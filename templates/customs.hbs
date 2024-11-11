@@ -1,0 +1,166 @@
+<div class="header">
+    <button type="button" data-action="save-triggers">
+        <i class="fa-solid fa-floppy-disk"></i>
+        {{@root.i18n 'save'}}
+    </button>
+    <div class="separator"></div>
+    <button type="button" data-action="import-triggers">
+        <i class="fa-solid fa-file-import"></i>
+        {{@root.i18n 'import'}}
+    </button>
+    <button type="button" data-action="export-triggers">
+        <i class="fa-solid fa-file-export"></i>
+        {{@root.i18n 'export'}}
+    </button>
+    <div class="separator"></div>
+    <select name="trigger-type">
+        {{selectOptions events valueAttr="value" labelAttr="label"}}
+    </select>
+    <button type="button" data-action="add-trigger">
+        <i class="fa-solid fa-calendar-plus"></i>
+        {{@root.i18n 'add'}}
+    </button>
+</div>
+<hr>
+<form class="triggers" data-tooltip-direction="UP">
+    <div class="scrollable">
+        <div class="left">
+            {{#each leftTriggers as |trigger|}}
+            {{> trigger trigger=trigger }}
+            {{/each}}
+        </div>
+        <div class="right">
+            {{#each rightTriggers as |trigger|}}
+            {{> trigger trigger=trigger}}
+            {{/each}}
+        </div>
+    </div>
+</form>
+
+{{#*inline 'trigger'}}
+<div class="trigger{{#if trigger.showInactives}} expanded{{/if}}" data-index="{{trigger.index}}">
+    <input type="text" class="hidden" name="{{trigger.index}}.event" value="{{trigger.event}}">
+    <div class="trigger-header header big-header">
+        <span class="title">
+            <i class="{{trigger.icon}}"></i>
+            <span>{{trigger.label}}</span>
+        </span>
+        <span class="controls">
+            {{> 'inputEntriesToggle' entry='condition' parent='.trigger' show=trigger.showInactives
+            showName=(concat trigger.index '.showInactives')}}
+            <a class="export" data-action="export-trigger"
+                data-tooltip="{{@root.i18n.path 'trigger.export'}}">
+                <i class="fa-solid fa-file-export"></i>
+            </a>
+            <a data-action="delete-trigger"
+                data-tooltip="{{@root.i18n.path 'trigger.delete.label'}}">
+                <i class="fa-solid fa-trash"></i>
+            </a>
+        </span>
+    </div>
+    {{#each trigger.conditions as |condition|}}
+    {{> 'inputEntry' condition entryType='condition' activeName=(concat ../trigger.index
+    '.usedConditions.' condition.name) valueName=(concat ../trigger.index '.conditions.'
+    condition.name)}}
+    {{/each}}
+    <div class="actions-header header big-header">
+        <span class="title">
+            <span>{{@root.i18n 'action.title'}}</span>
+        </span>
+        <select name="action-type">
+            {{selectOptions @root.actions valueAttr="value" labelAttr="label"}}
+        </select>
+        <a data-action="add-action" data-tooltip="{{@root.i18n.path 'action.add'}}">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+    {{#each trigger.actions as |action|}}
+    <div class="action{{#if action.showInactives}} expanded{{/if}}" data-type="{{action.type}}">
+        <div class="action-header header">
+            <span class="title">
+                <i class="{{action.icon}}"></i>
+                <span>{{action.label}}</span>
+            </span>
+            <span class="controls">
+                <a class="link" data-action="link-action"
+                    data-tooltip="{{@root.i18n.path 'link.link'}}">
+                    <i class="fa-solid fa-link"></i>
+                </a>
+                <a class="unlink" data-action="unlink-action"
+                    data-tooltip="{{@root.i18n.path 'link.unlink'}}">
+                    <i class="fa-solid fa-link-slash"></i>
+                </a>
+                {{> 'inputEntriesToggle' entry='condition' parent='.action'
+                show=action.showInactives
+                showName=(concat../trigger.index '.actions.' action.type '.showInactives')}}
+                <a data-action="delete-action" data-tooltip="{{@root.i18n.path 'action.delete'}}">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </span>
+        </div>
+        {{#each action.options as |option|}}
+        {{> 'inputEntry' option entryType='option' activeName=(concat ../../trigger.index
+        '.actions.' action.type '.usedOptions.' option.name) valueName=(concat ../../trigger.index
+        '.actions.' action.type '.' option.name)}}
+        {{/each}}
+        <a class="link-icon" data-action="link" data-tooltip="{{@root.i18n.path 'action.link'}}">
+            <i class="fa-solid fa-link-horizontal"
+                data-tooltip="{{@root.i18n.path 'link.unlink'}}"></i>
+        </a>
+    </div>
+    {{/each}}
+</div>
+{{/inline}}
+
+
+{{#*inline 'inputEntriesToggle'}}
+<input type="checkbox" class="hidden toggle-entries" name="{{showName}}" readonly {{checked show}}>
+<a class="toggle" data-action="toggle-entries" data-parent="{{parent}}"
+    data-tooltip="{{@root.i18n 'entry.toggle' entry=(@root.i18n (concat 'entry.' entry))}}">
+    <i class="fa-solid fa-eye show"></i>
+    <i class="fa-solid fa-eye-slash hide"></i>
+</a>
+{{/inline}}
+
+
+{{#*inline 'inputEntry'}}
+<div class="group {{entryType}} {{type}}">
+    <input class="used" type="checkbox" name="{{activeName}}" {{checked active}} {{disabled
+        required}}
+        data-tooltip="{{@root.i18n (ifThen required 'entry.required' 'entry.active') entry=(@root.i18n (concat 'entry.' entryType))}}">
+    <label class="input">
+        <span class="name" data-tooltip="{{tooltip}}">{{label}}</span>
+        {{> (concat type 'Input') this}}
+    </label>
+</div>
+{{/inline}}
+
+
+
+
+{{#*inline 'textInput'}}
+<input type="text" name="{{valueName}}" value="{{value}}" placeholder="{{tooltip}}">
+{{/inline}}
+
+{{#*inline 'uuidInput'}}
+{{> 'textInput' this}}
+<div class="item" data-uuid="{{value}}">
+    <a class="item-link" data-action="open-item-sheet">
+        <img src="{{item.img}}">
+        <span class="name">{{item.name}}</span>
+    </a>
+    <a class="reset" data-action="reset-uuid">
+        <i class="fa-solid fa-xmark"></i>
+    </a>
+</div>
+{{/inline}}
+
+{{#*inline 'toggleInput'}}
+<input type="checkbox" name="{{valueName}}" {{checked value}}>
+{{/inline}}
+
+{{#*inline 'selectInput'}}
+<select name="{{valueName}}">
+    {{selectOptions options selected=value valueAttr="value" labelAttr="label"}}
+</select>
+{{/inline}}

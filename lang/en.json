@@ -1,0 +1,87 @@
+{
+    "pf2e-trigger": {
+        "settings": {
+            "menus": {
+                "customs": {
+                    "name": "Custom Triggers",
+                    "hint": "Register you own triggers with the module.",
+                    "label": "Register"
+                }
+            }
+        },
+        "customs": {
+            "title": "Custom Triggers",
+            "export": "Export",
+            "import": "Import",
+            "save": "Save & Close",
+            "add": "Add",
+            "trigger": {
+                "delete": {
+                    "label": "Delete Trigger",
+                    "confirm": "Are you sure you want to delete this trigger?"
+                },
+                "export": "Export Trigger"
+            },
+            "action": {
+                "title": "Actions",
+                "add": "Add Action",
+                "delete": "Delete Action"
+            },
+            "entry": {
+                "active": "Activate/Disable {entry}",
+                "required": "Required {entry}",
+                "toggle": "Toggle Inactive {entry}s Visibility",
+                "condition": "Condition",
+                "option": "Option"
+            },
+            "link": {
+                "link": "Link to previous action",
+                "unlink": "Unlink from previous action"
+            }
+        },
+        "events": {
+            "aura-enter": "Aura Enter",
+            "aura-leave": "Aura Leave"
+        },
+        "conditions": {
+            "auraSlug": {
+                "label": "Aura slug",
+                "tooltip": "Slug of the aura"
+            },
+            "targetItem": {
+                "label": "Target has",
+                "tooltip": "Item Source UUID"
+            },
+            "originItem": {
+                "label": "Origin has",
+                "tooltip": "Item Source UUID"
+            },
+            "targets": {
+                "label": "Targets",
+                "tooltip": "Actors Affected"
+            },
+            "includeSelf": {
+                "label": "Include self",
+                "tooltip": "Include/Exclude self"
+            }
+        },
+        "condition-options": {
+            "all": "All",
+            "allies": "Allies",
+            "enemies": "Enemies"
+        },
+        "actions": {
+            "rollDamage": "Roll Damage"
+        },
+        "action-options": {
+            "formula": {
+                "label": "Formula",
+                "tooltip": "Damage Formula"
+            },
+            "item": {
+                "label": "Source Item",
+                "tooltip": "Item Source UUID"
+            }
+        }
+    }
+}

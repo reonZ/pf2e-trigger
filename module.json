@@ -1,0 +1,51 @@
+{
+    "id": "pf2e-trigger",
+    "title": "PF2e Trigger",
+    "description": "",
+    "authors": [
+        {
+            "name": "Idle",
+            "discord": "idleatre"
+        }
+    ],
+    "esmodules": ["scripts/main.js"],
+    "compatibility": {
+        "minimum": "12.331",
+        "verified": "12.331",
+        "maximum": "12"
+    },
+    "version": "1.0.0",
+    "url": "https://github.com/reonZ/pf2e-trigger",
+    "readme": "https://github.com/reonZ/pf2e-trigger/blob/master/README.md",
+    "manifest": "https://raw.githubusercontent.com/reonZ/pf2e-trigger/master/module.json",
+    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/1.0.0/module.zip",
+    "changelog": "https://github.com/reonZ/pf2e-trigger/blob/master/CHANGELOG.md",
+    "bugs": "https://github.com/reonZ/pf2e-trigger/issues",
+    "styles": ["styles/pf2e-trigger.css"],
+    "relationships": {
+        "systems": [
+            {
+                "id": "pf2e",
+                "type": "system",
+                "manifest": "https://raw.githubusercontent.com/foundryvtt/pf2e/master/system.json",
+                "compatibility": {
+                    "minimum": "6.6.2"
+                }
+            }
+        ],
+        "requires": [
+            {
+                "id": "lib-wrapper",
+                "type": "module",
+                "manifest": "https://raw.githubusercontent.com/ruipin/fvtt-lib-wrapper/master/module.json"
+            }
+        ]
+    },
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ]
+}

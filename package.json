@@ -1,0 +1,23 @@
+{
+    "name": "pf2e-trigger",
+    "scripts": {
+        "build": "esbuild src/main.ts --bundle --keep-names --minify --sourcemap --outdir=scripts",
+        "dev": "esbuild src/main.ts --bundle --keep-names --watch --sourcemap --outdir=scripts"
+    },
+    "author": "Idle",
+    "homepage": "https://github.com/reonZ/pf2e-trigger#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/reonZ/pf2e-trigger.git"
+    },
+    "bugs": {
+        "url": "https://github.com/reonZ/pf2e-trigger/issues"
+    },
+    "devDependencies": {
+        "esbuild": "^0.20.1",
+        "typescript": "5.3.3"
+    },
+    "dependencies": {
+        "foundry-pf2e": "file:../../../../dev/foundry-pf2e"
+    }
+}
