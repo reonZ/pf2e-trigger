@@ -1,5 +1,5 @@
 import { getActiveModule, isInstanceOf, localize, R, rollDamageFromFormula } from "foundry-pf2e";
-import { TriggerActions } from "../action";
+import { TriggerActionOptions } from "../action";
 import { Trigger, TriggerInputEntry } from "../trigger";
 
 abstract class TriggerEvent {
@@ -19,7 +19,7 @@ abstract class TriggerEvent {
 
     abstract test(
         actor: ActorPF2e,
-        trigger: Trigger,
+        conditions: Trigger["conditions"],
         options?: Record<string, any>
     ): Promisable<boolean>;
 
@@ -49,13 +49,13 @@ abstract class TriggerEvent {
 
     async rollDamage(
         actor: ActorPF2e,
-        action: TriggerActions["rollDamage"],
+        action: TriggerActionOptions<"rollDamage">,
         {
             origin,
             target,
         }: {
-            origin: { actor: ActorPF2e };
-            target?: { actor: ActorPF2e; token?: TokenDocumentPF2e };
+            origin: TargetDocuments;
+            target?: TargetDocuments;
         }
     ): Promise<boolean> {
         if (!action || !R.isString(action.formula) || !R.isString(action.item)) return false;
@@ -70,20 +70,22 @@ abstract class TriggerEvent {
 
         return true;
     }
+
+    rollSave(actor: ActorPF2e, actionOptions: TriggerActionOptions<"rollSave">, options: any) {}
 }
 
 function resolveTarget(
-    target: { actor: ActorPF2e; token?: TokenDocumentPF2e } | undefined,
+    target: TargetDocuments | undefined,
     uuids: true
 ): { actor: string; token?: string } | undefined;
 function resolveTarget(
-    target: { actor: ActorPF2e; token?: TokenDocumentPF2e } | undefined,
+    target: TargetDocuments | undefined,
     uuids?: false
-): { actor: ActorPF2e; token?: TokenDocumentPF2e } | undefined;
+): TargetDocuments | undefined;
 function resolveTarget(
-    target: { actor: ActorPF2e; token?: TokenDocumentPF2e } | undefined,
+    target: TargetDocuments | undefined,
     uuids?: boolean
-): { actor: ActorPF2e; token?: TokenDocumentPF2e } | { actor: string; token?: string } | undefined {
+): TargetDocuments | { actor: string; token?: string } | undefined {
     if (!target) return;
 
     const actor = target.actor;

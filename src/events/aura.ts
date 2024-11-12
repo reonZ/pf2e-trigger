@@ -26,8 +26,6 @@ const _wrappers = [
     createWrapper("CONFIG.Scene.documentClass.prototype.prepareData", scenePF2ePrepareData),
 ];
 
-type AuraTrigger = Triggers["aura-enter"] | Triggers["aura-leave"];
-
 abstract class AuraTriggerEvent extends TriggerEvent {
     get conditions() {
         return [
@@ -78,8 +76,8 @@ abstract class AuraTriggerEvent extends TriggerEvent {
 
     test(
         actor: ActorPF2e,
-        { conditions: { originItem, includeSelf, auraSlug, targetItem, targets } }: AuraTrigger,
-        { aura, origin }: { aura: AuraData; origin: AuraOrigin }
+        { originItem, includeSelf, auraSlug, targetItem, targets }: AuraTrigger["conditions"],
+        { aura, origin }: { aura: AuraData; origin: Required<TargetDocuments> }
     ): Promisable<boolean> {
         return (
             auraSlug === aura.slug &&
@@ -302,15 +300,14 @@ function auraSearch(aura: AuraData, origin: AuraOrigin) {
         slug === aura.slug && token === origin.token;
 }
 
-type AuraOrigin = {
-    actor: ActorPF2e;
-    token: TokenDocumentPF2e;
-};
+type AuraOrigin = Required<TargetDocuments>;
 
 type ActorAura = {
     aura: AuraData;
     origin: AuraOrigin;
     selfApplied: boolean;
 };
+
+type AuraTrigger = Triggers["aura-enter"] | Triggers["aura-leave"];
 
 export { AuraEnterTriggerEvent, AuraLeaveTriggerEvent };

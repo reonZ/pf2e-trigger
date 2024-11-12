@@ -71,7 +71,8 @@
             "enemies": "Enemies"
         },
         "actions": {
-            "rollDamage": "Roll Damage"
+            "rollDamage": "Roll Damage",
+            "rollSave": "Roll Save Check"
         },
         "action-options": {
             "formula": {

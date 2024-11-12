@@ -1,6 +1,6 @@
 import { ExtractTriggerInputs, TriggerInputEntry } from "./trigger";
 
-const TRIGGER_ACTIONS = ["rollDamage"] as const;
+const TRIGGER_ACTIONS = ["rollDamage", "rollSave"] as const;
 
 const rollDamageAction = {
     type: "rollDamage",
@@ -11,7 +11,13 @@ const rollDamageAction = {
     ],
 } as const satisfies TriggerActionEntry;
 
-const ACTIONS = [rollDamageAction] as const;
+const rollSaveAction = {
+    type: "rollSave",
+    icon: "",
+    options: [{ name: "dc", type: "number", required: true }],
+} as const satisfies TriggerActionEntry;
+
+const ACTIONS = [rollDamageAction, rollSaveAction] as const;
 
 const ACTIONS_MAP = new Collection(ACTIONS.map((action) => [action.type, action]));
 
@@ -24,13 +30,25 @@ type TriggerActionEntry = {
     linked?: boolean;
 };
 
-type TriggerAction = (typeof ACTIONS)[number];
+type TriggerAction = TriggerActions[keyof TriggerActions];
 
-type TriggerActions = TriggerAction extends { type: infer TType extends TriggerActionType }
+type TriggerActionOptions<TType extends TriggerActionType = TriggerActionType> =
+    TriggerActions[TType]["options"];
+
+type TriggerActions = (typeof ACTIONS)[number] extends {
+    type: infer TType extends TriggerActionType;
+}
     ? {
-          [k in TType]: ExtractTriggerInputs<Extract<TriggerAction, { type: k }>["options"]> & {
+          [k in TType]: {
+              type: k;
+              options: ExtractTriggerInputs<
+                  Extract<(typeof ACTIONS)[number], { type: k }>["options"]
+              >;
               usedOptions: {
-                  [c in Extract<TriggerAction, { type: k }>["options"][number]["name"]]: boolean;
+                  [c in Extract<
+                      (typeof ACTIONS)[number],
+                      { type: k }
+                  >["options"][number]["name"]]: boolean;
               };
               linked?: boolean;
           };
@@ -38,4 +56,4 @@ type TriggerActions = TriggerAction extends { type: infer TType extends TriggerA
     : never;
 
 export { ACTIONS, ACTIONS_MAP, TRIGGER_ACTIONS };
-export type { TriggerActions, TriggerActionType };
+export type { TriggerAction, TriggerActionOptions, TriggerActions, TriggerActionType };

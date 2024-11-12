@@ -38,16 +38,16 @@
 </form>
 
 {{#*inline 'trigger'}}
-<div class="trigger{{#if trigger.showInactives}} expanded{{/if}}" data-index="{{trigger.index}}">
-    <input type="text" class="hidden" name="{{trigger.index}}.event" value="{{trigger.event}}">
+<div class="trigger{{#if trigger.showInactives}} expanded{{/if}}{{#if trigger.highlight}} highlight{{/if}}"
+    data-trigger-index="{{trigger.index}}">
+    <input type="text" class="hidden" name="{{trigger.path}}.event" value="{{trigger.event}}">
     <div class="trigger-header header big-header">
         <span class="title">
             <i class="{{trigger.icon}}"></i>
             <span>{{trigger.label}}</span>
         </span>
         <span class="controls">
-            {{> 'inputEntriesToggle' entry='condition' parent='.trigger' show=trigger.showInactives
-            showName=(concat trigger.index '.showInactives')}}
+            {{> 'inputEntriesToggle' trigger entry='condition' parent='.trigger' }}
             <a class="export" data-action="export-trigger"
                 data-tooltip="{{@root.i18n.path 'trigger.export'}}">
                 <i class="fa-solid fa-file-export"></i>
@@ -59,9 +59,8 @@
         </span>
     </div>
     {{#each trigger.conditions as |condition|}}
-    {{> 'inputEntry' condition entryType='condition' activeName=(concat ../trigger.index
-    '.usedConditions.' condition.name) valueName=(concat ../trigger.index '.conditions.'
-    condition.name)}}
+    {{> 'inputEntry' condition entryType='condition' activeName=(concat ../trigger.path
+    '.usedConditions') valueName=(concat ../trigger.path '.conditions')}}
     {{/each}}
     <div class="actions-header header big-header">
         <span class="title">
@@ -75,7 +74,9 @@
         </a>
     </div>
     {{#each trigger.actions as |action|}}
-    <div class="action{{#if action.showInactives}} expanded{{/if}}" data-type="{{action.type}}">
+    <div class="action{{#if action.showInactives}} expanded{{/if}}" data-type="{{action.type}}"
+        data-action-index="{{action.index}}">
+        <input type="text" class="hidden" name="{{action.path}}.type" value="{{action.type}}">
         <div class="action-header header">
             <span class="title">
                 <i class="{{action.icon}}"></i>
@@ -91,17 +92,15 @@
                     <i class="fa-solid fa-link-slash"></i>
                 </a>
                 {{> 'inputEntriesToggle' entry='condition' parent='.action'
-                show=action.showInactives
-                showName=(concat../trigger.index '.actions.' action.type '.showInactives')}}
+                show=action.showInactives showName=(concat action.path '.showInactives')}}
                 <a data-action="delete-action" data-tooltip="{{@root.i18n.path 'action.delete'}}">
                     <i class="fa-solid fa-trash"></i>
                 </a>
             </span>
         </div>
         {{#each action.options as |option|}}
-        {{> 'inputEntry' option entryType='option' activeName=(concat ../../trigger.index
-        '.actions.' action.type '.usedOptions.' option.name) valueName=(concat ../../trigger.index
-        '.actions.' action.type '.' option.name)}}
+        {{> 'inputEntry' option entryType='option' activeName=(concat action.path '.usedOptions')
+        valueName=(concat option.path)}}
         {{/each}}
         <a class="link-icon" data-action="link" data-tooltip="{{@root.i18n.path 'action.link'}}">
             <i class="fa-solid fa-link-horizontal"
@@ -114,7 +113,8 @@
 
 
 {{#*inline 'inputEntriesToggle'}}
-<input type="checkbox" class="hidden toggle-entries" name="{{showName}}" readonly {{checked show}}>
+<input type="checkbox" class="hidden toggle-entries" name="{{path}}.showInactives" {{checked
+    showInactives}} readonly>
 <a class="toggle" data-action="toggle-entries" data-parent="{{parent}}"
     data-tooltip="{{@root.i18n 'entry.toggle' entry=(@root.i18n (concat 'entry.' entry))}}">
     <i class="fa-solid fa-eye show"></i>
@@ -125,7 +125,7 @@
 
 {{#*inline 'inputEntry'}}
 <div class="group {{entryType}} {{type}}">
-    <input class="used" type="checkbox" name="{{activeName}}" {{checked active}} {{disabled
+    <input class="used" type="checkbox" name="{{activeName}}.{{name}}" {{checked active}} {{disabled
         required}}
         data-tooltip="{{@root.i18n (ifThen required 'entry.required' 'entry.active') entry=(@root.i18n (concat 'entry.' entryType))}}">
     <label class="input">
@@ -139,7 +139,7 @@
 
 
 {{#*inline 'textInput'}}
-<input type="text" name="{{valueName}}" value="{{value}}" placeholder="{{tooltip}}">
+<input type="text" name="{{valueName}}.{{name}}" value="{{value}}" placeholder="{{tooltip}}">
 {{/inline}}
 
 {{#*inline 'uuidInput'}}
@@ -156,11 +156,11 @@
 {{/inline}}
 
 {{#*inline 'toggleInput'}}
-<input type="checkbox" name="{{valueName}}" {{checked value}}>
+<input type="checkbox" name="{{valueName}}.{{name}}" {{checked value}}>
 {{/inline}}
 
 {{#*inline 'selectInput'}}
-<select name="{{valueName}}">
+<select name="{{valueName}}.{{name}}">
     {{selectOptions options selected=value valueAttr="value" labelAttr="label"}}
 </select>
 {{/inline}}

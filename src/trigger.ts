@@ -1,7 +1,6 @@
 import { getSetting, R } from "foundry-pf2e";
-import { ACTIONS, TRIGGER_ACTIONS, TriggerActions } from "./action";
+import { ACTIONS_MAP, TriggerAction, TriggerActionType } from "./action";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
-import { TriggerEvent } from "./events/base";
 
 const EVENTS = [AuraEnterTriggerEvent, AuraLeaveTriggerEvent] as const;
 
@@ -26,7 +25,7 @@ function prepareTriggers() {
         const eventId = event.id;
 
         if (!EVENT_TRIGGERS.has(eventId)) {
-            // TODO need to validate
+            // TODO need to validate, conditions & action-opions must be undefined if not used
             const eventTriggers = allTriggers.filter((trigger) => trigger.event === eventId);
 
             EVENT_TRIGGERS.set(eventId, eventTriggers);
@@ -34,41 +33,36 @@ function prepareTriggers() {
             event._enable(eventTriggers.length > 0);
         }
     }
-
-    // TODO remove that shit
-    // @ts-ignore
-    window.trigger = {
-        triggers: EVENT_TRIGGERS,
-        events: EVENTS,
-    };
 }
 
 async function runTrigger<
     TEventId extends TriggerEventType,
-    TEvent extends TriggerEvent = Extract<TriggerEvents, { id: TEventId }>
->(eventId: TEventId, actor: ActorPF2e, options: EventOptions<TEventId>) {
-    const event = EVENTS_MAP.get(eventId) as unknown as TEvent;
-    const triggers = EVENT_TRIGGERS.get(eventId);
+    TOptions extends TriggerEventOptions<TEventId> = TriggerEventOptions<TEventId>
+>(eventId: TEventId, actor: ActorPF2e, options: TOptions) {
+    const event = EVENTS_MAP.get(eventId) as Extract<TriggerEvents, { id: TEventId }>;
+    const triggers = EVENT_TRIGGERS.get(eventId) as Triggers[TEventId][] | undefined;
     if (!event || !triggers?.length) return;
 
     Promise.all(
-        triggers.map(async (trigger) => {
-            const valid = await event.test(actor, trigger, options);
+        triggers.map(async (trigger: Trigger) => {
+            const valid = await event.test(actor, trigger.conditions, options);
             if (!valid) return;
 
             // TODO we must loop over chains instead of the whole array
-            for (const action of TRIGGER_ACTIONS) {
-                const triggerAction = trigger.actions[action];
-                if (!triggerAction) continue;
+            for (const triggerAction of trigger.actions) {
+                const action = ACTIONS_MAP.get(triggerAction.type);
+                if (!action) continue;
 
-                const method = event[action] as (
+                const method = event[action.type] as (
                     actor: ActorPF2e,
-                    trigger: TriggerActions[keyof TriggerActions],
-                    options?: any
+                    action: (typeof triggerAction)["options"],
+                    options?: TOptions
                 ) => Promisable<boolean>;
 
-                const canContinue = await method(actor, triggerAction, options);
-                // if (!canContinue) break;
+                method(actor, triggerAction.options, options);
+
+                //     const canContinue = await method(actor, triggerAction, options);
+                //     // if (!canContinue) break;
             }
         })
     );
@@ -104,7 +98,7 @@ function createTrigger(type: TriggerEventType): Trigger | undefined {
         event: type,
         conditions,
         usedConditions,
-        actions: {},
+        actions: [],
     };
 }
 
@@ -137,14 +131,15 @@ type TriggerInputValueTypes = {
     uuid: string;
     toggle: boolean;
     select: string;
+    number: number;
 };
 
 type TriggerInputValueType = TriggerInputValueTypes[keyof TriggerInputValueTypes];
 
-type EventOptions<TEventID extends TriggerEventType> = Parameters<
+type TriggerEventOptions<TEventID extends TriggerEventType> = Parameters<
     ExtractTriggerEvent<TEventID>["test"]
 >[2] &
-    Parameters<ExtractTriggerEvent<TEventID>["rollDamage"]>[2];
+    Parameters<ExtractTriggerEvent<TEventID>[TriggerActionType]>[2];
 
 type Trigger = Triggers[keyof Triggers];
 
@@ -156,7 +151,7 @@ type Triggers = TriggerEvents extends { id: infer TEventId extends TriggerEventT
               ? {
                     event: k;
                     conditions: ExtractTriggerInputs<TConditions>;
-                    actions: Partial<TriggerActions>;
+                    actions: TriggerAction[];
                     usedConditions: { [c in keyof ExtractTriggerInputs<TConditions>]: boolean };
                 }
               : never;
@@ -176,7 +171,8 @@ type TriggerInputEntry =
     | TriggerInputText
     | TriggerInputUuid
     | TriggerInputToggle
-    | TriggerInputSelect;
+    | TriggerInputSelect
+    | TriggerInputNumbert;
 
 type TriggerInputEntryBase<TType extends string> = {
     name: string;
@@ -185,6 +181,8 @@ type TriggerInputEntryBase<TType extends string> = {
 };
 
 type TriggerInputText = TriggerInputEntryBase<"text">;
+
+type TriggerInputNumbert = TriggerInputEntryBase<"number">;
 
 type TriggerInputUuid = TriggerInputEntryBase<"uuid">;
 
@@ -198,7 +196,7 @@ type TriggerInputSelect = TriggerInputEntryBase<"select"> & {
 
 type TriggerInputType = TriggerInputEntry["type"];
 
-export { EVENT_TRIGGERS, EVENTS_MAP, createTrigger, prepareTriggers, runTrigger };
+export { createTrigger, EVENT_TRIGGERS, EVENTS_MAP, prepareTriggers, runTrigger };
 export type {
     ExtractTriggerInputs,
     ExtractTriggerInputValue,

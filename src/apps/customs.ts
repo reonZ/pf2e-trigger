@@ -13,7 +13,7 @@ import {
     templateLocalize,
     templatePath,
 } from "foundry-pf2e";
-import { ACTIONS, ACTIONS_MAP, TriggerActions, TriggerActionType } from "../action";
+import { ACTIONS, ACTIONS_MAP, TriggerAction, TriggerActions, TriggerActionType } from "../action";
 import {
     createTrigger,
     EVENTS_MAP,
@@ -28,6 +28,7 @@ class CustomTriggers extends FormApplication {
     #events: { value: TriggerEventType; label: string }[];
     #actions: { value: TriggerActionType; label: string }[];
     #triggers: CustomTrigger[];
+    #highlight: number[] = [];
 
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
@@ -53,6 +54,7 @@ class CustomTriggers extends FormApplication {
             (value) => localize("actions", value)
         );
 
+        // TODO validate triggers
         this.#triggers = foundry.utils.deepClone(getSetting<CustomTrigger[]>("customTriggers"));
     }
 
@@ -65,43 +67,61 @@ class CustomTriggers extends FormApplication {
     }
 
     render(force?: boolean, options?: CustomTriggersRenderOptions): this {
-        if (this.rendered) {
-            this.#triggers = options?.triggers ?? this.generateTriggersData(true);
+        if (options && this.rendered) {
+            this.#triggers = options.triggers ?? this.generateTriggersData(true);
+            this.#highlight = options.highlight ?? [];
         }
 
         return super.render(force, options);
     }
 
     generateTriggersData(readonly: boolean = false) {
-        const data: Record<number, CustomTrigger> & { "action-type"?: string | string[] } =
-            foundry.utils.expandObject(
-                R.mapValues(
-                    new FormDataExtended(this.form, { disabled: true, readonly }).object,
-                    (value) => (typeof value === "string" ? value.trim() : value)
-                )
-            );
+        type TemplateTrigger = Omit<CustomTrigger, "actions"> & {
+            actions?: Record<
+                number,
+                TriggerAction & {
+                    showInactives?: boolean;
+                }
+            >;
+        };
 
-        delete data["action-type"];
+        const data: { triggers?: Record<number, TemplateTrigger> } = foundry.utils.expandObject(
+            R.mapValues(
+                new FormDataExtended(this.form, { disabled: true, readonly }).object,
+                (value) => (typeof value === "string" ? value.trim() : value)
+            )
+        );
 
         return R.pipe(
-            R.entries(data as Record<number, CustomTrigger>),
+            R.entries(data.triggers ?? {}),
             R.sortBy(([index]) => Number(index)),
-            R.map(([_, trigger]) => {
-                trigger.actions ??= {};
-                return trigger;
+            R.map(([_, trigger]): CustomTrigger => {
+                const actions = R.pipe(
+                    R.entries(trigger.actions ?? {}),
+                    R.sortBy(([index]) => Number(index)),
+                    R.map(([__, action]) => action)
+                );
+
+                return {
+                    ...trigger,
+                    actions,
+                };
             })
         );
     }
 
     getData(options?: Partial<FormApplicationOptions>): CustomTriggersData {
-        const leftTriggers: CustomDataTrigger[] = [];
-        const rightTriggers: CustomDataTrigger[] = [];
+        const highlights = this.#highlight.slice();
+
+        this.#highlight.length = 0;
 
         const triggers = R.pipe(
             this.#triggers,
-            R.map((trigger, index): CustomDataTrigger | undefined => {
+            R.map((trigger, triggerIndex): CustomDataTrigger | undefined => {
                 const event = EVENTS_MAP.get(trigger.event);
                 if (!event) return;
+
+                const triggerPath = `triggers.${triggerIndex}`;
 
                 const conditions: CustomTriggerCondition[] = R.pipe(
                     event.conditions,
@@ -116,33 +136,43 @@ class CustomTriggers extends FormApplication {
                 );
 
                 const actions: CustomTriggerAction[] = R.pipe(
-                    R.entries(trigger.actions),
-                    R.map(([actionType, triggerAction]): CustomTriggerAction | undefined => {
-                        const action = ACTIONS_MAP.get(actionType);
+                    trigger.actions,
+                    R.map((triggerAction, actionIndex): CustomTriggerAction | undefined => {
+                        const action = ACTIONS_MAP.get(triggerAction.type);
                         if (!action) return;
 
-                        const options: CustomTriggerOption[] = R.pipe(
-                            R.entries(triggerAction),
-                            R.map(([name, value]): CustomTriggerOption | undefined => {
-                                const option = action.options.find((o) => o.name === name);
-                                if (!option) return;
+                        const actionPath = `${triggerPath}.actions.${actionIndex}`;
 
-                                return this.#processInputEntry(
+                        const options: CustomTriggerOption[] = R.pipe(
+                            action.options,
+                            R.map((option): CustomTriggerOption => {
+                                const name = option.name as keyof (typeof triggerAction)["options"];
+                                const triggerOption =
+                                    triggerAction.options as TriggerActions[typeof name];
+
+                                const data = this.#processInputEntry(
                                     option,
-                                    value as TriggerInputValueType,
+                                    triggerOption[name],
                                     triggerAction.usedOptions,
                                     "action-options"
                                 );
+
+                                return {
+                                    ...data,
+                                    path: `${actionPath}.options`,
+                                };
                             }),
                             R.filter(R.isTruthy)
                         );
 
                         return {
-                            options,
                             type: action.type,
                             icon: action.icon,
-                            linked: !!triggerAction.linked,
+                            index: actionIndex,
+                            path: actionPath,
                             label: localize("actions", action.type),
+                            linked: !!triggerAction.linked,
+                            options,
                             showInactives: !!triggerAction.showInactives,
                         };
                     }),
@@ -150,23 +180,24 @@ class CustomTriggers extends FormApplication {
                 );
 
                 return {
-                    index,
+                    path: triggerPath,
+                    index: triggerIndex,
                     event: event.id,
                     icon: event.icon,
                     label: event.createLabel(trigger),
                     conditions,
                     actions,
+                    highlight: highlights.includes(triggerIndex),
                     showInactives: !!trigger.showInactives,
                 };
             }),
             R.filter(R.isTruthy)
         );
 
-        for (let index = 0; index < triggers.length; index++) {
-            const trigger = triggers[index];
-            const array = index % 2 === 0 ? leftTriggers : rightTriggers;
-            array.push(trigger);
-        }
+        const [leftTriggers, rightTriggers] = R.partition(
+            triggers,
+            (trigger, index) => index % 2 === 0
+        );
 
         return {
             events: this.#events,
@@ -214,13 +245,15 @@ class CustomTriggers extends FormApplication {
                     trigger.showInactives = true;
                     triggers.unshift(trigger);
 
-                    this.render(false, { triggers });
+                    this.render(false, { triggers, highlight: [0] });
 
                     break;
                 }
 
                 case "delete-trigger": {
-                    const index = Number(htmlClosest(el, "[data-index]")?.dataset.index);
+                    const index = Number(
+                        htmlClosest(el, "[data-trigger-index]")?.dataset.triggerIndex
+                    );
                     if (isNaN(index)) return;
 
                     const confirm = await confirmDialog({
@@ -332,20 +365,26 @@ type EventAction =
 
 type CustomDataTrigger = {
     label: string;
+    path: string;
     index: number;
     event: TriggerEventType;
     icon: string;
     conditions: CustomTriggerCondition[];
     actions: CustomTriggerAction[];
     showInactives: boolean;
+    highlight: boolean;
 };
 
-type CustomTriggerOption = CustomTriggerInput;
+type CustomTriggerOption = CustomTriggerInput & {
+    path: string;
+};
 
 type CustomTriggerAction = {
     type: TriggerActionType;
     icon: string;
+    index: number;
     label: string;
+    path: string;
     linked: boolean;
     showInactives: boolean;
     options: CustomTriggerOption[];
@@ -376,17 +415,12 @@ type CustomTriggersData = {
 
 type CustomTrigger = Omit<Trigger, "actions"> & {
     showInactives?: boolean;
-    actions: TriggerActions extends { [t in infer TType extends TriggerActionType]: any }
-        ? {
-              [k in TType]?: TriggerActions[k] & {
-                  showInactives?: boolean;
-              };
-          }
-        : never;
+    actions: (TriggerAction & { showInactives?: boolean })[];
 };
 
 type CustomTriggersRenderOptions = RenderOptions & {
-    triggers: CustomTrigger[];
+    triggers?: CustomTrigger[];
+    highlight?: number[];
 };
 
 export { CustomTriggers };

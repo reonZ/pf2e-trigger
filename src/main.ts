@@ -8,36 +8,7 @@ Hooks.once("init", () => {
     registerSetting({
         key: "customTriggers",
         type: Array,
-        // TODO remove that
-        default: [
-            // {
-            //     event: "aura-enter",
-            //     conditions: {
-            //         auraSlug: "kinetic-aura",
-            //         targetItem: undefined,
-            //         originItem: "Compendium.pf2e.feat-effects.Item.2EMak2C8x6pFwoUi",
-            //         includeSelf: false,
-            //         targets: "enemies",
-            //     },
-            //     actions: {
-            //         rollDamage: {
-            //             formula: "(floor(@actor.level/2))[fire]",
-            //             item: "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve",
-            //             usedOptions: {
-            //                 formula: true,
-            //                 item: true,
-            //             },
-            //         },
-            //     },
-            //     usedConditions: {
-            //         auraSlug: true,
-            //         targetItem: false,
-            //         originItem: true,
-            //         includeSelf: false,
-            //         targets: true,
-            //     },
-            // } satisfies Trigger,
-        ],
+        default: [],
         scope: "world",
         config: false,
     });
