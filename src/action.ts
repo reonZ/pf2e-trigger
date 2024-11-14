@@ -41,10 +41,6 @@ const rollSaveAction = {
             localize: true,
         },
         {
-            name: "basic",
-            type: "checkbox",
-        },
-        {
             name: "dc",
             type: "number",
             required: true,

@@ -1,4 +1,11 @@
-import { getActiveModule, isInstanceOf, localize, R, rollDamageFromFormula } from "foundry-pf2e";
+import {
+    getActiveModule,
+    isInstanceOf,
+    localize,
+    R,
+    rollDamageFromFormula,
+    SAVE_TYPES,
+} from "foundry-pf2e";
 import { TriggerActionOptions } from "../action";
 import { Trigger, TriggerInputEntry, TriggerInputValueType } from "../trigger";
 
@@ -81,9 +88,16 @@ abstract class TriggerEvent {
     ): Promise<boolean> {
         const threshold = Number(linkOption);
 
-        ChatMessage.create({ content: "This is a save check message:<br>Failure" });
-        const success = 0;
-        return isNaN(threshold) ? true : success >= threshold;
+        const save = actionOptions.save;
+        if (!SAVE_TYPES.includes(save)) return false;
+
+        const actorSave = actor.saves?.[save];
+        if (!actorSave) return false;
+
+        const roll = await actorSave.roll({ dc: actionOptions.dc });
+        if (!roll) return false;
+
+        return isNaN(threshold) ? true : (roll.degreeOfSuccess ?? 2) >= threshold;
     }
 }
 
