@@ -60,7 +60,8 @@
     </div>
     {{#each trigger.conditions as |condition|}}
     {{> 'inputEntry' condition entryType='condition' activeName=(concat ../trigger.path
-    '.usedConditions') valueName=(concat ../trigger.path '.conditions')}}
+    '.usedConditions.' condition.name) valueName=(concat ../trigger.path '.conditions.'
+    condition.name)}}
     {{/each}}
     <div class="actions-header header big-header">
         <span class="title">
@@ -74,42 +75,56 @@
         </a>
     </div>
     {{#each trigger.actions as |action|}}
-    <div class="action{{#if action.showInactives}} expanded{{/if}}" data-type="{{action.type}}"
-        data-action-index="{{action.index}}">
+    <div class="action{{#if action.showInactives}} expanded{{/if}}{{#if action.linked}} linked{{/if}}"
+        data-type="{{action.type}}" data-action-index="{{action.index}}">
         <input type="text" class="hidden" name="{{action.path}}.type" value="{{action.type}}">
+        {{#if extraOption}}
+        <div
+            class="group option linked-option {{extraOption.type}}{{#if extraOption.hidden}} hidden{{/if}}">
+            <i class="fa-solid fa-link"></i>
+            <label class="input">
+                <span class="name"
+                    data-tooltip="{{extraOption.tooltip}}">{{extraOption.label}}</span>
+                {{> (concat extraOption.type 'Input') extraOption valueName=extraOption.path}}
+            </label>
+        </div>
+        {{/if}}
         <div class="action-header header">
             <span class="title">
                 <i class="{{action.icon}}"></i>
                 <span>{{action.label}}</span>
             </span>
             <span class="controls">
-                <a class="link" data-action="link-action"
-                    data-tooltip="{{@root.i18n.path 'link.link'}}">
-                    <i class="fa-solid fa-link"></i>
-                </a>
-                <a class="unlink" data-action="unlink-action"
-                    data-tooltip="{{@root.i18n.path 'link.unlink'}}">
-                    <i class="fa-solid fa-link-slash"></i>
+                <input type="checkbox" class="hidden" name="{{action.path}}.linked" {{checked
+                    action.linked}}>
+                <a data-action="toggle-link" data-tooltip="{{@root.i18n.path 'link'}}">
+                    <i class="fa-solid fa-link link"></i>
+                    <i class="fa-solid fa-link-slash unlink"></i>
                 </a>
                 {{> 'inputEntriesToggle' entry='condition' parent='.action'
                 show=action.showInactives showName=(concat action.path '.showInactives')}}
-                <a data-action="delete-action" data-tooltip="{{@root.i18n.path 'action.delete'}}">
+                <a data-action="delete-action"
+                    data-tooltip="{{@root.i18n.path 'action.delete.label'}}">
                     <i class="fa-solid fa-trash"></i>
                 </a>
             </span>
         </div>
         {{#each action.options as |option|}}
-        {{> 'inputEntry' option entryType='option' activeName=(concat action.path '.usedOptions')
-        valueName=(concat option.path)}}
+        {{> 'inputEntry' option entryType='option' activeName=(concat action.path '.usedOptions.'
+        option.name)
+        valueName=(concat option.path '.' option.name)}}
         {{/each}}
-        <a class="link-icon" data-action="link" data-tooltip="{{@root.i18n.path 'action.link'}}">
-            <i class="fa-solid fa-link-horizontal"
-                data-tooltip="{{@root.i18n.path 'link.unlink'}}"></i>
-        </a>
+        <div class="link-icon">
+            <i class="fa-solid fa-link-horizontal"></i>
+        </div>
     </div>
+    {{else}}
+    <div class="empty">{{@root.i18n 'empty'}}</div>
     {{/each}}
 </div>
 {{/inline}}
+
+
 
 
 {{#*inline 'inputEntriesToggle'}}
@@ -123,9 +138,11 @@
 {{/inline}}
 
 
+
+
 {{#*inline 'inputEntry'}}
 <div class="group {{entryType}} {{type}}">
-    <input class="used" type="checkbox" name="{{activeName}}.{{name}}" {{checked active}} {{disabled
+    <input class="used" type="checkbox" name="{{activeName}}" {{checked active}} {{disabled
         required}}
         data-tooltip="{{@root.i18n (ifThen required 'entry.required' 'entry.active') entry=(@root.i18n (concat 'entry.' entryType))}}">
     <label class="input">
@@ -139,7 +156,12 @@
 
 
 {{#*inline 'textInput'}}
-<input type="text" name="{{valueName}}.{{name}}" value="{{value}}" placeholder="{{tooltip}}">
+<input type="text" name="{{valueName}}" value="{{value}}" placeholder="{{tooltip}}">
+{{/inline}}
+
+{{#*inline 'numberInput'}}
+<input type="number" name="{{valueName}}" min="{{min}}" max="{{max}}" step="{{step}}"
+    value="{{value}}">
 {{/inline}}
 
 {{#*inline 'uuidInput'}}
@@ -155,12 +177,12 @@
 </div>
 {{/inline}}
 
-{{#*inline 'toggleInput'}}
-<input type="checkbox" name="{{valueName}}.{{name}}" {{checked value}}>
+{{#*inline 'checkboxInput'}}
+<input type="checkbox" name="{{valueName}}" {{checked value}}>
 {{/inline}}
 
 {{#*inline 'selectInput'}}
-<select name="{{valueName}}.{{name}}">
+<select name="{{valueName}}">
     {{selectOptions options selected=value valueAttr="value" labelAttr="label"}}
 </select>
 {{/inline}}

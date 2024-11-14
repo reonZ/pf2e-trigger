@@ -27,13 +27,27 @@ const _wrappers = [
 ];
 
 abstract class AuraTriggerEvent extends TriggerEvent {
+    #initiate: () => void;
+
+    constructor() {
+        super();
+
+        this.#initiate = foundry.utils.debounce(() => {
+            if (this.allEnabled) {
+                this.#initialAuraCheck();
+            } else {
+                this.#auraCheckCleanup();
+            }
+        }, 100);
+    }
+
     get conditions() {
         return [
             { name: "auraSlug", type: "text", required: true },
             { name: "targetItem", type: "uuid" },
             { name: "originItem", type: "uuid" },
             { name: "targets", type: "select", options: ["all", "allies", "enemies"] },
-            { name: "includeSelf", type: "toggle" },
+            { name: "includeSelf", type: "checkbox" },
         ] as const satisfies Readonly<TriggerInputEntry[]>;
     }
 
@@ -58,13 +72,9 @@ abstract class AuraTriggerEvent extends TriggerEvent {
             wrapper.toggle(currentAllEnabled);
         }
 
-        runWhenReady(() => {
-            if (currentAllEnabled && !previousAllEnabled) {
-                this.#initialAuraCheck();
-            } else if (!currentAllEnabled && previousAllEnabled) {
-                this.#auraCheckCleanup();
-            }
-        });
+        if (currentAllEnabled !== previousAllEnabled) {
+            runWhenReady(this.#initiate);
+        }
     }
 
     createLabel(trigger: AuraTrigger): string {

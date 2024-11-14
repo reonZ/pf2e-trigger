@@ -1,10 +1,19 @@
 import { getSetting, R } from "foundry-pf2e";
-import { ACTIONS_MAP, TriggerAction, TriggerActionType } from "./action";
+import { ACTIONS_MAP, TriggerAction } from "./action";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
+import { TriggerEvent } from "./events/base";
+
+const TRIGGER_INPUT_DEFAULT_VALUES = {
+    text: "",
+    uuid: "",
+    checkbox: false,
+    select: "",
+    number: 0,
+};
 
 const EVENTS = [AuraEnterTriggerEvent, AuraLeaveTriggerEvent] as const;
 
-const EVENTS_MAP = new Map(
+const EVENTS_MAP: Map<TriggerEventType, TriggerEvent> = new Map(
     R.pipe(
         EVENTS,
         R.map((EventCls) => {
@@ -19,14 +28,38 @@ const EVENT_TRIGGERS: Collection<Trigger[]> = new Collection();
 function prepareTriggers() {
     EVENT_TRIGGERS.clear();
 
-    const allTriggers = getSetting<Trigger[]>("customTriggers");
+    const allTriggers = foundry.utils.deepClone(getSetting<Trigger[]>("customTriggers"));
 
     for (const event of EVENTS_MAP.values()) {
         const eventId = event.id;
 
         if (!EVENT_TRIGGERS.has(eventId)) {
-            // TODO need to validate, conditions & action-opions must be undefined if not used
-            const eventTriggers = allTriggers.filter((trigger) => trigger.event === eventId);
+            // TODO more validation ?
+            const eventTriggers = R.pipe(
+                allTriggers,
+                R.filter((trigger) => trigger.event === eventId),
+                R.forEach((trigger) => {
+                    const conditions = trigger.conditions;
+
+                    R.forEachObj(trigger.usedConditions, (used, condition) => {
+                        if (!used && condition in conditions) {
+                            conditions[condition] = undefined;
+                        }
+                    });
+
+                    for (let i = 0; i < trigger.actions.length; i++) {
+                        const triggerAction = trigger.actions[i];
+                        const action = ACTIONS_MAP.get(triggerAction.type);
+                        if (!action) continue;
+
+                        R.forEachObj(triggerAction.usedOptions, (used, optionName: string) => {
+                            if (!used) {
+                                triggerAction.options[optionName] = undefined;
+                            }
+                        });
+                    }
+                })
+            );
 
             EVENT_TRIGGERS.set(eventId, eventTriggers);
 
@@ -35,12 +68,13 @@ function prepareTriggers() {
     }
 }
 
-async function runTrigger<
-    TEventId extends TriggerEventType,
-    TOptions extends TriggerEventOptions<TEventId> = TriggerEventOptions<TEventId>
->(eventId: TEventId, actor: ActorPF2e, options: TOptions) {
-    const event = EVENTS_MAP.get(eventId) as Extract<TriggerEvents, { id: TEventId }>;
-    const triggers = EVENT_TRIGGERS.get(eventId) as Triggers[TEventId][] | undefined;
+async function runTrigger<TEventId extends TriggerEventType>(
+    eventId: TEventId,
+    actor: ActorPF2e,
+    options: Record<string, any>
+) {
+    const event = EVENTS_MAP.get(eventId);
+    const triggers = EVENT_TRIGGERS.get(eventId);
     if (!event || !triggers?.length) return;
 
     Promise.all(
@@ -48,59 +82,77 @@ async function runTrigger<
             const valid = await event.test(actor, trigger.conditions, options);
             if (!valid) return;
 
-            // TODO we must loop over chains instead of the whole array
-            for (const triggerAction of trigger.actions) {
+            for (let i = 0; i < trigger.actions.length; i++) {
+                const triggerAction = trigger.actions[i];
                 const action = ACTIONS_MAP.get(triggerAction.type);
                 if (!action) continue;
 
                 const method = event[action.type] as (
                     actor: ActorPF2e,
                     action: (typeof triggerAction)["options"],
-                    options?: TOptions
+                    linkOption: TriggerInputValueType,
+                    options?: Record<string, any>
                 ) => Promisable<boolean>;
 
-                method(actor, triggerAction.options, options);
+                const nextAction = trigger.actions.at(i + 1);
+                const fn = () =>
+                    method(actor, triggerAction.options, nextAction?.linkOption, options);
 
-                //     const canContinue = await method(actor, triggerAction, options);
-                //     // if (!canContinue) break;
+                if (nextAction?.linked) {
+                    const canContinue = await fn();
+                    if (!canContinue) {
+                        i++;
+                        while (trigger.actions.at(i + 1)?.linked) {
+                            i++;
+                        }
+                    }
+                } else {
+                    fn();
+                }
             }
         })
     );
 }
 
-function createTrigger(type: TriggerEventType): Trigger | undefined {
+function createTrigger<TType extends TriggerEventType>(type: TType): Trigger | undefined {
     const event = EVENTS_MAP.get(type);
     if (!event) return;
 
-    type NewTriggerCondition = Triggers[typeof type]["conditions"];
-    type NewTriggerConditionName = keyof NewTriggerCondition;
-
-    const usedConditions = {} as Record<NewTriggerConditionName, boolean>;
-
-    const inputValue = (input: TriggerInputEntry) => {
-        return input.required ? (input.type === "toggle" ? false : "") : undefined;
-    };
-
+    const usedConditions = {} as Record<string, boolean>;
     const conditions = R.pipe(
         event.conditions as Readonly<TriggerInputEntry[]>,
         R.map((condition) => {
-            const name = condition.name as NewTriggerConditionName;
-            const value = inputValue(condition);
+            const name = condition.name;
+            const value = defaultInputValue(condition);
 
             usedConditions[name] = !!condition.required;
-
             return [name, value] as const;
         }),
         R.fromEntries()
-    ) as NewTriggerCondition;
+    );
 
     return {
         event: type,
         conditions,
-        usedConditions,
         actions: [],
+        usedConditions,
     };
 }
+
+function defaultInputValue(input: TriggerInputEntry): TriggerInputValueType {
+    return input.required ? input.default ?? TRIGGER_INPUT_DEFAULT_VALUES[input.type] : undefined;
+}
+
+function isInputType(type: TriggerInputType, value: TriggerInputValueType) {
+    return typeof value === typeof TRIGGER_INPUT_DEFAULT_VALUES[type];
+}
+
+type Trigger = {
+    event: TriggerEventType;
+    conditions: Record<string, TriggerInputValueType>;
+    usedConditions: Record<string, boolean>;
+    actions: TriggerAction[];
+};
 
 type ExtractTriggerInputs<TInputs extends Readonly<TriggerInputEntry[]>> = TInputs extends Readonly<
     { name: infer TName extends string }[]
@@ -126,22 +178,9 @@ type ExtractTriggerInputValue<TInput extends TriggerInputEntry> = TInput extends
         : TriggerInputValueTypes[TType]
     : never;
 
-type TriggerInputValueTypes = {
-    text: string;
-    uuid: string;
-    toggle: boolean;
-    select: string;
-    number: number;
-};
+type TriggerInputValueTypes = typeof TRIGGER_INPUT_DEFAULT_VALUES;
 
-type TriggerInputValueType = TriggerInputValueTypes[keyof TriggerInputValueTypes];
-
-type TriggerEventOptions<TEventID extends TriggerEventType> = Parameters<
-    ExtractTriggerEvent<TEventID>["test"]
->[2] &
-    Parameters<ExtractTriggerEvent<TEventID>[TriggerActionType]>[2];
-
-type Trigger = Triggers[keyof Triggers];
+type TriggerInputValueType = TriggerInputValueTypes[keyof TriggerInputValueTypes] | undefined;
 
 type Triggers = TriggerEvents extends { id: infer TEventId extends TriggerEventType }
     ? {
@@ -160,11 +199,6 @@ type Triggers = TriggerEvents extends { id: infer TEventId extends TriggerEventT
 
 type TriggerEvents = InstanceType<(typeof EVENTS)[number]>;
 
-type ExtractTriggerEvent<TEventId extends TriggerEventType> = Extract<
-    TriggerEvents,
-    { id: TEventId }
->;
-
 type TriggerEventType = TriggerEvents["id"];
 
 type TriggerInputEntry =
@@ -172,39 +206,52 @@ type TriggerInputEntry =
     | TriggerInputUuid
     | TriggerInputToggle
     | TriggerInputSelect
-    | TriggerInputNumbert;
+    | TriggerInputNumber;
 
-type TriggerInputEntryBase<TType extends string> = {
+type TriggerInputEntryBase<TType extends TriggerInputType> = {
     name: string;
     type: TType;
     required?: boolean;
+    default?: TriggerInputValueTypes[TType];
 };
 
 type TriggerInputText = TriggerInputEntryBase<"text">;
 
-type TriggerInputNumbert = TriggerInputEntryBase<"number">;
+type TriggerInputNumber = TriggerInputEntryBase<"number"> & {
+    min?: number;
+    max?: number;
+    step?: number;
+};
 
 type TriggerInputUuid = TriggerInputEntryBase<"uuid">;
 
-type TriggerInputToggle = TriggerInputEntryBase<"toggle"> & {
+type TriggerInputToggle = TriggerInputEntryBase<"checkbox"> & {
     default?: boolean;
 };
 
 type TriggerInputSelect = TriggerInputEntryBase<"select"> & {
-    options: string[];
+    options: (string | { value: string; label: string })[];
+    localize?: true;
 };
 
-type TriggerInputType = TriggerInputEntry["type"];
+type TriggerInputType = "number" | "text" | "uuid" | "checkbox" | "select";
 
-export { createTrigger, EVENT_TRIGGERS, EVENTS_MAP, prepareTriggers, runTrigger };
 export type {
     ExtractTriggerInputs,
-    ExtractTriggerInputValue,
     Trigger,
-    TriggerEvents,
     TriggerEventType,
     TriggerInputEntry,
     TriggerInputType,
     TriggerInputValueType,
     Triggers,
+};
+
+export {
+    EVENTS_MAP,
+    EVENT_TRIGGERS,
+    createTrigger,
+    defaultInputValue,
+    isInputType,
+    prepareTriggers,
+    runTrigger,
 };

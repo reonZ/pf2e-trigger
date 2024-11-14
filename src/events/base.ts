@@ -1,6 +1,6 @@
 import { getActiveModule, isInstanceOf, localize, R, rollDamageFromFormula } from "foundry-pf2e";
 import { TriggerActionOptions } from "../action";
-import { Trigger, TriggerInputEntry } from "../trigger";
+import { Trigger, TriggerInputEntry, TriggerInputValueType } from "../trigger";
 
 abstract class TriggerEvent {
     #enabled = false;
@@ -49,7 +49,8 @@ abstract class TriggerEvent {
 
     async rollDamage(
         actor: ActorPF2e,
-        action: TriggerActionOptions<"rollDamage">,
+        actionOptions: TriggerActionOptions<"rollDamage">,
+        linkOption: TriggerInputValueType,
         {
             origin,
             target,
@@ -58,12 +59,13 @@ abstract class TriggerEvent {
             target?: TargetDocuments;
         }
     ): Promise<boolean> {
-        if (!action || !R.isString(action.formula) || !R.isString(action.item)) return false;
+        if (!actionOptions || !R.isString(actionOptions.formula) || !R.isString(actionOptions.item))
+            return false;
 
-        const item = await fromUuid(action.item);
+        const item = await fromUuid(actionOptions.item);
         if (!isInstanceOf(item, "ItemPF2e")) return false;
 
-        await rollDamageFromFormula(origin.actor, action.formula, {
+        await rollDamageFromFormula(origin.actor, actionOptions.formula, {
             item,
             target: resolveTarget(target, true),
         });
@@ -71,7 +73,18 @@ abstract class TriggerEvent {
         return true;
     }
 
-    rollSave(actor: ActorPF2e, actionOptions: TriggerActionOptions<"rollSave">, options: any) {}
+    async rollSave(
+        actor: ActorPF2e,
+        actionOptions: TriggerActionOptions<"rollSave">,
+        linkOption: TriggerInputValueType,
+        options: {}
+    ): Promise<boolean> {
+        const threshold = Number(linkOption);
+
+        ChatMessage.create({ content: "This is a save check message:<br>Failure" });
+        const success = 0;
+        return isNaN(threshold) ? true : success >= threshold;
+    }
 }
 
 function resolveTarget(

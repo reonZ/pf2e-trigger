@@ -15,6 +15,8 @@
             "import": "Import",
             "save": "Save & Close",
             "add": "Add",
+            "empty": "No Action",
+            "linkedOnly": "Link Only",
             "trigger": {
                 "delete": {
                     "label": "Delete Trigger",
@@ -25,7 +27,10 @@
             "action": {
                 "title": "Actions",
                 "add": "Add Action",
-                "delete": "Delete Action"
+                "delete": {
+                    "label": "Delete Action",
+                    "confirm": "Are you sure you want to delete this action?"
+                }
             },
             "entry": {
                 "active": "Activate/Disable {entry}",
@@ -34,10 +39,7 @@
                 "condition": "Condition",
                 "option": "Option"
             },
-            "link": {
-                "link": "Link to previous action",
-                "unlink": "Unlink from previous action"
-            }
+            "link": "Toggle link to previous action"
         },
         "events": {
             "aura-enter": "Aura Enter",
@@ -50,22 +52,22 @@
             },
             "targetItem": {
                 "label": "Target has",
-                "tooltip": "Item Source UUID"
+                "tooltip": "Item source UUID"
             },
             "originItem": {
                 "label": "Origin has",
-                "tooltip": "Item Source UUID"
+                "tooltip": "Item source UUID"
             },
             "targets": {
                 "label": "Targets",
-                "tooltip": "Actors Affected"
+                "tooltip": "Actors affected"
             },
             "includeSelf": {
-                "label": "Include self",
-                "tooltip": "Include/Exclude self"
+                "label": "Include self?",
+                "tooltip": "Should include self?"
             }
         },
-        "condition-options": {
+        "select-options": {
             "all": "All",
             "allies": "Allies",
             "enemies": "Enemies"
@@ -77,11 +79,27 @@
         "action-options": {
             "formula": {
                 "label": "Formula",
-                "tooltip": "Damage Formula"
+                "tooltip": "Damage formula"
             },
             "item": {
                 "label": "Source Item",
-                "tooltip": "Item Source UUID"
+                "tooltip": "Item source UUID"
+            },
+            "dc": {
+                "label": "Check DC",
+                "tooltip": "DC of the check"
+            },
+            "save": {
+                "label": "Save",
+                "tooltip": "Actor save"
+            },
+            "basic": {
+                "label": "Basic Save?",
+                "tooltip": "Is a basic save?"
+            },
+            "success": {
+                "label": "Success",
+                "tooltip": "Degree of success of the check"
             }
         }
     }

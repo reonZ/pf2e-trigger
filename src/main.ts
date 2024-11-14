@@ -1,6 +1,6 @@
 import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "foundry-pf2e";
 import { CustomTriggers } from "./apps/customs";
-import { prepareTriggers, Trigger } from "./trigger";
+import { prepareTriggers } from "./trigger";
 
 MODULE.register("pf2e-trigger", "PF2e Trigger");
 
@@ -11,6 +11,11 @@ Hooks.once("init", () => {
         default: [],
         scope: "world",
         config: false,
+        onChange: () => {
+            if (userIsGM()) {
+                prepareTriggers();
+            }
+        },
     });
 
     registerSettingMenu({

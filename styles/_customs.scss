@@ -140,8 +140,17 @@
                 height: 1.87em;
                 gap: 0.5em;
 
-                &:hover {
+                > :first-child {
+                    flex: 0 0 1.25em;
+                    width: 1.25em;
+                }
+
+                &:not(.linked-option):hover {
                     background: #0000000d;
+                }
+
+                &.hidden {
+                    display: none;
                 }
 
                 .used {
@@ -167,6 +176,11 @@
                     input[type="text"],
                     select {
                         flex: 1;
+                    }
+
+                    input[type="number"] {
+                        text-align: end;
+                        width: 6ch;
                     }
                 }
 
@@ -237,6 +251,16 @@
                 flex-direction: column;
                 gap: 0.3em;
 
+                .linked-option {
+                    border-bottom: 1px dotted var(--accent-color);
+                    height: revert;
+                    padding-bottom: 0.3em;
+
+                    &:not(.hidden) ~ .link-icon {
+                        display: none;
+                    }
+                }
+
                 .action-header {
                     height: 1.4em;
                 }
@@ -256,10 +280,7 @@
                 }
 
                 &:not(.linked) {
-                    .unlink {
-                        display: none;
-                    }
-
+                    .unlink,
                     .link-icon {
                         display: none;
                     }
@@ -274,6 +295,11 @@
                     border-bottom-width: 1px;
                     border-bottom-style: dotted;
                 }
+            }
+
+            .empty {
+                text-align: center;
+                color: var(--text-light-disabled);
             }
 
             &.expanded .trigger-header,
@@ -291,41 +317,33 @@
             }
 
             &:not(.expanded) .condition,
-            .action:not(.expanded) .option {
+            .action:not(.expanded) .option:not(.linked-option) {
                 &:not(:has(.used:checked)) {
                     display: none;
                 }
             }
 
-            &:not(:has(.action)) {
-                padding-bottom: 0;
-
-                .actions-header {
-                    padding-top: 0.3em;
-                }
-            }
-
             &.highlight {
-                animation: pf2e-trigger-blink 0.6s linear 2;
+                animation: pf2e-trigger-blink 0.3s linear 3;
             }
 
             @keyframes pf2e-trigger-blink {
-                18% {
+                25% {
                     border-color: var(--highlight-color);
                     box-shadow: inset 0 0 20px var(--highlight-color);
                 }
 
-                36% {
+                50% {
                     border-color: var(--accent-color);
                     box-shadow: none;
                 }
 
-                54% {
+                75% {
                     border-color: var(--highlight-color);
                     box-shadow: inset 0 0 20px var(--highlight-color);
                 }
 
-                72% {
+                100% {
                     border-color: var(--accent-color);
                     box-shadow: none;
                 }
