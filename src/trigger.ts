@@ -172,8 +172,10 @@ type ExtractTriggerInputValue<TInput extends TriggerInputEntry> = TInput extends
     type: infer TType extends TriggerInputType;
 }
     ? TType extends "select"
-        ? TInput extends { options: infer TOptions extends string[] }
-            ? TOptions[number]
+        ? TInput extends { options: infer TOption extends string[] }
+            ? TOption[number]
+            : TInput extends { options: { value: infer TOption extends string }[] }
+            ? TOption
             : never
         : TriggerInputValueTypes[TType]
     : never;
