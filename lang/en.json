@@ -17,6 +17,7 @@
             "add": "Add",
             "empty": "No Action",
             "linkedOnly": "Link Only",
+            "uuid": "Item source UUID",
             "trigger": {
                 "delete": {
                     "label": "Delete Trigger",
@@ -43,34 +44,43 @@
         },
         "events": {
             "aura-enter": "Aura Enter",
-            "aura-leave": "Aura Leave"
+            "aura-leave": "Aura Leave",
+            "turn-start": "Turn Start",
+            "turn-end": "Turn End"
         },
         "conditions": {
             "auraSlug": {
-                "label": "Aura slug",
+                "label": "Aura Slug",
                 "tooltip": "Slug of the aura"
             },
             "targetItem": {
-                "label": "Target has",
-                "tooltip": "Item source UUID"
+                "label": "Target Has"
             },
             "originItem": {
-                "label": "Origin has",
-                "tooltip": "Item source UUID"
+                "label": "Origin Has"
             },
             "targets": {
                 "label": "Targets",
                 "tooltip": "Actors affected"
             },
             "includeSelf": {
-                "label": "Include self?",
+                "label": "Include Self?",
                 "tooltip": "Should include self?"
+            },
+            "starts": {
+                "label": "Starts",
+                "tooltip": "Pick one"
+            },
+            "itemUuid": {
+                "label": "Item Source"
             }
         },
         "select-options": {
             "all": "All",
             "allies": "Allies",
-            "enemies": "Enemies"
+            "enemies": "Enemies",
+            "hasItem": "With Item",
+            "hasAura": "Inside Aura"
         },
         "actions": {
             "rollDamage": "Roll Damage",
@@ -82,8 +92,7 @@
                 "tooltip": "Damage formula"
             },
             "item": {
-                "label": "Source Item",
-                "tooltip": "Item source UUID"
+                "label": "Source Item"
             },
             "dc": {
                 "label": "Check DC",
@@ -99,7 +108,11 @@
             },
             "success": {
                 "label": "Success",
-                "tooltip": "Degree of success of the check"
+                "tooltip": "Degree of success required"
+            },
+            "self": {
+                "label": "Damage Self?",
+                "tooltip": "Is self the source of damage?"
             }
         }
     }

@@ -88,6 +88,7 @@
                 .controls {
                     display: flex;
                     gap: 0.6em;
+                    text-align: center;
                 }
             }
 
@@ -108,6 +109,8 @@
             }
 
             .toggle {
+                width: 1.3em;
+
                 .hide {
                     opacity: 0.75;
                 }

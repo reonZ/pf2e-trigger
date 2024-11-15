@@ -7,7 +7,13 @@ import {
     SAVE_TYPES,
 } from "foundry-pf2e";
 import { TriggerActionOptions } from "../action";
-import { Trigger, TriggerInputEntry, TriggerInputValueType } from "../trigger";
+import {
+    RunTriggerArgs,
+    RunTriggerOptions,
+    Trigger,
+    TriggerInputEntry,
+    TriggerInputValueType,
+} from "../trigger";
 
 abstract class TriggerEvent {
     #enabled = false;
@@ -20,21 +26,19 @@ abstract class TriggerEvent {
         return this.#enabled;
     }
 
-    _enable(enabled: boolean): void {
+    _enable(enabled: boolean, triggers: Trigger[]): void {
         this.#enabled = enabled;
     }
 
-    abstract test(
-        actor: ActorPF2e,
-        conditions: Trigger["conditions"],
-        options?: Record<string, any>
-    ): Promisable<boolean>;
-
-    createLabel(trigger: Trigger): string {
-        return localize("events", this.id);
+    static testCondition<TCondition extends Maybe<any>>(
+        condition: TCondition,
+        testFunction: (condition: NonNullable<TCondition>) => boolean
+    ) {
+        if (condition == null) return true;
+        return testFunction(condition);
     }
 
-    actorsRespectAlliance(
+    static actorsRespectAlliance(
         origin: ActorPF2e,
         target: ActorPF2e,
         alliance: "all" | "allies" | "enemies" = "all"
@@ -46,52 +50,47 @@ abstract class TriggerEvent {
             : target.isEnemyOf(origin);
     }
 
-    testCondition<TCondition extends Maybe<any>>(
-        condition: TCondition,
-        testFunction: (condition: NonNullable<TCondition>) => boolean
-    ) {
-        if (condition == null) return true;
-        return testFunction(condition);
+    abstract test(
+        actor: ActorPF2e,
+        trigger: Trigger,
+        options: RunTriggerOptions
+    ): Promisable<boolean>;
+
+    label(trigger: Trigger): string {
+        return localize("events", this.id);
     }
 
-    async rollDamage(
-        actor: ActorPF2e,
-        actionOptions: TriggerActionOptions<"rollDamage">,
-        linkOption: TriggerInputValueType,
-        {
-            origin,
-            target,
-        }: {
-            origin: TargetDocuments;
-            target?: TargetDocuments;
-        }
-    ): Promise<boolean> {
-        if (!actionOptions || !R.isString(actionOptions.formula) || !R.isString(actionOptions.item))
-            return false;
+    abstract getRollDamageOrigin(
+        args: RunTriggerArgs<Trigger, "rollDamage">
+    ): TargetDocuments | undefined;
+
+    async rollDamage(args: RunTriggerArgs<Trigger, "rollDamage">): Promise<boolean> {
+        const { actionOptions, actor, options } = args;
+        if (!R.isString(actionOptions.formula) || !R.isString(actionOptions.item)) return false;
 
         const item = await fromUuid(actionOptions.item);
         if (!isInstanceOf(item, "ItemPF2e")) return false;
 
-        await rollDamageFromFormula(origin.actor, actionOptions.formula, {
+        const target = resolveTarget({ actor, token: options.token });
+        await rollDamageFromFormula(actionOptions.formula, {
             item,
-            target: resolveTarget(target, true),
+            target,
+            origin: actionOptions.self ? target : this.getRollDamageOrigin(args),
         });
 
         return true;
     }
 
-    async rollSave(
-        actor: ActorPF2e,
-        actionOptions: TriggerActionOptions<"rollSave">,
-        linkOption: TriggerInputValueType,
-        options: {}
-    ): Promise<boolean> {
+    async rollSave({
+        linkOption,
+        actionOptions,
+        actor,
+    }: RunTriggerArgs<Trigger, "rollSave">): Promise<boolean> {
         const threshold = Number(linkOption);
 
-        const save = actionOptions.save;
-        if (!SAVE_TYPES.includes(save)) return false;
+        if (!SAVE_TYPES.includes(actionOptions.save)) return false;
 
-        const actorSave = actor.saves?.[save];
+        const actorSave = actor.saves?.[actionOptions.save];
         if (!actorSave) return false;
 
         const roll = await actorSave.roll({ dc: actionOptions.dc });
@@ -125,4 +124,4 @@ function resolveTarget(
     return uuids ? { actor: actor.uuid, token: token?.uuid } : { actor, token };
 }
 
-export { TriggerEvent };
+export { TriggerEvent, resolveTarget };

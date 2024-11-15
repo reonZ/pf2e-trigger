@@ -1,6 +1,6 @@
 import { R } from "foundry-pf2e";
 import {
-    defaultInputValue,
+    createInputEntries,
     ExtractTriggerInputs,
     TriggerInputEntry,
     TriggerInputValueType,
@@ -21,6 +21,10 @@ const rollDamageAction = {
             name: "item",
             type: "uuid",
             required: true,
+        },
+        {
+            name: "self",
+            type: "checkbox",
         },
     ],
 } as const satisfies TriggerActionEntry;
@@ -85,17 +89,7 @@ function createAction<TType extends TriggerActionType>(type: TType): TriggerActi
     if (!action) return;
 
     const usedOptions = {} as Record<string, boolean>;
-    const options = R.pipe(
-        action.options,
-        R.map((option): [string, TriggerInputValueType] => {
-            const name = option.name;
-            const value = defaultInputValue(option);
-
-            usedOptions[name] = !!option.required;
-            return [option.name, value] as const;
-        }),
-        R.fromEntries()
-    );
+    const options = R.fromEntries(createInputEntries(action.options, usedOptions));
 
     return {
         type,

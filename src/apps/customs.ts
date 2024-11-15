@@ -24,6 +24,7 @@ import {
 import {
     createTrigger,
     EVENTS_MAP,
+    getSubInputs,
     isInputType,
     Trigger,
     TriggerEventType,
@@ -43,7 +44,7 @@ class CustomTriggers extends FormApplication {
             id: "pf2e-trigger-customs",
             title: localize("customs.title"),
             template: templatePath("customs"),
-            width: 740,
+            width: 800,
             height: 800,
             submitOnChange: false,
             submitOnClose: false,
@@ -62,7 +63,6 @@ class CustomTriggers extends FormApplication {
             (value) => localize("actions", value)
         );
 
-        // TODO validate triggers
         this.#triggers = foundry.utils.deepClone(getSetting<CustomTrigger[]>("customTriggers"));
     }
 
@@ -132,17 +132,11 @@ class CustomTriggers extends FormApplication {
                 if (!event) return;
 
                 const triggerPath = `triggers.${triggerIndex}`;
-
-                const conditions: CustomTriggerCondition[] = R.pipe(
+                const conditions = processInputEntries(
                     event.conditions,
-                    R.map((condition): CustomTriggerCondition => {
-                        return this.#processInputEntry(
-                            condition,
-                            trigger.conditions[condition.name],
-                            trigger.usedConditions,
-                            "conditions"
-                        );
-                    })
+                    trigger.usedConditions,
+                    trigger.conditions,
+                    "conditions"
                 );
 
                 const actions: CustomTriggerAction[] = R.pipe(
@@ -152,27 +146,12 @@ class CustomTriggers extends FormApplication {
                         if (!action) return;
 
                         const actionPath = `${triggerPath}.actions.${actionIndex}`;
-                        const actionOptions = triggerAction.options as Record<
-                            string,
-                            TriggerInputType | undefined
-                        >;
-
-                        const options: CustomTriggerOption[] = R.pipe(
+                        const options = processInputEntries(
                             action.options,
-                            R.map((option): CustomTriggerOption => {
-                                const data = this.#processInputEntry(
-                                    option,
-                                    actionOptions[option.name],
-                                    triggerAction.usedOptions,
-                                    "action-options"
-                                );
-
-                                return {
-                                    ...data,
-                                    path: `${actionPath}.options`,
-                                };
-                            }),
-                            R.filter(R.isTruthy)
+                            triggerAction.usedOptions,
+                            triggerAction.options,
+                            "action-options",
+                            { path: `${actionPath}.options` }
                         );
 
                         return {
@@ -196,8 +175,9 @@ class CustomTriggers extends FormApplication {
                         const previousEvent = previousAction?.event;
                         if (!previousEvent) return;
 
+                        const linkOptionName = "valid";
                         const linkOption = previousEvent.linkOption ?? {
-                            name: "valide",
+                            name: linkOptionName,
                             type: "checkbox",
                             default: true,
                         };
@@ -208,18 +188,15 @@ class CustomTriggers extends FormApplication {
                         )
                             return;
 
-                        const data = this.#processInputEntry(
+                        const { entry } = processInputEntry(
                             linkOption,
-                            action.linkOption,
                             {},
-                            "action-options"
+                            { [linkOptionName]: action.linkOption },
+                            "action-options",
+                            { path: `${action.path}.linkOption`, hidden: !previousEvent.linkOption }
                         );
 
-                        action.extraOption = {
-                            ...data,
-                            hidden: !previousEvent.linkOption,
-                            path: `${action.path}.linkOption`,
-                        };
+                        action.extraOption = entry;
                     })
                 );
 
@@ -228,14 +205,15 @@ class CustomTriggers extends FormApplication {
                     index: triggerIndex,
                     event: trigger.event,
                     icon: event.icon,
-                    label: event.createLabel(trigger),
+                    label: event.label(trigger),
                     conditions,
                     actions,
                     highlight: highlights.includes(triggerIndex),
                     showInactives: !!trigger.showInactives,
                 };
             }),
-            R.filter(R.isTruthy)
+            R.filter(R.isTruthy),
+            R.reverse()
         );
 
         const [leftTriggers, rightTriggers] = R.partition(
@@ -255,7 +233,7 @@ class CustomTriggers extends FormApplication {
     activateListeners($html: JQuery<HTMLElement>) {
         const html = this.element[0];
 
-        addListenerAll(html, ".input input", "change", (event, el) => {
+        addListenerAll(html, ".input input, .input select", "change", (event, el) => {
             el.blur();
             this.render();
         });
@@ -300,9 +278,9 @@ class CustomTriggers extends FormApplication {
                     const trigger = createTrigger(type) as CustomTrigger;
 
                     trigger.showInactives = true;
-                    triggers.unshift(trigger);
+                    triggers.push(trigger);
 
-                    this.render(false, { triggers, highlight: [0] });
+                    this.render(false, { triggers, highlight: [triggers.length - 1] });
 
                     break;
                 }
@@ -439,74 +417,98 @@ class CustomTriggers extends FormApplication {
     protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
         throw new Error("Method not implemented.");
     }
-
-    #processInputEntry(
-        inputEntry: TriggerInputEntry,
-        inputValue: TriggerInputValueType,
-        usedEntries: Record<string, boolean>,
-        source: "conditions" | "action-options"
-    ): ProcessedInputEntry {
-        const required = "required" in inputEntry && !!inputEntry.required;
-        const item =
-            inputEntry.type === "uuid" && R.isString(inputValue) ? fromUuidSync(inputValue) : null;
-
-        const localizeOption = "localize" in inputEntry && !!inputEntry;
-        const options =
-            "options" in inputEntry
-                ? arrayToSelect(
-                      inputEntry.options,
-                      localizeOption || ((value) => localize("select-options", value))
-                  )
-                : [];
-
-        const [min, max, step] = (() => {
-            const data = [
-                ["min", 0],
-                ["max", undefined],
-                ["step", 1],
-            ] as const;
-
-            if (inputEntry.type !== "number") return data.map(([_, defaultValue]) => defaultValue);
-
-            return R.map(data, ([key, defaultValue]) => {
-                const value = Number(inputEntry[key as keyof typeof inputEntry]);
-                return isNaN(value) ? defaultValue : value;
-            });
-        })();
-
-        const value = isInputType(inputEntry.type, inputValue) ? inputValue : inputEntry.default;
-
-        return {
-            min,
-            max,
-            step,
-            item,
-            value,
-            options,
-            required,
-            type: inputEntry.type,
-            name: inputEntry.name,
-            active: required || usedEntries[inputEntry.name],
-            label: localize(source, inputEntry.name, "label"),
-            tooltip: localize(source, inputEntry.name, "tooltip"),
-        };
-    }
 }
 
-type ProcessedInputEntry = {
-    min: number | undefined;
-    max: number | undefined;
-    step: number | undefined;
-    item: ClientDocument | CompendiumIndexData | null;
-    value: TriggerInputValueType | undefined;
-    options: { value: string; label: string }[];
-    required: boolean;
-    type: TriggerInputType;
-    name: string;
-    active: boolean;
-    label: string;
-    tooltip: string;
-};
+type ProcessInputOptions = { path?: string; hidden?: boolean };
+
+function processInputEntry(
+    inputEntry: TriggerInputEntry,
+    usedEntries: Record<string, boolean>,
+    values: Record<string, TriggerInputValueType>,
+    prefix: "conditions" | "action-options",
+    { path, hidden }: ProcessInputOptions = {}
+): { entry: ProcessedInputEntry; value: TriggerInputValueType } {
+    const inputValue = values[inputEntry.name];
+    const value = isInputType(inputEntry.type, inputValue) ? inputValue : inputEntry.default;
+    const required = "required" in inputEntry && !!inputEntry.required;
+    const item = inputEntry.type === "uuid" && R.isString(value) ? fromUuidSync(value) : null;
+    const localizeOption = "localize" in inputEntry && !!inputEntry;
+
+    const options =
+        "options" in inputEntry
+            ? arrayToSelect(
+                  inputEntry.options,
+                  localizeOption || ((value) => localize("select-options", value))
+              )
+            : [];
+
+    const [min, max, step] = (() => {
+        const data = [
+            ["min", 0],
+            ["max", undefined],
+            ["step", 1],
+        ] as const;
+
+        if (inputEntry.type !== "number") return data.map(([_, defaultValue]) => defaultValue);
+
+        return R.map(data, ([key, defaultValue]) => {
+            const value = Number(inputEntry[key as keyof typeof inputEntry]);
+            return isNaN(value) ? defaultValue : value;
+        });
+    })();
+
+    const entry: ProcessedInputEntry = {
+        min,
+        max,
+        step,
+        item,
+        path,
+        value,
+        hidden,
+        options,
+        required,
+        type: inputEntry.type,
+        name: inputEntry.name,
+        active: required || usedEntries[inputEntry.name],
+        label: localize(prefix, inputEntry.name, "label"),
+        tooltip:
+            inputEntry.type === "uuid"
+                ? localize("customs.uuid")
+                : localize(prefix, inputEntry.name, "tooltip"),
+    };
+
+    return { entry, value };
+}
+
+function processInputEntries(
+    inputEntries: Readonly<TriggerInputEntry[]>,
+    usedEntries: Record<string, boolean>,
+    values: Record<string, TriggerInputValueType>,
+    prefix: "conditions" | "action-options",
+    options?: ProcessInputOptions
+): ProcessedInputEntry[] {
+    return R.flatMap(inputEntries, (inputEntry) => {
+        const entries: ProcessedInputEntry[] = [];
+
+        const { entry, value } = processInputEntry(
+            inputEntry,
+            usedEntries,
+            values,
+            prefix,
+            options
+        );
+
+        entries.push(entry);
+
+        const subInputs = getSubInputs(inputEntry, value);
+        if (subInputs) {
+            const subEntries = processInputEntries(subInputs, usedEntries, values, prefix);
+            entries.push(...subEntries);
+        }
+
+        return entries;
+    });
+}
 
 type EventAction =
     | "save-triggers"
@@ -527,14 +529,10 @@ type CustomDataTrigger = {
     index: number;
     event: TriggerEventType;
     icon: string;
-    conditions: CustomTriggerCondition[];
+    conditions: ProcessedInputEntry[];
     actions: CustomTriggerAction[];
     showInactives: boolean;
     highlight: boolean;
-};
-
-type CustomTriggerOption = CustomTriggerInput & {
-    path: string;
 };
 
 type CustomTriggerAction = {
@@ -546,24 +544,26 @@ type CustomTriggerAction = {
     path: string;
     linked: boolean;
     showInactives: boolean;
-    options: CustomTriggerOption[];
+    options: ProcessedInputEntry[];
     linkOption: TriggerInputValueType;
-    extraOption?: CustomTriggerOption & { hidden: boolean };
+    extraOption?: ProcessedInputEntry;
 };
 
-type CustomTriggerInput = {
+type ProcessedInputEntry = {
+    min: number | undefined;
+    max: number | undefined;
+    step: number | undefined;
+    item: ClientDocument | CompendiumIndexData | null;
+    value: TriggerInputValueType | undefined;
+    options: { value: string; label: string }[];
     required: boolean;
-    label: string;
     type: TriggerInputType;
     name: string;
     active: boolean;
-    value: TriggerInputValueType | undefined;
+    label: string;
     tooltip: string;
-    item: Maybe<ClientDocument | CompendiumIndexData>;
-};
-
-type CustomTriggerCondition = CustomTriggerInput & {
-    options: { value: string; label: string }[];
+    path?: string;
+    hidden?: boolean;
 };
 
 type CustomTriggersData = {
