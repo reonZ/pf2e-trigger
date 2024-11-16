@@ -5,21 +5,13 @@ import {
     getInMemory,
     hasItemWithSourceId,
     R,
+    resolveTarget,
     runWhenReady,
     setInMemory,
     userIsActiveGM,
 } from "foundry-pf2e";
-import {
-    runTrigger,
-    RunTriggerArgs,
-    RunTriggerOptions,
-    Trigger,
-    TriggerInputEntry,
-    TriggerInputValueType,
-    Triggers,
-} from "../trigger";
-import { resolveTarget, TriggerEvent } from "./base";
-import { TriggerActionOptions } from "../action";
+import { runTrigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
+import { TriggerEvent } from "./base";
 
 abstract class AuraTriggerEvent extends TriggerEvent {
     static auraLinkedEvents = (() => {
@@ -136,7 +128,7 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
     }
 
-    test(actor: ActorPF2e, trigger: AuraTrigger, options: AuraTriggerOptions): Promisable<boolean> {
+    test(actor: ActorPF2e, trigger: AuraTrigger, options: AuraTestOptions): Promisable<boolean> {
         const { originItem, includeSelf, auraSlug, targetItem, targets } = trigger.conditions;
 
         const actorAura = getActorAura(actor, trigger.conditions, options);
@@ -153,12 +145,12 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         );
     }
 
-    getRollDamageOrigin({
-        actor,
-        conditions,
-        options,
-    }: RunTriggerArgs<AuraTrigger, "rollDamage">): TargetDocuments | undefined {
-        const actorAura = getActorAura(actor, conditions, options);
+    getOrigin(
+        actor: ActorPF2e,
+        trigger: AuraTrigger,
+        options: TriggerRunOptions
+    ): TargetDocuments | undefined {
+        const actorAura = getActorAura(actor, trigger.conditions, options);
         return resolveTarget(actorAura?.origin);
     }
 }
@@ -186,7 +178,7 @@ class AuraLeaveTriggerEvent extends AuraTriggerEvent {
 function getActorAura(
     actor: ActorPF2e,
     conditions: AuraTrigger["conditions"],
-    options: AuraTriggerOptions
+    options: AuraTestOptions
 ) {
     const auraslug = conditions.auraSlug;
     const actorAura =
@@ -239,7 +231,7 @@ async function notifyActors(this: TokenAura): Promise<void> {
                 runTrigger("aura-enter", actor, {
                     token,
                     aura: { data: auraData, origin },
-                } satisfies RunTriggerOptions);
+                } satisfies TriggerRunOptions);
             }
         }
     }
@@ -285,7 +277,7 @@ function checkTokensAuras() {
                 removeAuraFromMemory(actor, aura, origin);
                 runTrigger("aura-leave", actor, {
                     aura: { data: aura, origin },
-                } satisfies RunTriggerOptions);
+                } satisfies TriggerRunOptions);
             }
         }
     }
@@ -350,9 +342,9 @@ type ActorAura = {
 
 type AuraTrigger = Triggers["aura-enter"] | Triggers["aura-leave"];
 
-type AuraTriggerOptions = {
+type AuraTestOptions = {
     aura?: ActorAura;
 };
 
 export { AuraEnterTriggerEvent, AuraLeaveTriggerEvent, AuraTriggerEvent };
-export type { AuraTrigger, AuraTriggerOptions };
+export type { AuraTestOptions, AuraTrigger };

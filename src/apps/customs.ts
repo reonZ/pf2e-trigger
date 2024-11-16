@@ -13,20 +13,17 @@ import {
     templateLocalize,
     templatePath,
 } from "foundry-pf2e";
+import { TriggerEventAction } from "../actions/base";
 import {
-    ACTIONS,
     ACTIONS_MAP,
     createAction,
-    TriggerAction,
-    TriggerActionEntry,
-    TriggerActionType,
-} from "../action";
-import {
     createTrigger,
     EVENTS_MAP,
     getSubInputs,
     isInputType,
     Trigger,
+    TriggerAction,
+    TriggerActionType,
     TriggerEventType,
     TriggerInputEntry,
     TriggerInputType,
@@ -57,11 +54,7 @@ class CustomTriggers extends FormApplication {
         super(object, options);
 
         this.#events = arrayToSelect(EVENTS_MAP.keys(), (value) => localize("events", value));
-
-        this.#actions = arrayToSelect(
-            ACTIONS.map((action) => action.type),
-            (value) => localize("actions", value)
-        );
+        this.#actions = arrayToSelect(ACTIONS_MAP.keys(), (value) => localize("actions", value));
 
         this.#triggers = foundry.utils.deepClone(getSetting<CustomTrigger[]>("customTriggers"));
     }
@@ -156,8 +149,8 @@ class CustomTriggers extends FormApplication {
 
                         return {
                             options,
-                            event: action,
-                            type: action.type,
+                            entry: action,
+                            type: triggerAction.type,
                             icon: action.icon,
                             index: actionIndex,
                             path: actionPath,
@@ -172,7 +165,7 @@ class CustomTriggers extends FormApplication {
                         if (!action.linked) return;
 
                         const previousAction = actions.at(index - 1);
-                        const previousEvent = previousAction?.event;
+                        const previousEvent = previousAction?.entry;
                         if (!previousEvent) return;
 
                         const linkOptionName = "valid";
@@ -536,7 +529,7 @@ type CustomDataTrigger = {
 };
 
 type CustomTriggerAction = {
-    event: TriggerActionEntry;
+    entry: TriggerEventAction;
     type: TriggerActionType;
     icon: string;
     index: number;

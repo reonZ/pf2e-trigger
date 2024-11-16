@@ -83,8 +83,8 @@
             "hasAura": "Inside Aura"
         },
         "actions": {
-            "rollDamage": "Roll Damage",
-            "rollSave": "Roll Save Check"
+            "roll-damage": "Roll Damage",
+            "roll-save": "Roll Save Check"
         },
         "action-options": {
             "formula": {

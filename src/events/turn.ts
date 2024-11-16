@@ -1,16 +1,7 @@
 import { createHook, Hook } from "foundry-pf2e";
-import {
-    runTrigger,
-    RunTriggerArgs,
-    RunTriggerOptions,
-    Trigger,
-    TriggerInputEntry,
-    TriggerInputValueType,
-    Triggers,
-} from "../trigger";
-import { AuraTrigger, AuraTriggerEvent, AuraTriggerOptions } from "./aura";
+import { runTrigger, Trigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
+import { AuraTestOptions, AuraTrigger, AuraTriggerEvent } from "./aura";
 import { TriggerEvent } from "./base";
-import { TriggerActionOptions } from "../action";
 
 abstract class TurnTriggerEvent extends TriggerEvent {
     #hook: Hook | null = null;
@@ -71,7 +62,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         return eventLabel;
     }
 
-    test(actor: ActorPF2e, trigger: TurnTrigger, options: RunTriggerOptions): Promisable<boolean> {
+    test(actor: ActorPF2e, trigger: TurnTrigger, options: TurnTestOptions): Promisable<boolean> {
         if (this.#isAuraTrigger(trigger)) {
             return AuraTriggerEvent.prototype.test(actor, trigger, options);
         }
@@ -80,13 +71,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         return true;
     }
 
-    getRollDamageOrigin(args: RunTriggerArgs<Trigger, "rollDamage">): TargetDocuments | undefined {
-        if (this.#isAuraConditions(args.conditions)) {
-            return AuraTriggerEvent.prototype.getRollDamageOrigin(
-                args as RunTriggerArgs<AuraTrigger, "rollDamage">
-            );
-        }
-
+    getOrigin(): TargetDocuments | undefined {
         return undefined;
     }
 
@@ -102,7 +87,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         const actor = combatant.actor;
         if (!actor) return;
 
-        runTrigger(this.id, actor, {} satisfies RunTriggerOptions);
+        runTrigger(this.id, actor, {} satisfies TriggerRunOptions);
     }
 }
 
@@ -128,7 +113,7 @@ class TurnEndTriggerEvent extends TurnTriggerEvent {
 
 type TurnTrigger = Triggers["turn-start"] | Triggers["turn-end"];
 
-type TurnTestOptions = AuraTriggerOptions;
+type TurnTestOptions = AuraTestOptions;
 
 export { TurnEndTriggerEvent, TurnStartTriggerEvent };
 export type { TurnTestOptions };

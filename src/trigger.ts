@@ -1,8 +1,10 @@
 import { getSetting, R } from "foundry-pf2e";
-import { ACTIONS_MAP, TriggerAction, TriggerActionOptions, TriggerActionType } from "./action";
-import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent, AuraTriggerOptions } from "./events/aura";
+import { TriggerEventAction } from "./actions/base";
+import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
 import { TriggerEvent } from "./events/base";
-import { TurnEndTriggerEvent, TurnStartTriggerEvent, TurnTestOptions } from "./events/turn";
+import { TurnEndTriggerEvent, TurnStartTriggerEvent } from "./events/turn";
+import { RollDamageAction } from "./actions/roll-damage";
+import { RollSaveAction } from "./actions/roll-save";
 
 const TRIGGER_INPUT_DEFAULT_VALUES = {
     text: "",
@@ -20,13 +22,19 @@ const EVENTS = [
 ] as const;
 
 const EVENTS_MAP: Map<TriggerEventType, TriggerEvent> = new Map(
-    R.pipe(
-        EVENTS,
-        R.map((EventCls) => {
-            const event = new EventCls();
-            return [event.id, event] as const;
-        })
-    )
+    EVENTS.map((EventCls) => {
+        const event = new EventCls();
+        return [event.id, event] as const;
+    })
+);
+
+const ACTIONS = [RollDamageAction, RollSaveAction] as const;
+
+const ACTIONS_MAP: Map<TriggerActionType, TriggerEventAction> = new Map(
+    ACTIONS.map((ActionCls) => {
+        const action = new ActionCls();
+        return [action.type, action];
+    })
 );
 
 const EVENT_TRIGGERS: Collection<Trigger[]> = new Collection();
@@ -71,7 +79,7 @@ function prepareTriggers() {
 async function runTrigger<TEventId extends TriggerEventType>(
     eventId: TEventId,
     actor: ActorPF2e,
-    options: RunTriggerOptions
+    options: TriggerRunOptions
 ) {
     const event = EVENTS_MAP.get(eventId);
     const triggers = EVENT_TRIGGERS.get(eventId);
@@ -87,20 +95,9 @@ async function runTrigger<TEventId extends TriggerEventType>(
                 const action = ACTIONS_MAP.get(triggerAction.type);
                 if (!action) continue;
 
-                const type = action.type;
-                const method = event[type].bind(event) as (
-                    args: RunTriggerArgs<Trigger, typeof type>
-                ) => Promisable<boolean>;
-
                 const nextAction = trigger.actions.at(i + 1);
                 const fn = () =>
-                    method({
-                        actor,
-                        conditions: trigger.conditions,
-                        actionOptions: triggerAction.options as TriggerActionOptions<typeof type>,
-                        linkOption: nextAction?.linkOption,
-                        options,
-                    });
+                    action.execute(actor, trigger, triggerAction, nextAction?.linkOption, options);
 
                 if (nextAction?.linked) {
                     const canContinue = await fn();
@@ -162,6 +159,21 @@ function createTrigger<TType extends TriggerEventType>(type: TType): Trigger | u
         conditions,
         actions: [],
         usedConditions,
+    };
+}
+
+function createAction<TType extends TriggerActionType>(type: TType): TriggerAction | undefined {
+    const action = ACTIONS_MAP.get(type);
+    if (!action) return;
+
+    const usedOptions = {} as Record<string, boolean>;
+    const options = R.fromEntries(createInputEntries(action.options, usedOptions));
+
+    return {
+        type,
+        options,
+        usedOptions,
+        linked: false,
     };
 }
 
@@ -253,6 +265,38 @@ type TriggerEvents = InstanceType<(typeof EVENTS)[number]>;
 
 type TriggerEventType = TriggerEvents["id"];
 
+type TriggerEventActions = InstanceType<(typeof ACTIONS)[number]>;
+
+type TriggerActionType = TriggerEventActions["type"];
+
+type TriggerActions = TriggerEventActions extends { type: infer TType extends TriggerActionType }
+    ? {
+          [k in TType]: Extract<TriggerEventActions, { type: k }> extends {
+              options: infer TOptions extends Readonly<TriggerInputEntry[]>;
+          }
+              ? {
+                    type: k;
+                    options: ExtractTriggerInputs<TOptions>;
+                    linked: boolean;
+                    linkOption?: TriggerInputValueType;
+                    usedOptions: { [c in keyof ExtractTriggerInputs<TOptions>]: boolean };
+                }
+              : never;
+      }
+    : never;
+
+type TriggerRunOptions = Merge<
+    Parameters<TriggerEventActions["execute"]>[4] & Parameters<TriggerEvents["test"]>[2]
+>;
+
+type TriggerAction = {
+    type: TriggerActionType;
+    options: Record<string, TriggerInputValueType>;
+    linked: boolean;
+    linkOption?: TriggerInputValueType;
+    usedOptions: Record<string, boolean>;
+};
+
 type TriggerInputEntry =
     | TriggerInputText
     | TriggerInputUuid
@@ -295,20 +339,9 @@ type TriggerInputSelect = TriggerInputEntryBase<"select"> & {
 
 type TriggerInputType = "number" | "text" | "uuid" | "checkbox" | "select";
 
-type RunTriggerOptions = AuraTriggerOptions &
-    TurnTestOptions & {
-        token?: TokenDocumentPF2e<ScenePF2e>;
-    };
-
-type RunTriggerArgs<TTrigger extends Trigger, TAction extends TriggerActionType> = {
-    actor: ActorPF2e;
-    conditions: TTrigger["conditions"];
-    actionOptions: TriggerActionOptions<TAction>;
-    linkOption: TriggerInputValueType;
-    options: RunTriggerOptions;
-};
-
 export {
+    ACTIONS_MAP,
+    createAction,
     createInputEntries,
     createTrigger,
     defaultInputValue,
@@ -322,12 +355,14 @@ export {
 
 export type {
     ExtractTriggerInputs,
-    RunTriggerArgs,
-    RunTriggerOptions,
     Trigger,
+    TriggerAction,
+    TriggerActions,
+    TriggerActionType,
     TriggerEventType,
     TriggerInputEntry,
     TriggerInputType,
     TriggerInputValueType,
+    TriggerRunOptions,
     Triggers,
 };
