@@ -123,17 +123,16 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         super._enable(enabled, triggers);
     }
 
-    static getOrigin(actor: ActorPF2e, trigger: Trigger, options: TriggerRunOptions) {
-        const actorAura = getActorAura(actor, trigger.conditions, options);
-        return resolveTarget(actorAura?.origin);
-    }
-
     label(trigger: AuraTrigger, eventLabel = super.label(trigger)): string {
         const input = trigger.conditions.auraSlug?.trim() ?? "";
         return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
     }
 
     test(actor: ActorPF2e, trigger: AuraTrigger, options: AuraTestOptions): Promisable<boolean> {
+        const combatant = actor.combatant;
+        const encounter = combatant?.encounter;
+        if (!encounter || encounter.combatant !== combatant) return false;
+
         const { originItem, includeSelf, auraSlug, targetItem, targets } = trigger.conditions;
 
         const actorAura = getActorAura(actor, trigger.conditions, options);
@@ -143,19 +142,20 @@ abstract class AuraTriggerEvent extends TriggerEvent {
 
         return (
             auraSlug === aura?.slug &&
-            TriggerEvent.testCondition(includeSelf, (c) => c === (actor === origin.actor)) &&
-            TriggerEvent.actorsRespectAlliance(origin.actor, actor, targets) &&
-            TriggerEvent.testCondition(targetItem, (c) => hasItemWithSourceId(actor, c)) &&
-            TriggerEvent.testCondition(originItem, (c) => hasItemWithSourceId(origin.actor, c))
+            this.testCondition(includeSelf, (c) => c === (actor === origin.actor)) &&
+            this.actorsRespectAlliance(origin.actor, actor, targets) &&
+            this.testCondition(targetItem, (c) => hasItemWithSourceId(actor, c)) &&
+            this.testCondition(originItem, (c) => hasItemWithSourceId(origin.actor, c))
         );
     }
 
     getOrigin(
         actor: ActorPF2e,
-        trigger: AuraTrigger,
+        trigger: Trigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined {
-        return AuraTriggerEvent.getOrigin(actor, trigger, options);
+        const actorAura = getActorAura(actor, trigger.conditions, options);
+        return resolveTarget(actorAura?.origin);
     }
 }
 

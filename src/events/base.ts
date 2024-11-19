@@ -16,26 +16,6 @@ abstract class TriggerEvent {
         this.#enabled = enabled;
     }
 
-    static testCondition<TCondition extends Maybe<any>>(
-        condition: TCondition,
-        testFunction: (condition: NonNullable<TCondition>) => boolean
-    ) {
-        if (condition == null) return true;
-        return testFunction(condition);
-    }
-
-    static actorsRespectAlliance(
-        origin: ActorPF2e,
-        target: ActorPF2e,
-        alliance: "all" | "allies" | "enemies" = "all"
-    ) {
-        return alliance === "all"
-            ? true
-            : alliance === "allies"
-            ? target.isAllyOf(origin)
-            : target.isEnemyOf(origin);
-    }
-
     abstract test(
         actor: ActorPF2e,
         trigger: Trigger,
@@ -47,6 +27,26 @@ abstract class TriggerEvent {
         trigger: Trigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined;
+
+    testCondition<TCondition extends Maybe<any>>(
+        condition: TCondition,
+        testFunction: (condition: NonNullable<TCondition>) => boolean
+    ) {
+        if (condition == null) return true;
+        return testFunction(condition);
+    }
+
+    actorsRespectAlliance(
+        origin: ActorPF2e,
+        target: ActorPF2e,
+        alliance: "all" | "allies" | "enemies" = "all"
+    ) {
+        return alliance === "all"
+            ? true
+            : alliance === "allies"
+            ? target.isAllyOf(origin)
+            : target.isEnemyOf(origin);
+    }
 
     label(trigger: Trigger): string {
         return localize("events", this.id);
