@@ -71,7 +71,15 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         return true;
     }
 
-    getOrigin(): TargetDocuments | undefined {
+    getOrigin(
+        actor: ActorPF2e,
+        trigger: TurnTrigger,
+        options: TriggerRunOptions
+    ): TargetDocuments | undefined {
+        if (trigger.conditions.starts === "hasAura") {
+            return AuraTriggerEvent.getOrigin(actor, trigger as Trigger, options);
+        }
+
         return undefined;
     }
 

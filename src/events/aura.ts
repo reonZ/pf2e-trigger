@@ -10,7 +10,7 @@ import {
     setInMemory,
     userIsActiveGM,
 } from "foundry-pf2e";
-import { runTrigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
+import { runTrigger, Trigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
 import { TriggerEvent } from "./base";
 
 abstract class AuraTriggerEvent extends TriggerEvent {
@@ -123,6 +123,11 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         super._enable(enabled, triggers);
     }
 
+    static getOrigin(actor: ActorPF2e, trigger: Trigger, options: TriggerRunOptions) {
+        const actorAura = getActorAura(actor, trigger.conditions, options);
+        return resolveTarget(actorAura?.origin);
+    }
+
     label(trigger: AuraTrigger, eventLabel = super.label(trigger)): string {
         const input = trigger.conditions.auraSlug?.trim() ?? "";
         return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
@@ -150,8 +155,7 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         trigger: AuraTrigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined {
-        const actorAura = getActorAura(actor, trigger.conditions, options);
-        return resolveTarget(actorAura?.origin);
+        return AuraTriggerEvent.getOrigin(actor, trigger, options);
     }
 }
 
@@ -177,7 +181,7 @@ class AuraLeaveTriggerEvent extends AuraTriggerEvent {
 
 function getActorAura(
     actor: ActorPF2e,
-    conditions: AuraTrigger["conditions"],
+    conditions: Trigger["conditions"],
     options: AuraTestOptions
 ) {
     const auraslug = conditions.auraSlug;
