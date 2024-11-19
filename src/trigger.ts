@@ -28,6 +28,8 @@ const EVENTS_MAP: Map<TriggerEventType, TriggerEvent> = new Map(
     })
 );
 
+const EVENT_TYPES = EVENTS_MAP.keys().toArray();
+
 const ACTIONS = [RollDamageAction, RollSaveAction] as const;
 
 const ACTIONS_MAP: Map<TriggerActionType, TriggerEventAction> = new Map(
@@ -345,6 +347,7 @@ export {
     createInputEntries,
     createTrigger,
     defaultInputValue,
+    EVENT_TYPES,
     EVENT_TRIGGERS,
     EVENTS_MAP,
     getSubInputs,

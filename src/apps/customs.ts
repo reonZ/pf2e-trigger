@@ -6,6 +6,7 @@ import {
     htmlClosest,
     htmlQueryInClosest,
     htmlQueryInParent,
+    info,
     isInstanceOf,
     localize,
     R,
@@ -29,6 +30,7 @@ import {
     TriggerInputType,
     TriggerInputValueType,
 } from "../trigger";
+import { ActionImporter, TriggerImporter } from "./import";
 
 class CustomTriggers extends FormApplication {
     #events: { value: TriggerEventType; label: string }[];
@@ -240,7 +242,7 @@ class CustomTriggers extends FormApplication {
         });
 
         addListenerAll(html, "[data-action]", async (event, el) => {
-            const action = el.dataset.action as EventAction;
+            const eventAction = el.dataset.action as EventAction;
 
             const getTriggerIndex = () => {
                 const index = Number(htmlClosest(el, "[data-trigger-index]")?.dataset.triggerIndex);
@@ -259,7 +261,15 @@ class CustomTriggers extends FormApplication {
                 return { triggers, trigger };
             };
 
-            switch (action) {
+            const getActionData = (readonly?: boolean) => {
+                const { trigger, triggers } = getTriggerData(readonly);
+                const actionIndex = getActionIndex();
+                const actions = trigger?.actions ?? [];
+                const action = actionIndex === null ? undefined : actions.at(actionIndex);
+                return { trigger, triggers, actions, action };
+            };
+
+            switch (eventAction) {
                 case "add-trigger": {
                     const type = htmlQueryInParent(el, "select")?.value as Maybe<TriggerEventType>;
                     if (!type) return;
@@ -391,15 +401,62 @@ class CustomTriggers extends FormApplication {
                 }
 
                 case "toggle-link": {
-                    const index = getActionIndex();
-                    const { trigger, triggers } = getTriggerData(true);
-                    if (!trigger || index === null) return;
-
-                    const action = trigger.actions.at(index);
+                    const { action, triggers } = getActionData(true);
                     if (!action) return;
 
                     action.linked = !action.linked;
                     this.render(false, { triggers });
+
+                    break;
+                }
+
+                case "export-trigger": {
+                    const { trigger } = getTriggerData(false);
+                    if (!trigger) return;
+
+                    copyData("trigger", trigger);
+
+                    break;
+                }
+
+                case "export-action": {
+                    const { action } = getActionData(false);
+                    if (!action) return;
+
+                    copyData("action", action);
+
+                    break;
+                }
+
+                case "export-triggers": {
+                    const triggers = this.generateTriggersData(false);
+                    if (!triggers) return;
+
+                    copyData("export-all", triggers);
+
+                    break;
+                }
+
+                case "import-triggers": {
+                    const triggers = this.generateTriggersData(false);
+                    if (!triggers) return;
+
+                    new TriggerImporter((entries) => {
+                        triggers.push(...entries);
+                        this.render(false, { triggers });
+                    }).render(true);
+
+                    break;
+                }
+
+                case "import-actions": {
+                    const { trigger, triggers } = getTriggerData(true);
+                    if (!trigger) return;
+
+                    new ActionImporter((entries) => {
+                        trigger.actions.push(...entries);
+                        this.render(false, { triggers });
+                    }).render(true);
 
                     break;
                 }
@@ -412,7 +469,13 @@ class CustomTriggers extends FormApplication {
     }
 }
 
-type ProcessInputOptions = { path?: string; hidden?: boolean };
+function copyData(key: string, data: object) {
+    const stringified = JSON.stringify(data, undefined, 2);
+    const str = R.isArray(data) ? stringified : `[${stringified}]`;
+
+    game.clipboard.copyPlainText(str);
+    info(`customs.${key}.copied`);
+}
 
 function processInputEntry(
     inputEntry: TriggerInputEntry,
@@ -514,7 +577,12 @@ type EventAction =
     | "reset-uuid"
     | "add-action"
     | "delete-action"
-    | "toggle-link";
+    | "toggle-link"
+    | "export-trigger"
+    | "export-action"
+    | "import-actions";
+
+type ProcessInputOptions = { path?: string; hidden?: boolean };
 
 type CustomDataTrigger = {
     label: string;

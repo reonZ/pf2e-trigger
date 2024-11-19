@@ -1,0 +1,20 @@
+#pf2e-trigger-importer {
+    form {
+        display: flex;
+        flex-direction: column;
+
+        .hint {
+            flex: 0;
+        }
+
+        textarea {
+            flex: 1;
+        }
+
+        .buttons {
+            flex: 0;
+            display: flex;
+            margin-top: 0.5em;
+        }
+    }
+}

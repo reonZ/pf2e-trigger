@@ -119,14 +119,18 @@
             .actions-header {
                 .title {
                     flex: 1;
+
+                    + a {
+                        margin-inline: 0 0.8em;
+                    }
                 }
 
-                a {
-                    margin-left: 0.5em;
+                a i {
+                    font-size: 1.2em;
+                }
 
-                    i {
-                        font-size: 1.2em;
-                    }
+                select + a {
+                    margin-left: 0.5em;
                 }
 
                 & + .action {

@@ -5,12 +5,12 @@
     </button>
     <div class="separator"></div>
     <button type="button" data-action="import-triggers">
-        <i class="fa-solid fa-file-import"></i>
-        {{@root.i18n 'import'}}
+        <i class="fa-solid fa-download"></i>
+        {{@root.i18n 'import-all.label'}}
     </button>
     <button type="button" data-action="export-triggers">
         <i class="fa-solid fa-file-export"></i>
-        {{@root.i18n 'export'}}
+        {{@root.i18n 'export-all.label'}}
     </button>
     <div class="separator"></div>
     <select name="trigger-type">
@@ -48,8 +48,7 @@
         </span>
         <span class="controls">
             {{> 'inputEntriesToggle' trigger entry='condition' parent='.trigger' }}
-            <a class="export" data-action="export-trigger"
-                data-tooltip="{{@root.i18n.path 'trigger.export'}}">
+            <a data-action="export-trigger" data-tooltip="{{@root.i18n.path 'trigger.export'}}">
                 <i class="fa-solid fa-file-export"></i>
             </a>
             <a data-action="delete-trigger"
@@ -67,6 +66,9 @@
         <span class="title">
             <span>{{@root.i18n 'action.title'}}</span>
         </span>
+        <a data-action="import-actions" data-tooltip="{{@root.i18n.path 'action.import'}}">
+            <i class="fa-solid fa-download"></i>
+        </a>
         <select name="action-type">
             {{selectOptions @root.actions valueAttr="value" labelAttr="label"}}
         </select>
@@ -103,6 +105,9 @@
                 </a>
                 {{> 'inputEntriesToggle' entry='condition' parent='.action'
                 show=action.showInactives showName=(concat action.path '.showInactives')}}
+                <a data-action="export-action" data-tooltip="{{@root.i18n.path 'action.export'}}">
+                    <i class="fa-solid fa-file-export"></i>
+                </a>
                 <a data-action="delete-action"
                     data-tooltip="{{@root.i18n.path 'action.delete.label'}}">
                     <i class="fa-solid fa-trash"></i>

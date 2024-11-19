@@ -11,8 +11,13 @@
         },
         "customs": {
             "title": "Custom Triggers",
-            "export": "Export",
-            "import": "Import",
+            "export-all": {
+                "label": "Export",
+                "copied": "Triggers were copied to clipboard."
+            },
+            "import-all": {
+                "label": "Import"
+            },
             "save": "Save & Close",
             "add": "Add",
             "empty": "No Action",
@@ -23,7 +28,8 @@
                     "label": "Delete Trigger",
                     "confirm": "Are you sure you want to delete this trigger?"
                 },
-                "export": "Export Trigger"
+                "export": "Export Trigger",
+                "copied": "Trigger was copied to clipboard."
             },
             "action": {
                 "title": "Actions",
@@ -31,7 +37,10 @@
                 "delete": {
                     "label": "Delete Action",
                     "confirm": "Are you sure you want to delete this action?"
-                }
+                },
+                "import": "Import Action(s)",
+                "export": "Export Action",
+                "copied": "Action was copied to clipboard."
             },
             "entry": {
                 "active": "Activate/Disable {entry}",
@@ -41,6 +50,20 @@
                 "option": "Option"
             },
             "link": "Toggle link to previous action"
+        },
+        "importer": {
+            "import": "Import",
+            "cancel": "Cancel",
+            "hint": "Past an array of {objects} in the field below to import them.",
+            "error": "An error occured while trying to parse the imported data.",
+            "trigger": {
+                "title": "Import Trigger(s)",
+                "objects": "trigger objects"
+            },
+            "action": {
+                "title": "Import Action(s)",
+                "objects": "action objects"
+            }
         },
         "events": {
             "aura-enter": "Aura Enter",
