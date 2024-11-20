@@ -3,6 +3,7 @@ import {
     TriggerAction,
     TriggerInputEntry,
     TriggerInputValueType,
+    TriggerRunCache,
     TriggerRunOptions,
 } from "../trigger";
 
@@ -16,7 +17,8 @@ abstract class TriggerEventAction {
         trigger: Trigger,
         action: TriggerAction,
         linkOption: TriggerInputValueType,
-        options: TriggerRunOptions
+        options: TriggerRunOptions,
+        cache: TriggerRunCache
     ): Promisable<boolean>;
 }
 

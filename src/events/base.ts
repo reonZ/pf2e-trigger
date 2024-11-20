@@ -1,5 +1,5 @@
-import { localize } from "foundry-pf2e";
-import { Trigger, TriggerInputEntry, TriggerRunOptions } from "../trigger";
+import { hasItemWithSourceId, localize } from "foundry-pf2e";
+import { Trigger, TriggerInputEntry, TriggerRunCache, TriggerRunOptions } from "../trigger";
 
 abstract class TriggerEvent {
     #enabled = false;
@@ -19,7 +19,8 @@ abstract class TriggerEvent {
     abstract test(
         actor: ActorPF2e,
         trigger: Trigger,
-        options: TriggerRunOptions
+        options: TriggerRunOptions,
+        cache: TriggerRunCache
     ): Promisable<boolean>;
 
     abstract getOrigin(
@@ -34,6 +35,14 @@ abstract class TriggerEvent {
     ) {
         if (condition == null) return true;
         return testFunction(condition);
+    }
+
+    hasItemWithSourceId(
+        cache: { hasItem: Record<string, boolean> },
+        actor: ActorPF2e,
+        uuid: string
+    ) {
+        return (cache.hasItem[uuid] ??= hasItemWithSourceId(actor, uuid));
     }
 
     actorsRespectAlliance(
@@ -53,4 +62,7 @@ abstract class TriggerEvent {
     }
 }
 
+type TriggerRunCacheBase = Parameters<TriggerEvent["hasItemWithSourceId"]>[0];
+
+export type { TriggerRunCacheBase };
 export { TriggerEvent };

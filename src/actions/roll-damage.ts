@@ -47,7 +47,8 @@ class RollDamageAction extends TriggerEventAction {
         trigger: Trigger,
         action: TriggerActions["roll-damage"],
         linkOption: TriggerInputValueType,
-        options: { token?: TokenDocumentPF2e<ScenePF2e>; origin?: TargetDocuments }
+        options: { token?: TokenDocumentPF2e<ScenePF2e>; origin?: TargetDocuments },
+        cache: {}
     ) {
         if (!R.isString(action.options.formula) || !R.isString(action.options.item)) return false;
 

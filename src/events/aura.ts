@@ -11,7 +11,7 @@ import {
     userIsActiveGM,
 } from "foundry-pf2e";
 import { runTrigger, Trigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
-import { TriggerEvent } from "./base";
+import { TriggerEvent, TriggerRunCacheBase } from "./base";
 
 abstract class AuraTriggerEvent extends TriggerEvent {
     static auraLinkedEvents = (() => {
@@ -128,10 +128,19 @@ abstract class AuraTriggerEvent extends TriggerEvent {
         return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
     }
 
-    test(actor: ActorPF2e, trigger: AuraTrigger, options: AuraTestOptions): Promisable<boolean> {
-        const combatant = actor.combatant;
-        const encounter = combatant?.encounter;
-        if (!encounter || encounter.combatant !== combatant) return false;
+    test(
+        actor: ActorPF2e,
+        trigger: AuraTrigger,
+        options: AuraTestOptions,
+        cache: AuraTestCache
+    ): Promisable<boolean> {
+        cache.isCombatant ??= (() => {
+            const combat = game.combat;
+            const combatant = actor.combatant;
+            return !!combat && !!combatant && combat.combatant === combatant;
+        })();
+
+        if (!cache.isCombatant) return false;
 
         const { originItem, includeSelf, auraSlug, targetItem, targets } = trigger.conditions;
 
@@ -144,8 +153,8 @@ abstract class AuraTriggerEvent extends TriggerEvent {
             auraSlug === aura?.slug &&
             this.testCondition(includeSelf, (c) => c === (actor === origin.actor)) &&
             this.actorsRespectAlliance(origin.actor, actor, targets) &&
-            this.testCondition(targetItem, (c) => hasItemWithSourceId(actor, c)) &&
-            this.testCondition(originItem, (c) => hasItemWithSourceId(origin.actor, c))
+            this.testCondition(targetItem, (c) => this.hasItemWithSourceId(cache, actor, c)) &&
+            this.testCondition(originItem, (c) => this.hasItemWithSourceId(cache, origin.actor, c))
         );
     }
 
@@ -350,5 +359,9 @@ type AuraTestOptions = {
     aura?: ActorAura;
 };
 
+type AuraTestCache = TriggerRunCacheBase & {
+    isCombatant?: boolean;
+};
+
 export { AuraEnterTriggerEvent, AuraLeaveTriggerEvent, AuraTriggerEvent };
-export type { AuraTestOptions, AuraTrigger };
+export type { AuraTestCache, AuraTestOptions, AuraTrigger };

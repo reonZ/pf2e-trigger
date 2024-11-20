@@ -66,7 +66,8 @@ class RollSaveAction extends TriggerEventAction {
         trigger: Trigger,
         action: TriggerActions["roll-save"],
         linkOption: TriggerInputValueType,
-        options: {}
+        options: {},
+        cache: {}
     ) {
         const save = action.options.save;
         if (!SAVE_TYPES.includes(save)) return false;

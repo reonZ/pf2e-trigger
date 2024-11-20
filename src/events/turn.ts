@@ -7,7 +7,13 @@ import {
     TriggerRunOptions,
     Triggers,
 } from "../trigger";
-import { AuraEnterTriggerEvent, AuraTestOptions, AuraTrigger, AuraTriggerEvent } from "./aura";
+import {
+    AuraEnterTriggerEvent,
+    AuraTestCache,
+    AuraTestOptions,
+    AuraTrigger,
+    AuraTriggerEvent,
+} from "./aura";
 import { TriggerEvent } from "./base";
 
 abstract class TurnTriggerEvent extends TriggerEvent {
@@ -17,7 +23,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
     abstract get id(): "turn-start" | "turn-end";
 
     get auraEnterTrigger() {
-        return EVENTS_MAP.get("aura-enter") as AuraEnterTriggerEvent | undefined;
+        return EVENTS_MAP.get("aura-enter") as AuraEnterTriggerEvent;
     }
 
     get conditions() {
@@ -33,7 +39,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
                     },
                     {
                         value: "hasAura",
-                        subInputs: this.auraEnterTrigger?.conditions,
+                        subInputs: this.auraEnterTrigger.conditions,
                     },
                 ],
             },
@@ -66,16 +72,21 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         const eventLabel = super.label(trigger);
 
         if (this.#isAuraTrigger(trigger)) {
-            return this.auraEnterTrigger?.label(trigger, eventLabel) ?? eventLabel;
+            return this.auraEnterTrigger.label(trigger, eventLabel);
         }
 
         // TODO we need to create label for has-item
         return eventLabel;
     }
 
-    test(actor: ActorPF2e, trigger: TurnTrigger, options: TurnTestOptions): Promisable<boolean> {
+    test(
+        actor: ActorPF2e,
+        trigger: TurnTrigger,
+        options: TurnTestOptions,
+        cache: TurnTestCache
+    ): Promisable<boolean> {
         if (this.#isAuraTrigger(trigger)) {
-            return this.auraEnterTrigger?.test(actor, trigger, options) ?? true;
+            return this.auraEnterTrigger.test(actor, trigger, options, cache);
         }
 
         // TODO we need to do the test for has-item
@@ -88,7 +99,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         options: TriggerRunOptions
     ): TargetDocuments | undefined {
         if (trigger.conditions.starts === "hasAura") {
-            return this.auraEnterTrigger?.getOrigin(actor, trigger, options);
+            return this.auraEnterTrigger.getOrigin(actor, trigger, options);
         }
 
         return undefined;
@@ -133,6 +144,8 @@ class TurnEndTriggerEvent extends TurnTriggerEvent {
 type TurnTrigger = Triggers["turn-start"] | Triggers["turn-end"];
 
 type TurnTestOptions = AuraTestOptions;
+
+type TurnTestCache = AuraTestCache;
 
 export { TurnEndTriggerEvent, TurnStartTriggerEvent };
 export type { TurnTestOptions };

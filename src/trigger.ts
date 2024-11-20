@@ -1,7 +1,7 @@
 import { getSetting, R } from "foundry-pf2e";
 import { TriggerEventAction } from "./actions/base";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
-import { TriggerEvent } from "./events/base";
+import { TriggerEvent, TriggerRunCacheBase } from "./events/base";
 import { TurnEndTriggerEvent, TurnStartTriggerEvent } from "./events/turn";
 import { RollDamageAction } from "./actions/roll-damage";
 import { RollSaveAction } from "./actions/roll-save";
@@ -87,9 +87,13 @@ async function runTrigger<TEventId extends TriggerEventType>(
     const triggers = EVENT_TRIGGERS.get(eventId);
     if (!event || !triggers?.length) return;
 
+    const cache: TriggerRunCache = {
+        hasItem: {},
+    };
+
     Promise.all(
         triggers.map(async (trigger: Trigger) => {
-            const valid = await event.test(actor, trigger, options);
+            const valid = await event.test(actor, trigger, options, cache);
             if (!valid) return;
 
             for (let i = 0; i < trigger.actions.length; i++) {
@@ -98,8 +102,16 @@ async function runTrigger<TEventId extends TriggerEventType>(
                 if (!action) continue;
 
                 const nextAction = trigger.actions.at(i + 1);
-                const fn = () =>
-                    action.execute(actor, trigger, triggerAction, nextAction?.linkOption, options);
+                const fn = () => {
+                    return action.execute(
+                        actor,
+                        trigger,
+                        triggerAction,
+                        nextAction?.linkOption,
+                        options,
+                        cache
+                    );
+                };
 
                 if (nextAction?.linked) {
                     const canContinue = await fn();
@@ -291,6 +303,10 @@ type TriggerRunOptions = Merge<
     Parameters<TriggerEventActions["execute"]>[4] & Parameters<TriggerEvents["test"]>[2]
 >;
 
+type TriggerRunCache = TriggerRunCacheBase &
+    Merge<Parameters<TriggerEvents["test"]>[3]> &
+    Parameters<TriggerEventActions["execute"]>[5];
+
 type TriggerAction = {
     type: TriggerActionType;
     options: Record<string, TriggerInputValueType>;
@@ -366,6 +382,7 @@ export type {
     TriggerInputEntry,
     TriggerInputType,
     TriggerInputValueType,
+    TriggerRunCache,
     TriggerRunOptions,
     Triggers,
 };
