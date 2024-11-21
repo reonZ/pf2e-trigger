@@ -295,9 +295,9 @@ function checkTokensAuras() {
                 ? actorTokens.find((token) => tokenAura.containsToken(token))
                 : undefined;
 
-            if (token) {
+            if (!token) {
                 removeAuraFromMemory(actor, aura, origin);
-                runTrigger("aura-leave", { actor, token }, {
+                runTrigger("aura-leave", { actor, token: actorTokens.at(0) }, {
                     aura: { data: aura, origin },
                 } satisfies TriggerRunOptions);
             }
