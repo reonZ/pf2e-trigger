@@ -13,7 +13,7 @@ import {
     setSetting,
     templateLocalize,
     templatePath,
-} from "foundry-pf2e";
+} from "module-helpers";
 import { TriggerEventAction } from "../actions/base";
 import {
     ACTIONS_MAP,
@@ -627,7 +627,7 @@ type ProcessedInputEntry = {
     hidden?: boolean;
 };
 
-type CustomTriggersData = {
+type CustomTriggersData = FormApplicationData & {
     events: { value: TriggerEventType; label: string }[];
     actions: { value: TriggerActionType; label: string }[];
     leftTriggers: CustomDataTrigger[];

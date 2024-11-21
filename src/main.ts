@@ -1,6 +1,6 @@
-import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "foundry-pf2e";
-import { CustomTriggers } from "./apps/customs";
-import { prepareTriggers } from "./trigger";
+import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
+import { CustomTriggers } from "./apps/customs.js";
+import { prepareTriggers } from "./trigger.js";
 
 MODULE.register("pf2e-trigger", "PF2e Trigger");
 

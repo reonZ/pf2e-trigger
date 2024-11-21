@@ -6,17 +6,8 @@ import {
     R,
     templateLocalize,
     templatePath,
-} from "foundry-pf2e";
-import {
-    ACTIONS_MAP,
-    EVENT_TYPES,
-    EVENTS_MAP,
-    Trigger,
-    TriggerAction,
-    TriggerEventType,
-    TriggerInputValueType,
-} from "../trigger";
-import { TriggerEvent } from "../events/base";
+} from "module-helpers";
+import { ACTIONS_MAP, EVENTS_MAP, Trigger, TriggerAction, TriggerInputValueType } from "../trigger";
 
 abstract class Importer<TObject extends Trigger | TriggerAction> extends Application {
     #callback: (entries: TObject[]) => void;
