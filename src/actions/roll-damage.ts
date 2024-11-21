@@ -1,4 +1,4 @@
-import { isInstanceOf, R, resolveTarget, rollDamageFromFormula } from "foundry-pf2e";
+import { isInstanceOf, R, rollDamageFromFormula } from "module-helpers";
 import {
     EVENTS_MAP,
     Trigger,
@@ -37,17 +37,17 @@ class RollDamageAction extends TriggerEventAction {
         ] as const satisfies Readonly<TriggerInputEntry[]>;
     }
 
-    getOrigin(actor: ActorPF2e, trigger: Trigger, options: TriggerRunOptions) {
+    getOrigin(target: TargetDocuments, trigger: Trigger, options: TriggerRunOptions) {
         const event = EVENTS_MAP.get(trigger.event);
-        return event?.getOrigin(actor, trigger, options);
+        return event?.getOrigin(target, trigger, options);
     }
 
     async execute(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         action: TriggerActions["roll-damage"],
         linkOption: TriggerInputValueType,
-        options: { token?: TokenDocumentPF2e<ScenePF2e>; origin?: TargetDocuments },
+        options: { origin?: TargetDocuments },
         cache: {}
     ) {
         if (!R.isString(action.options.formula) || !R.isString(action.options.item)) return false;
@@ -55,11 +55,10 @@ class RollDamageAction extends TriggerEventAction {
         const item = await fromUuid(action.options.item);
         if (!isInstanceOf(item, "ItemPF2e")) return false;
 
-        const target = resolveTarget({ actor, token: options.token });
         await rollDamageFromFormula(action.options.formula, {
             item,
             target,
-            origin: action.options.self ? target : this.getOrigin(actor, trigger, options),
+            origin: action.options.self ? target : this.getOrigin(target, trigger, options),
         });
 
         return true;

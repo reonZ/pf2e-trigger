@@ -1,10 +1,10 @@
-import { getSetting, R } from "foundry-pf2e";
+import { getSetting, R } from "module-helpers";
 import { TriggerEventAction } from "./actions/base";
+import { RollDamageAction } from "./actions/roll-damage";
+import { RollSaveAction } from "./actions/roll-save";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
 import { TriggerEvent, TriggerRunCacheBase } from "./events/base";
 import { TurnEndTriggerEvent, TurnStartTriggerEvent } from "./events/turn";
-import { RollDamageAction } from "./actions/roll-damage";
-import { RollSaveAction } from "./actions/roll-save";
 
 const TRIGGER_INPUT_DEFAULT_VALUES = {
     text: "",
@@ -80,7 +80,7 @@ function prepareTriggers() {
 
 async function runTrigger<TEventId extends TriggerEventType>(
     eventId: TEventId,
-    actor: ActorPF2e,
+    target: TargetDocuments,
     options: TriggerRunOptions
 ) {
     const event = EVENTS_MAP.get(eventId);
@@ -91,9 +91,13 @@ async function runTrigger<TEventId extends TriggerEventType>(
         hasItem: {},
     };
 
+    target.token ??= target.actor.token ?? target.actor.getActiveTokens(true, true).at(0);
+
+    if (target.token?.hidden) return;
+
     Promise.all(
         triggers.map(async (trigger: Trigger) => {
-            const valid = await event.test(actor, trigger, options, cache);
+            const valid = await event.test(target, trigger, options, cache);
             if (!valid) return;
 
             for (let i = 0; i < trigger.actions.length; i++) {
@@ -104,7 +108,7 @@ async function runTrigger<TEventId extends TriggerEventType>(
                 const nextAction = trigger.actions.at(i + 1);
                 const fn = () => {
                     return action.execute(
-                        actor,
+                        target,
                         trigger,
                         triggerAction,
                         nextAction?.linkOption,
@@ -363,8 +367,8 @@ export {
     createInputEntries,
     createTrigger,
     defaultInputValue,
-    EVENT_TYPES,
     EVENT_TRIGGERS,
+    EVENT_TYPES,
     EVENTS_MAP,
     getSubInputs,
     isInputType,

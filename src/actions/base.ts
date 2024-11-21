@@ -13,7 +13,7 @@ abstract class TriggerEventAction {
     abstract get options(): Readonly<TriggerInputEntry[]>;
 
     abstract execute(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         action: TriggerAction,
         linkOption: TriggerInputValueType,

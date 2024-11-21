@@ -1,15 +1,19 @@
 import {
+    ActorPF2e,
+    AuraData,
     beautifySlug,
     createWrapper,
     deleteInMemory,
     getInMemory,
-    hasItemWithSourceId,
     R,
     resolveTarget,
     runWhenReady,
+    ScenePF2e,
     setInMemory,
+    TokenAura,
+    TokenDocumentPF2e,
     userIsActiveGM,
-} from "foundry-pf2e";
+} from "module-helpers";
 import { runTrigger, Trigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
 import { TriggerEvent, TriggerRunCacheBase } from "./base";
 
@@ -129,11 +133,13 @@ abstract class AuraTriggerEvent extends TriggerEvent {
     }
 
     test(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: AuraTrigger,
         options: AuraTestOptions,
         cache: AuraTestCache
     ): Promisable<boolean> {
+        const actor = target.actor;
+
         cache.isCombatant ??= (() => {
             const combat = game.combat;
             const combatant = actor.combatant;
@@ -159,11 +165,11 @@ abstract class AuraTriggerEvent extends TriggerEvent {
     }
 
     getOrigin(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined {
-        const actorAura = getActorAura(actor, trigger.conditions, options);
+        const actorAura = getActorAura(target.actor, trigger.conditions, options);
         return resolveTarget(actorAura?.origin);
     }
 }
@@ -241,8 +247,7 @@ async function notifyActors(this: TokenAura): Promise<void> {
             setAuraInMemory(actor, auraData, origin);
 
             if (!already) {
-                runTrigger("aura-enter", actor, {
-                    token,
+                runTrigger("aura-enter", { actor, token }, {
                     aura: { data: auraData, origin },
                 } satisfies TriggerRunOptions);
             }
@@ -286,9 +291,13 @@ function checkTokensAuras() {
                 ({ slug, token }) => slug === aura.slug && token === origin.token
             );
 
-            if (!tokenAura || !actorTokens.some((token) => tokenAura.containsToken(token))) {
+            const token = tokenAura
+                ? actorTokens.find((token) => tokenAura.containsToken(token))
+                : undefined;
+
+            if (token) {
                 removeAuraFromMemory(actor, aura, origin);
-                runTrigger("aura-leave", actor, {
+                runTrigger("aura-leave", { actor, token }, {
                     aura: { data: aura, origin },
                 } satisfies TriggerRunOptions);
             }

@@ -1,4 +1,4 @@
-import { hasItemWithSourceId, localize } from "foundry-pf2e";
+import { ActorPF2e, hasItemWithSourceId, localize } from "module-helpers";
 import { Trigger, TriggerInputEntry, TriggerRunCache, TriggerRunOptions } from "../trigger";
 
 abstract class TriggerEvent {
@@ -17,14 +17,14 @@ abstract class TriggerEvent {
     }
 
     abstract test(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         options: TriggerRunOptions,
         cache: TriggerRunCache
     ): Promisable<boolean>;
 
     abstract getOrigin(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined;
@@ -64,5 +64,5 @@ abstract class TriggerEvent {
 
 type TriggerRunCacheBase = Parameters<TriggerEvent["hasItemWithSourceId"]>[0];
 
-export type { TriggerRunCacheBase };
 export { TriggerEvent };
+export type { TriggerRunCacheBase };

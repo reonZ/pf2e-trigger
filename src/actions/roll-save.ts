@@ -1,4 +1,4 @@
-import { SAVE_TYPES } from "foundry-pf2e";
+import { SAVE_TYPES } from "module-helpers";
 import { Trigger, TriggerActions, TriggerInputEntry, TriggerInputValueType } from "../trigger";
 import { TriggerEventAction } from "./base";
 
@@ -62,7 +62,7 @@ class RollSaveAction extends TriggerEventAction {
     }
 
     async execute(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: Trigger,
         action: TriggerActions["roll-save"],
         linkOption: TriggerInputValueType,
@@ -72,7 +72,7 @@ class RollSaveAction extends TriggerEventAction {
         const save = action.options.save;
         if (!SAVE_TYPES.includes(save)) return false;
 
-        const actorSave = actor.saves?.[save];
+        const actorSave = target.actor.saves?.[save];
         if (!actorSave) return false;
 
         const roll = await actorSave.roll({ dc: action.options.dc });

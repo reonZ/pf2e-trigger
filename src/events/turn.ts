@@ -1,4 +1,4 @@
-import { createHook, Hook } from "foundry-pf2e";
+import { CombatantPF2e, createHook, EncounterPF2e, Hook } from "module-helpers";
 import {
     EVENTS_MAP,
     runTrigger,
@@ -80,13 +80,13 @@ abstract class TurnTriggerEvent extends TriggerEvent {
     }
 
     test(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: TurnTrigger,
         options: TurnTestOptions,
         cache: TurnTestCache
     ): Promisable<boolean> {
         if (this.#isAuraTrigger(trigger)) {
-            return this.auraEnterTrigger.test(actor, trigger, options, cache);
+            return this.auraEnterTrigger.test(target, trigger, options, cache);
         }
 
         // TODO we need to do the test for has-item
@@ -94,12 +94,12 @@ abstract class TurnTriggerEvent extends TriggerEvent {
     }
 
     getOrigin(
-        actor: ActorPF2e,
+        target: TargetDocuments,
         trigger: TurnTrigger,
         options: TriggerRunOptions
     ): TargetDocuments | undefined {
         if (trigger.conditions.starts === "hasAura") {
-            return this.auraEnterTrigger.getOrigin(actor, trigger, options);
+            return this.auraEnterTrigger.getOrigin(target, trigger, options);
         }
 
         return undefined;
@@ -117,7 +117,7 @@ abstract class TurnTriggerEvent extends TriggerEvent {
         const actor = combatant.actor;
         if (!actor) return;
 
-        runTrigger(this.id, actor, {} satisfies TriggerRunOptions);
+        runTrigger(this.id, { actor }, {} satisfies TriggerRunOptions);
     }
 }
 
