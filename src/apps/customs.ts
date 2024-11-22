@@ -2,6 +2,7 @@ import {
     addListenerAll,
     arrayToSelect,
     confirmDialog,
+    createFormData,
     getSetting,
     htmlClosest,
     htmlQueryInClosest,
@@ -88,12 +89,11 @@ class CustomTriggers extends FormApplication {
             >;
         };
 
-        const data: { triggers?: Record<number, TemplateTrigger> } = foundry.utils.expandObject(
-            R.mapValues(
-                new FormDataExtended(this.form, { disabled: true, readonly }).object,
-                (value) => (typeof value === "string" ? value.trim() : value)
-            )
-        );
+        const data: { triggers?: Record<number, TemplateTrigger> } = createFormData(this.form, {
+            disabled: true,
+            readonly,
+            expand: true,
+        });
 
         const triggers = R.pipe(
             R.entries(data.triggers ?? {}),
