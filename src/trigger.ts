@@ -28,7 +28,7 @@ const EVENTS_MAP: Map<TriggerEventType, TriggerEvent> = new Map(
     })
 );
 
-const EVENT_TYPES = EVENTS_MAP.keys().toArray();
+const EVENT_TYPES = [...EVENTS_MAP.keys()];
 
 const ACTIONS = [RollDamageAction, RollSaveAction] as const;
 
