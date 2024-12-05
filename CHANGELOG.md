@@ -1,3 +1,7 @@
+# 0.6.0
+
+-   add `Remove Item` trigger action
+
 # 0.5.1
 
 -   add cache to `runTrigger`
