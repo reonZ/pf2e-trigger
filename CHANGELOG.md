@@ -1,6 +1,7 @@
 # 0.6.0
 
 -   add `Remove Item` trigger action
+-   fix aura not being removed from memory
 
 # 0.5.1
 
