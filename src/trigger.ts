@@ -5,6 +5,7 @@ import { RollSaveAction } from "./actions/roll-save";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
 import { TriggerEvent, TriggerRunCacheBase } from "./events/base";
 import { TurnEndTriggerEvent, TurnStartTriggerEvent } from "./events/turn";
+import { RemoveItemAction } from "./actions/remove-item";
 
 const TRIGGER_INPUT_DEFAULT_VALUES = {
     text: "",
@@ -30,7 +31,7 @@ const EVENTS_MAP: Map<TriggerEventType, TriggerEvent> = new Map(
 
 const EVENT_TYPES = [...EVENTS_MAP.keys()];
 
-const ACTIONS = [RollDamageAction, RollSaveAction] as const;
+const ACTIONS = [RollDamageAction, RollSaveAction, RemoveItemAction] as const;
 
 const ACTIONS_MAP: Map<TriggerActionType, TriggerEventAction> = new Map(
     ACTIONS.map((ActionCls) => {

@@ -107,7 +107,8 @@
         },
         "actions": {
             "roll-damage": "Roll Damage",
-            "roll-save": "Roll Save Check"
+            "roll-save": "Roll Save Check",
+            "remove-item": "Remove Item"
         },
         "action-options": {
             "formula": {
@@ -115,7 +116,7 @@
                 "tooltip": "Damage formula"
             },
             "item": {
-                "label": "Source Item"
+                "label": "Item Source"
             },
             "dc": {
                 "label": "Check DC",
