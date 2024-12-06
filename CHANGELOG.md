@@ -1,3 +1,7 @@
+# 0.7.0
+
+-   add type lookup to item retrieval to improve performance
+
 # 0.6.0
 
 -   add `Remove Item` trigger action
