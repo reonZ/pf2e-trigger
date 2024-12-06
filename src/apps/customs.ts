@@ -28,6 +28,7 @@ import {
     TriggerActionType,
     TriggerEventType,
     TriggerInputEntry,
+    TriggerInputs,
     TriggerInputType,
     TriggerInputValueType,
 } from "../trigger";
@@ -480,7 +481,7 @@ function copyData(key: string, data: object) {
 function processInputEntry(
     inputEntry: TriggerInputEntry,
     usedEntries: Record<string, boolean>,
-    values: Record<string, TriggerInputValueType>,
+    values: TriggerInputs,
     prefix: "conditions" | "action-options",
     { path, hidden }: ProcessInputOptions = {}
 ): { entry: ProcessedInputEntry; value: TriggerInputValueType } {
@@ -539,7 +540,7 @@ function processInputEntry(
 function processInputEntries(
     inputEntries: Readonly<TriggerInputEntry[]>,
     usedEntries: Record<string, boolean>,
-    values: Record<string, TriggerInputValueType>,
+    values: TriggerInputs,
     prefix: "conditions" | "action-options",
     options?: ProcessInputOptions
 ): ProcessedInputEntry[] {

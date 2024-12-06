@@ -1,5 +1,11 @@
-import { R, getItemWithSourceId } from "module-helpers";
-import { Trigger, TriggerAction, TriggerInputEntry, TriggerInputValueType } from "../trigger";
+import { R } from "module-helpers";
+import {
+    Trigger,
+    TriggerAction,
+    TriggerInputEntry,
+    TriggerInputValueType,
+    findTriggerItem,
+} from "../trigger";
 import { TriggerEventAction } from "./base";
 
 class RemoveItemAction extends TriggerEventAction {
@@ -31,7 +37,7 @@ class RemoveItemAction extends TriggerEventAction {
     ) {
         if (!R.isString(action.options.item)) return false;
 
-        const item = getItemWithSourceId(target.actor, action.options.item);
+        const item = findTriggerItem(target.actor, action.options.item);
         if (!item) return false;
 
         await item.delete();

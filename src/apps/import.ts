@@ -7,7 +7,14 @@ import {
     templateLocalize,
     templatePath,
 } from "module-helpers";
-import { ACTIONS_MAP, EVENTS_MAP, Trigger, TriggerAction, TriggerInputValueType } from "../trigger";
+import {
+    ACTIONS_MAP,
+    EVENTS_MAP,
+    Trigger,
+    TriggerAction,
+    TriggerInputs,
+    TriggerInputValueType,
+} from "../trigger";
 
 abstract class Importer<TObject extends Trigger | TriggerAction> extends Application {
     #callback: (entries: TObject[]) => void;
@@ -88,7 +95,7 @@ function isInputType(value: unknown): value is TriggerInputValueType {
     return ["string", "number", "boolean", undefined].includes(typeof value);
 }
 
-function isInputRecord(obj: unknown): obj is Record<string, TriggerInputValueType> {
+function isInputRecord(obj: unknown): obj is TriggerInputs {
     return (
         R.isPlainObject(obj) &&
         R.entries(obj).every(([key, value]) => R.isString(key) && isInputType(value))

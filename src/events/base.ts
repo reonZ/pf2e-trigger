@@ -1,4 +1,4 @@
-import { ActorPF2e, hasItemWithSourceId, localize } from "module-helpers";
+import { ActorPF2e, localize } from "module-helpers";
 import { Trigger, TriggerInputEntry, TriggerRunCache, TriggerRunOptions } from "../trigger";
 
 abstract class TriggerEvent {
@@ -37,14 +37,6 @@ abstract class TriggerEvent {
         return testFunction(condition);
     }
 
-    hasItemWithSourceId(
-        cache: { hasItem: Record<string, boolean> },
-        actor: ActorPF2e,
-        uuid: string
-    ) {
-        return (cache.hasItem[uuid] ??= hasItemWithSourceId(actor, uuid));
-    }
-
     actorsRespectAlliance(
         origin: ActorPF2e,
         target: ActorPF2e,
@@ -62,7 +54,9 @@ abstract class TriggerEvent {
     }
 }
 
-type TriggerRunCacheBase = Parameters<TriggerEvent["hasItemWithSourceId"]>[0];
+type TriggerRunCacheBase = {
+    hasItem: Record<string, boolean>;
+};
 
 export { TriggerEvent };
 export type { TriggerRunCacheBase };

@@ -14,7 +14,14 @@ import {
     TokenDocumentPF2e,
     userIsActiveGM,
 } from "module-helpers";
-import { runTrigger, Trigger, TriggerInputEntry, TriggerRunOptions, Triggers } from "../trigger";
+import {
+    hasTriggerItem,
+    runTrigger,
+    Trigger,
+    TriggerInputEntry,
+    TriggerRunOptions,
+    Triggers,
+} from "../trigger";
 import { TriggerEvent, TriggerRunCacheBase } from "./base";
 
 abstract class AuraTriggerEvent extends TriggerEvent {
@@ -157,10 +164,10 @@ abstract class AuraTriggerEvent extends TriggerEvent {
 
         return (
             auraSlug === aura?.slug &&
-            this.testCondition(includeSelf, (c) => c === (actor === origin.actor)) &&
+            this.testCondition(includeSelf, (self) => self === (actor === origin.actor)) &&
             this.actorsRespectAlliance(origin.actor, actor, targets) &&
-            this.testCondition(targetItem, (c) => this.hasItemWithSourceId(cache, actor, c)) &&
-            this.testCondition(originItem, (c) => this.hasItemWithSourceId(cache, origin.actor, c))
+            this.testCondition(targetItem, (uuid) => hasTriggerItem(cache, actor, uuid)) &&
+            this.testCondition(originItem, (uuid) => hasTriggerItem(cache, origin.actor, uuid))
         );
     }
 

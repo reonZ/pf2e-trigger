@@ -1,11 +1,19 @@
-import { getSetting, R } from "module-helpers";
+import {
+    ActorPF2e,
+    getItemWithSourceId,
+    getSetting,
+    hasItemWithSourceId,
+    isItemEntry,
+    ItemType,
+    R,
+} from "module-helpers";
 import { TriggerEventAction } from "./actions/base";
+import { RemoveItemAction } from "./actions/remove-item";
 import { RollDamageAction } from "./actions/roll-damage";
 import { RollSaveAction } from "./actions/roll-save";
 import { AuraEnterTriggerEvent, AuraLeaveTriggerEvent } from "./events/aura";
 import { TriggerEvent, TriggerRunCacheBase } from "./events/base";
 import { TurnEndTriggerEvent, TurnStartTriggerEvent } from "./events/turn";
-import { RemoveItemAction } from "./actions/remove-item";
 
 const TRIGGER_INPUT_DEFAULT_VALUES = {
     text: "",
@@ -42,8 +50,50 @@ const ACTIONS_MAP: Map<TriggerActionType, TriggerEventAction> = new Map(
 
 const EVENT_TRIGGERS: Collection<Trigger[]> = new Collection();
 
+const TRIGGER_ITEM_TYPES: Map<string, ItemType> = new Map();
+
+function prepareTriggerInputs(
+    inputs: TriggerInputs,
+    usedInputs: Record<string, boolean>,
+    rawInputs: readonly TriggerInputEntry[]
+) {
+    const subInputs = R.pipe(
+        rawInputs,
+        R.flatMap((rawInput) => {
+            if (rawInput.type !== "select") return [];
+            return rawInput.options;
+        }),
+        R.filter(
+            (option): option is { value: string; subInputs: TriggerInputEntry[] } =>
+                R.isPlainObject(option) && R.isArray(option.subInputs)
+        ),
+        R.flatMap((option) => option.subInputs)
+    );
+
+    return R.mapValues(inputs, (value, name) => {
+        if (!usedInputs[name]) return undefined;
+
+        const rawInput =
+            rawInputs.find((rawInput) => rawInput.name === name) ||
+            subInputs.find((subInput) => subInput.name === name);
+
+        if (!rawInput) return undefined;
+
+        if (R.isString(value) && rawInput?.type === "uuid" && !TRIGGER_ITEM_TYPES.has(value)) {
+            const item = fromUuidSync(value);
+
+            if (isItemEntry(item)) {
+                TRIGGER_ITEM_TYPES.set(value, item.type);
+            }
+        }
+
+        return value;
+    });
+}
+
 function prepareTriggers() {
     EVENT_TRIGGERS.clear();
+    TRIGGER_ITEM_TYPES.clear();
 
     const allTriggers = foundry.utils.deepClone(getSetting<Trigger[]>("customTriggers"));
 
@@ -51,23 +101,22 @@ function prepareTriggers() {
         const eventId = event.id;
 
         if (!EVENT_TRIGGERS.has(eventId)) {
-            // TODO more validation ?
             const triggers = R.pipe(
                 allTriggers,
                 R.filter((trigger) => trigger.event === eventId),
                 R.forEach((trigger) => {
-                    R.forEachObj(trigger.usedConditions, (used, triggerCondition) => {
-                        if (!used) {
-                            trigger.conditions[triggerCondition] = undefined;
-                        }
-                    });
+                    trigger.conditions = prepareTriggerInputs(
+                        trigger.conditions,
+                        trigger.usedConditions,
+                        event.conditions
+                    );
 
                     R.forEach(trigger.actions, (triggerAction) => {
-                        R.forEachObj(triggerAction.usedOptions, (used, optionName: string) => {
-                            if (!used) {
-                                triggerAction.options[optionName] = undefined;
-                            }
-                        });
+                        triggerAction.options = prepareTriggerInputs(
+                            triggerAction.options,
+                            triggerAction.usedOptions,
+                            ACTIONS_MAP.get(triggerAction.type)?.options ?? []
+                        );
                     });
                 })
             );
@@ -217,9 +266,21 @@ function isInputType(type: TriggerInputType, value: TriggerInputValueType) {
     return typeof value === typeof TRIGGER_INPUT_DEFAULT_VALUES[type];
 }
 
+function hasTriggerItem(
+    cache: { hasItem: Record<string, boolean> },
+    actor: ActorPF2e,
+    uuid: string
+) {
+    return (cache.hasItem[uuid] ??= hasItemWithSourceId(actor, uuid, TRIGGER_ITEM_TYPES.get(uuid)));
+}
+
+function findTriggerItem(actor: ActorPF2e, uuid: string) {
+    return getItemWithSourceId(actor, uuid, TRIGGER_ITEM_TYPES.get(uuid));
+}
+
 type Trigger = {
     event: TriggerEventType;
-    conditions: Record<string, TriggerInputValueType>;
+    conditions: TriggerInputs;
     usedConditions: Record<string, boolean>;
     actions: TriggerAction[];
 };
@@ -314,11 +375,13 @@ type TriggerRunCache = TriggerRunCacheBase &
 
 type TriggerAction = {
     type: TriggerActionType;
-    options: Record<string, TriggerInputValueType>;
+    options: TriggerInputs;
     linked: boolean;
     linkOption?: TriggerInputValueType;
     usedOptions: Record<string, boolean>;
 };
+
+type TriggerInputs = Record<string, TriggerInputValueType>;
 
 type TriggerInputEntry =
     | TriggerInputText
@@ -371,7 +434,9 @@ export {
     EVENT_TRIGGERS,
     EVENT_TYPES,
     EVENTS_MAP,
+    findTriggerItem,
     getSubInputs,
+    hasTriggerItem,
     isInputType,
     prepareTriggers,
     runTrigger,
@@ -385,6 +450,7 @@ export type {
     TriggerActionType,
     TriggerEventType,
     TriggerInputEntry,
+    TriggerInputs,
     TriggerInputType,
     TriggerInputValueType,
     TriggerRunCache,

@@ -22,7 +22,9 @@ Hooks.once("init", () => {
         key: "customs",
         type: CustomTriggers,
     });
+});
 
+Hooks.once("setup", () => {
     if (userIsGM()) {
         prepareTriggers();
     }
