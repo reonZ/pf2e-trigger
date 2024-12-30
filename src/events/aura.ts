@@ -1,383 +1,377 @@
-import {
-    ActorPF2e,
-    AuraData,
-    beautifySlug,
-    createWrapper,
-    deleteInMemory,
-    getInMemory,
-    R,
-    resolveTarget,
-    runWhenReady,
-    ScenePF2e,
-    setInMemory,
-    TokenAura,
-    TokenDocumentPF2e,
-    userIsActiveGM,
-} from "module-helpers";
-import {
-    hasTriggerItem,
-    runTrigger,
-    Trigger,
-    TriggerInputEntry,
-    TriggerRunOptions,
-    Triggers,
-} from "../trigger";
-import { TriggerEvent, TriggerRunCacheBase } from "./base";
+import { createEventEntry } from ".";
+import { insideAuraCondition } from "../conditions/inside-aura";
 
-abstract class AuraTriggerEvent extends TriggerEvent {
-    static auraLinkedEvents = (() => {
-        const _wrappers = [
-            createWrapper(
-                "CONFIG.Token.documentClass.prototype.prepareBaseData",
-                tokenDocumentPF2ePrepareBaseData
-            ),
-            createWrapper(
-                "CONFIG.Token.documentClass.prototype.simulateUpdate",
-                tokenDocumentPF2eSimulateUpdate
-            ),
-            createWrapper("CONFIG.Scene.documentClass.prototype.prepareData", scenePF2ePrepareData),
-        ];
-
-        let _activeEvents = 0;
-
-        return {
-            add: () => {
-                const wasActive = _activeEvents > 0;
-
-                _activeEvents += 1;
-
-                if (!wasActive && _activeEvents > 0) {
-                    for (const wrapper of _wrappers) {
-                        wrapper.activate();
-                    }
-
-                    runWhenReady(AuraTriggerEvent.#initialAuraCheck);
-                }
-            },
-            remove: () => {
-                const wasActive = _activeEvents > 0;
-
-                _activeEvents -= 1;
-
-                if (wasActive && _activeEvents <= 0) {
-                    for (const wrapper of _wrappers) {
-                        wrapper.disable();
-                    }
-
-                    runWhenReady(AuraTriggerEvent.#auraCheckCleanup);
-                }
-            },
-        };
-    })();
-
-    static #initialAuraCheck() {
-        if (!userIsActiveGM()) return;
-
-        const scene = game.scenes.current;
-
-        if (
-            !scene ||
-            !canvas.ready ||
-            !scene.isInFocus ||
-            scene.grid.type !== CONST.GRID_TYPES.SQUARE
-        )
-            return;
-
-        const tokens = getSceneTokens();
-        const auras = tokens.flatMap((token) => Array.from(token.auras.values()));
-
-        for (const aura of auras) {
-            const auraActor = aura.token.actor;
-            const auraData = auraActor?.auras.get(aura.slug);
-            if (!(auraActor && auraData?.effects.length)) return;
-
-            const auradTokens = scene.tokens.filter((token) => aura.containsToken(token));
-            const affectedActors = getTokensActors(auradTokens);
-
-            const origin = { actor: auraActor, token: aura.token };
-            for (const actor of affectedActors) {
-                setAuraInMemory(actor, auraData, origin);
-            }
-        }
-    }
-
-    static #auraCheckCleanup() {
-        if (!userIsActiveGM()) return;
-
-        const tokens = getSceneTokens();
-        const sceneActors = getTokensActors(tokens);
-
-        for (const actor of sceneActors) {
-            deleteInMemory(actor, "auras");
-        }
-    }
-
-    abstract get id(): "aura-enter" | "aura-leave";
-
-    get conditions() {
-        return [
-            { name: "auraSlug", type: "text", required: true },
-            { name: "targetItem", type: "uuid" },
-            { name: "originItem", type: "uuid" },
-            { name: "targets", type: "select", options: ["all", "allies", "enemies"] },
-            { name: "includeSelf", type: "checkbox" },
-        ] as const satisfies Readonly<TriggerInputEntry[]>;
-    }
-
-    _enable(enabled: boolean, triggers: AuraTrigger[]): void {
-        if (enabled && !this.enabled) {
-            AuraTriggerEvent.auraLinkedEvents.add();
-        } else if (!enabled && this.enabled) {
-            AuraTriggerEvent.auraLinkedEvents.remove();
-        }
-
-        super._enable(enabled, triggers);
-    }
-
-    label(trigger: AuraTrigger, eventLabel = super.label(trigger)): string {
-        const input = trigger.conditions.auraSlug?.trim() ?? "";
-        return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
-    }
-
-    test(
-        target: TargetDocuments,
-        trigger: AuraTrigger,
-        options: AuraTestOptions,
-        cache: AuraTestCache
-    ): Promisable<boolean> {
-        const actor = target.actor;
-
-        cache.isCombatant ??= (() => {
-            const combat = game.combat;
-            const combatant = actor.combatant;
-            return !!combat && !!combatant && combat.combatant === combatant;
-        })();
-
-        if (!cache.isCombatant) return false;
-
-        const { originItem, includeSelf, auraSlug, targetItem, targets } = trigger.conditions;
-
-        const actorAura = getActorAura(actor, trigger.conditions, options);
-        if (!actorAura) return false;
-
-        const { aura, origin } = actorAura;
-
-        return (
-            auraSlug === aura?.slug &&
-            this.testCondition(includeSelf, (self) => self === (actor === origin.actor)) &&
-            this.actorsRespectAlliance(origin.actor, actor, targets) &&
-            this.testCondition(targetItem, (uuid) => hasTriggerItem(cache, actor, uuid)) &&
-            this.testCondition(originItem, (uuid) => hasTriggerItem(cache, origin.actor, uuid))
-        );
-    }
-
-    getOrigin(
-        target: TargetDocuments,
-        trigger: Trigger,
-        options: TriggerRunOptions
-    ): TargetDocuments | undefined {
-        const actorAura = getActorAura(target.actor, trigger.conditions, options);
-        return resolveTarget(actorAura?.origin);
-    }
+function createAuraEvent(key: string, icon: string) {
+    return createEventEntry(key, icon, {
+        hasSource: true,
+        conditions: [insideAuraCondition(key)],
+    });
 }
 
-class AuraEnterTriggerEvent extends AuraTriggerEvent {
-    get id(): "aura-enter" {
-        return "aura-enter";
-    }
-
-    get icon(): string {
-        return "fa-solid fa-circle";
-    }
+function enterAuraEvent() {
+    return createAuraEvent("aura-enter", "fa-solid fa-circle");
 }
 
-class AuraLeaveTriggerEvent extends AuraTriggerEvent {
-    get id(): "aura-leave" {
-        return "aura-leave";
-    }
-
-    get icon(): string {
-        return "fa-regular fa-circle";
-    }
+function leaveAuraEvent() {
+    return createAuraEvent("aura-leave", "fa-regular fa-circle");
 }
 
-function getActorAura(
-    actor: ActorPF2e,
-    conditions: Trigger["conditions"],
-    options: AuraTestOptions
-) {
-    const auraslug = conditions.auraSlug;
-    const actorAura =
-        options.aura ?? getAurasInMemory(actor).find(({ data: aura }) => auraslug === aura.slug);
+export { enterAuraEvent, leaveAuraEvent };
 
-    return actorAura ? { aura: actorAura.data, origin: actorAura.origin } : undefined;
-}
+// abstract class AuraTriggerEvent extends TriggerEvent {
+//     static auraLinkedEvents = (() => {
+//         const _wrappers = [
+//             createWrapper(
+//                 "CONFIG.Token.documentClass.prototype.prepareBaseData",
+//                 tokenDocumentPF2ePrepareBaseData
+//             ),
+//             createWrapper(
+//                 "CONFIG.Token.documentClass.prototype.simulateUpdate",
+//                 tokenDocumentPF2eSimulateUpdate
+//             ),
+//             createWrapper("CONFIG.Scene.documentClass.prototype.prepareData", scenePF2ePrepareData),
+//         ];
 
-function tokenDocumentPF2ePrepareBaseData(
-    this: TokenDocumentPF2e,
-    wrapped: libWrapper.RegisterCallback
-) {
-    wrapped();
+//         let _activeEvents = 0;
 
-    for (const aura of this.auras.values()) {
-        Object.defineProperty(aura, "notifyActors", {
-            value: notifyActors,
-        });
-    }
-}
+//         return {
+//             add: () => {
+//                 const wasActive = _activeEvents > 0;
 
-async function notifyActors(this: TokenAura): Promise<void> {
-    if (!this.scene.isInFocus) return;
+//                 _activeEvents += 1;
 
-    const auraActor = this.token.actor;
-    const auraData = auraActor?.auras.get(this.slug);
-    if (!(auraActor && auraData?.effects.length)) return;
+//                 if (!wasActive && _activeEvents > 0) {
+//                     for (const wrapper of _wrappers) {
+//                         wrapper.activate();
+//                     }
 
-    const origin = { actor: auraActor, token: this.token };
-    const affectedActors: Set<ActorPF2e> = new Set();
-    const auradTokens = this.scene.tokens.filter(
-        (t) => t.actor?.primaryUpdater === game.user && this.containsToken(t)
-    );
+//                     runWhenReady(AuraTriggerEvent.#initialAuraCheck);
+//                 }
+//             },
+//             remove: () => {
+//                 const wasActive = _activeEvents > 0;
 
-    for (const token of auradTokens) {
-        const actor = token.actor;
-        if (!actor || affectedActors.has(actor)) continue;
+//                 _activeEvents -= 1;
 
-        affectedActors.add(actor);
+//                 if (wasActive && _activeEvents <= 0) {
+//                     for (const wrapper of _wrappers) {
+//                         wrapper.disable();
+//                     }
 
-        await actor.applyAreaEffects(auraData, origin);
+//                     runWhenReady(AuraTriggerEvent.#auraCheckCleanup);
+//                 }
+//             },
+//         };
+//     })();
 
-        if (userIsActiveGM()) {
-            const auras = getAurasInMemory(actor);
-            const already = auras.find(auraSearch(auraData, origin));
+//     static #initialAuraCheck() {
+//         if (!userIsActiveGM()) return;
 
-            setAuraInMemory(actor, auraData, origin);
+//         const scene = game.scenes.current;
 
-            if (!already) {
-                runTrigger("aura-enter", { actor, token }, {
-                    aura: { data: auraData, origin },
-                } satisfies TriggerRunOptions);
-            }
-        }
-    }
-}
+//         if (
+//             !scene ||
+//             !canvas.ready ||
+//             !scene.isInFocus ||
+//             scene.grid.type !== CONST.GRID_TYPES.SQUARE
+//         )
+//             return;
 
-function tokenDocumentPF2eSimulateUpdate(
-    this: TokenDocumentPF2e,
-    wrapped: libWrapper.RegisterCallback,
-    actorUpdates?: Record<string, unknown>
-): void {
-    wrapped(actorUpdates);
+//         const tokens = getSceneTokens();
+//         const auras = tokens.flatMap((token) => Array.from(token.auras.values()));
 
-    if (userIsActiveGM()) {
-        checkTokensAuras();
-    }
-}
+//         for (const aura of auras) {
+//             const auraActor = aura.token.actor;
+//             const auraData = auraActor?.auras.get(aura.slug);
+//             if (!(auraActor && auraData?.effects.length)) return;
 
-function scenePF2ePrepareData(this: ScenePF2e, wrapped: libWrapper.RegisterCallback) {
-    wrapped();
+//             const auradTokens = scene.tokens.filter((token) => aura.containsToken(token));
+//             const affectedActors = getTokensActors(auradTokens);
 
-    if (userIsActiveGM()) {
-        checkTokensAuras();
-    }
-}
+//             const origin = { actor: auraActor, token: aura.token };
+//             for (const actor of affectedActors) {
+//                 setAuraInMemory(actor, auraData, origin);
+//             }
+//         }
+//     }
 
-function checkTokensAuras() {
-    const tokens = getSceneTokens();
-    const sceneActors = getTokensActors(tokens);
-    const tokensAuras = tokens.flatMap((token) => Array.from(token.auras.values()));
+//     static #auraCheckCleanup() {
+//         if (!userIsActiveGM()) return;
 
-    for (const actor of sceneActors) {
-        const actorAuras = getAurasInMemory(actor);
-        if (!actorAuras.length) continue;
+//         const tokens = getSceneTokens();
+//         const sceneActors = getTokensActors(tokens);
 
-        const actorTokens = actor.getActiveTokens(true, true);
+//         for (const actor of sceneActors) {
+//             deleteInMemory(actor, "auras");
+//         }
+//     }
 
-        for (const { data: aura, origin } of actorAuras) {
-            const tokenAura = tokensAuras.find(
-                ({ slug, token }) => slug === aura.slug && token === origin.token
-            );
+//     abstract get id(): "aura-enter" | "aura-leave";
 
-            const token = tokenAura
-                ? actorTokens.find((token) => tokenAura.containsToken(token))
-                : undefined;
+//     get conditions() {
+//         return [
+//             { name: "auraSlug", type: "text", required: true },
+//             { name: "targetItem", type: "uuid" },
+//             { name: "originItem", type: "uuid" },
+//             { name: "targets", type: "select", options: ["all", "allies", "enemies"] },
+//             { name: "includeSelf", type: "checkbox" },
+//         ] as const satisfies Readonly<TriggerInputEntry[]>;
+//     }
 
-            if (!token) {
-                removeAuraFromMemory(actor, aura, origin);
-                runTrigger("aura-leave", { actor, token: actorTokens.at(0) }, {
-                    aura: { data: aura, origin },
-                } satisfies TriggerRunOptions);
-            }
-        }
-    }
-}
+//     _enable(enabled: boolean, triggers: AuraTrigger[]): void {
+//         if (enabled && !this.enabled) {
+//             AuraTriggerEvent.auraLinkedEvents.add();
+//         } else if (!enabled && this.enabled) {
+//             AuraTriggerEvent.auraLinkedEvents.remove();
+//         }
 
-function getTokensActors(tokens: TokenDocumentPF2e[]) {
-    return R.pipe(
-        tokens,
-        R.map((token) => token.actor),
-        R.filter(R.isTruthy),
-        R.unique()
-    );
-}
+//         super._enable(enabled, triggers);
+//     }
 
-function getSceneTokens() {
-    const scene = game.scenes.current;
-    if (!canvas.ready || !scene) return [];
+//     label(trigger: AuraTrigger, eventLabel = super.label(trigger)): string {
+//         const input = trigger.conditions.auraSlug?.trim() ?? "";
+//         return input ? `${eventLabel} - ${beautifySlug(input)}` : eventLabel;
+//     }
 
-    return scene.tokens.reduce((list: TokenDocumentPF2e<ScenePF2e>[], token) => {
-        if (token.isLinked && list.some((t) => t.actor === token.actor)) {
-            return list;
-        }
-        list.push(token);
-        return list;
-    }, []);
-}
+//     test(
+//         target: TargetDocuments,
+//         trigger: AuraTrigger,
+//         options: AuraTestOptions,
+//         cache: AuraTestCache
+//     ): Promisable<boolean> {
+//         const actor = target.actor;
 
-function getAurasInMemory(actor: ActorPF2e) {
-    const current = getInMemory<ActorAura[]>(actor, "auras");
+//         cache.isCombatant ??= (() => {
+//             const combat = game.combat;
+//             const combatant = actor.combatant;
+//             return !!combat && !!combatant && combat.combatant === combatant;
+//         })();
 
-    return current instanceof Array ? current : [];
-}
+//         if (!cache.isCombatant) return false;
 
-function setAuraInMemory(actor: ActorPF2e, aura: AuraData, origin: AuraOrigin) {
-    const auras = getAurasInMemory(actor);
+//         const { originItem, includeSelf, auraSlug, targetItem, targets } = trigger.conditions;
 
-    auras.findSplice(auraSearch(aura, origin));
-    auras.push({ data: aura, origin });
+//         const actorAura = getActorAura(actor, trigger.conditions, options);
+//         if (!actorAura) return false;
 
-    return setInMemory(actor, "auras", auras);
-}
+//         const { aura, origin } = actorAura;
 
-function removeAuraFromMemory(actor: ActorPF2e, aura: AuraData, origin: AuraOrigin) {
-    const auras = getAurasInMemory(actor);
+//         return (
+//             auraSlug === aura?.slug &&
+//             this.testCondition(includeSelf, (self) => self === (actor === origin.actor)) &&
+//             this.actorsRespectAlliance(origin.actor, actor, targets) &&
+//             this.testCondition(targetItem, (uuid) => hasTriggerItem(cache, actor, uuid)) &&
+//             this.testCondition(originItem, (uuid) => hasTriggerItem(cache, origin.actor, uuid))
+//         );
+//     }
 
-    auras.findSplice(auraSearch(aura, origin));
+//     getOrigin(
+//         target: TargetDocuments,
+//         trigger: Trigger,
+//         options: TriggerRunOptions
+//     ): TargetDocuments | undefined {
+//         const actorAura = getActorAura(target.actor, trigger.conditions, options);
+//         return resolveTarget(actorAura?.origin);
+//     }
+// }
 
-    return setInMemory(actor, "auras", auras);
-}
+// class AuraEnterTriggerEvent extends AuraTriggerEvent {
+//     get id(): "aura-enter" {
+//         return "aura-enter";
+//     }
 
-function auraSearch(aura: AuraData, origin: AuraOrigin) {
-    return ({ data: { slug }, origin: { token } }: ActorAura) =>
-        slug === aura.slug && token === origin.token;
-}
+//     get icon(): string {
+//         return "fa-solid fa-circle";
+//     }
+// }
 
-type AuraOrigin = Required<TargetDocuments>;
+// class AuraLeaveTriggerEvent extends AuraTriggerEvent {
+//     get id(): "aura-leave" {
+//         return "aura-leave";
+//     }
 
-type ActorAura = {
-    data: AuraData;
-    origin: AuraOrigin;
-};
+//     get icon(): string {
+//         return "fa-regular fa-circle";
+//     }
+// }
 
-type AuraTrigger = Triggers["aura-enter"] | Triggers["aura-leave"];
+// function getActorAura(
+//     actor: ActorPF2e,
+//     conditions: Trigger["conditions"],
+//     options: AuraTestOptions
+// ) {
+//     const auraslug = conditions.auraSlug;
+//     const actorAura =
+//         options.aura ?? getAurasInMemory(actor).find(({ data: aura }) => auraslug === aura.slug);
 
-type AuraTestOptions = {
-    aura?: ActorAura;
-};
+//     return actorAura ? { aura: actorAura.data, origin: actorAura.origin } : undefined;
+// }
 
-type AuraTestCache = TriggerRunCacheBase & {
-    isCombatant?: boolean;
-};
+// function tokenDocumentPF2ePrepareBaseData(
+//     this: TokenDocumentPF2e,
+//     wrapped: libWrapper.RegisterCallback
+// ) {
+//     wrapped();
 
-export { AuraEnterTriggerEvent, AuraLeaveTriggerEvent, AuraTriggerEvent };
-export type { AuraTestCache, AuraTestOptions, AuraTrigger };
+//     for (const aura of this.auras.values()) {
+//         Object.defineProperty(aura, "notifyActors", {
+//             value: notifyActors,
+//         });
+//     }
+// }
+
+// async function notifyActors(this: TokenAura): Promise<void> {
+//     if (!this.scene.isInFocus) return;
+
+//     const auraActor = this.token.actor;
+//     const auraData = auraActor?.auras.get(this.slug);
+//     if (!(auraActor && auraData?.effects.length)) return;
+
+//     const origin = { actor: auraActor, token: this.token };
+//     const affectedActors: Set<ActorPF2e> = new Set();
+//     const auradTokens = this.scene.tokens.filter(
+//         (t) => t.actor?.primaryUpdater === game.user && this.containsToken(t)
+//     );
+
+//     for (const token of auradTokens) {
+//         const actor = token.actor;
+//         if (!actor || affectedActors.has(actor)) continue;
+
+//         affectedActors.add(actor);
+
+//         await actor.applyAreaEffects(auraData, origin);
+
+//         if (userIsActiveGM()) {
+//             const auras = getAurasInMemory(actor);
+//             const already = auras.find(auraSearch(auraData, origin));
+
+//             setAuraInMemory(actor, auraData, origin);
+
+//             if (!already) {
+//                 runTrigger("aura-enter", { actor, token }, {
+//                     aura: { data: auraData, origin },
+//                 } satisfies TriggerRunOptions);
+//             }
+//         }
+//     }
+// }
+
+// function tokenDocumentPF2eSimulateUpdate(
+//     this: TokenDocumentPF2e,
+//     wrapped: libWrapper.RegisterCallback,
+//     actorUpdates?: Record<string, unknown>
+// ): void {
+//     wrapped(actorUpdates);
+
+//     if (userIsActiveGM()) {
+//         checkTokensAuras();
+//     }
+// }
+
+// function scenePF2ePrepareData(this: ScenePF2e, wrapped: libWrapper.RegisterCallback) {
+//     wrapped();
+
+//     if (userIsActiveGM()) {
+//         checkTokensAuras();
+//     }
+// }
+
+// function checkTokensAuras() {
+//     const tokens = getSceneTokens();
+//     const sceneActors = getTokensActors(tokens);
+//     const tokensAuras = tokens.flatMap((token) => Array.from(token.auras.values()));
+
+//     for (const actor of sceneActors) {
+//         const actorAuras = getAurasInMemory(actor);
+//         if (!actorAuras.length) continue;
+
+//         const actorTokens = actor.getActiveTokens(true, true);
+
+//         for (const { data: aura, origin } of actorAuras) {
+//             const tokenAura = tokensAuras.find(
+//                 ({ slug, token }) => slug === aura.slug && token === origin.token
+//             );
+
+//             const token = tokenAura
+//                 ? actorTokens.find((token) => tokenAura.containsToken(token))
+//                 : undefined;
+
+//             if (!token) {
+//                 removeAuraFromMemory(actor, aura, origin);
+//                 runTrigger("aura-leave", { actor, token: actorTokens.at(0) }, {
+//                     aura: { data: aura, origin },
+//                 } satisfies TriggerRunOptions);
+//             }
+//         }
+//     }
+// }
+
+// function getTokensActors(tokens: TokenDocumentPF2e[]) {
+//     return R.pipe(
+//         tokens,
+//         R.map((token) => token.actor),
+//         R.filter(R.isTruthy),
+//         R.unique()
+//     );
+// }
+
+// function getSceneTokens() {
+//     const scene = game.scenes.current;
+//     if (!canvas.ready || !scene) return [];
+
+//     return scene.tokens.reduce((list: TokenDocumentPF2e<ScenePF2e>[], token) => {
+//         if (token.isLinked && list.some((t) => t.actor === token.actor)) {
+//             return list;
+//         }
+//         list.push(token);
+//         return list;
+//     }, []);
+// }
+
+// function getAurasInMemory(actor: ActorPF2e) {
+//     const current = getInMemory<ActorAura[]>(actor, "auras");
+
+//     return current instanceof Array ? current : [];
+// }
+
+// function setAuraInMemory(actor: ActorPF2e, aura: AuraData, origin: AuraOrigin) {
+//     const auras = getAurasInMemory(actor);
+
+//     auras.findSplice(auraSearch(aura, origin));
+//     auras.push({ data: aura, origin });
+
+//     return setInMemory(actor, "auras", auras);
+// }
+
+// function removeAuraFromMemory(actor: ActorPF2e, aura: AuraData, origin: AuraOrigin) {
+//     const auras = getAurasInMemory(actor);
+
+//     auras.findSplice(auraSearch(aura, origin));
+
+//     return setInMemory(actor, "auras", auras);
+// }
+
+// function auraSearch(aura: AuraData, origin: AuraOrigin) {
+//     return ({ data: { slug }, origin: { token } }: ActorAura) =>
+//         slug === aura.slug && token === origin.token;
+// }
+
+// type AuraOrigin = Required<TargetDocuments>;
+
+// type ActorAura = {
+//     data: AuraData;
+//     origin: AuraOrigin;
+// };
+
+// type AuraTrigger = Triggers["aura-enter"] | Triggers["aura-leave"];
+
+// type AuraTestOptions = {
+//     aura?: ActorAura;
+// };
+
+// type AuraTestCache = TriggerRunCacheBase & {
+//     isCombatant?: boolean;
+// };
+
+// export { AuraEnterTriggerEvent, AuraLeaveTriggerEvent, AuraTriggerEvent };
+// export type { AuraTestCache, AuraTestOptions, AuraTrigger };

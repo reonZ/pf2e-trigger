@@ -31,7 +31,7 @@ import {
     TriggerInputs,
     TriggerInputType,
     TriggerInputValueType,
-} from "../trigger";
+} from "../trigger.old";
 import { ActionImporter, TriggerImporter } from "./import";
 
 class CustomTriggers extends FormApplication {

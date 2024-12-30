@@ -1,86 +1,71 @@
-import { SAVE_TYPES } from "module-helpers";
-import { Trigger, TriggerActions, TriggerInputEntry, TriggerInputValueType } from "../trigger";
-import { TriggerEventAction } from "./base";
+import { ZeroToThree } from "module-helpers";
+import { createActionEntry } from ".";
 
-class RollSaveAction extends TriggerEventAction {
-    get type(): "roll-save" {
-        return "roll-save";
-    }
-
-    get icon(): string {
-        return "fa-solid fa-dice-d20";
-    }
-
-    get options() {
-        return [
+function rollSaveAction() {
+    return createActionEntry(
+        "roll-save",
+        "fa-solid fa-dice-d20",
+        [
             {
-                name: "save",
+                key: "save",
                 type: "select",
-                required: true,
                 options: [
                     { value: "fortitude", label: "PF2E.SavesFortitude" },
                     { value: "reflex", label: "PF2E.SavesReflex" },
                     { value: "will", label: "PF2E.SavesWill" },
                 ],
-                localize: true,
+            },
+            { key: "dc", type: "number", default: 15, min: 5 },
+            {
+                key: "logic",
+                type: "select",
+                default: ">",
+                ifLinked: true,
+                options: ["=", ">", "<"],
             },
             {
-                name: "dc",
-                type: "number",
-                required: true,
-                default: 15,
-                min: 5,
+                key: "success",
+                type: "select",
+                default: "1",
+                ifLinked: true,
+                options: [
+                    {
+                        value: "3",
+                        label: "PF2E.Check.Result.Degree.Check.criticalSuccess",
+                    },
+                    {
+                        value: "2",
+                        label: "PF2E.Check.Result.Degree.Check.success",
+                    },
+                    {
+                        value: "1",
+                        label: "PF2E.Check.Result.Degree.Check.failure",
+                    },
+                    {
+                        value: "0",
+                        label: "PF2E.Check.Result.Degree.Check.criticalFailure",
+                    },
+                ],
             },
-        ] as const satisfies Readonly<TriggerInputEntry[]>;
-    }
+        ] as const,
+        async (target, options, cached, extras) => {
+            const actorSave = target.actor.getStatistic(options.save);
+            if (!actorSave) return false;
 
-    get linkOption() {
-        return {
-            name: "success",
-            type: "select",
-            localize: true,
-            default: "2",
-            options: [
-                {
-                    value: "3",
-                    label: "PF2E.Check.Result.Degree.Check.criticalSuccess",
-                },
-                {
-                    value: "2",
-                    label: "PF2E.Check.Result.Degree.Check.success",
-                },
-                {
-                    value: "1",
-                    label: "PF2E.Check.Result.Degree.Check.failure",
-                },
-                {
-                    value: "0",
-                    label: "PF2E.Check.Result.Degree.Check.criticalFailure",
-                },
-            ],
-        } as const satisfies Readonly<TriggerInputEntry>;
-    }
+            const roll = await actorSave.roll({ dc: options.dc });
+            if (!roll) return false;
 
-    async execute(
-        target: TargetDocuments,
-        trigger: Trigger,
-        action: TriggerActions["roll-save"],
-        linkOption: TriggerInputValueType,
-        options: {},
-        cache: {}
-    ) {
-        const save = action.options.save;
-        if (!SAVE_TYPES.includes(save)) return false;
+            const logic = (options.logic ?? "=") as "=" | "<" | ">";
+            const threshold = Number(options.success ?? "2") as ZeroToThree;
+            const success = roll.degreeOfSuccess ?? 2;
 
-        const actorSave = target.actor.saves?.[save];
-        if (!actorSave) return false;
-
-        const roll = await actorSave.roll({ dc: action.options.dc });
-        if (!roll) return false;
-
-        const threshold = Number(linkOption);
-        return isNaN(threshold) ? true : (roll.degreeOfSuccess ?? 2) >= threshold;
-    }
+            return logic === ">"
+                ? success > threshold
+                : logic === "<"
+                ? success < threshold
+                : success === threshold;
+        }
+    );
 }
 
-export { RollSaveAction };
+export { rollSaveAction };

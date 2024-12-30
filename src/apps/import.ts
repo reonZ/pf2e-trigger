@@ -14,7 +14,7 @@ import {
     TriggerAction,
     TriggerInputs,
     TriggerInputValueType,
-} from "../trigger";
+} from "../trigger.old";
 
 abstract class Importer<TObject extends Trigger | TriggerAction> extends Application {
     #callback: (entries: TObject[]) => void;

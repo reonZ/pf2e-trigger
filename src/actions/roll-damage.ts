@@ -1,68 +1,40 @@
-import { isInstanceOf, R, rollDamageFromFormula } from "module-helpers";
-import {
-    EVENTS_MAP,
-    Trigger,
-    TriggerActions,
-    TriggerInputEntry,
-    TriggerInputValueType,
-    TriggerRunOptions,
-} from "../trigger";
-import { TriggerEventAction } from "./base";
+import { isInstanceOf, rollDamageFromFormula } from "module-helpers";
+import { createActionEntry } from ".";
 
-class RollDamageAction extends TriggerEventAction {
-    get type(): "roll-damage" {
-        return "roll-damage";
-    }
-
-    get icon(): string {
-        return "fa-solid fa-sword";
-    }
-
-    get options() {
-        return [
+function rollDamageAction() {
+    return createActionEntry(
+        "roll-damage",
+        "fa-solid fa-sword",
+        [
+            { key: "formula", type: "text" },
             {
-                name: "formula",
-                type: "text",
-                required: true,
+                key: "origin",
+                type: "select",
+                options: ["self", "source"],
+                default: "source",
+                ifHasSource: true,
             },
-            {
-                name: "item",
-                type: "uuid",
-                required: true,
-            },
-            {
-                name: "self",
-                type: "checkbox",
-            },
-        ] as const satisfies Readonly<TriggerInputEntry[]>;
-    }
+            { key: "item", type: "uuid", optional: true },
+        ] as const,
+        async (target, options, cached, extras) => {
+            const origin = (options.origin === "source" && extras.source) || target;
 
-    getOrigin(target: TargetDocuments, trigger: Trigger, options: TriggerRunOptions) {
-        const event = EVENTS_MAP.get(trigger.event);
-        return event?.getOrigin(target, trigger, options);
-    }
+            const item = (() => {
+                if (!options.item) return;
 
-    async execute(
-        target: TargetDocuments,
-        trigger: Trigger,
-        action: TriggerActions["roll-damage"],
-        linkOption: TriggerInputValueType,
-        options: { origin?: TargetDocuments },
-        cache: {}
-    ) {
-        if (!R.isString(action.options.formula) || !R.isString(action.options.item)) return false;
+                const item = cached.hasItem(origin.actor, options.item);
+                return isInstanceOf(item, "ItemPF2e") ? item : undefined;
+            })();
 
-        const item = await fromUuid(action.options.item);
-        if (!isInstanceOf(item, "ItemPF2e")) return false;
+            await rollDamageFromFormula(options.formula, {
+                item,
+                target,
+                origin,
+            });
 
-        await rollDamageFromFormula(action.options.formula, {
-            item,
-            target,
-            origin: action.options.self ? target : this.getOrigin(target, trigger, options),
-        });
-
-        return true;
-    }
+            return true;
+        }
+    );
 }
 
-export { RollDamageAction };
+export { rollDamageAction };
