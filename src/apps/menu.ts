@@ -27,7 +27,7 @@ import {
     getConditionEntry,
     getConditionLabel,
 } from "../conditions";
-import { TriggerEventEntry, getEventEntries, getEventEntry, getEventLabel } from "../events";
+import { getEventEntries, getEventEntry, getEventLabel } from "../events";
 import {
     TriggerInputType,
     TriggerInputValueType,
@@ -68,37 +68,6 @@ class TriggersMenu extends FormApplication {
             source: localize("menu.source"),
         };
 
-        const conditionsSelect = (triggerEntry: TriggerEventEntry, uniques: Set<string>) => {
-            return R.pipe(
-                getConditionEntries(),
-                R.flatMap((condition) => {
-                    if (uniques.has(condition.key)) return;
-
-                    const rawLabel = localize("condition", condition.key, "label");
-
-                    if (triggerEntry.hasSource && condition.allowSource) {
-                        return (["target", "source"] as const).map((x) => {
-                            return {
-                                value: `${condition.key}.${x}`,
-                                label: `${targets[x]}: ${rawLabel}`,
-                                rawLabel,
-                            };
-                        });
-                    }
-
-                    return [
-                        {
-                            value: condition.key,
-                            label: rawLabel,
-                            rawLabel,
-                        },
-                    ];
-                }),
-                R.filter(R.isTruthy),
-                R.sortBy(R.prop("rawLabel"))
-            );
-        };
-
         const actionsSelect = entriesToOptions("action", getActionEntries());
 
         const triggers = R.pipe(
@@ -111,6 +80,7 @@ class TriggersMenu extends FormApplication {
 
                 const triggerPath = `triggers.${triggerIndex}`;
                 const uniqueConditions: Set<string> = new Set();
+                const hasSource = triggerHasSource(trigger);
 
                 const requiredConditions = R.pipe(
                     eventEntry.conditions,
@@ -133,7 +103,7 @@ class TriggersMenu extends FormApplication {
                             isSource: !!conditionEntry.allowSource && !!condition.isSource,
                             isOptional: false,
                             path: `${triggerPath}.requiredConditions.${key}`,
-                            label: getConditionLabel(condition, conditionEntry, eventEntry),
+                            label: getConditionLabel(condition, conditionEntry, hasSource),
                         };
                     })
                 );
@@ -146,7 +116,7 @@ class TriggersMenu extends FormApplication {
                             conditionIndex
                         ): TriggerDataCondition | undefined => {
                             if (!R.isString(key) || !R.isString(id)) return;
-                            if (isSource && !eventEntry.hasSource) return;
+                            if (isSource && !hasSource) return;
 
                             const conditionEntry = getConditionEntry(key);
                             if (!conditionEntry) return;
@@ -161,7 +131,7 @@ class TriggersMenu extends FormApplication {
                                 id,
                                 isOptional: true,
                                 path: `${triggerPath}.optionalConditions.${conditionIndex}`,
-                                label: getConditionLabel({ isSource }, conditionEntry, eventEntry),
+                                label: getConditionLabel({ isSource }, conditionEntry, hasSource),
                                 isSource: !!conditionEntry.allowSource && !!isSource,
                                 value: value ?? getDefaultInputValue(conditionEntry),
                             };
@@ -186,8 +156,8 @@ class TriggersMenu extends FormApplication {
                             actionEntry.options,
                             R.map((optionEntry): TriggerDataOption | undefined => {
                                 if (
-                                    (optionEntry.ifHasSource === true && !eventEntry.hasSource) ||
-                                    (optionEntry.ifHasSource === false && eventEntry.hasSource) ||
+                                    (optionEntry.ifHasSource === true && !hasSource) ||
+                                    (optionEntry.ifHasSource === false && hasSource) ||
                                     (!linkedToNext && optionEntry.ifLinked)
                                 )
                                     return;
@@ -246,6 +216,33 @@ class TriggersMenu extends FormApplication {
                     R.filter(R.isTruthy)
                 );
 
+                const conditionsSelect = R.pipe(
+                    getConditionEntries(),
+                    R.flatMap((condition) => {
+                        if (uniqueConditions.has(condition.key)) return;
+
+                        const rawLabel = localize("condition", condition.key, "label");
+
+                        if (hasSource && condition.allowSource) {
+                            return (["target", "source"] as const).map((x) => {
+                                return {
+                                    value: `${condition.key}.${x}`,
+                                    label: `${targets[x]}: ${rawLabel}`,
+                                };
+                            });
+                        }
+
+                        return [
+                            {
+                                value: condition.key,
+                                label: rawLabel,
+                            },
+                        ];
+                    }),
+                    R.filter(R.isTruthy),
+                    R.sortBy(R.prop("label"))
+                );
+
                 return {
                     id: trigger.id,
                     event: trigger.event,
@@ -253,7 +250,7 @@ class TriggersMenu extends FormApplication {
                     path: triggerPath,
                     actions,
                     conditions: [...requiredConditions, ...optionalConditions],
-                    conditionsSelect: conditionsSelect(eventEntry, uniqueConditions),
+                    conditionsSelect,
                     actionsSelect,
                     label: getEventLabel(eventEntry, trigger as Trigger),
                 };
@@ -572,6 +569,13 @@ function entryToOption<K extends string>(
     entry: Readonly<{ key: K }>
 ) {
     return { value: entry.key, label: localize(path, entry.key, "label") };
+}
+
+function triggerHasSource(trigger: DeepPartial<Trigger>) {
+    return [
+        ...R.values(trigger.requiredConditions ?? {}),
+        ...(trigger.optionalConditions ?? []),
+    ].some((condition) => typeof getConditionEntry(condition?.key ?? "")?.sources === "function");
 }
 
 type EventAction =

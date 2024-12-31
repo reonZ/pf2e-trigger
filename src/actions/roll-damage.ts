@@ -26,13 +26,13 @@ function rollDamageAction() {
                 return isInstanceOf(item, "ItemPF2e") ? item : undefined;
             })();
 
-            await rollDamageFromFormula(options.formula, {
+            const message = await rollDamageFromFormula(options.formula, {
                 item,
                 target,
                 origin,
             });
 
-            return true;
+            return !!message;
         }
     );
 }

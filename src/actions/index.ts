@@ -6,12 +6,11 @@ import {
     getDefaultInputValue,
     isValidInputValue,
 } from "../inputs";
-import { Trigger, TriggerCache, TriggerRunOptions } from "../trigger";
+import { PreparedTrigger, TriggerCache, TriggerRunOptions } from "../trigger";
+import { addItemAction } from "./add-item";
 import { removeItemAction } from "./remove-item";
 import { rollDamageAction } from "./roll-damage";
 import { rollSaveAction } from "./roll-save";
-import { TriggerEventEntry } from "../events";
-import { addItemAction } from "./add-item";
 
 const ACTIONS: Map<string, TriggerActionEntry> = new Map();
 
@@ -75,8 +74,7 @@ function getActionLabel(key: string) {
 }
 
 function processActions(
-    trigger: DeepPartial<Trigger>,
-    eventEntry: TriggerEventEntry
+    trigger: DeepPartial<PreparedTrigger>
 ): trigger is { actions: TriggerAction[] } {
     trigger.actions = R.pipe(
         (trigger.actions ?? []) as DeepPartial<TriggerAction>[],
@@ -95,7 +93,7 @@ function processActions(
 
             for (const optionEntry of actionEntry.options) {
                 if (!linkedToNext && optionEntry.ifLinked) continue;
-                if (!eventEntry.hasSource && optionEntry.ifHasSource) continue;
+                if (!trigger.sources && optionEntry.ifHasSource) continue;
 
                 const optionKey = optionEntry.key;
                 const value = options[optionKey];

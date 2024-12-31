@@ -8,10 +8,10 @@ import {
     getInputLabel,
     hasValidInputValue,
 } from "../inputs";
-import { Trigger, TriggerCache } from "../trigger";
-import { insideAuraCondition } from "./inside-aura";
+import { PreparedTrigger, TriggerCache } from "../trigger";
 import { hasItemCondition } from "./has-item";
 import { hasRollOptionCondition } from "./has-rolloption";
+import { insideAuraCondition } from "./inside-aura";
 import { notItemCondition } from "./not-item";
 import { notRollOptionCondition } from "./not-rolloption";
 
@@ -66,16 +66,16 @@ function createConditionEntry<TInput extends TriggerInputEntry>(
 function getConditionLabel(
     condition: Partial<TriggerCondition>,
     conditionEntry: TriggerConditionEntry,
-    triggerEntry: TriggerEventEntry
+    hasSource: boolean
 ) {
     const label = getInputLabel(conditionEntry, "condition");
-    return conditionEntry.allowSource && triggerEntry.hasSource
+    return conditionEntry.allowSource && hasSource
         ? `${localize("menu", condition.isSource ? "source" : "target")}: ${label}`
         : label;
 }
 
 function processConditions(
-    trigger: DeepPartial<Trigger>,
+    trigger: DeepPartial<PreparedTrigger>,
     eventEntry: TriggerEventEntry
 ): trigger is {
     requiredConditions: Record<string, TriggerCondition>;
@@ -103,6 +103,8 @@ function processConditions(
         return true;
     };
 
+    const sources: TriggerConditionEntrySource[] = [];
+
     const requiredConditions = (trigger.requiredConditions ??= {});
     for (const conditionEntry of eventEntry.conditions) {
         const key = conditionEntry.key;
@@ -110,6 +112,10 @@ function processConditions(
 
         if (!isValid(conditionEntry, condition)) {
             return false;
+        }
+
+        if (R.isFunction(conditionEntry.sources)) {
+            sources.push(conditionEntry.sources);
         }
     }
 
@@ -119,15 +125,26 @@ function processConditions(
             const key = condition?.key;
             if (!key) return;
 
-            if (condition.isSource && !eventEntry.hasSource) return;
-
             const conditionEntry = getConditionEntry(key);
             if (!conditionEntry || !isValid(conditionEntry, condition)) return;
+
+            if (R.isFunction(conditionEntry.sources)) {
+                sources.push(conditionEntry.sources);
+            }
 
             return condition;
         }),
         R.filter(R.isTruthy)
     );
+
+    if (sources.length) {
+        trigger.sources = sources;
+    } else {
+        trigger.optionalConditions = R.pipe(
+            trigger.optionalConditions as TriggerCondition[],
+            R.filter((condition) => !condition.isSource)
+        );
+    }
 
     return true;
 }
@@ -135,14 +152,18 @@ function processConditions(
 type TriggerConditionEntryOptions = {
     unique?: boolean;
     allowSource?: boolean;
+    sources?: TriggerConditionEntrySource;
     _enable?: () => Promisable<void>;
     _disable?: () => Promisable<void>;
 };
 
+type TriggerConditionEntrySource = (target: TargetDocuments) => Promisable<TargetDocuments[]>;
+
 type TriggerConditionEntryTest<TInput extends TriggerInputEntry> = (
     target: TargetDocuments,
     value: ExtractTriggerInputValue<TInput>,
-    cached: TriggerCache
+    cached: TriggerCache,
+    source: TargetDocuments | undefined
 ) => Promisable<boolean>;
 
 type TriggerConditionEntry<TInput extends TriggerInputEntry = TriggerInputEntry> = TInput &
@@ -164,7 +185,7 @@ export {
     initializeConditions,
     processConditions,
 };
-export type { TriggerCondition, TriggerConditionEntry };
+export type { TriggerCondition, TriggerConditionEntry, TriggerConditionEntrySource };
 
 // const CONDITIONS = [auraSlug, itemUuid] as const;
 // const CONDITIONS_MAP = new Map(CONDITIONS.map((event) => [event.key, event] as const));

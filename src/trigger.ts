@@ -11,6 +11,7 @@ import {
 import { TriggerAction, getActionEntry, initializeActions, processActions } from "./actions";
 import {
     TriggerCondition,
+    TriggerConditionEntrySource,
     createNewCondition,
     getConditionEntries,
     getConditionEntry,
@@ -19,7 +20,7 @@ import {
 } from "./conditions";
 import { getEventEntries, getEventEntry, initializeEvents } from "./events";
 
-const TRIGGERS: Collection<Trigger[]> = new Collection();
+const TRIGGERS: Collection<PreparedTrigger[]> = new Collection();
 const ITEM_TYPES: Record<string, ItemType | undefined> = {};
 
 function initializeTriggers() {
@@ -35,6 +36,19 @@ function getTriggers(clone?: boolean) {
 
 function getItemType(uuid: string) {
     return uuid in ITEM_TYPES ? ITEM_TYPES[uuid] : (ITEM_TYPES[uuid] = itemTypeFromUuid(uuid));
+}
+
+async function getTriggerSources(trigger: PreparedTrigger, target: TargetDocuments) {
+    if (!trigger.sources) return [];
+
+    const sources = await Promise.all(trigger.sources.map((fn) => fn(target)));
+
+    return R.pipe(
+        sources,
+        R.filter(R.isTruthy),
+        R.flat(),
+        R.uniqueWith((a, b) => a.actor.uuid === b.actor.uuid && a.token?.uuid === b.token?.uuid)
+    );
 }
 
 function createNewTrigger(type: string): Trigger | undefined {
@@ -57,14 +71,14 @@ function createNewTrigger(type: string): Trigger | undefined {
     };
 }
 
-function processTrigger(trigger: DeepPartial<Trigger>): trigger is Trigger {
+function processTrigger(trigger: DeepPartial<PreparedTrigger>): trigger is PreparedTrigger {
     if (!R.isString(trigger.id) || !R.isString(trigger.event)) return false;
 
     const eventEntry = getEventEntry(trigger.event);
     if (!eventEntry) return false;
 
     if (!processConditions(trigger, eventEntry)) return false;
-    if (!processActions(trigger, eventEntry)) return false;
+    if (!processActions(trigger)) return false;
 
     return true;
 }
@@ -130,16 +144,20 @@ function prepareTriggers() {
     }
 
     MODULE.debugGroupEnd();
+
+    MODULE.debug(TRIGGERS);
 }
 
-async function runTriggers(key: string, target: TargetDocuments, options: TriggerRunOptions = {}) {
-    const eventEntry = getEventEntry(key);
+async function runTriggers(
+    triggerKey: string,
+    target: TargetDocuments,
+    options: TriggerRunOptions = {}
+) {
+    const eventEntry = getEventEntry(triggerKey);
     if (!eventEntry) return;
 
-    const triggers = TRIGGERS.get(key);
+    const triggers = TRIGGERS.get(triggerKey);
     if (!triggers?.length) return;
-
-    MODULE.debugGroup(`run '${key}' triggers`);
 
     const hasItemCached: Record<string, Record<string, ItemPF2e<ActorPF2e> | null>> = {};
     const isCombatantCached: Record<string, boolean> = {};
@@ -162,62 +180,84 @@ async function runTriggers(key: string, target: TargetDocuments, options: Trigge
     };
 
     triggerLoop: for (const trigger of triggers) {
-        MODULE.debug(`run trigger '${trigger.id}'`);
+        MODULE.debugGroup(`run '${triggerKey}' trigger ${trigger.id}`);
+
+        const triggerOptionsList = await (async () => {
+            if (options.source) {
+                return [options];
+            }
+
+            const sources = await getTriggerSources(trigger, target);
+            if (!sources.length) {
+                return [options];
+            }
+
+            return sources.map((source) => ({ ...options, source }));
+        })();
 
         const conditions = [...R.values(trigger.requiredConditions), ...trigger.optionalConditions];
 
-        for (const condition of conditions) {
-            const conditionEntry = getConditionEntry(condition.key);
-            if (!conditionEntry) continue;
-
-            const usedTarget =
-                (conditionEntry.allowSource && condition.isSource && options.source) || target;
-
-            if (!(await conditionEntry.test(usedTarget, condition.value, cached))) {
-                MODULE.debug(`condition '${condition.key}' failed`);
-                continue triggerLoop;
+        for (const triggerOptions of triggerOptionsList) {
+            if (triggerOptions.source) {
+                MODULE.debug(`--- source ${triggerOptions.source.actor.id}`);
             }
 
-            MODULE.debug(`condition '${condition.key}' passed`);
-        }
+            for (const condition of conditions) {
+                const conditionEntry = getConditionEntry(condition.key);
+                if (!conditionEntry) continue;
 
-        for (let i = 0; i < trigger.actions.length; i++) {
-            const action = trigger.actions[i];
-            const actionEntry = getActionEntry(action.key);
-            if (!actionEntry) continue;
+                const allowSource = conditionEntry.allowSource && condition.isSource;
+                const usedTarget = (allowSource && triggerOptions.source) || target;
+                const source = allowSource ? undefined : triggerOptions.source;
 
-            const execute = () => {
-                return actionEntry.execute(target, action.options, cached, options);
-            };
-
-            let nextAction = trigger.actions.at(i + 1);
-            if (nextAction?.linked) {
-                if (!(await execute())) {
-                    MODULE.debug(`action '${action.key}' executed and break chain`);
-                    MODULE.debug(`action '${nextAction.key}' skipped`);
-
-                    i++;
-                    while ((nextAction = trigger.actions.at(i + 1))?.linked) {
-                        MODULE.debug(`action '${nextAction.key}' skipped`);
-                        i++;
-                    }
-
-                    continue;
+                if (!(await conditionEntry.test(usedTarget, condition.value, cached, source))) {
+                    MODULE.debug(`condition '${condition.key}' failed`);
+                    MODULE.debugGroupEnd();
+                    continue triggerLoop;
                 }
-            } else {
-                execute();
+
+                MODULE.debug(`condition '${condition.key}' passed`);
             }
 
-            if (action.endProcess) {
-                MODULE.debug(`action '${action.key}' executed and end process`);
-                continue triggerLoop;
-            } else {
-                MODULE.debug(`action '${action.key}' executed`);
+            for (let i = 0; i < trigger.actions.length; i++) {
+                const action = trigger.actions[i];
+                const actionEntry = getActionEntry(action.key);
+                if (!actionEntry) continue;
+
+                const execute = () => {
+                    return actionEntry.execute(target, action.options, cached, triggerOptions);
+                };
+
+                let nextAction = trigger.actions.at(i + 1);
+                if (nextAction?.linked) {
+                    if (!(await execute())) {
+                        MODULE.debug(`action '${action.key}' executed and break chain`);
+                        MODULE.debug(`action '${nextAction.key}' skipped`);
+
+                        i++;
+                        while ((nextAction = trigger.actions.at(i + 1))?.linked) {
+                            MODULE.debug(`action '${nextAction.key}' skipped`);
+                            i++;
+                        }
+
+                        continue;
+                    }
+                } else {
+                    execute();
+                }
+
+                if (action.endProcess) {
+                    MODULE.debug(`action '${action.key}' executed and end process`);
+                    MODULE.debugGroupEnd();
+                    continue triggerLoop;
+                } else {
+                    MODULE.debug(`action '${action.key}' executed`);
+                }
             }
         }
-    }
 
-    MODULE.debugGroupEnd();
+        MODULE.debugGroupEnd();
+    }
 }
 
 type TriggerRunOptions = {
@@ -232,10 +272,14 @@ type Trigger = {
     actions: TriggerAction[];
 };
 
+type PreparedTrigger = Trigger & {
+    sources?: TriggerConditionEntrySource[];
+};
+
 type TriggerCache = {
     hasItem: (actor: ActorPF2e, uuid: string) => ItemPF2e<ActorPF2e> | null;
     isCombatant: (actor: ActorPF2e) => boolean;
 };
 
 export { createNewTrigger, getTriggers, initializeTriggers, prepareTriggers, runTriggers };
-export type { Trigger, TriggerCache, TriggerRunOptions };
+export type { PreparedTrigger, Trigger, TriggerCache, TriggerRunOptions };

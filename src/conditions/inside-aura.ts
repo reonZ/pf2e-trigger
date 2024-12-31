@@ -30,11 +30,24 @@ function insideAuraCondition(label?: string) {
             key: "aura-slug",
             label,
         },
-        ({ actor }, value, { isCombatant }) => {
-            return isCombatant(actor) && isInsideAura(actor, value);
+        ({ actor }, value, { isCombatant }, source) => {
+            return (
+                !!source &&
+                isCombatant(actor) &&
+                !!getInMemory<ActorAura[]>(actor, "auras")?.some(
+                    (aura) =>
+                        aura.data.slug === value &&
+                        aura.origin.actor.uuid === source.actor.uuid &&
+                        (!source.token || source.token.id === aura.origin.token.id)
+                )
+            );
         },
         {
             unique: true,
+            allowSource: false,
+            sources: ({ actor }) => {
+                return getAurasInMemory(actor).map((aura) => aura.origin);
+            },
             _enable,
             _disable,
         }
@@ -63,10 +76,6 @@ function _disable() {
     }
 
     runWhenReady(auraCheckCleanup);
-}
-
-function isInsideAura(actor: ActorPF2e, slug: string) {
-    return !!getInMemory<ActorAura[]>(actor, "auras")?.some((aura) => aura.data.slug === slug);
 }
 
 function auraSearch(aura: AuraData, origin: AuraOrigin) {
