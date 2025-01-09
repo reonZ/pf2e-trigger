@@ -1,10 +1,11 @@
+import triggers from "@trigger/triggers";
+import { TriggersMenu } from "@trigger/triggers-menu";
 import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
-import { TriggersMenu } from "./apps/menu";
-import { initializeTriggers, prepareTriggers } from "./trigger";
 
 MODULE.register("pf2e-trigger");
 
 // TODO remove this
+// @ts-expect-error
 CONFIG.debug.modules = true;
 
 Hooks.once("init", () => {
@@ -16,21 +17,19 @@ Hooks.once("init", () => {
         config: false,
         onChange: () => {
             if (userIsGM()) {
-                prepareTriggers();
+                triggers.processTriggers();
             }
         },
     });
 
     registerSettingMenu({
-        key: "triggersMenu",
+        key: "triggers-menu",
         type: TriggersMenu,
     });
-
-    initializeTriggers();
 });
 
 Hooks.once("setup", () => {
     if (userIsGM()) {
-        prepareTriggers();
+        triggers.processTriggers();
     }
 });

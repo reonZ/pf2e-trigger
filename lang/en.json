@@ -2,180 +2,44 @@
     "pf2e-trigger": {
         "settings": {
             "menus": {
-                "customs": {
-                    "name": "Custom Triggers",
+                "triggers-menu": {
+                    "name": "Triggers Menu",
                     "hint": "Register you own triggers with the module.",
                     "label": "Register"
                 }
             }
         },
-        "menu": {
-            "title": "Triggers Menu",
-            "export-all": {
-                "label": "Export",
-                "copied": "Triggers were copied to clipboard."
+        "triggers-menu": {
+            "title": "Triggers Menu"
+        },
+        "blueprint": {
+            "node": {
+                "in": "In",
+                "out": "Out",
+                "target": "Target",
+                "true": "True",
+                "false": "False",
+                "test": "A Bigger Test",
+                "item": "Item",
+                "uuid": "Source UUID"
             },
-            "import-all": {
-                "label": "Import"
-            },
-            "save": "Save & Close",
-            "add": "Add",
-            "target": "Target",
-            "source": "Source",
-            "trigger": {
-                "delete": {
-                    "title": "Delete Trigger",
-                    "prompt": "Are you sure you want to delete this trigger?"
+            "event": {
+                "subtitle": "Event",
+                "turn-start": {
+                    "title": "Turn Start"
                 }
             },
             "condition": {
-                "title": "Conditions",
-                "add": "Add Condition",
-                "delete": {
-                    "title": "Delete Condition",
-                    "required": "This condition is required",
-                    "prompt": "Are you sure you want to delete this condition?"
+                "subtitle": "Condition",
+                "has-item": {
+                    "title": "Has Item"
                 }
             },
-            "action": {
-                "title": "Actions",
-                "add": "Add Action",
-                "link": "Link to previous action",
-                "unlink": "Unlink actions",
-                "chain": {
-                    "end": "End Process",
-                    "continue": "Continue"
-                },
-                "delete": {
-                    "title": "Delete Action",
-                    "prompt": "Are you sure you want to delete this action?"
-                },
-                "option": {
-                    "required": "This option is required",
-                    "toggle": "Toggle Active"
-                },
-                "move": {
-                    "up": "Move Up",
-                    "down": "Move Down"
+            "value": {
+                "item-source": {
+                    "title": "Item Source"
                 }
             }
-        },
-        "importer": {
-            "import": "Import",
-            "cancel": "Cancel",
-            "hint": "Past an array of {objects} in the field below to import them.",
-            "error": "An error occured while trying to parse the imported data.",
-            "trigger": {
-                "title": "Import Trigger(s)",
-                "objects": "trigger objects"
-            },
-            "action": {
-                "title": "Import Action(s)",
-                "objects": "action objects"
-            }
-        },
-        "event": {
-            "aura-enter": {
-                "label": "Aura Enter"
-            },
-            "aura-leave": {
-                "label": "Aura Leave"
-            },
-            "turn-start": {
-                "label": "Turn Start"
-            },
-            "turn-end": {
-                "label": "Turn End"
-            }
-        },
-        "condition": {
-            "aura-slug": {
-                "label": "Affected by Aura",
-                "placeholder": "aura-slug"
-            },
-            "aura-enter": {
-                "label": "Aura Entered"
-            },
-            "aura-leave": {
-                "label": "Aura Left"
-            },
-            "has-item": {
-                "label": "Has Item"
-            },
-            "not-item": {
-                "label": "Not Item"
-            },
-            "has-rolloption": {
-                "label": "Has RollOption",
-                "placeholder": "self:item:roll-option"
-            },
-            "not-rolloption": {
-                "label": "Not RollOption",
-                "placeholder": "self:item:roll-option"
-            }
-        },
-        "action": {
-            "add-item": {
-                "label": "Add Item",
-                "option": {
-                    "item": {
-                        "label": "Item Source"
-                    }
-                }
-            },
-            "remove-item": {
-                "label": "Remove Item",
-                "option": {
-                    "item": {
-                        "label": "Item Source"
-                    }
-                }
-            },
-            "roll-damage": {
-                "label": "Roll Damage",
-                "option": {
-                    "formula": {
-                        "label": "Damage Formula",
-                        "placeholder": "(1d6+1)[fire]"
-                    },
-                    "item": {
-                        "label": "Item Source"
-                    },
-                    "origin": {
-                        "label": "Origin",
-                        "option": {
-                            "source": "Source",
-                            "self": "Self"
-                        }
-                    }
-                }
-            },
-            "roll-save": {
-                "label": "Roll Save Check",
-                "option": {
-                    "dc": {
-                        "label": "Difficulty Class"
-                    },
-                    "save": {
-                        "label": "Save Check"
-                    },
-                    "success": {
-                        "label": "Degree of Success"
-                    },
-                    "logic": {
-                        "label": "Logic",
-                        "option": {
-                            "=": "Equal To",
-                            ">": "Greater Than",
-                            "<": "Less Than"
-                        }
-                    }
-                }
-            }
-        },
-        "input": {
-            "text": "",
-            "uuid": "<source-uuid>"
         }
     }
 }

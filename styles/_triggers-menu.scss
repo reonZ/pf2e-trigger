@@ -1,0 +1,31 @@
+#pf2e-trigger-triggers-menu {
+    --width: calc(100% - var(--sidebar-width) - 15px);
+    --height: calc(100% - 10px);
+
+    height: var(--height);
+    max-height: var(--height);
+    width: var(--width);
+    max-width: var(--width);
+    margin: 0;
+
+    background-color: #808080;
+
+    border: 1px solid black;
+
+    .window-header {
+        display: none;
+    }
+
+    .window-content {
+        padding: 0;
+        position: relative;
+        background: none;
+        overflow: hidden;
+    }
+
+    form {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+}

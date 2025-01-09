@@ -1,0 +1,53 @@
+import { NodeEntryId, TriggerNode } from "@node/trigger-node";
+import { BlueprintLayer } from "./layer";
+import { BlueprintNode } from "@blueprint/node/blueprint-node";
+import { createBlueprintNode } from "@blueprint/node/blueprint-nodes-list";
+import { BlueprintNodeEntry } from "@blueprint/node/node-entry";
+import { Trigger } from "@trigger/trigger";
+
+class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
+    #nodes: Collection<BlueprintNode> = new Collection();
+
+    initialize(): void {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
+        for (const node of trigger.nodes()) {
+            this.addNode(node);
+        }
+    }
+
+    *nodes(): Generator<BlueprintNode, void, undefined> {
+        for (const node of this.#nodes) {
+            yield node;
+        }
+    }
+
+    getNode(id: string): BlueprintNode | undefined {
+        return this.#nodes.get(id);
+    }
+
+    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+        const { nodeId } = Trigger.segmentConnectionId(id);
+        return this.getNode(nodeId)?.getEntry(id);
+    }
+
+    addNode(triggerNode: TriggerNode | BlueprintNode) {
+        triggerNode =
+            triggerNode instanceof BlueprintNode ? triggerNode : createBlueprintNode(triggerNode);
+        this.#nodes.set(triggerNode.id, triggerNode);
+        this.addChild(triggerNode);
+    }
+
+    onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {
+        for (const node of this.nodes()) {
+            const connected = node.onConnect(point, other);
+
+            if (connected !== undefined) {
+                return connected;
+            }
+        }
+    }
+}
+
+export { BlueprintNodesLayer };
