@@ -15,7 +15,7 @@ class Trigger {
         this.#data = data;
     }
 
-    static segmentConnectionId(id: NodeEntryId): SegmentedEntryId {
+    static segmentEntryId(id: NodeEntryId): SegmentedEntryId {
         const seg = id.split(".");
 
         return {

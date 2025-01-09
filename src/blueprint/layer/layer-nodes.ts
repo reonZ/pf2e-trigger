@@ -28,7 +28,7 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     }
 
     getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
-        const { nodeId } = Trigger.segmentConnectionId(id);
+        const { nodeId } = Trigger.segmentEntryId(id);
         return this.getNode(nodeId)?.getEntry(id);
     }
 
