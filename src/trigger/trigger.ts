@@ -40,9 +40,22 @@ class Trigger {
 function createTrigger(data: Maybe<TriggerDataRaw>): Trigger | null {
     if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) return null;
 
+    const uniques: Set<string> = new Set();
+
     const nodes = R.pipe(
         R.isArray(data.nodes) ? data.nodes : [],
-        R.map(createTriggerNode),
+        R.map((node) => {
+            const trigger = createTriggerNode(node);
+            if (!trigger?.schema.unique) {
+                return trigger;
+            }
+
+            const uniqueId = `${trigger.type}-${trigger.key}`;
+            if (uniques.has(uniqueId)) return;
+
+            uniques.add(uniqueId);
+            return trigger;
+        }),
         R.filter(R.isTruthy),
         R.mapToObj((node) => [node.id, node])
     );

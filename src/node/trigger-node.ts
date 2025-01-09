@@ -101,6 +101,7 @@ type NodeSchemaEntry = {
 };
 
 type NodeSchema = {
+    unique?: boolean;
     inputs?: NodeSchemaEntry[];
     outputs: NodeSchemaEntry[];
 };
