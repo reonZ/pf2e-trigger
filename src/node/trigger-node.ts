@@ -9,6 +9,14 @@ abstract class TriggerNode {
         this.#data = data;
     }
 
+    static get unique(): boolean {
+        return false;
+    }
+
+    static get entriesSchema(): NodeSchema {
+        return { outputs: [] };
+    }
+
     get id(): string {
         return this.#data.id;
     }
@@ -29,7 +37,13 @@ abstract class TriggerNode {
         return this.#data.y;
     }
 
-    abstract get schema(): NodeSchema;
+    get isUnique(): boolean {
+        return !!(this.constructor as typeof TriggerNode).unique;
+    }
+
+    get schema(): NodeSchema {
+        return (this.constructor as typeof TriggerNode).entriesSchema;
+    }
 
     getValue(category: NodeEntryCategory, key: string): NodeEntryValue {
         return this.#readCursor(category, key).value;
@@ -101,7 +115,6 @@ type NodeSchemaEntry = {
 };
 
 type NodeSchema = {
-    unique?: boolean;
     inputs?: NodeSchemaEntry[];
     outputs: NodeSchemaEntry[];
 };

@@ -1,4 +1,4 @@
-import { NodeEntryCategory, NodeEntryId } from "@node/trigger-node";
+import { NodeEntryCategory, NodeEntryId, NodeEntryType } from "@node/trigger-node";
 import { R } from "module-helpers";
 import { BlueprintNode } from "./blueprint-node";
 import { BlueprintNodeLayout } from "./node-child";
@@ -55,8 +55,15 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
         }
     }
 
-    getEntry(id: NodeEntryId): BlueprintNodeEntry | undefined {
+    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
         return this.#entries.get(id);
+    }
+
+    getEntryFromType(
+        category: NodeEntryCategory,
+        type: NodeEntryType | undefined
+    ): BlueprintNodeEntry | undefined {
+        return this.#entries.find((entry) => entry.category === category && entry.type === type);
     }
 
     paint(maxWidth: number): void {

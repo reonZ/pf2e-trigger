@@ -12,8 +12,29 @@
         "triggers-menu": {
             "title": "Triggers Menu"
         },
-        "blueprint": {
-            "node": {
+        "node": {
+            "event": {
+                "title": "Events",
+                "subtitle": "Event",
+                "turn-start": {
+                    "title": "Turn Start"
+                }
+            },
+            "condition": {
+                "title": "Conditions",
+                "subtitle": "Condition",
+                "has-item": {
+                    "title": "Has Item"
+                }
+            },
+            "value": {
+                "title": "Values",
+                "subtitle": "value",
+                "item-source": {
+                    "title": "Item Source"
+                }
+            },
+            "entry": {
                 "in": "In",
                 "out": "Out",
                 "target": "Target",
@@ -22,23 +43,6 @@
                 "test": "A Bigger Test",
                 "item": "Item",
                 "uuid": "Source UUID"
-            },
-            "event": {
-                "subtitle": "Event",
-                "turn-start": {
-                    "title": "Turn Start"
-                }
-            },
-            "condition": {
-                "subtitle": "Condition",
-                "has-item": {
-                    "title": "Has Item"
-                }
-            },
-            "value": {
-                "item-source": {
-                    "title": "Item Source"
-                }
             }
         }
     }

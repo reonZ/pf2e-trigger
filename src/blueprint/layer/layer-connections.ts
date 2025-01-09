@@ -4,6 +4,8 @@ import { NodeEntryId } from "@node/trigger-node";
 import { R, subtractPoints } from "module-helpers";
 import { BlueprintLayer } from "./layer";
 import { BlueprintNodesLayer } from "./layer-nodes";
+import { BlueprintMenu } from "@blueprint/menu";
+import { createTriggerNode } from "@node/trigger-nodes-list";
 
 class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     #connector!: PIXI.Graphics;
@@ -111,7 +113,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         );
     }
 
-    #endConnection(event: PIXI.FederatedPointerEvent) {
+    async #endConnection(event: PIXI.FederatedPointerEvent) {
         const origin = this.#connecting;
 
         this.#terminateConnection(event);
@@ -127,12 +129,35 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         } else if (target === null) {
             this.#connector.clear();
         } else {
-            this.#onMenu(origin, point);
+            await this.#onMenu(origin, point);
+            this.#connector.clear();
         }
     }
 
-    #onMenu(origin: BlueprintNodeEntry, point: Point) {
-        console.log("menu");
+    async #onMenu(origin: BlueprintNodeEntry, { x, y }: Point) {
+        if (!this.trigger) return;
+
+        const result = await BlueprintMenu.open(this.blueprint, { x, y }, origin);
+        if (!result) return;
+
+        const node = createTriggerNode({ ...result, x, y, id: fu.randomID() });
+        if (!node) return;
+
+        this.trigger.addNode(node);
+
+        const blueprintNode = this.nodesLayer.addNode(node);
+        const target = blueprintNode.getEntryFromType(origin.oppositeCategory, origin.type);
+
+        if (target) {
+            const offset = subtractPoints({ x, y }, target.connectorOffset);
+            const point = subtractPoints(offset, this.stage.position);
+
+            blueprintNode.setPosition(point);
+
+            this.#onConnected(origin, target);
+        }
+
+        this.#connector.clear();
     }
 
     #onConnected(origin: BlueprintNodeEntry, target: BlueprintNodeEntry) {

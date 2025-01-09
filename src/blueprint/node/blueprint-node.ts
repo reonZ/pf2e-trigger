@@ -1,17 +1,18 @@
+import { Blueprint } from "@blueprint/blueprint";
 import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
 import {
     NodeEntryCategory,
     NodeEntryId,
+    NodeEntryType,
     NodeSchema,
     NodeType,
     TriggerNode,
 } from "@node/trigger-node";
-import { BlueprintNodeHeader } from "./node-header";
-import { Blueprint } from "@blueprint/blueprint";
 import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
 import { BlueprintNodeBody } from "./node-body";
 import { BlueprintNodeBorder } from "./node-border";
 import { BlueprintNodeEntry } from "./node-entry";
+import { BlueprintNodeHeader } from "./node-header";
 
 abstract class BlueprintNode extends PIXI.Container {
     #dragOffset: Point = { x: 0, y: 0 };
@@ -69,12 +70,12 @@ abstract class BlueprintNode extends PIXI.Container {
         return this.blueprint.stage;
     }
 
-    get localizePath(): string {
-        return `blueprint.${this.type}.${this.key}`;
-    }
-
     get icon(): PIXI.Sprite | string | null {
         return null;
+    }
+
+    get localizePath(): string {
+        return `node.${this.type}.${this.key}`;
     }
 
     get title(): string | null {
@@ -82,7 +83,7 @@ abstract class BlueprintNode extends PIXI.Container {
     }
 
     get subtitle(): string | null {
-        return localize("blueprint", this.type, "subtitle");
+        return localize("node", this.type, "subtitle");
     }
 
     get fontSize(): number {
@@ -115,8 +116,15 @@ abstract class BlueprintNode extends PIXI.Container {
         }
     }
 
-    getEntry(id: NodeEntryId): BlueprintNodeEntry | undefined {
-        return this.#body.getEntry(id);
+    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+        return this.#body.getEntryFromId(id);
+    }
+
+    getEntryFromType(
+        category: NodeEntryCategory,
+        type: NodeEntryType | undefined
+    ): BlueprintNodeEntry | undefined {
+        return this.#body.getEntryFromType(category, type);
     }
 
     bringToTop() {
@@ -148,6 +156,7 @@ abstract class BlueprintNode extends PIXI.Container {
     }
 
     refresh() {
+        console.log(this);
         const removed = this.removeChildren();
 
         for (let i = 0; i < removed.length; ++i) {
@@ -223,14 +232,24 @@ abstract class BlueprintNode extends PIXI.Container {
         this.stage.on("pointermove", this.#onDragMove, this);
     }
 
+    setPosition(x: number, y: number): void;
+    setPosition(point: Point): void;
+    setPosition(xOrPoint: Point | number, y: number = 0) {
+        const position = R.isNumber(xOrPoint) ? { x: xOrPoint, y } : xOrPoint;
+        this.position.set(position.x, position.y);
+    }
+
     #onDragMove(event: PIXI.FederatedPointerEvent) {
         const position = subtractPoints(event.global, this.#dragOffset);
+        const newPosition = this.stage.toLocal(position);
 
-        this.stage.toLocal(position, undefined, this.position);
+        this.setPosition(newPosition);
         this.blueprint.layers.connections.updateConnections(this);
     }
 
     #onDragEnd(event: PIXI.FederatedPointerEvent) {
+        // TODO we need to save the new coordinates
+
         this.stage.off("pointerup", this.#onDragEnd, this);
         this.stage.off("pointerupoutside", this.#onDragEnd, this);
         this.stage.off("pointermove", this.#onDragMove, this);

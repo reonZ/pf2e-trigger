@@ -1,3 +1,4 @@
+import { Blueprint } from "@blueprint/blueprint";
 import {
     NodeEntryCategory,
     NodeEntryId,
@@ -8,10 +9,9 @@ import {
     NodeType,
     TriggerNode,
 } from "@node/trigger-node";
-import { BlueprintNodeBody } from "./node-body";
-import { BlueprintNode } from "./blueprint-node";
 import { ItemPF2e, R, joinStr, localize, localizeIfExist } from "module-helpers";
-import { Blueprint } from "@blueprint/blueprint";
+import { BlueprintNode } from "./blueprint-node";
+import { BlueprintNodeBody } from "./node-body";
 
 const NODE_TYPE_COLOR: Record<NodeEntryType, PIXI.Color | number> = {
     item: 0x3c85fa,
@@ -20,14 +20,23 @@ const NODE_TYPE_COLOR: Record<NodeEntryType, PIXI.Color | number> = {
     text: 0x0,
 };
 
-const INPUT_COMPONENT_TYPES: NodeEntryType[] = ["uuid", "text"];
+const FIELD_TYPES: NodeEntryType[] = ["uuid", "text"];
 
-const NODE_CONNECTION_OUTPUTS: Record<NodeType, NodeType[]> = {
-    action: ["action"],
-    condition: ["condition", "action"],
-    event: ["condition"],
-    logic: [],
-    value: [],
+const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
+    inputs: {
+        action: ["condition", "action"],
+        condition: ["event", "condition"],
+        event: [],
+        logic: [],
+        value: [],
+    },
+    outputs: {
+        action: ["action"],
+        condition: ["condition", "action"],
+        event: ["condition"],
+        logic: [],
+        value: [],
+    },
 };
 
 class BlueprintNodeEntry extends PIXI.Graphics {
@@ -45,8 +54,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         this.#schema = schema;
         this.#body = body;
 
-        this.#isField =
-            category === "inputs" && !!schema.type && INPUT_COMPONENT_TYPES.includes(schema.type);
+        this.#isField = category === "inputs" && isFieldConnection(schema.type);
 
         this.#connector = this.#createConnector();
         this.#text = this.#createText();
@@ -129,7 +137,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
     }
 
     get label() {
-        const path = "blueprint.node";
+        const path = "node.entry";
         const label = this.#schema.label;
         const key = this.key ?? this.category;
 
@@ -152,6 +160,16 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         return {
             x: bounds.x + bounds.width / 2,
             y: bounds.y + bounds.height / 2,
+        };
+    }
+
+    get connectorOffset(): Point {
+        const center = this.connectorCenter;
+        const bounds = this.node.getBounds();
+
+        return {
+            x: center.x - bounds.x,
+            y: center.y - bounds.y,
         };
     }
 
@@ -184,9 +202,10 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         if (!this.isValue) {
             const output = this.category === "outputs" ? this : other;
             const input = output === this ? other : this;
-            const allowed = NODE_CONNECTION_OUTPUTS[output.node.type];
 
-            if (!allowed.includes(input.node.type)) return false;
+            if (!canConnectoToBridge("outputs", output.node.type, input.node.type)) {
+                return false;
+            }
         }
 
         const connections = Object.keys(this.connections);
@@ -364,8 +383,17 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         el.focus();
         el.setSelectionRange(0, -1);
 
-        const onBlur = () => {
-            this.value = el.value;
+        const self = this;
+        const stage = this.node.stage;
+        stage.eventMode = "none";
+        stage.interactiveChildren = false;
+
+        const onBlur = function () {
+            self.value = el.value;
+
+            stage.eventMode = "static";
+            stage.interactiveChildren = true;
+
             el.remove();
         };
 
@@ -394,4 +422,16 @@ class BlueprintNodeEntry extends PIXI.Graphics {
     }
 }
 
-export { BlueprintNodeEntry };
+function isFieldConnection(type: NodeEntryType | undefined): boolean {
+    return !!type && FIELD_TYPES.includes(type);
+}
+
+function canConnectoToBridge(category: NodeEntryCategory, origin: NodeType, target: NodeType) {
+    const allowed = BRIDGE_CONNECTIONS[category][origin];
+    return allowed.includes(target);
+}
+
+type NodeConnectionsList = Record<NodeType, NodeType[]>;
+
+export { BlueprintNodeEntry, canConnectoToBridge, isFieldConnection };
+export type { NodeConnectionsList };

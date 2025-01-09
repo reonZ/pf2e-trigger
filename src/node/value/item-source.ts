@@ -2,7 +2,7 @@ import { NodeSchema } from "@node/trigger-node";
 import { ValueTriggerNode } from "./value";
 
 class ItemSourceValueTriggerNode extends ValueTriggerNode {
-    get schema(): NodeSchema {
+    static get entriesSchema(): NodeSchema {
         return {
             inputs: [{ key: "uuid", type: "uuid" }],
             outputs: [{ key: "item", type: "item" }],

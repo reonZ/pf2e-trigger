@@ -1,9 +1,11 @@
+import { createTriggerNode } from "@node/trigger-nodes-list";
 import { Trigger } from "@trigger/trigger";
 import triggers from "@trigger/triggers";
 import { ItemPF2e, MODULE, R, subtractPoints } from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
-import { BlueprintNodesLayer } from "./layer/layer-nodes";
 import { BlueprintGridLayer } from "./layer/layer-grid";
+import { BlueprintNodesLayer } from "./layer/layer-nodes";
+import { BlueprintMenu } from "./menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #dragging: Point | null = null;
@@ -89,6 +91,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return { x: point.x - viewBounds.x, y: point.y - viewBounds.y };
     }
 
+    getGlobalCoordinates(point: Point) {
+        const viewBounds = this.view.getBoundingClientRect();
+        return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
+    }
+
     #onDropCanvasData(event: DragEvent) {
         const data = TextEditor.getDragEventData(event) as unknown as DropCanvasData;
         if (!R.isPlainObject(data) || data.type !== "Item" || !R.isString(data.uuid)) return;
@@ -134,7 +141,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#gridLayer.reverseTilePosition(x, y);
     }
 
-    #onDragEnd(event: PIXI.FederatedPointerEvent) {
+    async #onDragEnd(event: PIXI.FederatedPointerEvent) {
         const wasDragging = !!this.#dragging;
 
         this.#dragging = null;
@@ -145,9 +152,26 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.off("pointerupoutside", this.#onDragEnd, this);
         this.stage.off("pointermove", this.#onDragMove, this);
 
-        if (wasDragging) return;
+        if (wasDragging || !this.trigger) return;
 
-        console.log("menu", event.global);
+        const { x, y } = event.global;
+        const result = await BlueprintMenu.open(this, { x, y });
+        if (!result) return;
+
+        const node = createTriggerNode({ ...result, id: fu.randomID(), x, y });
+        if (!node) return;
+
+        this.trigger.addNode(node);
+
+        const blueprintNode = this.#nodesLayer.addNode(node);
+        const center = {
+            x: x - blueprintNode.width / 2,
+            y: y - blueprintNode.height / 2,
+        };
+
+        const point = subtractPoints(center, this.stage.position);
+
+        blueprintNode.setPosition(point);
     }
 }
 

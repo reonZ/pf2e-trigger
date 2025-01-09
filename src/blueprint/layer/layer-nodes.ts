@@ -29,14 +29,16 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
 
     getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
         const { nodeId } = Trigger.segmentEntryId(id);
-        return this.getNode(nodeId)?.getEntry(id);
+        return this.getNode(nodeId)?.getEntryFromId(id);
     }
 
-    addNode(triggerNode: TriggerNode | BlueprintNode) {
-        triggerNode =
-            triggerNode instanceof BlueprintNode ? triggerNode : createBlueprintNode(triggerNode);
-        this.#nodes.set(triggerNode.id, triggerNode);
-        this.addChild(triggerNode);
+    addNode(node: TriggerNode | BlueprintNode): BlueprintNode {
+        const blueprintNode = node instanceof BlueprintNode ? node : createBlueprintNode(node);
+
+        this.#nodes.set(node.id, blueprintNode);
+        this.addChild(blueprintNode);
+
+        return blueprintNode;
     }
 
     onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {

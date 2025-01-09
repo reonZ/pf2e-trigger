@@ -1,3 +1,4 @@
+import { isFieldConnection } from "@blueprint/node/node-entry";
 import { R } from "module-helpers";
 import { HasItemConditionTriggerNode } from "./condition/has-item";
 import { EndTurnEventTriggerNode, StartTurnEventTriggerNode } from "./event/turn";
@@ -34,6 +35,41 @@ const NODES: Record<NodeType, Record<string, typeof TriggerNode>> = {
         "item-source": ItemSourceValueTriggerNode,
     },
 };
+
+const FILTERS = R.pipe(
+    NODES,
+    R.entries(),
+    R.flatMap(([type, nodes]) => {
+        return R.entries(nodes).map(([key, node]) => {
+            const schema = node.entriesSchema;
+
+            const inputs = R.pipe(
+                schema.inputs ?? [],
+                R.filter((input) => !input.type || !isFieldConnection(input.type)),
+                R.map((input) => input.type),
+                R.unique()
+            );
+
+            const outputs = R.pipe(
+                schema.outputs,
+                R.map((output) => output.type),
+                R.unique()
+            );
+
+            return {
+                type,
+                key,
+                inputs,
+                outputs,
+            };
+        });
+    }),
+    R.filter(({ type }) => type !== "event")
+);
+
+function getNodesFilters() {
+    return FILTERS;
+}
 
 function createTriggerNode(data: Maybe<NodeDataRaw>): TriggerNode | null {
     if (
@@ -116,4 +152,4 @@ function isNodeType(type: Maybe<NodeType | string>): type is NodeType {
     return R.isString(type) && NODE_TYPES.includes(type as NodeType);
 }
 
-export { createTriggerNode };
+export { createTriggerNode, getNodesFilters };

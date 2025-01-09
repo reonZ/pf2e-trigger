@@ -35,6 +35,14 @@ class Trigger {
             yield node;
         }
     }
+
+    addNode(node: TriggerNode) {
+        this.#data.nodes[node.id] = node;
+    }
+
+    getNodes(): TriggerNode[] {
+        return Object.values(this.#data.nodes);
+    }
 }
 
 function createTrigger(data: Maybe<TriggerDataRaw>): Trigger | null {
@@ -46,7 +54,7 @@ function createTrigger(data: Maybe<TriggerDataRaw>): Trigger | null {
         R.isArray(data.nodes) ? data.nodes : [],
         R.map((node) => {
             const trigger = createTriggerNode(node);
-            if (!trigger?.schema.unique) {
+            if (!trigger?.isUnique) {
                 return trigger;
             }
 
