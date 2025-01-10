@@ -14,6 +14,7 @@ import {
 } from "module-helpers";
 import { Blueprint } from "./blueprint";
 import { BlueprintNodeEntry, canConnectoToBridge } from "./node/node-entry";
+import { Trigger } from "@trigger/trigger";
 
 class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
     #resolve: BlueprintMenuResolve;
@@ -58,6 +59,18 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         });
     }
 
+    get blueprint(): Blueprint {
+        return this.#blueprint;
+    }
+
+    get view() {
+        return this.blueprint.view;
+    }
+
+    get trigger(): Trigger | null {
+        return this.blueprint.trigger;
+    }
+
     async close(options?: ApplicationClosingOptions) {
         return super.close({ animate: false });
     }
@@ -88,7 +101,7 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
 
     #getFilterNodes(): BlueprintMenuFilterNode[] {
         const sourceUniques = R.pipe(
-            this.#blueprint.trigger?.getNodes() ?? [],
+            this.trigger?.getNodes() ?? [],
             R.filter((node) => node.isUnique),
             R.map((node) => ({ key: node.key, type: node.type }))
         );
@@ -136,7 +149,7 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         if (!menu) return position;
 
         const bounds = menu?.getBoundingClientRect();
-        const viewBounds = this.#blueprint.view.getBoundingClientRect();
+        const viewBounds = this.view.getBoundingClientRect();
 
         const point = {
             x: Math.clamp(

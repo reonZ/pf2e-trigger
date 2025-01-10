@@ -8,7 +8,7 @@ import { BlueprintNodesLayer } from "./layer/layer-nodes";
 import { BlueprintMenu } from "./menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
-    #dragging: Point | null = null;
+    #drag: { origin: Point; dragging?: boolean } | null = null;
     #trigger: Trigger | null = null;
     #gridLayer: BlueprintGridLayer;
     #connectionsLayer: BlueprintConnectionsLayer;
@@ -118,19 +118,28 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #onPointerDown(event: PIXI.FederatedPointerEvent) {
         if (event.button !== 2) return;
 
+        this.#drag = { origin: subtractPoints(event.global, this.stage.position) };
+
         this.stage.on("pointerup", this.#onDragEnd, this);
         this.stage.on("pointerupoutside", this.#onDragEnd, this);
         this.stage.on("pointermove", this.#onDragMove, this);
     }
 
     #onDragMove(event: PIXI.FederatedPointerEvent) {
-        if (!this.#dragging) {
-            this.#dragging = subtractPoints(event.global, this.stage.position);
-            this.#nodesLayer.interactiveChildren = false;
-            return;
+        if (!this.#drag) return;
+
+        const { origin, dragging } = this.#drag;
+
+        if (!dragging) {
+            const { x, y } = subtractPoints(event.global, this.stage.position);
+            const distance = Math.hypot(x - origin.x, y - origin.y);
+
+            if (distance < 10) return;
         }
 
-        const { x, y } = subtractPoints(event.global, this.#dragging);
+        this.#drag.dragging = true;
+
+        const { x, y } = subtractPoints(event.global, origin);
 
         this.#hitArea.x = -x;
         this.#hitArea.y = -y;
@@ -142,9 +151,9 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     async #onDragEnd(event: PIXI.FederatedPointerEvent) {
-        const wasDragging = !!this.#dragging;
+        const wasDragging = !!this.#drag?.dragging;
 
-        this.#dragging = null;
+        this.#drag = null;
         this.#nodesLayer.interactiveChildren = true;
 
         this.stage.cursor = "default";
