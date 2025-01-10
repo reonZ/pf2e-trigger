@@ -156,11 +156,10 @@ abstract class BlueprintNode extends PIXI.Container {
     }
 
     refresh() {
-        console.log(this);
         const removed = this.removeChildren();
 
         for (let i = 0; i < removed.length; ++i) {
-            removed[i].destroy(true);
+            removed[i].destroy();
         }
 
         this.#header = this.title ? new BlueprintNodeHeader(this) : null;

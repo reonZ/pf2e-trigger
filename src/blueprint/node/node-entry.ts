@@ -383,17 +383,8 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         el.focus();
         el.setSelectionRange(0, -1);
 
-        const self = this;
-        const stage = this.node.stage;
-        stage.eventMode = "none";
-        stage.interactiveChildren = false;
-
-        const onBlur = function () {
-            self.value = el.value;
-
-            stage.eventMode = "static";
-            stage.interactiveChildren = true;
-
+        const onBlur = () => {
+            this.value = el.value;
             el.remove();
         };
 
