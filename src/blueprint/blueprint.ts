@@ -5,7 +5,7 @@ import { ItemPF2e, MODULE, R, subtractPoints } from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
-import { BlueprintMenu } from "./menu";
+import { NodesMenu } from "./nodes-menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #drag: { origin: Point; dragging?: boolean } | null = null;
@@ -164,7 +164,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (wasDragging || !this.trigger) return;
 
         const { x, y } = event.global;
-        const result = await BlueprintMenu.open(this, { x, y });
+        const result = await NodesMenu.open(this, { x, y });
         if (!result) return;
 
         const node = createTriggerNode({ ...result, id: fu.randomID(), x, y });

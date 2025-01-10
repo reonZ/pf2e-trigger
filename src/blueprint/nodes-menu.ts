@@ -16,8 +16,8 @@ import { Blueprint } from "./blueprint";
 import { BlueprintNodeEntry, canConnectoToBridge } from "./node/node-entry";
 import { Trigger } from "@trigger/trigger";
 
-class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
-    #resolve: BlueprintMenuResolve;
+class NodesMenu extends foundry.applications.api.ApplicationV2 {
+    #resolve: MenuResolve;
     #point: Point;
     #blueprint: Blueprint;
     #source: BlueprintNodeEntry | undefined;
@@ -25,7 +25,7 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
     private constructor(
         blueprint: Blueprint,
         point: Point,
-        resolve: BlueprintMenuResolve,
+        resolve: MenuResolve,
         source?: BlueprintNodeEntry,
         options?: DeepPartial<ApplicationConfiguration>
     ) {
@@ -52,8 +52,8 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         point: Point,
         source?: BlueprintNodeEntry,
         options?: DeepPartial<ApplicationConfiguration>
-    ): Promise<BlueprintMenuReturnedValue> {
-        return new Promise<BlueprintMenuReturnedValue>((resolve) => {
+    ): Promise<ReturnedValue> {
+        return new Promise<ReturnedValue>((resolve) => {
             const menu = new this(blueprint, point, resolve, source, options);
             menu.render(true);
         });
@@ -79,11 +79,11 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         this.#resolve(null);
     }
 
-    async _prepareContext(options: ApplicationRenderOptions): Promise<BlueprintMenuContext> {
+    async _prepareContext(options: ApplicationRenderOptions): Promise<MenuData> {
         const groups = R.pipe(
             this.#getFilterNodes(),
             R.map(
-                ({ key, type }): ContextNode => ({
+                ({ key, type }): DataNode => ({
                     key,
                     type,
                     label: localize(`node.${type}.${key}.title`),
@@ -99,7 +99,7 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         };
     }
 
-    #getFilterNodes(): BlueprintMenuFilterNode[] {
+    #getFilterNodes(): MenuFilterNode[] {
         const sourceUniques = R.pipe(
             this.trigger?.getNodes() ?? [],
             R.filter((node) => node.isUnique),
@@ -178,7 +178,7 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
         addListenerAll(html, "li", (event, el) => {
             event.stopPropagation();
 
-            const { type, key } = el.dataset as BlueprintMenuNode;
+            const { type, key } = el.dataset as MenuNode;
 
             this.#resolve({ type, key });
             this.close();
@@ -186,28 +186,26 @@ class BlueprintMenu extends foundry.applications.api.ApplicationV2 {
     }
 }
 
-type ContextNode = { type: NodeType; key: string; label: string };
-type ContextNodesGroup = { title: string; nodes: ContextNode[] };
+type DataNode = { type: NodeType; key: string; label: string };
+type DataNodesGroup = { title: string; nodes: DataNode[] };
 
-type BlueprintMenuContext = {
-    groups: Partial<Record<NodeType, ContextNodesGroup>>;
+type MenuData = {
+    groups: Partial<Record<NodeType, DataNodesGroup>>;
     i18n: ReturnType<typeof templateLocalize>;
 };
 
-type BlueprintMenuNode = {
+type MenuNode = {
     type: NodeType;
     key: string;
 };
 
-type BlueprintMenuReturnedValue = { type: NodeType; key: string } | null;
+type ReturnedValue = { type: NodeType; key: string } | null;
 
-type BlueprintMenuResolve = (
-    value: BlueprintMenuReturnedValue | PromiseLike<BlueprintMenuReturnedValue>
-) => void;
+type MenuResolve = (value: ReturnedValue | PromiseLike<ReturnedValue>) => void;
 
-type BlueprintMenuFilterNode = BlueprintMenuNode & {
+type MenuFilterNode = MenuNode & {
     inputs: (NodeEntryType | undefined)[];
     outputs: (NodeEntryType | undefined)[];
 };
 
-export { BlueprintMenu };
+export { NodesMenu };

@@ -1,11 +1,11 @@
 import { BlueprintNode } from "@blueprint/node/blueprint-node";
 import { BlueprintNodeEntry } from "@blueprint/node/node-entry";
+import { NodesMenu } from "@blueprint/nodes-menu";
 import { NodeEntryId } from "@node/trigger-node";
+import { createTriggerNode } from "@node/trigger-nodes-list";
 import { R, subtractPoints } from "module-helpers";
 import { BlueprintLayer } from "./layer";
 import { BlueprintNodesLayer } from "./layer-nodes";
-import { BlueprintMenu } from "@blueprint/menu";
-import { createTriggerNode } from "@node/trigger-nodes-list";
 
 class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     #connector!: PIXI.Graphics;
@@ -137,7 +137,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     async #onMenu(origin: BlueprintNodeEntry, { x, y }: Point) {
         if (!this.trigger) return;
 
-        const result = await BlueprintMenu.open(this.blueprint, { x, y }, origin);
+        const result = await NodesMenu.open(this.blueprint, { x, y }, origin);
         if (!result) return;
 
         const node = createTriggerNode({ ...result, x, y, id: fu.randomID() });
