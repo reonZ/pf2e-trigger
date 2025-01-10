@@ -30,10 +30,13 @@ abstract class BlueprintNode extends PIXI.Container {
         this.x = trigger.x;
         this.y = trigger.y;
 
+        this.eventMode = "static";
+
         if (this.canDrag) {
             this.cursor = "move";
-            this.eventMode = "static";
             this.on("pointerdown", this.#onPointerDown, this);
+        } else {
+            this.on("pointerdown", (event) => event.stopPropagation());
         }
 
         this.#header = this.title ? new BlueprintNodeHeader(this) : null;
