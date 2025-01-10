@@ -5,7 +5,7 @@ import { ItemPF2e, MODULE, R, subtractPoints } from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
-import { NodesMenu } from "./nodes-menu";
+import { BlueprintNodesMenu } from "./nodes-menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #drag: { origin: Point; dragging?: boolean } | null = null;
@@ -120,8 +120,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         this.#drag = { origin: subtractPoints(event.global, this.stage.position) };
 
-        this.stage.on("pointerup", this.#onDragEnd, this);
-        this.stage.on("pointerupoutside", this.#onDragEnd, this);
+        this.stage.on("pointerup", this.#onPointerUp, this);
+        this.stage.on("pointerupoutside", this.#onPointerUp, this);
         this.stage.on("pointermove", this.#onDragMove, this);
     }
 
@@ -150,21 +150,21 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#gridLayer.reverseTilePosition(x, y);
     }
 
-    async #onDragEnd(event: PIXI.FederatedPointerEvent) {
+    async #onPointerUp(event: PIXI.FederatedPointerEvent) {
         const wasDragging = !!this.#drag?.dragging;
 
         this.#drag = null;
         this.#nodesLayer.interactiveChildren = true;
 
         this.stage.cursor = "default";
-        this.stage.off("pointerup", this.#onDragEnd, this);
-        this.stage.off("pointerupoutside", this.#onDragEnd, this);
+        this.stage.off("pointerup", this.#onPointerUp, this);
+        this.stage.off("pointerupoutside", this.#onPointerUp, this);
         this.stage.off("pointermove", this.#onDragMove, this);
 
         if (wasDragging || !this.trigger) return;
 
         const { x, y } = event.global;
-        const result = await NodesMenu.open(this, { x, y });
+        const result = await BlueprintNodesMenu.open(this, { x, y });
         if (!result) return;
 
         const node = createTriggerNode({ ...result, id: fu.randomID(), x, y });

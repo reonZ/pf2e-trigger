@@ -1,18 +1,18 @@
 import { BlueprintNode } from "@blueprint/node/blueprint-node";
 import { BlueprintNodeEntry } from "@blueprint/node/node-entry";
-import { NodesMenu } from "@blueprint/nodes-menu";
 import { NodeEntryId } from "@node/trigger-node";
 import { createTriggerNode } from "@node/trigger-nodes-list";
 import { R, subtractPoints } from "module-helpers";
 import { BlueprintLayer } from "./layer";
 import { BlueprintNodesLayer } from "./layer-nodes";
+import { BlueprintNodesMenu } from "@blueprint/nodes-menu";
 
 class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     #connector!: PIXI.Graphics;
     #connecting: BlueprintNodeEntry | null = null;
     #connections: Map<TwoWaysId, PIXI.Graphics> = new Map();
 
-    get nodesLayer(): BlueprintNodesLayer {
+    get nodes(): BlueprintNodesLayer {
         return this.blueprint.layers.nodes;
     }
 
@@ -20,13 +20,13 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         const trigger = this.trigger;
         if (!trigger) return;
 
-        for (const node of this.nodesLayer.nodes()) {
+        for (const node of this.nodes.nodes()) {
             for (const origin of node.entries("outputs", true)) {
-                const ids = origin.connections;
+                const ids = origin.entries;
 
                 for (const id of R.keys(ids)) {
-                    const target = this.nodesLayer.getEntryFromId(id);
-                    if (!target || !target.connections[origin.id]) continue;
+                    const target = this.nodes.getEntryFromId(id);
+                    if (!target || !target.entries[origin.id]) continue;
 
                     this.createConnection(origin, target);
                 }
@@ -39,16 +39,36 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
 
         this.#drawConnection(connection, origin, target);
 
-        twoWays(origin, target, (id) => this.#connections.set(id, connection));
+        twoWays(origin.id, target.id, (id) => this.#connections.set(id, connection));
     }
 
-    updateConnections(node: BlueprintNode) {
+    removeConnection(originId: NodeEntryId, targetId: NodeEntryId) {
+        let toRemove: PIXI.Graphics | undefined;
+
+        twoWays(originId, targetId, (id) => {
+            const connection = this.#connections.get(id);
+            if (!connection) return;
+
+            toRemove = connection;
+            this.#connections.delete(id);
+        });
+
+        if (toRemove) {
+            this.removeChild(toRemove);
+            toRemove.destroy();
+        }
+    }
+
+    updateConnections(nodeOrId: BlueprintNode | string) {
+        const node = nodeOrId instanceof BlueprintNode ? nodeOrId : this.nodes.getNode(nodeOrId);
+        if (!node) return;
+
         for (const origin of node.entries(undefined, true)) {
-            const ids = origin.connections;
+            const ids = origin.entries;
 
             for (const id of R.keys(ids)) {
-                const target = this.nodesLayer.getEntryFromId(id);
-                if (!target || !target.connections[origin.id]) continue;
+                const target = this.nodes.getEntryFromId(id);
+                if (!target || !target.entries[origin.id]) continue;
 
                 const connection = this.#connections.get(`${origin.id}-${target.id}`);
                 if (!connection) continue;
@@ -62,7 +82,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         this.#connector ??= this.addChild(new PIXI.Graphics());
         this.#connector.clear();
 
-        this.nodesLayer.interactiveChildren = false;
+        this.nodes.interactiveChildren = false;
 
         this.#connecting = origin;
 
@@ -121,7 +141,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         if (!origin) return;
 
         const point = event.global;
-        const target = this.blueprint.layers.nodes.onConnect(point, origin);
+        const target = this.nodes.onConnect(point, origin);
 
         if (target) {
             this.#connector.clear();
@@ -137,7 +157,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     async #onMenu(origin: BlueprintNodeEntry, { x, y }: Point) {
         if (!this.trigger) return;
 
-        const result = await NodesMenu.open(this.blueprint, { x, y }, origin);
+        const result = await BlueprintNodesMenu.open(this.blueprint, { x, y }, origin);
         if (!result) return;
 
         const node = createTriggerNode({ ...result, x, y, id: fu.randomID() });
@@ -145,7 +165,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
 
         this.trigger.addNode(node);
 
-        const blueprintNode = this.nodesLayer.addNode(node);
+        const blueprintNode = this.nodes.addNode(node);
         const target = blueprintNode.getEntryFromType(origin.oppositeCategory, origin.type);
 
         if (target) {
@@ -173,7 +193,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     #terminateConnection(event: PIXI.FederatedPointerEvent) {
         this.#connecting = null;
 
-        this.nodesLayer.interactiveChildren = true;
+        this.nodes.interactiveChildren = true;
 
         this.stage.off("pointermove", this.#dragConnection, this);
         this.stage.off("pointerup", this.#endConnection, this);
@@ -181,8 +201,8 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
     }
 }
 
-function twoWays(a: BlueprintNodeEntry, b: BlueprintNodeEntry, callback: (id: TwoWaysId) => void) {
-    for (const id of [`${a.id}-${b.id}`, `${b.id}-${a.id}`] as const) {
+function twoWays(a: NodeEntryId, b: NodeEntryId, callback: (id: TwoWaysId) => void) {
+    for (const id of [`${a}-${b}`, `${b}-${a}`] as const) {
         callback(id);
     }
 }
@@ -190,3 +210,4 @@ function twoWays(a: BlueprintNodeEntry, b: BlueprintNodeEntry, callback: (id: Tw
 type TwoWaysId = `${NodeEntryId}-${NodeEntryId}`;
 
 export { BlueprintConnectionsLayer };
+export type { TwoWaysId };

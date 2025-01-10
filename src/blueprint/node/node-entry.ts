@@ -120,7 +120,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         this.node.refresh();
     }
 
-    get connections(): NodeEntryIdMap {
+    get entries(): NodeEntryIdMap {
         return this.trigger.getConnections(this.category, this.key);
     }
 
@@ -129,7 +129,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
     }
 
     get isActive(): boolean {
-        return !this.#isField && Object.keys(this.connections).length > 0;
+        return !this.#isField && Object.keys(this.entries).length > 0;
     }
 
     get connectorColor(): number | PIXI.Color {
@@ -177,7 +177,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
         if (this.#isField) return false;
 
         const isValue = this.isValue;
-        const nbConnections = Object.keys(this.connections).length;
+        const nbConnections = Object.keys(this.entries).length;
 
         return (
             nbConnections === 0 ||
@@ -208,7 +208,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
             }
         }
 
-        const connections = Object.keys(this.connections);
+        const connections = Object.keys(this.entries);
 
         if (connections.length === 0) return true;
         if (other.id in connections) return false;

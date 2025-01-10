@@ -1,4 +1,5 @@
 import { Blueprint } from "@blueprint/blueprint";
+import { NodeContextMenu, NodeContextMenuValue } from "@blueprint/context-menu/node-context-menu";
 import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
 import {
     NodeEntryCategory,
@@ -214,12 +215,45 @@ abstract class BlueprintNode extends PIXI.Container {
         this.#border.paint(maxWidth);
     }
 
-    #onPointerDown(event: PIXI.FederatedPointerEvent) {
+    async #onPointerDown(event: PIXI.FederatedPointerEvent) {
         event.stopPropagation();
 
         if (event.button === 0) {
             this.bringToTop();
             this.#onDragStart(event);
+        } else if (event.button === 2) {
+            const { x, y } = event.global;
+            const result = await NodeContextMenu.open<NodeContextMenuValue>(
+                this.blueprint,
+                { x, y },
+                this
+            );
+
+            if (!result) return;
+
+            switch (result) {
+                case "delete": {
+                    return this.#deleteNode();
+                }
+            }
+        }
+    }
+
+    #deleteNode() {
+        const trigger = this.blueprint.trigger;
+        const nodesLayer = this.blueprint.layers.nodes;
+        const connectionsLayer = this.blueprint.layers.connections;
+
+        nodesLayer.removeNode(this);
+
+        for (const [thisEntryId, otherEntryId] of trigger?.removeNode(this.id) ?? []) {
+            const otherNode = nodesLayer.getEntryFromId(otherEntryId);
+
+            if (otherNode) {
+                otherNode.refreshConnector();
+            }
+
+            connectionsLayer.removeConnection(thisEntryId, otherEntryId);
         }
     }
 

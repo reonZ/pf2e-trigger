@@ -1,3 +1,4 @@
+import { BlueprintNode } from "@blueprint/node/blueprint-node";
 import {
     NodeDataRaw,
     NodeEntryCategory,
@@ -38,6 +39,27 @@ class Trigger {
 
     addNode(node: TriggerNode) {
         this.#data.nodes[node.id] = node;
+    }
+
+    *removeNode(idOrNode: string | BlueprintNode | TriggerNode) {
+        const triggerNode =
+            idOrNode instanceof BlueprintNode
+                ? idOrNode.trigger
+                : idOrNode instanceof TriggerNode
+                ? idOrNode
+                : this.#data.nodes[idOrNode];
+
+        delete this.#data.nodes[triggerNode.id];
+
+        for (const [thisEntryId, otherEntryId] of triggerNode.removeConnections()) {
+            const { nodeId, category, key } = Trigger.segmentEntryId(otherEntryId);
+            const otherNode = this.#data.nodes[nodeId];
+            if (!otherNode) continue;
+
+            otherNode.removeConnection(category, key, thisEntryId);
+
+            yield [thisEntryId, otherEntryId];
+        }
     }
 
     getNodes(): TriggerNode[] {

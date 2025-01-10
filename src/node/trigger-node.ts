@@ -1,3 +1,5 @@
+import { R } from "module-helpers";
+
 const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
 const NODE_ENTRY_TYPES = ["item", "boolean", "uuid", "text"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
@@ -45,6 +47,35 @@ abstract class TriggerNode {
         return (this.constructor as typeof TriggerNode).schema;
     }
 
+    *connections(): Generator<[NodeEntryId, NodeEntryId], void, undefined> {
+        for (const category of ["inputs", "outputs"] as const) {
+            for (const [key, entry] of R.entries(this.#data[category])) {
+                if (!entry.ids) continue;
+
+                for (const id of R.keys(entry.ids)) {
+                    yield [`${this.type}.${this.id}.${category}.${key}`, id];
+                }
+            }
+        }
+    }
+
+    *removeConnections(): Generator<[NodeEntryId, NodeEntryId], void, undefined> {
+        for (const category of ["inputs", "outputs"] as const) {
+            for (const [key, entry] of R.entries(this.#data[category])) {
+                if (!entry.ids) continue;
+
+                for (const id of R.keys(entry.ids)) {
+                    delete entry.ids[id];
+                    yield [`${this.type}.${this.id}.${category}.${key}`, id];
+                }
+            }
+        }
+    }
+
+    removeConnection(category: NodeEntryCategory, key: string, id: NodeEntryId) {
+        delete this.getConnections(category, key)[id];
+    }
+
     getValue(category: NodeEntryCategory, key: string): NodeEntryValue {
         return this.#readCursor(category, key).value;
     }
@@ -79,7 +110,7 @@ type NodeEntryCategory = (typeof NODE_ENTRY_CATEGORIES)[number];
 type NodeEntryValue = string | number | undefined;
 
 type NodeEntryId = `${NodeType}.${string}.${NodeEntryCategory}.${string}`;
-type NodeEntryIdMap = Record<NodeEntryId, boolean>;
+type NodeEntryIdMap = Partial<Record<NodeEntryId, boolean>>;
 
 type NodeEntryMap = Record<string, NodeDataEntry>;
 

@@ -4,9 +4,14 @@ import { BlueprintNode } from "@blueprint/node/blueprint-node";
 import { createBlueprintNode } from "@blueprint/node/blueprint-nodes-list";
 import { BlueprintNodeEntry } from "@blueprint/node/node-entry";
 import { Trigger } from "@trigger/trigger";
+import { BlueprintConnectionsLayer } from "./layer-connections";
 
 class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     #nodes: Collection<BlueprintNode> = new Collection();
+
+    get connections(): BlueprintConnectionsLayer {
+        return this.blueprint.layers.connections;
+    }
 
     initialize(): void {
         const trigger = this.trigger;
@@ -39,6 +44,16 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
         this.addChild(blueprintNode);
 
         return blueprintNode;
+    }
+
+    removeNode(node: BlueprintNode) {
+        node.eventMode = "none";
+
+        this.#nodes.delete(node.id);
+
+        if (this.removeChild(node)) {
+            node.destroy();
+        }
     }
 
     onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {

@@ -44,6 +44,9 @@
                 "item": "Item",
                 "uuid": "Source UUID"
             }
+        },
+        "context": {
+            "delete": "Delete"
         }
     }
 }
