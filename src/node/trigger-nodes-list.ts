@@ -41,7 +41,7 @@ const FILTERS = R.pipe(
     R.entries(),
     R.flatMap(([type, nodes]) => {
         return R.entries(nodes).map(([key, node]) => {
-            const schema = node.entriesSchema;
+            const schema = node.schema;
 
             const inputs = R.pipe(
                 schema.inputs ?? [],

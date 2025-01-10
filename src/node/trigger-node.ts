@@ -9,11 +9,11 @@ abstract class TriggerNode {
         this.#data = data;
     }
 
-    static get unique(): boolean {
+    static get isUnique(): boolean {
         return false;
     }
 
-    static get entriesSchema(): NodeSchema {
+    static get schema(): NodeSchema {
         return { outputs: [] };
     }
 
@@ -38,11 +38,11 @@ abstract class TriggerNode {
     }
 
     get isUnique(): boolean {
-        return !!(this.constructor as typeof TriggerNode).unique;
+        return !!(this.constructor as typeof TriggerNode).isUnique;
     }
 
     get schema(): NodeSchema {
-        return (this.constructor as typeof TriggerNode).entriesSchema;
+        return (this.constructor as typeof TriggerNode).schema;
     }
 
     getValue(category: NodeEntryCategory, key: string): NodeEntryValue {
