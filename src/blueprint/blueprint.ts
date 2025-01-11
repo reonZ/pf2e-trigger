@@ -1,6 +1,5 @@
 import { createTriggerNode } from "@node/trigger-nodes-list";
 import { Trigger } from "@trigger/trigger";
-import triggers from "@trigger/triggers";
 import { ItemPF2e, MODULE, R, subtractPoints } from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
@@ -40,12 +39,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         this.stage.sortChildren();
 
-        const trigger = triggers.first();
-        this.setTrigger(trigger);
-
         this.view.addEventListener("drop", this.#onDropCanvasData.bind(this));
-
-        this.stage.on("pointerdown", this.#onPointerDown, this);
 
         parent.prepend(this.view);
 
@@ -68,6 +62,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         };
     }
 
+    initialize() {
+        this.stage.on("pointerdown", this.#onPointerDown, this);
+
+        this.#nodesLayer.initialize();
+        this.#connectionsLayer.initialize();
+    }
+
     reset() {
         this.#trigger = null;
 
@@ -77,13 +78,18 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#connectionsLayer.reset();
     }
 
-    setTrigger(trigger: Trigger) {
-        this.reset();
+    setTrigger(trigger: Maybe<Trigger>) {
+        if (this.trigger !== trigger) {
+            this.reset();
 
-        this.#trigger = trigger;
+            this.#trigger = trigger ?? null;
 
-        this.#nodesLayer.initialize();
-        this.#connectionsLayer.initialize();
+            if (trigger) {
+                this.initialize();
+            }
+        }
+
+        this.#resetPosition();
     }
 
     getLocalCoordinates(point: Point) {
@@ -94,6 +100,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     getGlobalCoordinates(point: Point) {
         const viewBounds = this.view.getBoundingClientRect();
         return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
+    }
+
+    #resetPosition() {
+        this.stage.position.set(0, 0);
+        this.#gridLayer.reverseTilePosition(0, 0);
     }
 
     #onDropCanvasData(event: DragEvent) {

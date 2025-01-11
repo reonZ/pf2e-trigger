@@ -1,5 +1,5 @@
 #pf2e-trigger-triggers-menu {
-    --width: calc(100% - var(--sidebar-width) - 15px);
+    --width: calc(100% - var(--sidebar-width) - 12px);
     --height: calc(100% - 10px);
 
     height: var(--height);
@@ -9,7 +9,9 @@
     margin: 0;
 
     background-color: #808080;
-    border: 1px solid black;
+    border: 1px solid var(--color-border-dark-1);
+    border-left: 0;
+    border-radius: 0 5px 5px 0;
 
     .window-header {
         display: none;
@@ -22,9 +24,94 @@
         overflow: hidden;
     }
 
-    form {
+    .sidebar {
+        --background-accent: #0000003b;
+        --sidebar-width: 300px;
+        --indicator-width: 25px;
+        --inner-width: calc(var(--sidebar-width) - var(--indicator-width));
+
         position: absolute;
-        inset: 0;
-        pointer-events: none;
+        top: -1px;
+        bottom: -1px;
+        left: 0;
+        width: 300px;
+        border-radius: 0 5px 5px 0;
+        border: 1px solid var(--color-border-dark-1);
+        background: url(/ui/denim075.png) repeat;
+        background-color: gray;
+        transition: all 0.5s;
+        color: var(--text-light);
+        display: grid;
+        grid-template-columns: 1fr var(--indicator-width);
+        transform: translateX(calc(var(--inner-width) * -1));
+
+        &:not(.no-hover):hover {
+            transform: translateX(0);
+        }
+
+        .menu {
+            padding-bottom: 0.5em;
+            overflow: hidden;
+
+            .header {
+                display: flex;
+                padding: 0.5em;
+                font-size: 1.2em;
+                align-items: center;
+                justify-content: space-between;
+                background: var(--background-accent);
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+
+                li {
+                    padding: 0.6em 1em;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 1em;
+
+                    .name {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .controls {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.6em;
+                    }
+
+                    &:hover {
+                        background: #ffffff0d;
+
+                        .name {
+                            text-shadow: 0 0 8px var(--color-shadow-primary);
+                        }
+                    }
+
+                    &.active {
+                        background: #00d0fc1a;
+                    }
+                }
+            }
+        }
+
+        .indicator {
+            background-color: var(--background-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            i {
+                margin-left: 1px;
+            }
+        }
     }
 }

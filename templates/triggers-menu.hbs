@@ -1,4 +1,36 @@
-<form>
-    <div class="header"></div>
-    <div class="footer"></div>
-</form>
+<div class="sidebar">
+    <div class="menu">
+        <div class="header">
+            <a data-action="close-window" data-tooltip="{{@root.i18n.path 'close'}}">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            {{@root.i18n 'triggers'}}
+            <a data-action="add-trigger" data-tooltip="{{@root.i18n.path 'trigger.add'}}">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+        </div>
+        <ul class="triggers">
+            {{#each triggers as |trigger|}}
+            <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
+                data-action="select-trigger" data-id="{{trigger.id}}">
+                <div class="name">
+                    {{trigger.name}}
+                </div>
+                <div class="controls">
+                    <a data-action="export-trigger"
+                        data-tooltip="{{@root.i18n.path 'trigger.export'}}">
+                        <i class="fa-solid fa-file-export"></i>
+                    </a>
+                    <a data-action="delete-trigger"
+                        data-tooltip="{{@root.i18n.path 'trigger.delete'}}">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="indicator">
+        <i class="fa-solid fa-chevrons-right"></i>
+    </div>
+</div>

@@ -31,6 +31,14 @@ class Trigger {
         return this.#data.id;
     }
 
+    get name(): string {
+        return this.#data.name;
+    }
+
+    get eventNode(): TriggerNode {
+        return this.#data.event;
+    }
+
     *nodes(): Generator<TriggerNode, void, undefined> {
         for (const node of Object.values(this.#data.nodes)) {
             yield node;
@@ -68,16 +76,25 @@ class Trigger {
 }
 
 function createTrigger(data: Maybe<TriggerDataRaw>): Trigger | null {
-    if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) return null;
+    if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) {
+        return null;
+    }
 
     const uniques: Set<string> = new Set();
+    let event: TriggerNode | undefined;
 
     const nodes = R.pipe(
         R.isArray(data.nodes) ? data.nodes : [],
         R.map((node) => {
             const trigger = createTriggerNode(node);
+
             if (!trigger?.isUnique) {
                 return trigger;
+            }
+
+            if (trigger.type === "event") {
+                if (event) return;
+                event = trigger;
             }
 
             const uniqueId = `${trigger.type}-${trigger.key}`;
@@ -90,14 +107,19 @@ function createTrigger(data: Maybe<TriggerDataRaw>): Trigger | null {
         R.mapToObj((node) => [node.id, node])
     );
 
+    if (!event) {
+        return null;
+    }
+
     return new Trigger({
         id: data.id,
         name: data.name,
         nodes,
+        event,
     });
 }
 
-type TriggerDataRaw = Omit<TriggerData, "nodes"> & {
+type TriggerDataRaw = Omit<TriggerData, "nodes" | "event"> & {
     nodes: NodeDataRaw[];
 };
 
@@ -108,6 +130,7 @@ type BaseTriggerData = {
 
 type TriggerData = BaseTriggerData & {
     nodes: Record<string, TriggerNode>;
+    event: TriggerNode;
 };
 
 type SegmentedEntryId = {

@@ -36,7 +36,7 @@ const NODES: Record<NodeType, Record<string, typeof TriggerNode>> = {
     },
 };
 
-const FILTERS = R.pipe(
+const FILTERS: NodeFilter[] = R.pipe(
     NODES,
     R.entries(),
     R.flatMap(([type, nodes]) => {
@@ -67,8 +67,12 @@ const FILTERS = R.pipe(
     R.filter(({ type }) => type !== "event")
 );
 
-function getNodesFilters() {
+function getNodesFilters(): NodeFilter[] {
     return FILTERS;
+}
+
+function getEventNodeKeys(): string[] {
+    return R.keys(NODES.event);
 }
 
 function createTriggerNode(data: Maybe<NodeDataRaw>): TriggerNode | null {
@@ -152,4 +156,11 @@ function isNodeType(type: Maybe<NodeType | string>): type is NodeType {
     return R.isString(type) && NODE_TYPES.includes(type as NodeType);
 }
 
-export { createTriggerNode, getNodesFilters };
+type NodeFilter = {
+    type: "event" | "condition" | "value" | "action" | "logic";
+    key: string;
+    inputs: ("boolean" | "item" | "uuid" | "text" | undefined)[];
+    outputs: ("boolean" | "item" | "uuid" | "text" | undefined)[];
+};
+
+export { createTriggerNode, getEventNodeKeys, getNodesFilters };

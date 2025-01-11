@@ -8,7 +8,7 @@ import { BlueprintNodesLayer } from "./layer-nodes";
 import { BlueprintNodesMenu } from "@blueprint/nodes-menu";
 
 class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
-    #connector!: PIXI.Graphics;
+    #connector: PIXI.Graphics = new PIXI.Graphics();
     #connecting: BlueprintNodeEntry | null = null;
     #connections: Map<TwoWaysId, PIXI.Graphics> = new Map();
 
@@ -32,6 +32,14 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
                 }
             }
         }
+    }
+
+    reset(): void {
+        super.reset();
+        // @ts-expect-error
+        this.#connector = null;
+        this.#connecting = null;
+        this.#connections.clear();
     }
 
     createConnection(origin: BlueprintNodeEntry, target: BlueprintNodeEntry) {
@@ -176,8 +184,6 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
 
             this.#onConnected(origin, target);
         }
-
-        this.#connector.clear();
     }
 
     #onConnected(origin: BlueprintNodeEntry, target: BlueprintNodeEntry) {

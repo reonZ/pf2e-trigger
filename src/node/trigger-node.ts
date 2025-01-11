@@ -72,6 +72,11 @@ abstract class TriggerNode {
         }
     }
 
+    setPosition({ x, y }: Point) {
+        this.#data.x = x;
+        this.#data.y = y;
+    }
+
     removeConnection(category: NodeEntryCategory, key: string, id: NodeEntryId) {
         delete this.getConnections(category, key)[id];
     }

@@ -10,7 +10,21 @@
             }
         },
         "triggers-menu": {
-            "title": "Triggers Menu"
+            "title": "Triggers Menu",
+            "triggers": "Triggers",
+            "close": "Close Window",
+            "trigger": {
+                "add": "Add Trigger",
+                "export": "Export Trigger",
+                "delete": "Delete Trigger"
+            }
+        },
+        "add-trigger": {
+            "title": "Add Trigger",
+            "label": "Event Type",
+            "name": "Trigger Name",
+            "yes": "Create",
+            "no": "Cancel"
         },
         "node": {
             "event": {
@@ -18,6 +32,9 @@
                 "subtitle": "Event",
                 "turn-start": {
                     "title": "Turn Start"
+                },
+                "turn-end": {
+                    "title": "Turn End"
                 }
             },
             "condition": {

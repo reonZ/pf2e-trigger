@@ -272,7 +272,9 @@ abstract class BlueprintNode extends PIXI.Container {
     setPosition(point: Point): void;
     setPosition(xOrPoint: Point | number, y: number = 0) {
         const position = R.isNumber(xOrPoint) ? { x: xOrPoint, y } : xOrPoint;
+
         this.position.set(position.x, position.y);
+        this.trigger.setPosition(position);
     }
 
     #onDragMove(event: PIXI.FederatedPointerEvent) {
@@ -284,8 +286,6 @@ abstract class BlueprintNode extends PIXI.Container {
     }
 
     #onDragEnd(event: PIXI.FederatedPointerEvent) {
-        // TODO we need to save the new coordinates
-
         this.stage.off("pointerup", this.#onDragEnd, this);
         this.stage.off("pointerupoutside", this.#onDragEnd, this);
         this.stage.off("pointermove", this.#onDragMove, this);

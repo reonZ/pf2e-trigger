@@ -6,6 +6,29 @@ class TriggerCollection extends Collection<Trigger> {
         return this.values().next().value;
     }
 
+    createEventTrigger({ event, name }: { event: string; name: string }): Trigger | null {
+        const id = fu.randomID();
+        const trigger = createTrigger({
+            id,
+            name: name.trim() || id,
+            nodes: [
+                {
+                    id: fu.randomID(),
+                    type: "event",
+                    key: event,
+                    x: 400,
+                    y: 200,
+                },
+            ],
+        });
+
+        if (trigger) {
+            this.set(trigger.id, trigger);
+        }
+
+        return trigger;
+    }
+
     processTriggers() {
         // TODO use setting instead of that
 
@@ -15,20 +38,20 @@ class TriggerCollection extends Collection<Trigger> {
         const triggersData: Maybe<TriggerDataRaw>[] = [
             {
                 id: fu.randomID(),
-                name: "test",
+                name: "Test Trigger",
                 nodes: [
                     {
                         id: fu.randomID(),
                         type: "event",
                         key: "turn-start",
-                        x: 50,
+                        x: 400,
                         y: 200,
                     },
                     {
                         id: hasItemId,
                         type: "condition",
                         key: "has-item",
-                        x: 350,
+                        x: 650,
                         y: 300,
                         // inputs: {
                         //     item: {
@@ -40,7 +63,7 @@ class TriggerCollection extends Collection<Trigger> {
                         id: itemSourceId,
                         type: "value",
                         key: "item-source",
-                        x: 80,
+                        x: 380,
                         y: 330,
                         inputs: {
                             uuid: { value: "Compendium.pf2e.equipment-srd.Item.7Uk6LMmzsCxuhhA6" },
@@ -59,7 +82,7 @@ class TriggerCollection extends Collection<Trigger> {
 
         this.clear();
 
-        for (const triggerData of triggersData) {
+        for (const triggerData of []) {
             const trigger = createTrigger(triggerData);
 
             if (trigger) {
@@ -72,3 +95,4 @@ class TriggerCollection extends Collection<Trigger> {
 }
 
 export default new TriggerCollection();
+export type { TriggerCollection };

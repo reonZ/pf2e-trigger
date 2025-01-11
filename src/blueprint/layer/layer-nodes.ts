@@ -22,6 +22,11 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
         }
     }
 
+    reset(): void {
+        super.reset();
+        this.#nodes.clear();
+    }
+
     *nodes(): Generator<BlueprintNode, void, undefined> {
         for (const node of this.#nodes) {
             yield node;

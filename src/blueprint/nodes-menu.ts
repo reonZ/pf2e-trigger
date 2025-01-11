@@ -4,6 +4,7 @@ import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
     R,
+    TemplateLocalize,
     addListenerAll,
     localize,
     templateLocalize,
@@ -93,7 +94,7 @@ type DataNodesGroup = { title: string; nodes: DataNode[] };
 
 type MenuData = {
     groups: Partial<Record<NodeType, DataNodesGroup>>;
-    i18n: ReturnType<typeof templateLocalize>;
+    i18n: TemplateLocalize;
 };
 
 type MenuNode = {
