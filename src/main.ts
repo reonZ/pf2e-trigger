@@ -1,5 +1,5 @@
-import triggers from "@trigger/triggers";
-import { TriggersMenu } from "@trigger/triggers-menu";
+import { prepareTriggersData } from "@data/data-trigger-list";
+import { TriggersMenu } from "triggers-menu";
 import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
 
 MODULE.register("pf2e-trigger");
@@ -17,7 +17,7 @@ Hooks.once("init", () => {
         config: false,
         onChange: () => {
             if (userIsGM()) {
-                triggers.processTriggers();
+                prepareTriggersData();
             }
         },
     });
@@ -30,6 +30,6 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
     if (userIsGM()) {
-        triggers.processTriggers();
+        prepareTriggersData();
     }
 });

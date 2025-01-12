@@ -1,34 +1,35 @@
 import { Blueprint } from "@blueprint/blueprint";
-import { NodeContextMenu, NodeContextMenuValue } from "@blueprint/context-menu/node-context-menu";
 import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
-import {
-    NodeEntryCategory,
-    NodeEntryId,
-    NodeEntryType,
-    NodeSchema,
-    NodeType,
-    TriggerNode,
-} from "@node/trigger-node";
+import { NodeSchema, NodeType } from "@schema/schema";
+import { getSchema } from "@schema/schema-list";
+import { NodeEntryCategory, NodeEntryId, NodeEntryIdMap, NodeEntryType } from "@data/data-entry";
+import { NodeData, NodeEntryValue } from "@data/data-node";
 import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
-import { BlueprintNodeBody } from "./node-body";
-import { BlueprintNodeBorder } from "./node-border";
-import { BlueprintNodeEntry } from "./node-entry";
-import { BlueprintNodeHeader } from "./node-header";
+import { BlueprintNodeHeader } from "./blueprint-node-header";
+import { BlueprintNodeBody } from "./blueprint-node-body";
+import { BlueprintNodeBorder } from "./blueprint-node-border";
+import {
+    NodeContextMenu,
+    NodeContextMenuValue,
+} from "@blueprint/menu/context-menu/node-context-menu";
+import { BlueprintNodeEntry } from "./blueprint-node-entry";
 
-abstract class BlueprintNode extends PIXI.Container {
+class BlueprintNode extends PIXI.Container {
+    #data: NodeData;
     #dragOffset: Point = { x: 0, y: 0 };
-    #trigger: TriggerNode;
-    #header: BlueprintNodeHeader | null;
-    #body: BlueprintNodeBody;
-    #border: BlueprintNodeBorder;
+    #schema: NodeSchema;
+    #header: BlueprintNodeHeader | null = null;
+    #body!: BlueprintNodeBody;
+    #border!: BlueprintNodeBorder;
 
-    constructor(trigger: TriggerNode) {
+    constructor(data: NodeData) {
         super();
 
-        this.#trigger = trigger;
+        this.#data = data;
+        this.#schema = getSchema(data);
 
-        this.x = trigger.x;
-        this.y = trigger.y;
+        this.x = data.x;
+        this.y = data.y;
 
         this.eventMode = "static";
 
@@ -38,40 +39,58 @@ abstract class BlueprintNode extends PIXI.Container {
         } else {
             this.on("pointerdown", (event) => event.stopPropagation());
         }
-
-        this.#header = this.title ? new BlueprintNodeHeader(this) : null;
-        this.#body = new BlueprintNodeBody(this);
-        this.#border = new BlueprintNodeBorder(this);
-
-        this.#paint();
-    }
-
-    get id(): string {
-        return this.#trigger.id;
-    }
-
-    get type(): NodeType {
-        return this.#trigger.type;
-    }
-
-    get key(): string {
-        return this.#trigger.key;
-    }
-
-    get trigger(): TriggerNode {
-        return this.#trigger;
     }
 
     get schema(): NodeSchema {
-        return this.#trigger.schema;
+        return this.#schema;
+    }
+
+    get id(): string {
+        return this.#data.id;
+    }
+
+    get type(): NodeType {
+        return this.#data.type;
+    }
+
+    get key(): string {
+        return this.#data.key;
+    }
+
+    get canDrag(): boolean {
+        return this.type !== "event";
+    }
+
+    get stage(): PIXI.Container {
+        return this.parent.stage;
     }
 
     get blueprint(): Blueprint {
         return this.parent.blueprint;
     }
 
-    get stage(): PIXI.Container {
-        return this.blueprint.stage;
+    get outerPadding(): number {
+        return 10;
+    }
+
+    get backgroundColor(): PIXI.Color | number {
+        return 0x000000;
+    }
+
+    get fontSize(): number {
+        return 14;
+    }
+
+    get opacity(): number {
+        return 0.6;
+    }
+
+    get entryData() {
+        return {
+            padding: { x: this.outerPadding, y: 6 },
+            height: this.fontSize * 1.16,
+            spacing: 8,
+        };
     }
 
     get icon(): PIXI.Sprite | string | null {
@@ -90,24 +109,30 @@ abstract class BlueprintNode extends PIXI.Container {
         return localize("node", this.type, "subtitle");
     }
 
-    get fontSize(): number {
-        return 14;
-    }
-
-    get padding(): number {
-        return 10;
-    }
-
-    get canDrag(): boolean {
-        return true;
-    }
-
     get headerColor(): PIXI.Color | number {
         return 0x0;
     }
 
-    get opacity(): number {
-        return 0.6;
+    initialize() {
+        this.#header = this.title ? new BlueprintNodeHeader(this) : null;
+        this.#body = new BlueprintNodeBody(this);
+        this.#border = new BlueprintNodeBorder(this);
+
+        this.#header?.initialize();
+        this.#body.initialize();
+        this.#border?.initialize();
+
+        this.#paint();
+    }
+
+    refresh() {
+        const removed = this.removeChildren();
+
+        for (let i = 0; i < removed.length; ++i) {
+            removed[i].destroy();
+        }
+
+        this.initialize();
     }
 
     *entries(
@@ -118,23 +143,6 @@ abstract class BlueprintNode extends PIXI.Container {
             if (activeOnly && !entry.isActive) continue;
             yield entry;
         }
-    }
-
-    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
-        return this.#body.getEntryFromId(id);
-    }
-
-    getEntryFromType(
-        category: NodeEntryCategory,
-        type: NodeEntryType | undefined
-    ): BlueprintNodeEntry | undefined {
-        return this.#body.getEntryFromType(category, type);
-    }
-
-    bringToTop() {
-        const highest = R.firstBy(this.parent.children, [R.prop("zIndex"), "desc"])?.zIndex ?? 0;
-        this.zIndex = highest + 1;
-        this.parent.sortChildren();
     }
 
     onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {
@@ -151,26 +159,41 @@ abstract class BlueprintNode extends PIXI.Container {
         return null;
     }
 
+    getEntryFromType(
+        category: NodeEntryCategory,
+        type: NodeEntryType | undefined
+    ): BlueprintNodeEntry | undefined {
+        return this.#body.getEntryFromType(category, type);
+    }
+
+    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+        return this.#body.getEntryFromId(id);
+    }
+
     onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean {
-        for (const entry of this.#body.entries()) {
+        for (const entry of this.entries()) {
             const dropped = entry.onDropItem(point, item);
             if (dropped) return true;
         }
         return false;
     }
 
-    refresh() {
-        const removed = this.removeChildren();
+    bringToTop() {
+        const highest = R.firstBy(this.parent.children, [R.prop("zIndex"), "desc"])?.zIndex ?? 0;
+        this.zIndex = highest + 1;
+        this.parent.sortChildren();
+    }
 
-        for (let i = 0; i < removed.length; ++i) {
-            removed[i].destroy();
-        }
+    setPosition(x: number, y: number): void;
+    setPosition(point: Point): void;
+    setPosition(xOrPoint: Point | number, y: number = 0) {
+        const position = R.isNumber(xOrPoint) ? { x: xOrPoint, y } : xOrPoint;
 
-        this.#header = this.title ? new BlueprintNodeHeader(this) : null;
-        this.#body = new BlueprintNodeBody(this);
-        this.#border = new BlueprintNodeBorder(this);
+        this.position.set(position.x, position.y);
+        this.#data.x = position.x;
+        this.#data.y = position.y;
 
-        this.#paint();
+        this.blueprint.layers.connections.updateConnections(this);
     }
 
     fontAwesomeIcon(unicode: string, options: Omit<Partial<PIXI.ITextStyle>, "fontFamily"> = {}) {
@@ -207,9 +230,31 @@ abstract class BlueprintNode extends PIXI.Container {
         return new PreciseText(text, style);
     }
 
+    getValue(category: NodeEntryCategory, key: string): NodeEntryValue {
+        return this.#data[category][key]?.value;
+    }
+
+    setValue(category: NodeEntryCategory, key: string, value: NodeEntryValue) {
+        fu.setProperty(this.#data, `${category}.${key}.value`, value);
+    }
+
+    getConnections(category: NodeEntryCategory, key: string): NodeEntryIdMap {
+        return this.#data[category][key]?.ids ?? {};
+    }
+
+    addConnection(category: NodeEntryCategory, key: string, id: NodeEntryId) {
+        const ids = this.getConnections(category, key);
+        ids[id] = true;
+        fu.setProperty(this.#data, `${category}.${key}.ids`, ids);
+    }
+
+    deleteConnection(category: NodeEntryCategory, key: string, id: NodeEntryId): boolean {
+        return delete this.#data[category][key]?.ids?.[id];
+    }
+
     #paint() {
         const maxInner = Math.max(this.#header?.innerWidth ?? 0, this.#body.innerWidth);
-        const maxWidth = maxInner + this.padding * 2;
+        const maxWidth = maxInner + this.outerPadding * 2;
 
         this.#body.y = this.#header?.outerHeight ?? 0;
 
@@ -231,32 +276,13 @@ abstract class BlueprintNode extends PIXI.Container {
                 { x, y },
                 this
             );
-
             if (!result) return;
 
             switch (result) {
                 case "delete": {
-                    return this.#deleteNode();
+                    return this.blueprint.deleteNode(this.id);
                 }
             }
-        }
-    }
-
-    #deleteNode() {
-        const trigger = this.blueprint.trigger;
-        const nodesLayer = this.blueprint.layers.nodes;
-        const connectionsLayer = this.blueprint.layers.connections;
-
-        nodesLayer.removeNode(this);
-
-        for (const [thisEntryId, otherEntryId] of trigger?.removeNode(this.id) ?? []) {
-            const otherNode = nodesLayer.getEntryFromId(otherEntryId);
-
-            if (otherNode) {
-                otherNode.refreshConnector();
-            }
-
-            connectionsLayer.removeConnection(thisEntryId, otherEntryId);
         }
     }
 
@@ -268,21 +294,11 @@ abstract class BlueprintNode extends PIXI.Container {
         this.stage.on("pointermove", this.#onDragMove, this);
     }
 
-    setPosition(x: number, y: number): void;
-    setPosition(point: Point): void;
-    setPosition(xOrPoint: Point | number, y: number = 0) {
-        const position = R.isNumber(xOrPoint) ? { x: xOrPoint, y } : xOrPoint;
-
-        this.position.set(position.x, position.y);
-        this.trigger.setPosition(position);
-    }
-
     #onDragMove(event: PIXI.FederatedPointerEvent) {
         const position = subtractPoints(event.global, this.#dragOffset);
         const newPosition = this.stage.toLocal(position);
 
         this.setPosition(newPosition);
-        this.blueprint.layers.connections.updateConnections(this);
     }
 
     #onDragEnd(event: PIXI.FederatedPointerEvent) {

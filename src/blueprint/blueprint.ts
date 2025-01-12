@@ -1,18 +1,23 @@
-import { createTriggerNode } from "@node/trigger-nodes-list";
-import { Trigger } from "@trigger/trigger";
-import { ItemPF2e, MODULE, R, subtractPoints } from "module-helpers";
+import { processNodeData } from "@data/data-node";
+import { TriggerData, TriggerRawData, processTriggerData } from "@data/data-trigger";
+import { getTriggersDataMap } from "@data/data-trigger-list";
+import { NodeType } from "@schema/schema";
+import { EventNodeKey } from "@schema/schema-list";
+import { ItemPF2e, MODULE, R, distanceBetweenPoints, subtractPoints } from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
-import { BlueprintNodesMenu } from "./nodes-menu";
+import { BlueprintNodesMenu, NodesMenuReturnValue } from "./menu/nodes-menu";
+import { BlueprintNode } from "./node/blueprint-node";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
-    #drag: { origin: Point; dragging?: boolean } | null = null;
-    #trigger: Trigger | null = null;
-    #gridLayer: BlueprintGridLayer;
-    #connectionsLayer: BlueprintConnectionsLayer;
-    #nodesLayer: BlueprintNodesLayer;
+    #triggers: Record<string, TriggerData>;
+    #trigger: string | null = null;
     #hitArea: PIXI.Rectangle;
+    #gridLayer: BlueprintGridLayer;
+    #nodesLayer: BlueprintNodesLayer;
+    #connectionsLayer: BlueprintConnectionsLayer;
+    #drag: { origin: Point; dragging?: boolean } | null = null;
 
     constructor(parent: HTMLElement) {
         super({
@@ -29,15 +34,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.hitArea = this.#hitArea;
         this.stage.eventMode = "static";
 
+        this.#triggers = getTriggersDataMap();
+
         this.#gridLayer = new BlueprintGridLayer(this);
         this.#nodesLayer = new BlueprintNodesLayer(this);
         this.#connectionsLayer = new BlueprintConnectionsLayer(this);
 
-        this.#gridLayer.zIndex = 0;
-        this.#connectionsLayer.zIndex = 1;
-        this.#nodesLayer.zIndex = 2;
-
-        this.stage.sortChildren();
+        this.#sortLayers();
 
         this.view.addEventListener("drop", this.#onDropCanvasData.bind(this));
 
@@ -46,50 +49,22 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         MODULE.debug(this);
     }
 
-    get trigger(): Trigger | null {
-        return this.#trigger;
-    }
-
-    get layers(): {
-        grid: BlueprintGridLayer;
-        nodes: BlueprintNodesLayer;
-        connections: BlueprintConnectionsLayer;
-    } {
+    get layers() {
         return {
-            grid: this.#gridLayer,
             nodes: this.#nodesLayer,
             connections: this.#connectionsLayer,
         };
     }
 
-    initialize() {
-        this.stage.on("pointerdown", this.#onPointerDown, this);
-
-        this.#nodesLayer.initialize();
-        this.#connectionsLayer.initialize();
+    get trigger(): TriggerData | null {
+        return this.#triggers[this.#trigger ?? ""] ?? null;
     }
 
-    reset() {
-        this.#trigger = null;
-
-        this.stage.removeAllListeners();
-
-        this.#nodesLayer.reset();
-        this.#connectionsLayer.reset();
-    }
-
-    setTrigger(trigger: Maybe<Trigger>) {
-        if (this.trigger !== trigger) {
-            this.reset();
-
-            this.#trigger = trigger ?? null;
-
-            if (trigger) {
-                this.initialize();
-            }
-        }
-
-        this.#resetPosition();
+    get triggersList(): { name: string; id: string }[] {
+        return R.pipe(
+            R.values(this.#triggers),
+            R.flatMap(({ id, name }) => ({ id, name }))
+        );
     }
 
     getLocalCoordinates(point: Point) {
@@ -102,9 +77,131 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
     }
 
+    getTrigger(id: string): TriggerData | undefined {
+        return this.#triggers[id];
+    }
+
+    setTrigger(triggerOrId: Maybe<string | TriggerData>) {
+        const trigger = R.isPlainObject(triggerOrId)
+            ? triggerOrId
+            : this.#triggers[triggerOrId ?? ""];
+
+        if (this.trigger?.id !== trigger?.id) {
+            this.#reset();
+
+            this.#trigger = trigger?.id ?? null;
+
+            if (trigger) {
+                this.#initialize();
+            }
+        }
+
+        this.#resetPosition();
+    }
+
+    createTrigger({ name, event }: { event: EventNodeKey; name: string }) {
+        const data: TriggerRawData = {
+            id: fu.randomID(),
+            name,
+            nodes: [
+                {
+                    id: fu.randomID(),
+                    type: "event",
+                    key: event,
+                    x: 100,
+                    y: 200,
+                },
+            ],
+        };
+
+        const trigger = processTriggerData(data);
+        if (!trigger) return;
+
+        this.#triggers[trigger.id] = trigger;
+        this.setTrigger(trigger);
+    }
+
+    editTrigger(id: string, { name }: { name: string }) {
+        const trigger = this.#triggers[id];
+        if (!trigger) return;
+
+        trigger.name = name;
+    }
+
+    deleteTrigger(id: string) {
+        const trigger = this.#triggers[id];
+        if (!trigger) return;
+
+        if (this.#trigger === id) {
+            this.setTrigger(null);
+        }
+
+        delete this.#triggers[id];
+    }
+
+    createNode(type: NodeType, key: string, x: number, y: number): BlueprintNode | undefined {
+        if (!this.trigger) return;
+
+        const id = fu.randomID();
+        const data = processNodeData({ id, type, key, x, y });
+        if (!data) return;
+
+        this.trigger.nodes[data.id] = data;
+        return this.#nodesLayer.addNode(data);
+    }
+
+    deleteNode(id: string) {
+        const node = this.#nodesLayer.getNode(id);
+        if (!node) return;
+
+        for (const entry of node.entries()) {
+            for (const [originId, targetId] of entry.removeConnections()) {
+                this.#connectionsLayer.removeConnection(originId, targetId);
+            }
+        }
+
+        this.#nodesLayer.removeNode(id);
+
+        delete this.trigger?.nodes[id];
+    }
+
+    #initialize() {
+        this.stage.on("pointerdown", this.#onPointerDown, this);
+
+        this.#nodesLayer.initialize();
+        this.#connectionsLayer.initialize();
+    }
+
+    #reset() {
+        this.#trigger = null;
+
+        this.stage.removeAllListeners();
+
+        this.#nodesLayer.reset();
+        this.#connectionsLayer.reset();
+    }
+
     #resetPosition() {
-        this.stage.position.set(0, 0);
-        this.#gridLayer.reverseTilePosition(0, 0);
+        const distance = distanceBetweenPoints(this.stage.position, { x: 0, y: 0 });
+        if (distance === 0) return;
+
+        CanvasAnimation.animate(
+            [
+                this.stage.position,
+                this.#gridLayer.position,
+                this.#gridLayer.tilePosition,
+                this.#hitArea,
+            ].flatMap((parent) => ["x", "y"].map((attribute) => ({ parent, attribute, to: 0 }))),
+            { duration: distance / 4 }
+        );
+    }
+
+    #sortLayers() {
+        this.#gridLayer.zIndex = 0;
+        this.#connectionsLayer.zIndex = 1;
+        this.#nodesLayer.zIndex = 2;
+
+        this.stage.sortChildren();
     }
 
     #onDropCanvasData(event: DragEvent) {
@@ -142,8 +239,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const { origin, dragging } = this.#drag;
 
         if (!dragging) {
-            const { x, y } = subtractPoints(event.global, this.stage.position);
-            const distance = Math.hypot(x - origin.x, y - origin.y);
+            const target = subtractPoints(event.global, this.stage.position);
+            const distance = distanceBetweenPoints(target, origin);
 
             if (distance < 10) return;
         }
@@ -172,26 +269,26 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.off("pointerupoutside", this.#onPointerUp, this);
         this.stage.off("pointermove", this.#onDragMove, this);
 
-        if (wasDragging || !this.trigger) return;
+        if (!wasDragging && this.trigger) {
+            this.#onMenu(event.global);
+        }
+    }
 
-        const { x, y } = event.global;
-        const result = await BlueprintNodesMenu.open(this, { x, y });
+    async #onMenu({ x, y }: Point) {
+        const result = await BlueprintNodesMenu.open<NodesMenuReturnValue>(this, { x, y });
         if (!result) return;
 
-        const node = createTriggerNode({ ...result, id: fu.randomID(), x, y });
+        const { key, type } = result;
+        const node = this.createNode(type, key, x, y);
         if (!node) return;
 
-        this.trigger.addNode(node);
-
-        const blueprintNode = this.#nodesLayer.addNode(node);
         const center = {
-            x: x - blueprintNode.width / 2,
-            y: y - blueprintNode.height / 2,
+            x: x - node.width / 2,
+            y: y - node.height / 2,
         };
 
         const point = subtractPoints(center, this.stage.position);
-
-        blueprintNode.setPosition(point);
+        node.setPosition(point);
     }
 }
 

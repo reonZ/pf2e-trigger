@@ -1,8 +1,9 @@
-import { ItemSourceValueTriggerNode } from "@node/value/item-source";
-import { ValueBlueprintNode } from "./blueprint-value";
 import { ItemPF2e, R, isItemEntry } from "module-helpers";
+import { ValueBlueprintNode } from "./blueprint-value-node";
 
-class ItemSourceValueBlueprintNode extends ValueBlueprintNode {
+class ItemSourceBlueprintNode extends ValueBlueprintNode {
+    #item: Maybe<ItemPF2e | CompendiumIndexData>;
+
     get title(): string | null {
         const item = this.item;
         return item?.name || super.title;
@@ -13,8 +14,17 @@ class ItemSourceValueBlueprintNode extends ValueBlueprintNode {
         return item === null ? "\uf127" : item ? PIXI.Sprite.from(item.img) : super.icon;
     }
 
-    get item(): ItemPF2e | CompendiumIndexData | undefined | null {
-        const value = this.trigger.getValue("inputs", "uuid");
+    get item(): Maybe<ItemPF2e | CompendiumIndexData> {
+        return this.#item;
+    }
+
+    initialize(): void {
+        this.#item = this.#getItem();
+        super.initialize();
+    }
+
+    #getItem(): Maybe<ItemPF2e | CompendiumIndexData> {
+        const value = this.getValue("inputs", "uuid");
         if (!R.isString(value) || !value.trim()) return;
 
         const item = fromUuidSync<ItemPF2e>(value);
@@ -24,8 +34,4 @@ class ItemSourceValueBlueprintNode extends ValueBlueprintNode {
     }
 }
 
-interface ItemSourceValueBlueprintNode extends ValueBlueprintNode {
-    get trigger(): ItemSourceValueTriggerNode;
-}
-
-export { ItemSourceValueBlueprintNode };
+export { ItemSourceBlueprintNode };

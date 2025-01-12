@@ -1,10 +1,5 @@
-import { HasItemConditionTriggerNode } from "@node/condition/has-item";
-import { ConditionBlueprintNode } from "./blueprint-condition";
+import { ConditionBlueprintNode } from "./blueprint-condition-node";
 
-class HasItemConditionBlueprintNode extends ConditionBlueprintNode {}
+class HasItemBlueprintNode extends ConditionBlueprintNode {}
 
-interface HasItemConditionBlueprintNode extends ConditionBlueprintNode {
-    get trigger(): HasItemConditionTriggerNode;
-}
-
-export { HasItemConditionBlueprintNode };
+export { HasItemBlueprintNode };

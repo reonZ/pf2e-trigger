@@ -1,19 +1,29 @@
-<div class="sidebar">
+<div class="sidebar show">
     <div class="menu">
         <div class="header">
-            <a data-action="close-window" data-tooltip="{{@root.i18n.path 'close'}}">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-            {{@root.i18n 'triggers'}}
-            <a data-action="add-trigger" data-tooltip="{{@root.i18n.path 'trigger.add'}}">
-                <i class="fa-solid fa-plus"></i>
-            </a>
+            <div class="controls left">
+                <a data-action="close-window" data-tooltip="{{@root.i18n.path 'close'}}">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+            </div>
+            <div class="title">{{@root.i18n 'triggers'}}</div>
+            <div class="controls right">
+                <a data-action="import" data-tooltip="{{@root.i18n.path 'import'}}">
+                    <i class="fa-solid fa-file-import"></i>
+                </a>
+                <a data-action="export-all" data-tooltip="{{@root.i18n.path 'export-all'}}">
+                    <i class="fa-solid fa-file-export"></i>
+                </a>
+                <a data-action="add-trigger" data-tooltip="{{@root.i18n.path 'trigger.add'}}">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+            </div>
         </div>
         <ul class="triggers">
             {{#each triggers as |trigger|}}
             <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
-                data-action="select-trigger" data-id="{{trigger.id}}">
-                <div class="name">
+                data-id="{{trigger.id}}">
+                <div class="name" data-action="select-trigger">
                     {{trigger.name}}
                 </div>
                 <div class="controls">
@@ -22,7 +32,7 @@
                         <i class="fa-solid fa-file-export"></i>
                     </a>
                     <a data-action="delete-trigger"
-                        data-tooltip="{{@root.i18n.path 'trigger.delete'}}">
+                        data-tooltip="{{@root.i18n.path 'trigger.delete.label'}}">
                         <i class="fa-solid fa-trash"></i>
                     </a>
                 </div>
@@ -34,3 +44,4 @@
         <i class="fa-solid fa-chevrons-right"></i>
     </div>
 </div>
+<div class="trigger-title"></div>

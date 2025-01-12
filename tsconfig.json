@@ -22,7 +22,8 @@
         "outDir": "scripts",
         "baseUrl": "src",
         "paths": {
-            "@node/*": ["node/*"],
+            "@data/*": ["data/*"],
+            "@schema/*": ["schema/*"],
             "@trigger/*": ["trigger/*"],
             "@blueprint/*": ["blueprint/*"]
         }

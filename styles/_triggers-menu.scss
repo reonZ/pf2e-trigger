@@ -34,18 +34,18 @@
         top: -1px;
         bottom: -1px;
         left: 0;
-        width: 300px;
+        width: var(--sidebar-width);
         border-radius: 0 5px 5px 0;
         border: 1px solid var(--color-border-dark-1);
         background: url(/ui/denim075.png) repeat;
         background-color: gray;
-        transition: all 0.5s;
+        transition: all 0.1s;
         color: var(--text-light);
-        display: grid;
-        grid-template-columns: 1fr var(--indicator-width);
-        transform: translateX(calc(var(--inner-width) * -1));
+        transform: translateX(calc(100% * -1));
 
-        &:not(.no-hover):hover {
+        &.show {
+            --indicator-width: 0px;
+
             transform: translateX(0);
         }
 
@@ -54,12 +54,34 @@
             overflow: hidden;
 
             .header {
-                display: flex;
-                padding: 0.5em;
                 font-size: 1.2em;
-                align-items: center;
-                justify-content: space-between;
                 background: var(--background-accent);
+                position: relative;
+                padding-block: 0.5em;
+
+                .title {
+                    text-align: center;
+                }
+
+                .controls {
+                    position: absolute;
+                    display: flex;
+                    gap: 0.5em;
+                    top: 50%;
+                    transform: translateY(-50%);
+
+                    &.left {
+                        left: 0.5em;
+                    }
+
+                    &.right {
+                        right: 0.6em;
+
+                        .fa-file-import {
+                            margin-right: 0.2em;
+                        }
+                    }
+                }
             }
 
             ul {
@@ -68,17 +90,25 @@
                 margin: 0;
 
                 li {
-                    padding: 0.6em 1em;
                     cursor: pointer;
                     white-space: nowrap;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    gap: 1em;
+
+                    > * {
+                        padding-block: 0.6em;
+                    }
 
                     .name {
+                        flex: 1;
                         overflow: hidden;
                         text-overflow: ellipsis;
+                        padding: 0.6em 1em;
+
+                        &:hover {
+                            text-shadow: 0 0 8px var(--color-shadow-primary);
+                        }
                     }
 
                     .controls {
@@ -86,14 +116,11 @@
                         align-items: center;
                         justify-content: center;
                         gap: 0.6em;
+                        padding-right: 1em;
                     }
 
                     &:hover {
                         background: #ffffff0d;
-
-                        .name {
-                            text-shadow: 0 0 8px var(--color-shadow-primary);
-                        }
                     }
 
                     &.active {
@@ -104,14 +131,42 @@
         }
 
         .indicator {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: calc(var(--indicator-width) * -1);
+            width: var(--indicator-width);
             background-color: var(--background-accent);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: all 0.1s;
 
             i {
                 margin-left: 1px;
+                pointer-events: none;
             }
+        }
+    }
+
+    .trigger-title {
+        position: absolute;
+        top: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 1.7em;
+        color: var(--text-light);
+        padding: 0.2em 0.5em;
+        background: #00000066;
+        opacity: 0.4;
+        border-radius: 0 0 10px 10px;
+        pointer-events: none;
+        letter-spacing: 1px;
+        border: 1px solid var(--color-border-dark);
+
+        &:empty {
+            display: none;
         }
     }
 }

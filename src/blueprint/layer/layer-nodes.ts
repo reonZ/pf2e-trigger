@@ -1,23 +1,16 @@
-import { NodeEntryId, TriggerNode } from "@node/trigger-node";
-import { BlueprintLayer } from "./layer";
 import { BlueprintNode } from "@blueprint/node/blueprint-node";
-import { createBlueprintNode } from "@blueprint/node/blueprint-nodes-list";
-import { BlueprintNodeEntry } from "@blueprint/node/node-entry";
-import { Trigger } from "@trigger/trigger";
-import { BlueprintConnectionsLayer } from "./layer-connections";
+import { BlueprintLayer } from "./layer";
+import { NodeData } from "@data/data-node";
+import { createBLueprintNode } from "@blueprint/node/blueprint-node-list";
+import { R } from "module-helpers";
+import { NodeEntryId, segmentEntryId } from "@data/data-entry";
+import { BlueprintNodeEntry } from "@blueprint/node/blueprint-node-entry";
 
 class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     #nodes: Collection<BlueprintNode> = new Collection();
 
-    get connections(): BlueprintConnectionsLayer {
-        return this.blueprint.layers.connections;
-    }
-
     initialize(): void {
-        const trigger = this.trigger;
-        if (!trigger) return;
-
-        for (const node of trigger.nodes()) {
+        for (const node of R.values(this.trigger?.nodes ?? {})) {
             this.addNode(node);
         }
     }
@@ -38,12 +31,12 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     }
 
     getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
-        const { nodeId } = Trigger.segmentEntryId(id);
+        const { nodeId } = segmentEntryId(id);
         return this.getNode(nodeId)?.getEntryFromId(id);
     }
 
-    addNode(node: TriggerNode | BlueprintNode): BlueprintNode {
-        const blueprintNode = node instanceof BlueprintNode ? node : createBlueprintNode(node);
+    addNode(node: NodeData | BlueprintNode): BlueprintNode {
+        const blueprintNode = node instanceof BlueprintNode ? node : createBLueprintNode(node);
 
         this.#nodes.set(node.id, blueprintNode);
         this.addChild(blueprintNode);
@@ -51,23 +44,19 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
         return blueprintNode;
     }
 
-    removeNode(node: BlueprintNode) {
+    removeNode(nodeOrId: NodeData | BlueprintNode | string) {
+        const node =
+            nodeOrId instanceof BlueprintNode
+                ? nodeOrId
+                : this.#nodes.get(R.isString(nodeOrId) ? nodeOrId : nodeOrId.id);
+        if (!node) return;
+
         node.eventMode = "none";
 
         this.#nodes.delete(node.id);
 
         if (this.removeChild(node)) {
             node.destroy();
-        }
-    }
-
-    onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {
-        for (const node of this.nodes()) {
-            const connected = node.onConnect(point, other);
-
-            if (connected !== undefined) {
-                return connected;
-            }
         }
     }
 }

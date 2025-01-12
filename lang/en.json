@@ -13,10 +13,15 @@
             "title": "Triggers Menu",
             "triggers": "Triggers",
             "close": "Close Window",
+            "import": "Import Trigger(s)",
+            "export-all": "Export All Triggers",
             "trigger": {
                 "add": "Add Trigger",
                 "export": "Export Trigger",
-                "delete": "Delete Trigger"
+                "delete": {
+                    "label": "Delete Trigger",
+                    "prompt": "Are you sure you want to delete the <strong>{name}</strong> trigger?"
+                }
             }
         },
         "add-trigger": {
@@ -24,6 +29,12 @@
             "label": "Event Type",
             "name": "Trigger Name",
             "yes": "Create",
+            "no": "Cancel"
+        },
+        "edit-trigger": {
+            "title": "Edit Trigger",
+            "name": "Trigger Name",
+            "yes": "Edit",
             "no": "Cancel"
         },
         "node": {

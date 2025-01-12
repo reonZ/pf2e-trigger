@@ -1,5 +1,5 @@
 import { Blueprint } from "@blueprint/blueprint";
-import { Trigger } from "@trigger/trigger";
+import { TriggerData } from "@data/data-trigger";
 
 abstract class BlueprintLayer<T extends PIXI.DisplayObject> extends PIXI.Container<T> {
     #blueprint: Blueprint;
@@ -16,10 +16,6 @@ abstract class BlueprintLayer<T extends PIXI.DisplayObject> extends PIXI.Contain
         return this.#blueprint;
     }
 
-    get trigger(): Trigger | null {
-        return this.blueprint.trigger;
-    }
-
     get stage(): PIXI.Container {
         return this.blueprint.stage;
     }
@@ -30,6 +26,10 @@ abstract class BlueprintLayer<T extends PIXI.DisplayObject> extends PIXI.Contain
 
     get screen(): PIXI.Rectangle {
         return this.blueprint.screen;
+    }
+
+    get trigger(): TriggerData | null {
+        return this.blueprint.trigger;
     }
 
     abstract initialize(): void;
