@@ -18,7 +18,7 @@ function prepareTriggersData() {
     const conditionId = fu.randomID();
     const valueId = fu.randomID();
 
-    const triggersRawData = [
+    const triggersRawData: TriggerRawData[] = [
         {
             id: fu.randomID(),
             name: "Test Trigger",
@@ -38,7 +38,7 @@ function prepareTriggersData() {
                     y: 300,
                     inputs: {
                         item: {
-                            ids: { [`${valueId}.outputs.item`]: true },
+                            ids: [`${valueId}.outputs.item`],
                         },
                     },
                 },
@@ -50,7 +50,7 @@ function prepareTriggersData() {
                 //     y: 500,
                 //     inputs: {
                 //         item: {
-                //             ids: { [`${valueId}.outputs.item`]: true },
+                //             ids: [`${valueId}.outputs.item`],
                 //         },
                 //     },
                 // },
@@ -65,13 +65,13 @@ function prepareTriggersData() {
                     },
                     outputs: {
                         item: {
-                            ids: { [`${conditionId}.inputs.item`]: true },
+                            ids: [`${conditionId}.inputs.item`],
                         },
                     },
                 },
             ],
         },
-    ] as unknown as TriggerRawData[];
+    ];
 
     // end of test
 

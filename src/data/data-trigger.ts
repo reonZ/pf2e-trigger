@@ -48,11 +48,11 @@ function processTriggerData(data: TriggerRawData): TriggerData | null {
 
                 const originId = `${node.id}.${category}.${key}` as NodeEntryId;
 
-                for (const targetId of R.keys(entry.ids)) {
+                for (const targetId of entry.ids) {
                     const targetIds = fu.getProperty(nodes, `${targetId}.ids`);
-                    if (!R.isPlainObject(targetIds) || originId in targetIds) continue;
+                    if (!R.isArray(targetIds) || targetIds.includes(originId)) continue;
 
-                    delete node[category][key].ids?.[targetId];
+                    node[category][key].ids?.findSplice((x) => x === targetId);
                 }
             }
         }

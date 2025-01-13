@@ -2,7 +2,7 @@ import { Blueprint } from "@blueprint/blueprint";
 import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
 import { NodeSchema, NodeType } from "@schema/schema";
 import { getSchema } from "@schema/schema-list";
-import { NodeEntryCategory, NodeEntryId, NodeEntryIdMap, NodeEntryType } from "@data/data-entry";
+import { NodeEntryCategory, NodeEntryId, NodeEntryType } from "@data/data-entry";
 import { NodeData, NodeEntryValue } from "@data/data-node";
 import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
 import { BlueprintNodeHeader } from "./blueprint-node-header";
@@ -238,18 +238,18 @@ class BlueprintNode extends PIXI.Container {
         fu.setProperty(this.#data, `${category}.${key}.value`, value);
     }
 
-    getConnections(category: NodeEntryCategory, key: string): NodeEntryIdMap {
-        return this.#data[category][key]?.ids ?? {};
+    getConnections(category: NodeEntryCategory, key: string): NodeEntryId[] {
+        return this.#data[category][key]?.ids ?? [];
     }
 
     addConnection(category: NodeEntryCategory, key: string, id: NodeEntryId) {
         const ids = this.getConnections(category, key);
-        ids[id] = true;
+        ids.push(id);
         fu.setProperty(this.#data, `${category}.${key}.ids`, ids);
     }
 
-    deleteConnection(category: NodeEntryCategory, key: string, id: NodeEntryId): boolean {
-        return delete this.#data[category][key]?.ids?.[id];
+    deleteConnection(category: NodeEntryCategory, key: string, id: NodeEntryId) {
+        this.#data[category][key]?.ids?.findSplice((x) => x === id);
     }
 
     #paint() {

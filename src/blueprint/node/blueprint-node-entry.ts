@@ -110,7 +110,7 @@ class BlueprintNodeEntry extends PIXI.Graphics {
     }
 
     get connections(): NodeEntryId[] {
-        return R.keys(this.node.getConnections(this.category, this.key));
+        return this.node.getConnections(this.category, this.key);
     }
 
     get value(): NodeEntryValue {
