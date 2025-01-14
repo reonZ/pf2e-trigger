@@ -45,4 +45,9 @@
         min-width: 150px;
         min-height: 150px;
     }
+
+    &.input-select .menu {
+        transform: translateX(-0.5px);
+        border-radius: 0;
+    }
 }

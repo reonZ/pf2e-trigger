@@ -38,6 +38,16 @@
             "no": "Cancel"
         },
         "node": {
+            "action": {
+                "title": "Actions",
+                "subtitle": "Action",
+                "roll-save": {
+                    "title": "Roll Save",
+                    "dc": {
+                        "label": "DC"
+                    }
+                }
+            },
             "event": {
                 "title": "Events",
                 "subtitle": "Event",
@@ -70,10 +80,11 @@
                 "false": "False",
                 "test": "A Bigger Test",
                 "item": "Item",
-                "uuid": "Source UUID"
+                "uuid": "Source UUID",
+                "result": "Result"
             }
         },
-        "context": {
+        "select": {
             "delete": "Delete"
         }
     }

@@ -1,21 +1,7 @@
 import { NodeType, isNodeType } from "@schema/schema";
-import { isNodeKey } from "@schema/schema-list";
+import { getSchema, isNodeKey } from "@schema/schema-list";
 import { R } from "module-helpers";
-import { NodeEntryMap, processEntryDataMap } from "./data-entry";
-
-// abstract class TriggerNode {
-//     #data: NodeData;
-//     #schema: NodeSchema;
-
-//     constructor(data: NodeData) {
-//         this.#data = data;
-//         this.#schema = getSchema(data);
-//     }
-
-//     get isUnique(): boolean {
-//         return !!this.#schema.isUnique;
-//     }
-// }
+import { NodeEntryMap, processInputEntryData, processOutputEntryData } from "./data-entry";
 
 function processNodeData(data: NodeRawData): NodeData | null {
     if (
@@ -29,8 +15,10 @@ function processNodeData(data: NodeRawData): NodeData | null {
         return null;
     }
 
-    const inputs = processEntryDataMap(data.inputs);
-    const outputs = processEntryDataMap(data.outputs);
+    const schema = getSchema({ type: data.type, key: data.key });
+
+    const inputs = processInputEntryData(data.inputs, schema.inputs);
+    const outputs = processOutputEntryData(data.outputs);
 
     return {
         id: data.id,
@@ -63,7 +51,7 @@ type BaseNodeData<T extends NodeType = NodeType> = {
     y: number;
 };
 
-type NodeEntryValue = string | number | undefined;
+type NodeEntryValue = string | number | boolean | undefined;
 
 export { processNodeData };
 export type { NodeData, NodeEntryValue, NodeRawData };

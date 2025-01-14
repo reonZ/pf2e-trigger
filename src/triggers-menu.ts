@@ -1,8 +1,12 @@
 import { Blueprint } from "@blueprint/blueprint";
 import { EventNodeKey, getEventKeys } from "@schema/schema-list";
 import {
+    ApplicationClosingOptions,
+    ApplicationConfiguration,
+    ApplicationRenderOptions,
     R,
     TemplateLocalize,
+    addListener,
     addListenerAll,
     confirmDialog,
     createHTMLElement,
@@ -11,47 +15,49 @@ import {
     localize,
     render,
     templateLocalize,
-    templatePath,
     waitDialog,
 } from "module-helpers";
 
-class TriggersMenu extends FormApplication {
+class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     #blueprint: Blueprint | null = null;
     #timeout: NodeJS.Timeout | null = null;
 
-    static get defaultOptions(): FormApplicationOptions {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            id: "pf2e-trigger-triggers-menu",
-            title: localize("triggers-menu.title"),
-            template: templatePath("triggers-menu"),
-            submitOnChange: false,
-            submitOnClose: false,
-            closeOnSubmit: true,
-            scrollY: [".triggers"],
-            left: 0,
-            top: 5,
-        } satisfies Partial<FormApplicationOptions>);
-    }
+    static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
+        window: {
+            resizable: false,
+            minimizable: false,
+            frame: false,
+            positioned: false,
+        },
+        id: "pf2e-trigger-triggers-menu",
+        classes: ["app", "window-app"],
+    };
 
     get blueprint(): Blueprint | null {
         return this.#blueprint;
     }
 
     get sidebar(): HTMLElement | null {
-        return htmlQuery(this.element[0], ".window-content > .sidebar");
+        return htmlQuery(this.element, ".sidebar");
     }
 
-    render(force?: boolean, options?: RenderOptions): this {
+    async render(
+        options?: boolean | DeepPartial<ApplicationRenderOptions>,
+        _options?: DeepPartial<ApplicationRenderOptions>
+    ): Promise<this> {
         if (this.rendered) return this;
-        return super.render(force, options);
+        return super.render(options, _options);
     }
 
-    protected async _render(force?: boolean, options?: RenderOptions): Promise<void> {
-        await super._render(force, options);
-        this.#createPixiApplication();
+    async close(options?: ApplicationClosingOptions) {
+        return super.close({ animate: false });
     }
 
-    getData(options?: Partial<FormApplicationOptions>): BlueprintMenuData {
+    _onClose() {
+        this.#blueprint?.destroy();
+    }
+
+    protected async _prepareContext(options?: ApplicationRenderOptions): Promise<TriggersMenuData> {
         return {
             triggers: this.blueprint?.triggersList ?? [],
             selected: this.blueprint?.trigger?.id,
@@ -59,18 +65,39 @@ class TriggersMenu extends FormApplication {
         };
     }
 
+    protected _renderHTML(context: object, options: ApplicationRenderOptions): Promise<string> {
+        return render("triggers-menu", context);
+    }
+
+    protected _replaceHTML(
+        result: string,
+        content: HTMLElement,
+        options: ApplicationRenderOptions
+    ): void {
+        content.innerHTML = result;
+        this.#activateListeners(content);
+    }
+
+    _onFirstRender(context: TriggersMenuData, options: ApplicationRenderOptions) {
+        requestAnimationFrame(() => {
+            this.#blueprint = new Blueprint(this.element);
+            this.refresh();
+        });
+    }
+
     async refresh(close?: boolean) {
-        const data = this.getData();
+        const data = await this._prepareContext();
         const template = await render("triggers-menu", data);
         const wrapper = createHTMLElement("div", { innerHTML: template });
 
-        const oldTitle = htmlQuery(this.element[0], ".trigger-title");
+        const oldTitle = htmlQuery(this.element, ".trigger-title");
         if (oldTitle) {
             oldTitle.innerText = this.blueprint?.trigger?.name ?? "";
         }
 
         const newTriggers = htmlQuery(wrapper, "ul.triggers");
         const oldTriggers = htmlQuery(this.sidebar, "ul.triggers");
+
         if (newTriggers && oldTriggers) {
             oldTriggers.replaceWith(newTriggers);
             this.#activateTriggersListeners(newTriggers);
@@ -87,25 +114,23 @@ class TriggersMenu extends FormApplication {
         });
     }
 
-    activateListeners($html: JQuery<HTMLElement>): void {
-        const html = $html[0];
-
-        html.addEventListener("pointerenter", () => {
+    #activateListeners(html: HTMLElement) {
+        addListener(html, ".sidebar", "pointerenter", (event, el) => {
             if (this.#timeout) {
                 clearTimeout(this.#timeout);
                 this.#timeout = null;
             }
-            html.classList.add("show");
+            el.classList.add("show");
         });
 
-        html.addEventListener("pointerleave", () => {
+        addListener(html, ".sidebar", "pointerleave", (event, el) => {
             this.#timeout = setTimeout(() => {
-                html.classList.remove("show");
+                el.classList.remove("show");
                 this.#timeout = null;
             }, 200);
         });
 
-        addListenerAll(htmlQuery(html, ".header"), "[data-action]", (event, el) => {
+        addListenerAll(html, ".header [data-action]", (event, el) => {
             switch (el.dataset.action as MenuEventAction) {
                 case "add-trigger": {
                     return this.#addTrigger();
@@ -227,26 +252,12 @@ class TriggersMenu extends FormApplication {
         this.blueprint?.editTrigger(id, result);
         this.refresh();
     }
-
-    #createPixiApplication() {
-        requestAnimationFrame(() => {
-            const parent = htmlQuery(this.element[0], ".window-content");
-            if (parent) {
-                this.#blueprint = new Blueprint(parent);
-                this.refresh();
-            }
-        });
-    }
-
-    protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
-        throw new Error("Method not implemented.");
-    }
 }
 
 type MenuEventAction = "close-window" | "add-trigger" | "export-all" | "import";
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
 
-type BlueprintMenuData = FormApplicationData & {
+type TriggersMenuData = {
     triggers: { name: string; id: string }[];
     selected: Maybe<string>;
     i18n: TemplateLocalize;

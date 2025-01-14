@@ -1,10 +1,10 @@
 import { BlueprintNode } from "@blueprint/node/blueprint-node";
 import { BlueprintLayer } from "./layer";
 import { NodeData } from "@data/data-node";
-import { createBLueprintNode } from "@blueprint/node/blueprint-node-list";
+import { createBlueprintNode } from "@blueprint/node/blueprint-node-list";
 import { R } from "module-helpers";
 import { NodeEntryId, segmentEntryId } from "@data/data-entry";
-import { BlueprintNodeEntry } from "@blueprint/node/blueprint-node-entry";
+import { BlueprintEntry } from "@blueprint/node/entry/blueprint-entry";
 
 class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     #nodes: Collection<BlueprintNode> = new Collection();
@@ -30,13 +30,13 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
         return this.#nodes.get(id);
     }
 
-    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+    getEntryFromId(id: NodeEntryId): BlueprintEntry | undefined {
         const { nodeId } = segmentEntryId(id);
         return this.getNode(nodeId)?.getEntryFromId(id);
     }
 
     addNode(node: NodeData | BlueprintNode): BlueprintNode {
-        const blueprintNode = node instanceof BlueprintNode ? node : createBLueprintNode(node);
+        const blueprintNode = node instanceof BlueprintNode ? node : createBlueprintNode(node);
 
         this.#nodes.set(node.id, blueprintNode);
         this.addChild(blueprintNode);

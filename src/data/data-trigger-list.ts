@@ -7,7 +7,7 @@ function getTriggersDataMap(): Record<string, TriggerData> {
     return R.pipe(
         R.values(TRIGGERS),
         R.flatMap(R.identity()),
-        R.mapToObj((trigger) => [trigger.id, trigger])
+        R.mapToObj((trigger) => [trigger.id, fu.deepClone(trigger)])
     );
 }
 
@@ -17,6 +17,7 @@ function prepareTriggersData() {
     const eventId = fu.randomID();
     const conditionId = fu.randomID();
     const valueId = fu.randomID();
+    const actionId = fu.randomID();
 
     const triggersRawData: TriggerRawData[] = [
         {
@@ -29,6 +30,11 @@ function prepareTriggersData() {
                     key: "turn-start",
                     x: 100,
                     y: 200,
+                    outputs: {
+                        out: {
+                            ids: [`${conditionId}.inputs.in`],
+                        },
+                    },
                 },
                 {
                     id: conditionId,
@@ -37,8 +43,16 @@ function prepareTriggersData() {
                     x: 350,
                     y: 300,
                     inputs: {
+                        in: {
+                            ids: [`${eventId}.outputs.out`],
+                        },
                         item: {
                             ids: [`${valueId}.outputs.item`],
+                        },
+                    },
+                    outputs: {
+                        false: {
+                            ids: [`${actionId}.inputs.in`],
                         },
                     },
                 },
@@ -69,21 +83,37 @@ function prepareTriggersData() {
                         },
                     },
                 },
+                {
+                    id: actionId,
+                    type: "action",
+                    key: "roll-save",
+                    x: 550,
+                    y: 350,
+                    inputs: {
+                        in: {
+                            ids: [`${conditionId}.outputs.false`],
+                        },
+                    },
+                },
             ],
         },
     ];
 
     // end of test
 
-    TRIGGERS = R.pipe(
-        triggersRawData,
-        // getSetting<TriggerRawData[]>("triggers"),
-        R.map((data) => processTriggerData(data)),
-        R.filter(R.isTruthy),
-        R.groupBy((trigger) => trigger.event.key)
-    );
+    // getSetting<TriggerRawData[]>("triggers"),
+    TRIGGERS = processTriggers(triggersRawData);
 
     MODULE.debug("TRIGGERS", TRIGGERS);
 }
 
-export { getTriggersDataMap, prepareTriggersData };
+function processTriggers(triggers: TriggerRawData[]): Record<string, TriggerData[]> {
+    return R.pipe(
+        triggers,
+        R.map((data) => processTriggerData(data)),
+        R.filter(R.isTruthy),
+        R.groupBy((trigger) => trigger.event.key)
+    );
+}
+
+export { getTriggersDataMap, prepareTriggersData, processTriggers };

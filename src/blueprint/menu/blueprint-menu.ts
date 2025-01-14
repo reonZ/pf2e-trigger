@@ -1,6 +1,4 @@
 import { Blueprint } from "@blueprint/blueprint";
-import { BlueprintNode } from "@blueprint/node/blueprint-node";
-import { BlueprintNodeEntry } from "@blueprint/node/blueprint-node-entry";
 import { TriggerData } from "@data/data-trigger";
 import {
     ApplicationClosingOptions,
@@ -11,28 +9,23 @@ import {
     render,
 } from "module-helpers";
 
-abstract class BlueprintMenu<
-    TReturn extends any,
-    TSource extends BlueprintNode | BlueprintNodeEntry
-> extends foundry.applications.api.ApplicationV2 {
-    #resolve: (value: TReturn | null | PromiseLike<TReturn | null>) => void;
-    #point: Point;
+abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.api
+    .ApplicationV2<BlueprintMenuOptions> {
+    #resolve: BlueprintMenuResolve<TReturn>;
     #blueprint: Blueprint;
-    #source: TSource;
+    #target: Point | PIXI.Container;
 
-    constructor(
+    protected constructor(
         blueprint: Blueprint,
-        point: Point,
-        resolve: (value: TReturn | null | PromiseLike<TReturn | null>) => void,
-        source: TSource,
-        options?: DeepPartial<ApplicationConfiguration>
+        target: Point | PIXI.Container,
+        resolve: BlueprintMenuResolve<TReturn>,
+        options?: DeepPartial<BlueprintMenuOptions>
     ) {
         super(options);
 
         this.#blueprint = blueprint;
-        this.#point = blueprint.getGlobalCoordinates(point);
         this.#resolve = resolve;
-        this.#source = source;
+        this.#target = target;
     }
 
     static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
@@ -44,19 +37,6 @@ abstract class BlueprintMenu<
         },
         id: "pf2e-trigger-blueprint-menu",
     };
-
-    static open<TReturn extends any>(
-        blueprint: Blueprint,
-        point: Point,
-        source?: BlueprintNode | BlueprintNodeEntry,
-        options?: DeepPartial<ApplicationConfiguration>
-    ): Promise<TReturn | null> {
-        return new Promise((resolve) => {
-            // @ts-expect-error
-            const menu = new this(blueprint, point, resolve, source, options);
-            menu.render(true);
-        });
-    }
 
     abstract get template(): string;
 
@@ -72,15 +52,11 @@ abstract class BlueprintMenu<
         return this.blueprint.view;
     }
 
-    get source(): TSource {
-        return this.#source;
+    get target(): Point | PIXI.Container {
+        return this.#target;
     }
 
-    get point(): Point {
-        return this.#point;
-    }
-
-    get resolve(): (value: TReturn | null | PromiseLike<TReturn | null>) => void {
+    get resolve(): BlueprintMenuResolve<TReturn> {
         return this.#resolve;
     }
 
@@ -109,25 +85,38 @@ abstract class BlueprintMenu<
         const menu = htmlQuery(this.element, ".menu");
         if (!menu) return position;
 
+        Object.assign(menu.style, this.options.style ?? {});
+
+        const target = this.target;
         const bounds = menu?.getBoundingClientRect();
         const viewBounds = this.view.getBoundingClientRect();
 
-        const point = {
-            x: Math.clamp(
-                this.#point.x - bounds.width / 2,
-                viewBounds.left,
-                viewBounds.right - bounds.width
-            ),
-            y: Math.clamp(
-                this.#point.y - bounds.height / 2,
-                viewBounds.top,
-                viewBounds.bottom - bounds.height
-            ),
-        };
+        const mark: { top: Point; bottom: Point; width?: string } = (() => {
+            if (!(target instanceof PIXI.Container)) {
+                const { x, y } = this.blueprint.getGlobalCoordinates(target);
+                const point = { x: x - bounds.width / 2, y };
+                return { top: point, bottom: point };
+            }
+
+            const { x, y } = target.getGlobalPosition();
+
+            return {
+                width: `${target.width}px`,
+                top: this.blueprint.getGlobalCoordinates({ x, y: y - 1 }),
+                bottom: this.blueprint.getGlobalCoordinates({ x, y: y + target.height }),
+            };
+        })();
+
+        let y = mark.bottom.y - 1;
+
+        if (y + bounds.height > viewBounds.bottom && y > viewBounds.height / 2) {
+            y = mark.top.y - bounds.height + 2;
+        }
 
         Object.assign(menu.style, {
-            left: `${point.x}px`,
-            top: `${point.y}px`,
+            left: `${mark.top.x}px`,
+            top: `${y}px`,
+            minWidth: mark.width,
         });
 
         return position;
@@ -138,4 +127,11 @@ abstract class BlueprintMenu<
     }
 }
 
+type BlueprintMenuOptions = ApplicationConfiguration & {
+    style: Partial<CSSStyleDeclaration>;
+};
+
+type BlueprintMenuResolve<T> = (value: T | null | PromiseLike<T | null>) => void;
+
 export { BlueprintMenu };
+export type { BlueprintMenuResolve, BlueprintMenuOptions };

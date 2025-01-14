@@ -1,6 +1,5 @@
-import { BlueprintNodeEntry } from "@blueprint/node/blueprint-node-entry";
 import { NodeType } from "@schema/schema";
-import { TriggerNodeFilter, getFilters } from "@schema/schema-list";
+import { NodeFilter, getFilters } from "@schema/schema-list";
 import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
@@ -10,15 +9,47 @@ import {
     localize,
     templateLocalize,
 } from "module-helpers";
-import { BlueprintMenu } from "./blueprint-menu";
+import { BlueprintMenu, BlueprintMenuOptions, BlueprintMenuResolve } from "./blueprint-menu";
+import { BlueprintEntry } from "@blueprint/node/entry/blueprint-entry";
+import { Blueprint } from "@blueprint/blueprint";
 
-class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue, BlueprintNodeEntry> {
+class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
+    #source: BlueprintEntry | undefined;
+
     static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
         classes: ["nodes-menu"],
     };
 
+    protected constructor(
+        blueprint: Blueprint,
+        target: Point | PIXI.Container,
+        resolve: BlueprintMenuResolve<NodesMenuReturnValue>,
+        source?: BlueprintEntry,
+        options?: DeepPartial<BlueprintMenuOptions>
+    ) {
+        super(blueprint, target, resolve, options);
+
+        this.#source = source;
+    }
+
+    static open(
+        blueprint: Blueprint,
+        target: Point | PIXI.Container,
+        source?: BlueprintEntry,
+        options?: DeepPartial<BlueprintMenuOptions>
+    ): Promise<NodesMenuReturnValue | null> {
+        return new Promise((resolve) => {
+            const menu = new this(blueprint, target, resolve, source, options);
+            menu.render(true);
+        });
+    }
+
     get template(): string {
         return "nodes-menu";
+    }
+
+    get source(): BlueprintEntry | undefined {
+        return this.#source;
     }
 
     async _prepareContext(options: ApplicationRenderOptions): Promise<MenuData> {
@@ -41,7 +72,7 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue, BlueprintNo
         };
     }
 
-    #getFilters(): TriggerNodeFilter[] {
+    #getFilters(): NodeFilter[] {
         const filters = getFilters(this.trigger);
         const entry = this.source;
         if (!entry) return filters;

@@ -7,7 +7,7 @@ import { ItemPF2e, MODULE, R, distanceBetweenPoints, subtractPoints } from "modu
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
-import { BlueprintNodesMenu, NodesMenuReturnValue } from "./menu/nodes-menu";
+import { BlueprintNodesMenu } from "./menu/blueprint-nodes-menu";
 import { BlueprintNode } from "./node/blueprint-node";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
@@ -275,7 +275,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     async #onMenu({ x, y }: Point) {
-        const result = await BlueprintNodesMenu.open<NodesMenuReturnValue>(this, { x, y });
+        const result = await BlueprintNodesMenu.open(this, { x, y });
         if (!result) return;
 
         const { key, type } = result;

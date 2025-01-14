@@ -1,12 +1,14 @@
-import { R } from "module-helpers";
 import { BlueprintNodeLayout } from "./blueprint-node-child";
-import { BlueprintNodeEntry } from "./blueprint-node-entry";
-import { NodeEntryCategory, NodeEntryId, NodeEntryType } from "@data/data-entry";
+import { NodeEntryId } from "@data/data-entry";
+import { NodeEntryCategory, NodeEntryType } from "@schema/schema";
+import { BlueprintEntry } from "./entry/blueprint-entry";
+import { R } from "module-helpers";
+import { createBlueprintEntry } from "./entry/blueprint-entry-list";
 
 class BlueprintNodeBody extends BlueprintNodeLayout {
-    #entries: Collection<BlueprintNodeEntry> = new Collection();
-    #inputs: BlueprintNodeEntry[] = [];
-    #outputs: BlueprintNodeEntry[] = [];
+    #entries: Collection<BlueprintEntry> = new Collection();
+    #inputs: BlueprintEntry[] = [];
+    #outputs: BlueprintEntry[] = [];
     #left: PIXI.Container | null = null;
     #right!: PIXI.Container;
 
@@ -51,7 +53,7 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
         this.endFill();
     }
 
-    *entries(category?: NodeEntryCategory): Generator<BlueprintNodeEntry, void, undefined> {
+    *entries(category?: NodeEntryCategory): Generator<BlueprintEntry, void, undefined> {
         const collection =
             category === "outputs" ? this.#outputs : category ? this.#inputs : this.#entries;
 
@@ -60,14 +62,11 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
         }
     }
 
-    getEntryFromType(
-        category: NodeEntryCategory,
-        type: NodeEntryType | undefined
-    ): BlueprintNodeEntry | undefined {
+    getEntryFromType(category: NodeEntryCategory, type: NodeEntryType): BlueprintEntry | undefined {
         return this.#entries.find((entry) => entry.category === category && entry.type === type);
     }
 
-    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+    getEntryFromId(id: NodeEntryId): BlueprintEntry | undefined {
         return this.#entries.get(id);
     }
 
@@ -84,8 +83,7 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
         left.x = padding.x;
 
         for (const schemaInput of schema.inputs) {
-            const input = new BlueprintNodeEntry(this, "inputs", schemaInput);
-            input.initialize();
+            const input = createBlueprintEntry("inputs", this, schemaInput);
             input.y = offset;
 
             offset += rowHeight + this.spacing;
@@ -113,8 +111,7 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
             schema.outputs,
             R.filter(R.isTruthy),
             R.map((schemaOutput) => {
-                const output = new BlueprintNodeEntry(this, "outputs", schemaOutput);
-                output.initialize();
+                const output = createBlueprintEntry("outputs", this, schemaOutput);
 
                 if (output.width > maxWidth) {
                     maxWidth = output.width;

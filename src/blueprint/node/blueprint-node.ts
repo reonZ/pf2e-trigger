@@ -1,18 +1,17 @@
 import { Blueprint } from "@blueprint/blueprint";
 import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
-import { NodeSchema, NodeType } from "@schema/schema";
-import { getSchema } from "@schema/schema-list";
-import { NodeEntryCategory, NodeEntryId, NodeEntryType } from "@data/data-entry";
+import { BlueprintSelectMenu } from "@blueprint/menu/blueprint-select-menu";
+import { NodeEntryId } from "@data/data-entry";
 import { NodeData, NodeEntryValue } from "@data/data-node";
+import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "@schema/schema";
+import { getSchema } from "@schema/schema-list";
 import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
-import { BlueprintNodeHeader } from "./blueprint-node-header";
 import { BlueprintNodeBody } from "./blueprint-node-body";
 import { BlueprintNodeBorder } from "./blueprint-node-border";
-import {
-    NodeContextMenu,
-    NodeContextMenuValue,
-} from "@blueprint/menu/context-menu/node-context-menu";
-import { BlueprintNodeEntry } from "./blueprint-node-entry";
+import { BlueprintNodeHeader } from "./blueprint-node-header";
+import { BlueprintEntry } from "./entry/blueprint-entry";
+
+const NODE_CONTEXT = ["delete"] as const;
 
 class BlueprintNode extends PIXI.Container {
     #data: NodeData;
@@ -138,14 +137,14 @@ class BlueprintNode extends PIXI.Container {
     *entries(
         category?: NodeEntryCategory,
         activeOnly?: boolean
-    ): Generator<BlueprintNodeEntry, void, undefined> {
+    ): Generator<BlueprintEntry, void, undefined> {
         for (const entry of this.#body.entries(category)) {
             if (activeOnly && !entry.isActive) continue;
             yield entry;
         }
     }
 
-    onConnect(point: Point, other: BlueprintNodeEntry): BlueprintNodeEntry | null | undefined {
+    onConnect(point: Point, other: BlueprintEntry): BlueprintEntry | null | undefined {
         if (!this.getBounds().contains(point.x, point.y)) return;
 
         for (const entry of this.entries(other.oppositeCategory)) {
@@ -159,23 +158,22 @@ class BlueprintNode extends PIXI.Container {
         return null;
     }
 
-    getEntryFromType(
-        category: NodeEntryCategory,
-        type: NodeEntryType | undefined
-    ): BlueprintNodeEntry | undefined {
+    onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean {
+        if (!this.getBounds().contains(point.x, point.y)) return false;
+
+        for (const entry of this.entries()) {
+            if (entry.onDropItem(point, item)) break;
+        }
+
+        return true;
+    }
+
+    getEntryFromType(category: NodeEntryCategory, type: NodeEntryType): BlueprintEntry | undefined {
         return this.#body.getEntryFromType(category, type);
     }
 
-    getEntryFromId(id: NodeEntryId): BlueprintNodeEntry | undefined {
+    getEntryFromId(id: NodeEntryId): BlueprintEntry | undefined {
         return this.#body.getEntryFromId(id);
-    }
-
-    onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean {
-        for (const entry of this.entries()) {
-            const dropped = entry.onDropItem(point, item);
-            if (dropped) return true;
-        }
-        return false;
     }
 
     bringToTop() {
@@ -271,11 +269,7 @@ class BlueprintNode extends PIXI.Container {
             this.#onDragStart(event);
         } else if (event.button === 2) {
             const { x, y } = event.global;
-            const result = await NodeContextMenu.open<NodeContextMenuValue>(
-                this.blueprint,
-                { x, y },
-                this
-            );
+            const result = await BlueprintSelectMenu.open(this.blueprint, { x, y }, NODE_CONTEXT);
             if (!result) return;
 
             switch (result) {

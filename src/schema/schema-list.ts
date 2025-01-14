@@ -1,13 +1,21 @@
 import { TriggerData } from "@data/data-trigger";
 import { R } from "module-helpers";
+import { rollSaveSchema } from "./action/roll-save-schema";
 import { hasItemSchema } from "./condition/has-item-schema";
 import { eventSchema } from "./event/event-schema";
-import { NodeEntryType, NodeSchema, NodeType } from "./schema";
+import {
+    NodeEntryType,
+    NodeSchema,
+    NodeSchemaInputEntry,
+    NodeType,
+    isInputConnection,
+} from "./schema";
 import { itemSourceSchema } from "./value/item-source-schema";
 
-const FIELD_TYPES: NodeEntryType[] = ["uuid", "text"];
-
 const SCHEMAS = {
+    action: {
+        "roll-save": rollSaveSchema,
+    },
     event: {
         "turn-start": eventSchema,
         "turn-end": eventSchema,
@@ -20,35 +28,42 @@ const SCHEMAS = {
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
 
-const FILTERS: TriggerNodeFilter[] = R.pipe(
+const FILTERS: NodeFilter[] = R.pipe(
     R.entries(SCHEMAS),
     R.flatMap(([type, schemas]) => {
-        return R.entries(schemas).map(([key, schema]: [string, NodeSchema]) => {
-            const inputs = R.pipe(
-                schema.inputs ?? [],
-                R.filter((input) => !input.type || !isFieldConnection(input.type)),
-                R.map((input) => input.type),
-                R.unique()
-            );
+        return R.pipe(
+            R.entries(schemas),
+            R.map(([key, schema]: [string, NodeSchema]): NodeFilter => {
+                const inputs: NodeEntryType[] = R.pipe(
+                    schema.inputs ?? [],
+                    R.filter(isInputConnection),
+                    R.map((input) => input.type),
+                    R.unique()
+                );
 
-            const outputs = R.pipe(
-                schema.outputs,
-                R.map((output) => output.type),
-                R.unique()
-            );
+                if (schema.in) {
+                    inputs.unshift(undefined);
+                }
 
-            return {
-                type,
-                key,
-                inputs,
-                outputs,
-            };
-        });
+                const outputs = R.pipe(
+                    schema.outputs,
+                    R.map((output) => output.type),
+                    R.unique()
+                );
+
+                return {
+                    type,
+                    key,
+                    inputs,
+                    outputs,
+                };
+            })
+        );
     }),
     R.filter(({ type }) => type !== "event")
 );
 
-function getFilters(trigger?: TriggerData | null): TriggerNodeFilter[] {
+function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     const uniques = R.pipe(
         R.values(trigger?.nodes ?? {}),
         R.filter((node) => !!(getSchema(node) as NodeSchema).isUnique),
@@ -63,7 +78,14 @@ function getFilters(trigger?: TriggerData | null): TriggerNodeFilter[] {
 
 function getSchema<T extends NodeType>({ type, key }: { type: T; key: string }): NodeSchema {
     // @ts-expect-error
-    return SCHEMAS[type][key];
+    const schema = fu.deepClone(SCHEMAS[type][key]) as NodeSchema;
+
+    if (schema.in) {
+        schema.inputs ??= [];
+        schema.inputs.unshift({ key: "in" } as NodeSchemaInputEntry);
+    }
+
+    return schema;
 }
 
 function getEventKeys(): EventNodeKey[] {
@@ -72,10 +94,6 @@ function getEventKeys(): EventNodeKey[] {
 
 function isNodeKey<T extends NodeType>(type: T, key: any): key is NodeKey<T> {
     return R.isString(key) && key in SCHEMAS[type];
-}
-
-function isFieldConnection(type: NodeEntryType | undefined): boolean {
-    return !!type && FIELD_TYPES.includes(type);
 }
 
 type NodeSchemas = typeof SCHEMAS;
@@ -94,21 +112,21 @@ type ExtractPartialNodeMap<T> = {
 
 type NodeKey<T extends NodeType> = keyof NodeSchemas[T];
 
-type TriggerNodeFilter = {
+type NodeFilter = {
     type: NodeType;
     key: string;
-    inputs: ("boolean" | "item" | "uuid" | "text" | undefined)[];
-    outputs: ("boolean" | "item" | "uuid" | "text" | undefined)[];
+    inputs: NodeEntryType[];
+    outputs: NodeEntryType[];
 };
 
 type EventNodeKey = keyof (typeof SCHEMAS)["event"];
 
-export { getEventKeys, getFilters, getSchema, isFieldConnection, isNodeKey };
+export { getEventKeys, getFilters, getSchema, isNodeKey };
 export type {
     EventNodeKey,
     ExtractNodeMap,
     ExtractPartialNodeMap,
+    NodeFilter,
     NodeKey,
     NodeSchemas,
-    TriggerNodeFilter,
 };

@@ -1,30 +1,60 @@
+import {
+    NodeEntryCategory,
+    NodeSchemaInputEntry,
+    isEntryCategory,
+    isInputConnection,
+    isInputValue,
+} from "@schema/schema";
 import { R } from "module-helpers";
 
-const NODE_ENTRY_TYPES = ["item", "boolean", "uuid", "text"] as const;
-const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
-
-function processEntryDataMap(map: MaybePartial<NodeEntryMap>): NodeEntryMap {
+function processOutputEntryData(map: MaybePartial<NodeEntryMap>): NodeEntryMap {
     if (!R.isPlainObject(map)) return {};
 
-    return R.pipe(
-        R.entries(map),
-        R.map(([key, entry]) => [key, processEntryData(entry)] as const),
-        R.mapToObj(([key, entry]) => [key, entry])
-    );
+    const processed: NodeEntryMap = {};
+
+    for (const [key, entry] of R.entries(map)) {
+        const ids = processEntryIds(entry?.ids);
+        if (!ids.length) continue;
+        processed[key] = { ids };
+    }
+
+    return processed;
 }
 
-function processEntryData(entry: MaybePartial<NodeDataEntry>): NodeDataEntry {
-    return !R.isPlainObject(entry)
-        ? {}
-        : R.isArray(entry.ids)
-        ? { ids: processEntryIds(entry.ids) }
-        : !R.isNullish(entry.value)
-        ? { value: entry.value }
-        : {};
+function processInputEntryData(
+    map: MaybePartial<NodeEntryMap>,
+    nodeSchema: Maybe<NodeSchemaInputEntry[]>
+): NodeEntryMap {
+    if (!R.isPlainObject(map)) return {};
+
+    const processed: NodeEntryMap = {};
+
+    for (const [key, entry] of R.entries(map)) {
+        if (key === "in") {
+            const ids = processEntryIds(entry?.ids);
+            if (ids.length) {
+                processed[key] = { ids };
+            }
+            continue;
+        }
+
+        const schema = nodeSchema?.find((x) => x.key === key);
+        if (!schema) continue;
+
+        if (isInputConnection(schema)) {
+            const ids = processEntryIds(entry?.ids);
+            if (!ids.length) continue;
+            processed[key] = { ids };
+        } else if (isInputValue(schema, entry?.value)) {
+            processed[key] = { value: entry.value };
+        }
+    }
+
+    return processed;
 }
 
-function processEntryIds(ids: Array<unknown>): NodeEntryId[] {
-    return R.filter(ids, (id): id is NodeEntryId => isEntryId(id));
+function processEntryIds(ids: unknown): NodeEntryId[] {
+    return R.isArray(ids) ? R.filter(ids, (id): id is NodeEntryId => isEntryId(id)) : [];
 }
 
 function isEntryId(id: unknown): id is NodeEntryId {
@@ -34,19 +64,10 @@ function isEntryId(id: unknown): id is NodeEntryId {
     return seg.length === 3 && isEntryCategory(seg[1]);
 }
 
-function isEntryCategory(
-    category: Maybe<NodeEntryCategory | string>
-): category is NodeEntryCategory {
-    return R.isString(category) && NODE_ENTRY_CATEGORIES.includes(category as NodeEntryCategory);
-}
-
 function segmentEntryId(id: NodeEntryId): SegmentedEntryId {
     const [nodeId, category, key] = id.split(".");
     return { nodeId, category, key } as SegmentedEntryId;
 }
-
-type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number];
-type NodeEntryCategory = (typeof NODE_ENTRY_CATEGORIES)[number];
 
 type NodeEntryMap = Record<string, NodeDataEntry>;
 
@@ -63,12 +84,5 @@ type SegmentedEntryId = {
     key: string;
 };
 
-export { processEntryDataMap, segmentEntryId };
-export type {
-    NodeDataEntry,
-    NodeEntryCategory,
-    NodeEntryId,
-    NodeEntryMap,
-    NodeEntryType,
-    SegmentedEntryId,
-};
+export { processInputEntryData, processOutputEntryData, segmentEntryId };
+export type { NodeDataEntry, NodeEntryId, NodeEntryMap, SegmentedEntryId };

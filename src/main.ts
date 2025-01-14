@@ -1,6 +1,6 @@
 import { prepareTriggersData } from "@data/data-trigger-list";
-import { TriggersMenu } from "triggers-menu";
 import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
+import { TriggersMenu } from "triggers-menu";
 
 MODULE.register("pf2e-trigger");
 
