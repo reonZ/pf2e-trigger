@@ -103,7 +103,8 @@
             }
         },
         "select": {
-            "delete": "Delete"
+            "delete": "Delete",
+            "disconnect": "Disconnect"
         }
     }
 }

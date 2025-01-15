@@ -4,6 +4,9 @@ import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "@schema/
 import { ItemPF2e, localize, localizeIfExist } from "module-helpers";
 import { BlueprintNode } from "../blueprint-node";
 import { BlueprintNodeBody } from "../blueprint-node-body";
+import { BlueprintSelectMenu } from "@blueprint/menu/blueprint-select-menu";
+
+const CONNECTION_CONTEXT = ["disconnect"] as const;
 
 abstract class BlueprintEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
@@ -151,7 +154,7 @@ abstract class BlueprintEntry<
         this.refreshConnector();
     }
 
-    *removeConnections(): Generator<[NodeEntryId, NodeEntryId], void, undefined> {
+    removeConnections() {
         const originId = this.id;
 
         for (const targetId of this.connections) {
@@ -162,8 +165,11 @@ abstract class BlueprintEntry<
             targetNode.deleteConnection(category, key, this.id);
             targetNode.getEntryFromId(targetId)?.refreshConnector();
 
-            yield [originId, targetId];
+            this.blueprint.layers.connections.removeConnection(originId, targetId);
         }
+
+        this.node.deleteConnections(this.category, this.key);
+        this.refreshConnector();
     }
 
     protected _createText(): PIXI.Container | PreciseText | PIXI.Graphics {
@@ -184,12 +190,25 @@ abstract class BlueprintEntry<
         return connector;
     }
 
-    #onConnectorPointerDown(event: PIXI.FederatedPointerEvent) {
+    async #onConnectorPointerDown(event: PIXI.FederatedPointerEvent) {
         event.stopPropagation();
 
         if (event.button === 0 && this.canConnect) {
             this.blueprint.layers.connections.startConnection(this);
         } else if (event.button === 2 && this.isActive) {
+            const { x, y } = event.global;
+            const result = await BlueprintSelectMenu.open(
+                this.blueprint,
+                { x, y },
+                CONNECTION_CONTEXT
+            );
+            if (!result) return;
+
+            switch (result) {
+                case "disconnect": {
+                    this.removeConnections();
+                }
+            }
         }
     }
 

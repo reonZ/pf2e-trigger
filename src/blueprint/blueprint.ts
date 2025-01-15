@@ -174,9 +174,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!node) return;
 
         for (const entry of node.entries()) {
-            for (const [originId, targetId] of entry.removeConnections()) {
-                this.#connectionsLayer.removeConnection(originId, targetId);
-            }
+            entry.removeConnections();
         }
 
         this.#nodesLayer.removeNode(id);

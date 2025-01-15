@@ -258,6 +258,10 @@ class BlueprintNode extends PIXI.Container {
         this.#data[category][key]?.ids?.findSplice((x) => x === id);
     }
 
+    deleteConnections(category: NodeEntryCategory, key: string) {
+        delete this.#data[category][key]?.ids;
+    }
+
     #paint() {
         const maxInner = this.innerWidth;
         const maxWidth = maxInner + this.outerPadding * 2;
