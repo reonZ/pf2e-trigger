@@ -10,7 +10,7 @@ abstract class LogicBlueprintNode extends BlueprintNode {
     }
 
     get innerWidth(): number {
-        return super.innerWidth + this.body.innerPadding * 2;
+        return super.innerWidth + this.body.innerPadding * 1.5;
     }
 
     initialize(): void {
@@ -21,7 +21,7 @@ abstract class LogicBlueprintNode extends BlueprintNode {
 
     #positionFiligram() {
         const left =
-            (this.body.left?.width ?? 0) + this.outerPadding + this.body.innerPadding * 1.5;
+            (this.body.left?.width ?? 0) + this.outerPadding + this.body.innerPadding * 1.25;
 
         this.#filigram.x = left - this.#filigram.width / 2;
         this.#filigram.y = this.height / 2 - this.#filigram.height / 2;
