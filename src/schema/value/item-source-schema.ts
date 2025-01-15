@@ -1,8 +1,8 @@
-import { NodeSchema } from "@schema/schema";
+import { ValueSchema } from "./value-schema";
 
 const itemSourceSchema = {
     inputs: [{ key: "uuid", type: "uuid", field: true }],
     outputs: [{ key: "item", type: "item" }],
-} as const satisfies NodeSchema;
+} as const satisfies ValueSchema;
 
 export { itemSourceSchema };

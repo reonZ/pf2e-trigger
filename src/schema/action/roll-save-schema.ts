@@ -1,4 +1,4 @@
-import { NodeSchema } from "@schema/schema";
+import { ActionSchema } from "./action-schema";
 
 const rollSaveSchema = {
     in: true,
@@ -21,6 +21,6 @@ const rollSaveSchema = {
         },
     ],
     outputs: [{ key: "out" }, { key: "result", type: "number" }],
-} as const satisfies NodeSchema;
+} as const satisfies ActionSchema;
 
 export { rollSaveSchema };
