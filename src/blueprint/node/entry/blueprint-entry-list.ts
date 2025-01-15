@@ -1,9 +1,4 @@
-import {
-    NodeEntryCategory,
-    NodeEntryType,
-    NodeSchemaInputEntry,
-    NodeSchemaOutputEntry,
-} from "@schema/schema";
+import { NodeEntryCategory, NodeSchemaInputEntry, NodeSchemaOutputEntry } from "@schema/schema";
 import { BlueprintNodeBody } from "../blueprint-node-body";
 import { BlueprintEntry } from "./blueprint-entry";
 import { BlueprintBridgeEntry } from "./blueprint-entry-bridge";
@@ -13,7 +8,6 @@ import { BlueprintNumberEntry } from "./value/blueprint-entry-number";
 import { BlueprintSelectEntry } from "./value/blueprint-entry-select";
 import { BlueprintTextEntry } from "./value/blueprint-entry-text";
 import { BlueprintUuidEntry } from "./value/blueprint-entry-uuid";
-import { BlueprintValueEntry } from "./value/blueprint-entry-value";
 
 const INPUTS_ENTRIES = {
     boolean: BlueprintBooleanEntry,
@@ -22,7 +16,7 @@ const INPUTS_ENTRIES = {
     select: BlueprintSelectEntry,
     text: BlueprintTextEntry,
     uuid: BlueprintUuidEntry,
-} satisfies Record<NonNullable<NodeEntryType>, typeof BlueprintValueEntry>;
+};
 
 function createBlueprintEntry(
     category: NodeEntryCategory,
