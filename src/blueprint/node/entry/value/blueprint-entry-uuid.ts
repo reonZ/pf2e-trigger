@@ -12,9 +12,8 @@ class BlueprintUuidEntry<
 
     protected _createText(): PreciseText | PIXI.Graphics {
         const value = this.value;
-        const label = value ? String(value) : this.label;
-
-        return this._createInputField(120, label, !value);
+        const label = value.length ? value : this.label;
+        return this._createInputField(120, label, !value.length);
     }
 
     protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {
