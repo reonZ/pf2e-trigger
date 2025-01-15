@@ -1,10 +1,10 @@
 import { NodeEntryCategory } from "@schema/schema";
-import { BlueprintValueEntry } from "./blueprint-entry-value";
 import { R } from "module-helpers";
+import { BlueprintInputEntry } from "./blueprint-entry-input";
 
 class BlueprintNumberEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
-> extends BlueprintValueEntry<TCategory, "number"> {
+> extends BlueprintInputEntry<TCategory, "number"> {
     get connectorColor(): number {
         return 0x07b88f;
     }

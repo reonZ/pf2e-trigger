@@ -19,6 +19,8 @@ class BlueprintBooleanEntry<
     //     wrapper.addChild(field);
     //     return wrapper;
     // }
+
+    protected async _onInputFocus(target: PIXI.Graphics) {}
 }
 
 export { BlueprintBooleanEntry };
