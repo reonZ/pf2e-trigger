@@ -1,12 +1,10 @@
-<div class="menu">
-    {{#each groups as |group|}}
-    <div class="title">{{group.title}}</div>
-    <ul class="list">
-        {{#each group.nodes as |node|}}
-        <li data-type="{{node.type}}" data-key="{{node.key}}">
-            {{node.label}}
-        </li>
-        {{/each}}
-    </ul>
+{{#each groups as |group|}}
+<div class="title">{{group.title}}</div>
+<ul class="list">
+    {{#each group.nodes as |node|}}
+    <li data-type="{{node.type}}" data-key="{{node.key}}">
+        {{node.label}}
+    </li>
     {{/each}}
-</div>
+</ul>
+{{/each}}

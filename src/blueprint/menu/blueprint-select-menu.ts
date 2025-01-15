@@ -58,9 +58,7 @@ class BlueprintSelectMenu<
         };
     }
 
-    _activateListeners(html: HTMLElement) {
-        super._activateListeners(html);
-
+    protected _activateListeners(html: HTMLElement) {
         addListenerAll(html, "li", (event, el) => {
             event.stopPropagation();
 

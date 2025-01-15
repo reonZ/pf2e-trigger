@@ -5,7 +5,6 @@ import {
     ApplicationConfiguration,
     ApplicationPosition,
     ApplicationRenderOptions,
-    htmlQuery,
     render,
 } from "module-helpers";
 
@@ -35,10 +34,11 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
             frame: false,
             positioned: true,
         },
-        id: "pf2e-trigger-blueprint-menu",
+        classes: ["pf2e-trigger-blueprint-menu"],
     };
 
     abstract get template(): string;
+    protected abstract _activateListeners(html: HTMLElement): void;
 
     get blueprint(): Blueprint {
         return this.#blueprint;
@@ -78,17 +78,28 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
         options: ApplicationRenderOptions
     ): void {
         content.innerHTML = result;
+        content.tabIndex = 0;
+
         this._activateListeners(content);
     }
 
-    protected _updatePosition(position: ApplicationPosition) {
-        const menu = htmlQuery(this.element, ".menu");
-        if (!menu) return position;
+    protected _onFirstRender(context: object, options: ApplicationRenderOptions): void {
+        requestAnimationFrame(() => {
+            this.element.addEventListener("blur", (event) => {
+                this.close();
+            });
 
-        Object.assign(menu.style, this.options.style ?? {});
+            this.element.focus();
+        });
+    }
+
+    protected _updatePosition(position: ApplicationPosition) {
+        const el = this.element;
+
+        Object.assign(el.style, this.options.style ?? {});
 
         const target = this.target;
-        const bounds = menu?.getBoundingClientRect();
+        const bounds = el.getBoundingClientRect();
         const viewBounds = this.view.getBoundingClientRect();
 
         const mark: { top: Point; bottom: Point; width?: string } = (() => {
@@ -113,17 +124,13 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
             y = mark.top.y - bounds.height + 2;
         }
 
-        Object.assign(menu.style, {
+        Object.assign(el.style, {
             left: `${mark.top.x}px`,
             top: `${y}px`,
             minWidth: mark.width,
         });
 
         return position;
-    }
-
-    protected _activateListeners(html: HTMLElement) {
-        html.addEventListener("click", () => this.close());
     }
 }
 
@@ -134,4 +141,4 @@ type BlueprintMenuOptions = ApplicationConfiguration & {
 type BlueprintMenuResolve<T> = (value: T | null | PromiseLike<T | null>) => void;
 
 export { BlueprintMenu };
-export type { BlueprintMenuResolve, BlueprintMenuOptions };
+export type { BlueprintMenuOptions, BlueprintMenuResolve };

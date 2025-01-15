@@ -67,6 +67,25 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
+    destroy(removeView?: boolean, stageOptions?: PIXI.IDestroyOptions | boolean) {
+        this.stage.removeAllListeners();
+
+        //@ts-expect-error
+        this.#triggers = null;
+        this.#trigger = null;
+        //@ts-expect-error
+        this.#hitArea = null;
+        //@ts-expect-error
+        this.#gridLayer = null;
+        //@ts-expect-error
+        this.#nodesLayer = null;
+        //@ts-expect-error
+        this.#connectionsLayer = null;
+        this.#drag = null;
+
+        super.destroy(true, true);
+    }
+
     getLocalCoordinates(point: Point) {
         const viewBounds = this.view.getBoundingClientRect();
         return { x: point.x - viewBounds.x, y: point.y - viewBounds.y };
