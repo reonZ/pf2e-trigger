@@ -167,6 +167,7 @@ type NodeSchemaSelectEntry = Omit<
     field: NodeSchemaSelectField;
 };
 type NodeSchemaSelectField = {
+    default?: string;
     options: (string | NodeSchemaSelectOption)[];
 };
 type NodeSchemaSelectOption = {
