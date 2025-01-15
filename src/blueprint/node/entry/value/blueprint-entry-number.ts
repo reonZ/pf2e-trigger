@@ -10,16 +10,17 @@ class BlueprintNumberEntry<
     }
 
     protected _createText(): PIXI.Container {
-        const textEl = super._createText();
-        if (!this.isField) return textEl;
+        if (!this.isField) {
+            return super._createText();
+        }
 
         const wrapper = new PIXI.Container();
-        wrapper.addChild(textEl);
+        const field = this._createInputField(40, String(this.value));
 
-        const value = String(this.value);
-
-        const field = this._createInputField(40, value);
-        field.x = textEl.x + textEl.width + this.spacing;
+        if (this.node.type !== "value") {
+            const textEl = wrapper.addChild(super._createText());
+            field.x = textEl.x + textEl.width + this.spacing;
+        }
 
         wrapper.addChild(field);
 
