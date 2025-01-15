@@ -12,6 +12,8 @@ import {
 } from "./schema";
 import { itemSourceSchema } from "./value/item-source-schema";
 import { createLogicSchema } from "./logic/logic-schema";
+import { createValueSchema } from "./value/value-schema";
+import { successValueSchema } from "./value/success-value-schema";
 
 const SCHEMAS = {
     action: {
@@ -26,10 +28,12 @@ const SCHEMAS = {
     },
     value: {
         "item-source": itemSourceSchema,
+        "number-value": createValueSchema("number"),
+        "success-value": successValueSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),
-        "eq-text": createLogicSchema("text"),
+        // "eq-text": createLogicSchema("text"),
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
 

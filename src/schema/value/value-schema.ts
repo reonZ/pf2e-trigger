@@ -1,4 +1,15 @@
-import { NodeSchemaInputEntry, NodeSchemaOutputEntry } from "@schema/schema";
+import {
+    NodeSchemaInputEntry,
+    NodeSchemaOutputEntry,
+    NonNullableNodeEntryType,
+} from "@schema/schema";
+
+function createValueSchema(type: Exclude<NonNullableNodeEntryType, "select">): ValueSchema {
+    return {
+        inputs: [{ key: "in", type, field: true }],
+        outputs: [{ key: "value", type }],
+    };
+}
 
 type ValueSchema = {
     inputs?: NodeSchemaInputEntry[];
@@ -6,3 +17,4 @@ type ValueSchema = {
 };
 
 export type { ValueSchema };
+export { createValueSchema };

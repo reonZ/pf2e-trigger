@@ -70,6 +70,12 @@
                 "subtitle": "value",
                 "item-source": {
                     "title": "Item Source"
+                },
+                "number-value": {
+                    "title": "Number"
+                },
+                "success-value": {
+                    "title": "Degree of Success"
                 }
             },
             "logic": {
@@ -90,10 +96,10 @@
                 "target": "Target",
                 "true": "True",
                 "false": "False",
-                "test": "A Bigger Test",
                 "item": "Item",
                 "uuid": "Source UUID",
-                "result": "Result"
+                "result": "Result",
+                "value": "Value"
             }
         },
         "select": {

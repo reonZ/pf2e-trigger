@@ -1,6 +1,6 @@
 import { BlueprintNode } from "../blueprint-node";
 
-abstract class ValueBlueprintNode extends BlueprintNode {
+class ValueBlueprintNode extends BlueprintNode {
     get subtitle(): null {
         return null;
     }
