@@ -1,9 +1,11 @@
 import { NodeEntryValue } from "@data/data-node";
 import {
+    ExtractSchema,
+    ExtractSchemaType,
     NodeEntryCategory,
     NodeEntryType,
     NodeType,
-    NonNullableInputEntry,
+    NonNullableNodeEntryType,
     getDefaultInputValue,
     isInputConnection,
     setToSchemaValue,
@@ -13,7 +15,7 @@ import { BlueprintEntry } from "../blueprint-entry";
 
 abstract class BlueprintValueEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory,
-    TSchema extends NonNullableInputEntry = NonNullableInputEntry
+    TEntry extends NonNullableNodeEntryType = NonNullableNodeEntryType
 > extends BlueprintEntry<TCategory> {
     get isField(): boolean {
         return this.category === "inputs" && !isInputConnection(this.schema);
@@ -31,11 +33,12 @@ abstract class BlueprintValueEntry<
         return true;
     }
 
-    get value(): NonNullable<NodeEntryValue> {
-        return this.node.getValue(this.category, this.key) ?? getDefaultInputValue(this.schema);
+    get value(): ExtractSchemaType<TEntry> {
+        return (this.node.getValue(this.category, this.key) ??
+            getDefaultInputValue(this.schema)) as ExtractSchemaType<TEntry>;
     }
 
-    set value(value: unknown) {
+    set value(value: ExtractSchemaType<TEntry>) {
         const processed = setToSchemaValue(this.schema, value);
         this.node.setValue(this.category, this.key, processed);
         this._onValueChange(processed);
@@ -140,16 +143,22 @@ abstract class BlueprintValueEntry<
         return field;
     }
 
-    protected async _onInputFocus(target: PIXI.Graphics): Promise<void> {
+    protected _createHtmlInput(): HTMLInputElement {
         const value = this.value;
+        const el = document.createElement("input");
+
+        el.type = "text";
+        el.value = R.isString(value) ? value : "";
+
+        return el;
+    }
+
+    protected async _onInputFocus(target: PIXI.Graphics): Promise<void> {
         const bounds = target.getBounds();
+        const el = this._createHtmlInput();
         const viewBounds = this.blueprint.view.getBoundingClientRect();
 
         target.children[0].visible = false;
-
-        const el = document.createElement("input");
-        el.type = "text";
-        el.value = R.isString(value) ? value : "";
 
         Object.assign(el.style, {
             position: "absolute",
@@ -166,10 +175,10 @@ abstract class BlueprintValueEntry<
         document.body.appendChild(el);
 
         el.focus();
-        el.setSelectionRange(0, -1);
+        el.select();
 
         const onBlur = () => {
-            this.value = el.value.trim();
+            this.value = el.value.trim() as ExtractSchemaType<TEntry>;
             target.children[0].visible = true;
             el.remove();
         };
@@ -201,10 +210,10 @@ abstract class BlueprintValueEntry<
 
 interface BlueprintValueEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory,
-    TSchema extends NonNullableInputEntry = NonNullableInputEntry
+    TEntry extends NonNullableNodeEntryType = NonNullableNodeEntryType
 > extends BlueprintEntry<TCategory> {
     get type(): NonNullable<NodeEntryType>;
-    get schema(): TSchema;
+    get schema(): ExtractSchema<TEntry>;
 }
 
 export { BlueprintValueEntry };

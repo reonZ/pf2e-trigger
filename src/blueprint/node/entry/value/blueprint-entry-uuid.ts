@@ -1,11 +1,11 @@
-import { NodeEntryCategory, NodeSchemaUuidEntry } from "@schema/schema";
+import { NodeEntryValue } from "@data/data-node";
+import { NodeEntryCategory } from "@schema/schema";
 import { ItemPF2e } from "module-helpers";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
-import { NodeEntryValue } from "@data/data-node";
 
 class BlueprintUuidEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
-> extends BlueprintValueEntry<TCategory, NodeSchemaUuidEntry> {
+> extends BlueprintValueEntry<TCategory, "uuid"> {
     protected _onValueChange(value: NodeEntryValue): void {
         this.node.refresh();
     }

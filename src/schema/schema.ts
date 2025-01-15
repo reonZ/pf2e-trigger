@@ -6,15 +6,13 @@ const NODE_TYPES = ["event", "condition", "value", "action"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
 const NODE_ENTRY_TYPES = ["item", "boolean", "uuid", "text", "number", "select"] as const;
 
-const ENTRY_VALUE_TYPE: Record<
-    NonNullableNodeEntryType,
-    StringConstructor | NumberConstructor | BooleanConstructor
-> = {
+const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
     number: Number,
     select: String,
     text: String,
     uuid: String,
+    item: String,
 };
 
 function isInputConnection(
@@ -181,6 +179,14 @@ type NodeSchemaInputEntry =
     | NodeSchemaNumberEntry
     | NodeSchemaSelectEntry;
 
+type ExtractSchema<T extends NonNullable<NodeEntryType>> = Extract<
+    NodeSchemaInputEntry,
+    { type: T }
+>;
+type ExtractSchemaType<T extends NonNullable<NodeEntryType>> = PrimitiveOf<
+    (typeof ENTRY_VALUE_TYPE)[T]
+>;
+
 type NodeSchemaOutputEntry = {
     key: string;
     label?: string;
@@ -208,6 +214,8 @@ export {
     setToSchemaValue,
 };
 export type {
+    ExtractSchema,
+    ExtractSchemaType,
     NodeEntryCategory,
     NodeEntryType,
     NodeSchema,
