@@ -1,4 +1,3 @@
-import { NodeEntryValue } from "@data/data-node";
 import {
     ExtractInputSchemaEntry,
     ExtractSchemaType,
@@ -43,7 +42,7 @@ abstract class BlueprintValueEntry<
     set value(value: ExtractSchemaType<TEntry>) {
         const processed = setToSchemaValue(this.schema, value);
         this.node.setValue(this.category, this.key, processed);
-        this._onValueChange(processed);
+        this.refreshField();
     }
 
     get inputFontSize(): number {
@@ -90,10 +89,6 @@ abstract class BlueprintValueEntry<
         if (!this.isField || !this.textComponent.getBounds().contains(x, y)) return false;
         this._onItemDropped(item);
         return true;
-    }
-
-    protected _onValueChange(value: NodeEntryValue) {
-        this.refreshField();
     }
 
     protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {

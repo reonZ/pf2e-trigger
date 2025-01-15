@@ -1,4 +1,3 @@
-import { NodeEntryValue } from "@data/data-node";
 import { NodeEntryCategory } from "@schema/schema";
 import { ItemPF2e } from "module-helpers";
 import { BlueprintInputEntry } from "./blueprint-entry-input";
@@ -6,10 +5,6 @@ import { BlueprintInputEntry } from "./blueprint-entry-input";
 class BlueprintUuidEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintInputEntry<TCategory, "uuid"> {
-    protected _onValueChange(value: NodeEntryValue): void {
-        this.node.refresh();
-    }
-
     protected _createText(): PreciseText | PIXI.Graphics {
         const value = this.value;
         const label = value.length ? value : this.label;

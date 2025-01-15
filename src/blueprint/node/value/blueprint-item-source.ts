@@ -1,5 +1,7 @@
 import { ItemPF2e, R, isItemEntry } from "module-helpers";
 import { ValueBlueprintNode } from "./blueprint-value-node";
+import { NodeEntryCategory } from "@schema/schema";
+import { NodeEntryValue } from "@data/data-node";
 
 class ItemSourceBlueprintNode extends ValueBlueprintNode {
     #item: Maybe<ItemPF2e | CompendiumIndexData>;
@@ -21,6 +23,11 @@ class ItemSourceBlueprintNode extends ValueBlueprintNode {
     initialize(): void {
         this.#item = this.#getItem();
         super.initialize();
+    }
+
+    setValue(category: NodeEntryCategory, key: string, value: NodeEntryValue) {
+        super.setValue(category, key, value);
+        this.refresh();
     }
 
     #getItem(): Maybe<ItemPF2e | CompendiumIndexData> {
