@@ -14,7 +14,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         action: ["action"],
         condition: ["condition", "action"],
         event: ["condition"],
-        logic: [],
+        logic: ["action"],
         value: [],
     },
 };
