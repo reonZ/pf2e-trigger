@@ -11,6 +11,7 @@ import {
     isInputConnection,
 } from "./schema";
 import { itemSourceSchema } from "./value/item-source-schema";
+import { createLogicSchema } from "./logic/logic-schema";
 
 const SCHEMAS = {
     action: {
@@ -25,6 +26,10 @@ const SCHEMAS = {
     },
     value: {
         "item-source": itemSourceSchema,
+    },
+    logic: {
+        "eq-number": createLogicSchema("number"),
+        "eq-text": createLogicSchema("text"),
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
 

@@ -72,7 +72,19 @@
                     "title": "Item Source"
                 }
             },
+            "logic": {
+                "title": "Logic",
+                "subtitle": "Logic",
+                "eq-number": {
+                    "title": "Equals (Number)"
+                },
+                "eq-text": {
+                    "title": "Equals (Text)"
+                }
+            },
             "entry": {
+                "a": "A",
+                "b": "B",
                 "in": "In",
                 "out": "Out",
                 "target": "Target",

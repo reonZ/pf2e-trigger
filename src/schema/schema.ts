@@ -1,8 +1,7 @@
 import { NodeEntryValue } from "@data/data-node";
 import { R } from "module-helpers";
 
-const NODE_TYPES = ["event", "condition", "value", "action"] as const;
-// const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
+const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
 const NODE_ENTRY_TYPES = ["item", "boolean", "uuid", "text", "number", "select"] as const;
 
@@ -119,6 +118,10 @@ function isEntryCategory(category: any): category is NodeEntryCategory {
     return R.isString(category) && NODE_ENTRY_CATEGORIES.includes(category as NodeEntryCategory);
 }
 
+function createBooleanSchemaOutputs(): BooleanSchemaOutputs {
+    return [{ key: "true" }, { key: "false" }];
+}
+
 type NodeType = (typeof NODE_TYPES)[number];
 type NodeEntryCategory = (typeof NODE_ENTRY_CATEGORIES)[number];
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number] | undefined;
@@ -179,7 +182,7 @@ type NodeSchemaInputEntry =
     | NodeSchemaNumberEntry
     | NodeSchemaSelectEntry;
 
-type ExtractSchema<T extends NonNullable<NodeEntryType>> = Extract<
+type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
     NodeSchemaInputEntry,
     { type: T }
 >;
@@ -204,7 +207,13 @@ type NonNullableInputEntry = NodeSchemaInputEntry & {
     type: Exclude<NodeEntryType, undefined | "item">;
 };
 
+type BooleanSchemaOutputs = [
+    { key: "true"; label?: string | undefined },
+    { key: "false"; label?: string | undefined }
+];
+
 export {
+    createBooleanSchemaOutputs,
     getDefaultInputValue,
     getSelectOption,
     isEntryCategory,
@@ -214,7 +223,8 @@ export {
     setToSchemaValue,
 };
 export type {
-    ExtractSchema,
+    BooleanSchemaOutputs,
+    ExtractInputSchemaEntry,
     ExtractSchemaType,
     NodeEntryCategory,
     NodeEntryType,

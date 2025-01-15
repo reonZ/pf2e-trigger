@@ -5,6 +5,7 @@ import { ItemSourceBlueprintNode } from "./value/blueprint-item-source";
 import { EndTurnBlueprintNode, StartTurnBlueprintNode } from "./event/blueprint-turn-event";
 import { HasItemBlueprintNode } from "./condition/blueprint-has-item";
 import { RollSaveBlueprintNode } from "./action/blueprint-roll-save";
+import { EqBlueprintNode } from "./logic/eq-node";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -19,6 +20,10 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     },
     value: {
         "item-source": ItemSourceBlueprintNode,
+    },
+    logic: {
+        "eq-number": EqBlueprintNode,
+        "eq-text": EqBlueprintNode,
     },
 };
 

@@ -12,6 +12,10 @@ class BlueprintNodeBody extends BlueprintNodeLayout {
     #left: PIXI.Container | null = null;
     #right!: PIXI.Container;
 
+    get left(): PIXI.Container | null {
+        return this.#left;
+    }
+
     get padding(): Point {
         return { x: this.parent.outerPadding, y: 6 };
     }

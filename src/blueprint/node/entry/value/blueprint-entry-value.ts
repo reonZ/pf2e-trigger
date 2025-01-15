@@ -1,6 +1,6 @@
 import { NodeEntryValue } from "@data/data-node";
 import {
-    ExtractSchema,
+    ExtractInputSchemaEntry,
     ExtractSchemaType,
     NodeEntryCategory,
     NodeEntryType,
@@ -151,7 +151,7 @@ interface BlueprintValueEntry<
     TEntry extends NonNullableNodeEntryType = NonNullableNodeEntryType
 > extends BlueprintEntry<TCategory> {
     get type(): NonNullable<NodeEntryType>;
-    get schema(): ExtractSchema<TEntry>;
+    get schema(): ExtractInputSchemaEntry<TEntry>;
 }
 
 export { BlueprintValueEntry };

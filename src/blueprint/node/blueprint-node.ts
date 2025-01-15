@@ -40,6 +40,10 @@ class BlueprintNode extends PIXI.Container {
         }
     }
 
+    get body(): BlueprintNodeBody {
+        return this.#body;
+    }
+
     get schema(): NodeSchema {
         return this.#schema;
     }
@@ -110,6 +114,10 @@ class BlueprintNode extends PIXI.Container {
 
     get headerColor(): PIXI.Color | number {
         return 0x0;
+    }
+
+    get innerWidth() {
+        return Math.max(this.#header?.innerWidth ?? 0, this.#body.innerWidth);
     }
 
     initialize() {
@@ -251,7 +259,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #paint() {
-        const maxInner = Math.max(this.#header?.innerWidth ?? 0, this.#body.innerWidth);
+        const maxInner = this.innerWidth;
         const maxWidth = maxInner + this.outerPadding * 2;
 
         this.#body.y = this.#header?.outerHeight ?? 0;
