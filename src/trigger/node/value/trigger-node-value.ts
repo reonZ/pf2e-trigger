@@ -9,7 +9,6 @@ import { ActorPF2e, ItemPF2e } from "module-helpers";
 import { TriggerNode, TriggerNodeEntryValue } from "../trigger-node";
 
 abstract class ValueTriggerNode<TSchema extends ValueSchema> extends TriggerNode<TSchema> {
-    // actor uuid
     #values: Record<string, ExtractValueType<TSchema> | null> = {};
 
     protected abstract _computeValue(

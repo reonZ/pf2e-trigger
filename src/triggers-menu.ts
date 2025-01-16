@@ -137,8 +137,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 }
 
                 case "close-window": {
-                    // TODO do you want to save ?
-                    return this.close();
+                    return this.#closeAndSave();
                 }
             }
         });
@@ -166,6 +165,22 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 }
             }
         });
+    }
+
+    async #closeAndSave() {
+        const result = await confirmDialog(
+            {
+                title: localize("triggers-menu.save.title"),
+                content: localize("triggers-menu.save.prompt"),
+            },
+            { animation: false }
+        );
+
+        if (result) {
+            this.blueprint?.saveTrigger();
+        }
+
+        this.close();
     }
 
     async #deleteTrigger(id: string) {

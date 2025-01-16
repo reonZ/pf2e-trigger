@@ -1,6 +1,6 @@
-import { MODULE, R } from "module-helpers";
-import { TriggerData, TriggerRawData, processTriggerData } from "./data-trigger";
 import { prepareHooks } from "hook/trigger-hook-list";
+import { MODULE, R, getSetting } from "module-helpers";
+import { TriggerData, TriggerRawData, processTriggerData } from "./data-trigger";
 
 let TRIGGERS: Record<string, TriggerData[]>;
 
@@ -102,8 +102,8 @@ function prepareTriggersData() {
 
     // end of test
 
-    // getSetting<TriggerRawData[]>("triggers"),
-    const triggers = processTriggers(triggersRawData);
+    const rawData = getSetting<TriggerRawData[]>("triggers");
+    const triggers = processTriggers(rawData);
 
     TRIGGERS = R.groupBy(triggers, (trigger) => trigger.event.key);
     MODULE.debug("TRIGGERS", TRIGGERS);

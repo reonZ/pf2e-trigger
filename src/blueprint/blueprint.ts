@@ -1,9 +1,21 @@
 import { processNodeData } from "@data/data-node";
-import { TriggerData, TriggerRawData, processTriggerData } from "@data/data-trigger";
+import {
+    TriggerData,
+    TriggerRawData,
+    processTriggerData,
+    serializeTrigger,
+} from "@data/data-trigger";
 import { getTriggersDataMap } from "@data/data-trigger-list";
 import { NodeType } from "@schema/schema";
 import { EventNodeKey } from "@schema/schema-list";
-import { ItemPF2e, MODULE, R, distanceBetweenPoints, subtractPoints } from "module-helpers";
+import {
+    ItemPF2e,
+    MODULE,
+    R,
+    distanceBetweenPoints,
+    setSetting,
+    subtractPoints,
+} from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
@@ -65,6 +77,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             R.values(this.#triggers),
             R.flatMap(({ id, name }) => ({ id, name }))
         );
+    }
+
+    saveTrigger() {
+        const serialized = R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
+        setSetting("triggers", serialized);
     }
 
     destroy(removeView?: boolean, stageOptions?: PIXI.IDestroyOptions | boolean) {

@@ -2,18 +2,6 @@ import { R } from "module-helpers";
 import { NodeEntryId } from "./data-entry";
 import { NodeData, NodeRawData, processNodeData } from "./data-node";
 
-// class TriggerNode<T extends NodeType, K extends NodeKey<T>> {
-//     #schema: NodeSchemas[T][K];
-
-//     constructor(data: NodeData<T, K>) {
-//         this.#schema = getSchema(data.type, data.key);
-//     }
-// }
-
-// class ConditionNode<T extends NodeType, K extends NodeKey<T>> extends TriggerNode<T, K> {}
-
-// class HasItemTriggerNode extends ConditionNode<"condition", "has-item"> {}
-
 function processTriggerData(data: TriggerRawData): TriggerData | null {
     if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) {
         return null;
@@ -66,6 +54,14 @@ function processTriggerData(data: TriggerRawData): TriggerData | null {
     };
 }
 
+function serializeTrigger(trigger: TriggerData): TriggerRawData {
+    return {
+        id: trigger.id,
+        name: trigger.name,
+        nodes: R.values(trigger.nodes),
+    };
+}
+
 type TriggerData = BaseTriggerData & {
     nodes: Record<string, NodeData>;
     event: NodeData;
@@ -82,5 +78,5 @@ type BaseTriggerData = {
     name: string;
 };
 
-export { processTriggerData };
+export { processTriggerData, serializeTrigger };
 export type { TriggerData, TriggerRawData };
