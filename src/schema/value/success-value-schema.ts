@@ -3,7 +3,7 @@ import { ValueSchema } from "./value-schema";
 const successValueSchema = {
     inputs: [
         {
-            key: "in",
+            key: "input",
             type: "select",
             field: {
                 default: "2",

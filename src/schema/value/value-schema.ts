@@ -4,13 +4,13 @@ function createValueSchema<T extends Exclude<NodeEntryType, "select" | undefined
     type: T
 ): TypeValueSchema<T> {
     return {
-        inputs: [{ key: "in", type, field: true }],
+        inputs: [{ key: "input", type, field: true }],
         outputs: [{ key: "value", type }],
     };
 }
 
 type TypeValueSchema<T extends Exclude<NodeEntryType, "select" | undefined>> = {
-    inputs: [{ key: "in"; type: T; field: true }];
+    inputs: [{ key: "input"; type: T; field: true }];
     outputs: [{ key: "value"; type: T }];
 };
 
