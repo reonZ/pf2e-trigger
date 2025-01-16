@@ -42,7 +42,9 @@ abstract class BlueprintValueEntry<
     set value(value: ExtractSchemaEntryType<TEntry>) {
         const processed = setToSchemaValue(this.schema, value);
         this.node.setValue(this.category, this.key, processed);
-        this.refreshField();
+        if (this.node) {
+            this.refreshField();
+        }
     }
 
     get inputFontSize(): number {
