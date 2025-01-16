@@ -1,4 +1,8 @@
-import { ExtractSchemaType, NodeEntryCategory, NonNullableNodeEntryType } from "@schema/schema";
+import {
+    ExtractSchemaEntryType,
+    NodeEntryCategory,
+    NonNullableNodeEntryType,
+} from "@schema/schema";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 
 class BlueprintInputEntry<
@@ -40,7 +44,7 @@ class BlueprintInputEntry<
         el.select();
 
         const onBlur = () => {
-            this.value = el.value.trim() as ExtractSchemaType<TEntry>;
+            this.value = el.value.trim() as ExtractSchemaEntryType<TEntry>;
             target.children[0].visible = true;
             el.remove();
         };

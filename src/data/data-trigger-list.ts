@@ -1,5 +1,6 @@
 import { MODULE, R } from "module-helpers";
 import { TriggerData, TriggerRawData, processTriggerData } from "./data-trigger";
+import { prepareHooks } from "hook/trigger-hook-list";
 
 let TRIGGERS: Record<string, TriggerData[]>;
 
@@ -51,7 +52,7 @@ function prepareTriggersData() {
                         },
                     },
                     outputs: {
-                        false: {
+                        true: {
                             ids: [`${actionId}.inputs.in`],
                         },
                     },
@@ -91,7 +92,7 @@ function prepareTriggersData() {
                     y: 350,
                     inputs: {
                         in: {
-                            ids: [`${conditionId}.outputs.false`],
+                            ids: [`${conditionId}.outputs.true`],
                         },
                     },
                 },
@@ -102,17 +103,19 @@ function prepareTriggersData() {
     // end of test
 
     // getSetting<TriggerRawData[]>("triggers"),
-    TRIGGERS = processTriggers(triggersRawData);
+    const triggers = processTriggers(triggersRawData);
 
+    TRIGGERS = R.groupBy(triggers, (trigger) => trigger.event.key);
     MODULE.debug("TRIGGERS", TRIGGERS);
+
+    prepareHooks(triggers);
 }
 
-function processTriggers(triggers: TriggerRawData[]): Record<string, TriggerData[]> {
+function processTriggers(triggers: TriggerRawData[]): TriggerData[] {
     return R.pipe(
         triggers,
         R.map((data) => processTriggerData(data)),
-        R.filter(R.isTruthy),
-        R.groupBy((trigger) => trigger.event.key)
+        R.filter(R.isTruthy)
     );
 }
 

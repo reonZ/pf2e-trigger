@@ -1,27 +1,19 @@
-import {
-    BooleanSchemaOutputs,
-    ExtractInputSchemaEntry,
-    NodeSchemaInputEntry,
-    NonNullableNodeEntryType,
-    createBooleanSchemaOutputs,
-} from "@schema/schema";
+import { BooleanSchemaOutputs, NodeEntryType, createBooleanSchemaOutputs } from "@schema/schema";
 
-function createLogicSchema<T extends NonNullableNodeEntryType>(
-    type: T
-): LogicSchema<ExtractInputSchemaEntry<T>> {
+function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T): LogicSchema<T> {
     return {
         inputs: [
             { key: "a", type },
             { key: "b", type },
-        ] as [ExtractInputSchemaEntry<T>, ExtractInputSchemaEntry<T>],
+        ],
         outputs: createBooleanSchemaOutputs(),
     };
 }
 
-type LogicSchema<T extends NodeSchemaInputEntry = NodeSchemaInputEntry> = {
-    inputs: [T, T];
+type LogicSchema<T extends NonNullable<NodeEntryType> = NonNullable<NodeEntryType>> = {
+    inputs: [{ key: "a"; type: T }, { key: "b"; type: T }];
     outputs: BooleanSchemaOutputs;
 };
 
-export type { LogicSchema };
 export { createLogicSchema };
+export type { LogicSchema };

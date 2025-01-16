@@ -7,6 +7,7 @@ import {
     NodeEntryType,
     NodeSchema,
     NodeSchemaInputEntry,
+    NodeSchemaOutputEntry,
     NodeType,
     isInputConnection,
 } from "./schema";
@@ -36,6 +37,23 @@ const SCHEMAS = {
         // "eq-text": createLogicSchema("text"),
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
+
+const SCHEMA_MAP = R.pipe(
+    SCHEMAS,
+    R.mapValues((group) =>
+        R.pipe(
+            group,
+            R.mapValues((schema: NodeSchema): NodeSchemaMap => {
+                return {
+                    in: schema.in,
+                    isUnique: schema.isUnique,
+                    inputs: R.mapToObj(schema.inputs ?? [], (input) => [input.key, input]),
+                    outputs: R.mapToObj(schema.outputs, (output) => [output.key, output]),
+                };
+            })
+        )
+    )
+);
 
 const FILTERS: NodeFilter[] = R.pipe(
     R.entries(SCHEMAS),
@@ -85,13 +103,18 @@ function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     );
 }
 
+function getSchemaMap<T extends NodeType>({ type, key }: { type: T; key: string }): NodeSchemaMap {
+    // @ts-expect-error
+    return SCHEMA_MAP[type][key];
+}
+
 function getSchema<T extends NodeType>({ type, key }: { type: T; key: string }): NodeSchema {
     // @ts-expect-error
-    const schema = fu.deepClone(SCHEMAS[type][key]) as NodeSchema;
+    const schema = fu.deepClone(SCHEMAS[type][key]);
 
     if (schema.in) {
         schema.inputs ??= [];
-        schema.inputs.unshift({ key: "in" } as NodeSchemaInputEntry);
+        schema.inputs.unshift({ key: "in" });
     }
 
     return schema;
@@ -121,6 +144,9 @@ type ExtractPartialNodeMap<T> = {
 
 type NodeKey<T extends NodeType> = keyof NodeSchemas[T];
 
+type NodeEventKey = keyof (typeof SCHEMAS)["event"];
+type NodeConditionKey = keyof (typeof SCHEMAS)["condition"];
+
 type NodeFilter = {
     type: NodeType;
     key: string;
@@ -130,12 +156,20 @@ type NodeFilter = {
 
 type EventNodeKey = keyof (typeof SCHEMAS)["event"];
 
-export { getEventKeys, getFilters, getSchema, isNodeKey };
+type NodeSchemaMap = Omit<NodeSchema, "inputs" | "outputs"> & {
+    inputs: Record<string, NodeSchemaInputEntry>;
+    outputs: Record<string, NodeSchemaOutputEntry>;
+};
+
+export { getEventKeys, getFilters, getSchema, getSchemaMap, isNodeKey };
 export type {
     EventNodeKey,
     ExtractNodeMap,
     ExtractPartialNodeMap,
+    NodeConditionKey,
+    NodeEventKey,
     NodeFilter,
     NodeKey,
     NodeSchemas,
+    NodeSchemaMap,
 };

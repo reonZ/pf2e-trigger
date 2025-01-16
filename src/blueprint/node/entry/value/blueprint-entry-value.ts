@@ -1,6 +1,6 @@
 import {
     ExtractInputSchemaEntry,
-    ExtractSchemaType,
+    ExtractSchemaEntryType,
     NodeEntryCategory,
     NodeEntryType,
     NodeType,
@@ -34,12 +34,12 @@ abstract class BlueprintValueEntry<
         return true;
     }
 
-    get value(): ExtractSchemaType<TEntry> {
+    get value(): ExtractSchemaEntryType<TEntry> {
         return (this.node.getValue(this.category, this.key) ??
-            getDefaultInputValue(this.schema)) as ExtractSchemaType<TEntry>;
+            getDefaultInputValue(this.schema)) as ExtractSchemaEntryType<TEntry>;
     }
 
-    set value(value: ExtractSchemaType<TEntry>) {
+    set value(value: ExtractSchemaEntryType<TEntry>) {
         const processed = setToSchemaValue(this.schema, value);
         this.node.setValue(this.category, this.key, processed);
         this.refreshField();

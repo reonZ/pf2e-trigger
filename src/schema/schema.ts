@@ -11,8 +11,10 @@ const ENTRY_VALUE_TYPE = {
     select: String,
     text: String,
     uuid: String,
-    item: String,
-};
+} satisfies Record<
+    NonNullableNodeEntryType,
+    StringConstructor | NumberConstructor | BooleanConstructor
+>;
 
 function isInputConnection(
     schema: NodeSchemaInputEntry
@@ -20,7 +22,7 @@ function isInputConnection(
     return !!schema.type && (schema.type === "item" || !schema.field);
 }
 
-function isInputSchema(schema: NodeSchemaInputEntry): schema is NonNullableInputEntry {
+function isInputSchemaEntry(schema: NodeSchemaInputEntry): schema is NonNullableInputEntry {
     return !!schema.type && schema.type !== "item";
 }
 
@@ -29,7 +31,7 @@ function isInputValue(
     value: unknown
 ): value is string | number | boolean {
     if (
-        !isInputSchema(schema) ||
+        !isInputSchemaEntry(schema) ||
         R.isNullish(value) ||
         value?.constructor !== ENTRY_VALUE_TYPE[schema.type]
     ) {
@@ -78,7 +80,7 @@ function getDefaultInputValue(schema: NonNullableInputEntry): NonNullable<NodeEn
 }
 
 function setToSchemaValue(schema: NonNullableInputEntry, value: unknown): NodeEntryValue {
-    if (!isInputSchema(schema) || R.isNullish(value)) {
+    if (!isInputSchemaEntry(schema) || R.isNullish(value)) {
         return getDefaultInputValue(schema);
     }
 
@@ -187,9 +189,22 @@ type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
     NodeSchemaInputEntry,
     { type: T }
 >;
-type ExtractSchemaType<T extends NonNullable<NodeEntryType>> = PrimitiveOf<
+
+type ExtractSchemaEntryType<T extends NonNullableNodeEntryType> = PrimitiveOf<
     (typeof ENTRY_VALUE_TYPE)[T]
 >;
+
+type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
+    inputs?: { key: infer K extends string }[];
+}
+    ? K
+    : never;
+
+type ExtractSchemaOuputsKeys<S extends NodeSchema> = S extends {
+    outputs: { key: infer K extends string }[];
+}
+    ? K
+    : never;
 
 type NodeSchemaOutputEntry = {
     key: string;
@@ -205,7 +220,7 @@ type NodeSchema = {
 };
 
 type NonNullableInputEntry = NodeSchemaInputEntry & {
-    type: Exclude<NodeEntryType, undefined | "item">;
+    type: NonNullableNodeEntryType;
 };
 
 type BooleanSchemaOutputs = [
@@ -219,6 +234,7 @@ export {
     getSelectOption,
     isEntryCategory,
     isInputConnection,
+    isInputSchemaEntry,
     isInputValue,
     isNodeType,
     setToSchemaValue,
@@ -226,7 +242,9 @@ export {
 export type {
     BooleanSchemaOutputs,
     ExtractInputSchemaEntry,
-    ExtractSchemaType,
+    ExtractSchemaEntryType,
+    ExtractSchemaInputsKeys,
+    ExtractSchemaOuputsKeys,
     NodeEntryCategory,
     NodeEntryType,
     NodeSchema,

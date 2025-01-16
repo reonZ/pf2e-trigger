@@ -1,7 +1,5 @@
 import { createConditionSchema } from "./condition-schema";
 
-const hasItemSchema = createConditionSchema({
-    inputs: [{ key: "item", type: "item" }],
-});
+const hasItemSchema = createConditionSchema([{ key: "item", type: "item" }] as const);
 
 export { hasItemSchema };

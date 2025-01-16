@@ -1,5 +1,3 @@
-import { NodeSchemaOutputEntry } from "@schema/schema";
-
 const eventSchema = {
     isUnique: true,
     outputs: [{ key: "out", label: "target" }],
@@ -7,7 +5,7 @@ const eventSchema = {
 
 type EventSchema = {
     isUnique: true;
-    outputs: Omit<NodeSchemaOutputEntry, "type">[];
+    outputs: [{ key: "out"; label?: string }];
 };
 
 export { eventSchema };

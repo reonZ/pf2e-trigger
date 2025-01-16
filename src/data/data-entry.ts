@@ -1,11 +1,13 @@
 import {
     NodeEntryCategory,
     NodeSchemaInputEntry,
+    getDefaultInputValue,
     isEntryCategory,
     isInputConnection,
     isInputValue,
 } from "@schema/schema";
 import { R } from "module-helpers";
+import { NodeEntryValue } from "./data-node";
 
 function processOutputEntryData(map: MaybePartial<NodeEntryMap>): NodeEntryMap {
     if (!R.isPlainObject(map)) return {};
@@ -45,8 +47,12 @@ function processInputEntryData(
             const ids = processEntryIds(entry?.ids);
             if (!ids.length) continue;
             processed[key] = { ids };
-        } else if (isInputValue(schema, entry?.value)) {
-            processed[key] = { value: entry.value };
+        } else {
+            processed[key] = {
+                value: isInputValue(schema, entry?.value)
+                    ? entry.value
+                    : getDefaultInputValue(schema),
+            };
         }
     }
 
@@ -73,7 +79,7 @@ type NodeEntryMap = Record<string, NodeDataEntry>;
 
 type NodeDataEntry = {
     ids?: NodeEntryId[];
-    value?: string | number;
+    value?: NodeEntryValue;
 };
 
 type NodeEntryId = `${string}.${NodeEntryCategory}.${string}`;
