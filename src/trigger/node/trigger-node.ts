@@ -37,7 +37,7 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
 
         for (const id of output?.ids ?? []) {
             const otherNode = this.#trigger.getNode(id);
-            otherNode._execute(origin, options);
+            otherNode._execute(origin, options, value as any);
         }
     }
 
@@ -67,9 +67,10 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
 
     protected async _execute(
         origin: TargetDocuments,
-        options: TriggerExecuteOptions
+        options: TriggerExecuteOptions,
+        value?: TriggerNodeEntryValue
     ): Promise<void> {
-        return;
+        throw new Error("_execute not implemented.");
     }
 
     protected async _query(
@@ -77,11 +78,11 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         origin: TargetDocuments,
         options: TriggerExecuteOptions
     ): Promise<TriggerNodeEntryValue | undefined> {
-        return;
+        throw new Error("_query not implemented.");
     }
 }
 
-type ExtractValueType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
+type ExtractSchemaValueType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
     ? ExtractSchemaEntryType<T>
     : T extends "item"
     ? ItemPF2e<ActorPF2e>
@@ -93,7 +94,7 @@ type ExtractSchemaInputValueType<
 > = S extends {
     inputs: NodeSchemaInputEntry[];
 }
-    ? ExtractValueType<Extract<S["inputs"][number], { key: K }>["type"]>
+    ? ExtractSchemaValueType<Extract<S["inputs"][number], { key: K }>["type"]>
     : never;
 
 type ExtracSchemaOutputValueType<
@@ -102,7 +103,7 @@ type ExtracSchemaOutputValueType<
 > = S extends {
     outputs: NodeSchemaOutputEntry[];
 }
-    ? ExtractValueType<Extract<S["outputs"][number], { key: K }>["type"]>
+    ? ExtractSchemaValueType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
 type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e<ActorPF2e>;

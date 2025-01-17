@@ -1,4 +1,4 @@
-import { createConditionSchema } from "./condition-schema";
+import { createConditionSchema } from "./schema-condition";
 
 const hasItemSchema = createConditionSchema([{ key: "item", type: "item" }] as const);
 

@@ -1,4 +1,4 @@
-import { ValueSchema } from "./value-schema";
+import { ValueSchema } from "./schema-value";
 
 const successValueSchema = {
     inputs: [

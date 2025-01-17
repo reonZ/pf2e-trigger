@@ -1,4 +1,4 @@
-import { ValueSchema } from "./value-schema";
+import { ValueSchema } from "./schema-value";
 
 const itemSourceSchema = {
     inputs: [{ key: "uuid", type: "uuid", field: true }],

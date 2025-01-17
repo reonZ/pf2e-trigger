@@ -1,8 +1,8 @@
 import { TriggerData } from "@data/data-trigger";
 import { R } from "module-helpers";
-import { rollSaveSchema } from "./action/roll-save-schema";
-import { hasItemSchema } from "./condition/has-item-schema";
-import { eventSchema } from "./event/event-schema";
+import { rollSaveSchema } from "./action/schema-roll-save";
+import { hasItemSchema } from "./condition/schema-has-item";
+import { eventSchema } from "./event/schema-event";
 import {
     NodeEntryType,
     NodeSchema,
@@ -11,14 +11,16 @@ import {
     NodeType,
     isInputConnection,
 } from "./schema";
-import { itemSourceSchema } from "./value/item-source-schema";
-import { createLogicSchema } from "./logic/logic-schema";
-import { createValueSchema } from "./value/value-schema";
-import { successValueSchema } from "./value/success-value-schema";
+import { itemSourceSchema } from "./value/schema-item-source";
+import { createLogicSchema } from "./logic/schema-logic";
+import { createValueSchema } from "./value/schema-value";
+import { successValueSchema } from "./value/schema-success-value";
+import { rollDamageSchema } from "./action/schema-roll-damage";
 
 const SCHEMAS = {
     action: {
         "roll-save": rollSaveSchema,
+        "roll-damage": rollDamageSchema,
     },
     event: {
         "turn-start": eventSchema,
@@ -34,6 +36,10 @@ const SCHEMAS = {
     },
     logic: {
         "eq-number": createLogicSchema("number"),
+        "gt-number": createLogicSchema("number"),
+        "lt-number": createLogicSchema("number"),
+        "gte-number": createLogicSchema("number"),
+        "lte-number": createLogicSchema("number"),
         // "eq-text": createLogicSchema("text"),
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;

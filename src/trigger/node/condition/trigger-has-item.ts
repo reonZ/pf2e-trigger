@@ -1,4 +1,4 @@
-import { hasItemSchema } from "@schema/condition/has-item-schema";
+import { hasItemSchema } from "@schema/condition/schema-has-item";
 import { TriggerExecuteOptions } from "@trigger/trigger";
 import { isInstanceOf } from "module-helpers";
 import { TriggerNode } from "../trigger-node";

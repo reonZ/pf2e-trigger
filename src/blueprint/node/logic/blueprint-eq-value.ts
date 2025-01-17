@@ -1,9 +1,9 @@
 import { LogicBlueprintNode } from "./blueprint-logic-node";
 
-class EqBlueprintNode extends LogicBlueprintNode {
+class EqValueBlueprintNode extends LogicBlueprintNode {
     get filigram(): string {
         return "\x3d";
     }
 }
 
-export { EqBlueprintNode };
+export { EqValueBlueprintNode };

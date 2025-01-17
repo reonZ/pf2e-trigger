@@ -1,4 +1,4 @@
-import { EventSchema } from "@schema/event/event-schema";
+import { EventSchema } from "@schema/event/schema-event";
 import { TriggerExecuteOptions } from "@trigger/trigger";
 import { TriggerNode } from "../trigger-node";
 

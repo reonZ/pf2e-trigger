@@ -1,4 +1,4 @@
-import { rollSaveSchema } from "@schema/action/roll-save-schema";
+import { rollSaveSchema } from "@schema/action/schema-roll-save";
 import { TriggerNode } from "../trigger-node";
 import { TriggerExecuteOptions } from "@trigger/trigger";
 import { R } from "module-helpers";
@@ -9,7 +9,8 @@ class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {
         const save = await this.get("save", origin, options);
         if (!R.isNumber(dc) || !R.isString(save)) return;
 
-        const statistic = origin.actor.getStatistic(save);
+        const target = options.target.actor;
+        const statistic = target.getStatistic(save);
         if (!statistic) return;
 
         const roll = await statistic.roll({ dc });

@@ -3,7 +3,7 @@ import {
     ExtractSchemaInputsKeys,
     NonNullableNodeEntryType,
 } from "@schema/schema";
-import { ValueSchema } from "@schema/value/value-schema";
+import { ValueSchema } from "@schema/value/schema-value";
 import { TriggerExecuteOptions } from "@trigger/trigger";
 import { ActorPF2e, ItemPF2e } from "module-helpers";
 import { TriggerNode, TriggerNodeEntryValue } from "../trigger-node";
@@ -42,4 +42,3 @@ type ExtractValueType<S extends ValueSchema> = S["outputs"][0] extends {
     : never;
 
 export { ValueTriggerNode };
-export type { ExtractValueType };

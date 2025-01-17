@@ -1,4 +1,4 @@
-import { ActionSchema } from "./action-schema";
+import { ActionSchema } from "./schema-action";
 
 const rollSaveSchema = {
     in: true,

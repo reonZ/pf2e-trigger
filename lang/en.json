@@ -50,6 +50,12 @@
                     "dc": {
                         "label": "DC"
                     }
+                },
+                "roll-damage": {
+                    "title": "Roll Damage",
+                    "formula": {
+                        "label": "Formula"
+                    }
                 }
             },
             "event": {
@@ -87,6 +93,18 @@
                 "subtitle": "Logic",
                 "eq-number": {
                     "title": "Equals (Number)"
+                },
+                "gt-number": {
+                    "title": "Greater Than"
+                },
+                "lt-number": {
+                    "title": "Less Than"
+                },
+                "gte-number": {
+                    "title": "Greater Than or Equal"
+                },
+                "lte-number": {
+                    "title": "Less Than or Equal"
                 },
                 "eq-text": {
                     "title": "Equals (Text)"

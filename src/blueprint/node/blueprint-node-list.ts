@@ -5,12 +5,18 @@ import { ItemSourceBlueprintNode } from "./value/blueprint-item-source";
 import { EndTurnBlueprintNode, StartTurnBlueprintNode } from "./event/blueprint-turn-event";
 import { HasItemBlueprintNode } from "./condition/blueprint-has-item";
 import { RollSaveBlueprintNode } from "./action/blueprint-roll-save";
-import { EqBlueprintNode } from "./logic/eq-node";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
+import { EqValueBlueprintNode } from "./logic/blueprint-eq-value";
+import { GtValueBlueprintNode } from "./logic/blueprint-gt-value";
+import { LtValueBlueprintNode } from "./logic/blueprint-lt-value";
+import { GteValueBlueprintNode } from "./logic/blueprint-gte-value";
+import { LteValueBlueprintNode } from "./logic/blueprint-lte-value";
+import { RollDamageBlueprintNode } from "./action/blueprint-roll-damage";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "roll-save": RollSaveBlueprintNode,
+        "roll-damage": RollDamageBlueprintNode,
     },
     condition: {
         "has-item": HasItemBlueprintNode,
@@ -25,8 +31,12 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "success-value": ValueBlueprintNode,
     },
     logic: {
-        "eq-number": EqBlueprintNode,
-        // "eq-text": EqBlueprintNode,
+        "eq-number": EqValueBlueprintNode,
+        "gt-number": GtValueBlueprintNode,
+        "lt-number": LtValueBlueprintNode,
+        "gte-number": GteValueBlueprintNode,
+        "lte-number": LteValueBlueprintNode,
+        // "eq-text": EqValueBlueprintNode,
     },
 };
 

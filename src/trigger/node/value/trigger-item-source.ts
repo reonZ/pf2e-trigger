@@ -1,4 +1,4 @@
-import { itemSourceSchema } from "@schema/value/item-source-schema";
+import { itemSourceSchema } from "@schema/value/schema-item-source";
 import { TriggerExecuteOptions } from "@trigger/trigger";
 import { ActorPF2e, ItemPF2e, getItemWithSourceId } from "module-helpers";
 import { ValueTriggerNode } from "./trigger-node-value";

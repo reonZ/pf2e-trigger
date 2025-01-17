@@ -10,10 +10,14 @@ class BlueprintTextEntry<
     }
 
     protected _createText(): PIXI.Container {
-        const textEl = super._createText();
-        if (!this.isField) return textEl;
+        if (!this.isField) {
+            return super._createText();
+        }
 
-        return this._createInputField(120, String(this.value));
+        const value = this.value;
+        const label = value.length ? value : this.label;
+
+        return this._createInputField(120, label, !value.length);
     }
 
     protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {

@@ -4,7 +4,7 @@ import { ItemPF2e } from "module-helpers";
 
 const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
     inputs: {
-        action: ["condition", "action"],
+        action: ["condition", "action", "logic"],
         condition: ["event", "condition"],
         event: [],
         logic: [],
