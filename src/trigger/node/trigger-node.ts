@@ -14,7 +14,7 @@ import {
 } from "@schema/schema";
 import { NodeSchemaMap, getSchemaMap } from "@schema/schema-list";
 import { Trigger, TriggerExecuteOptions } from "@trigger/trigger";
-import { ActorPF2e, ItemPF2e, R } from "module-helpers";
+import { ItemPF2e, R } from "module-helpers";
 
 abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     #data: NodeData;
@@ -42,16 +42,14 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     }
 
     async get<K extends ExtractSchemaInputsKeys<TSchema>>(
-        key: K,
-        origin: TargetDocuments,
-        options: TriggerExecuteOptions
+        key: K
     ): Promise<ExtractSchemaInputValueType<TSchema, K> | undefined> {
         const input = this.#data.inputs[key] as NodeDataEntry | undefined;
 
         if (input) {
             if (R.isArray(input.ids)) {
                 const otherNode = this.#trigger.getNode(input.ids[0]);
-                return otherNode._query(key, origin, options) as any;
+                return otherNode._query(key) as any;
             }
 
             if ("value" in input) {
@@ -74,9 +72,7 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     }
 
     protected async _query(
-        key: ExtractSchemaInputsKeys<TSchema>,
-        origin: TargetDocuments,
-        options: TriggerExecuteOptions
+        key: ExtractSchemaInputsKeys<TSchema>
     ): Promise<TriggerNodeEntryValue | undefined> {
         throw new Error("_query not implemented.");
     }
@@ -85,7 +81,7 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
 type ExtractSchemaValueType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
     ? ExtractSchemaEntryType<T>
     : T extends "item"
-    ? ItemPF2e<ActorPF2e>
+    ? ItemPF2e
     : never;
 
 type ExtractSchemaInputValueType<
@@ -106,7 +102,7 @@ type ExtracSchemaOutputValueType<
     ? ExtractSchemaValueType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
-type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e<ActorPF2e>;
+type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e;
 
 export { TriggerNode };
 export type { TriggerNodeEntryValue };

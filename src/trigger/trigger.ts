@@ -15,12 +15,14 @@ class Trigger {
     async execute(options: TriggerExecuteOptions): Promise<void> {
         try {
             const event = createTriggerNode(this, this.#data.event);
-            event["_execute"](options.target, options);
+            await event["_execute"](options.target, options);
         } catch (error) {
             MODULE.error(
                 `an error occured while processing the trigger: ${this.#data.name}`,
                 error
             );
+        } finally {
+            MODULE.debug("execute trigger", this);
         }
     }
 

@@ -1,13 +1,12 @@
+import { ExtractSchemaInputsKeys } from "@schema/schema";
 import { successValueSchema } from "@schema/value/schema-success-value";
-import { ValueTriggerNode } from "./trigger-node-value";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { TriggerNode } from "../trigger-node";
 
-class SuccessValueTriggerNode extends ValueTriggerNode<typeof successValueSchema> {
-    protected async _computeValue(
-        origin: TargetDocuments,
-        options: TriggerExecuteOptions
+class SuccessValueTriggerNode extends TriggerNode<typeof successValueSchema> {
+    protected async _query(
+        key: ExtractSchemaInputsKeys<typeof successValueSchema>
     ): Promise<number> {
-        const input = Number(await this.get("input", origin, options));
+        const input = Number(await this.get("input"));
         return isNaN(input) ? 2 : input;
     }
 }

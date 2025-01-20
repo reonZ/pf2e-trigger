@@ -12,7 +12,7 @@ abstract class NumberLogicTriggerNode extends TriggerNode<LogicSchema<"number">>
         options: TriggerExecuteOptions,
         value?: ExtractInValueType<LogicSchema<"number">>
     ) {
-        const input = await this.get("b", origin, options);
+        const input = await this.get("b");
         if (!R.isNumber(value) || !R.isNumber(input)) return;
 
         const sendKey = this._logic(value, input) ? "true" : "false";

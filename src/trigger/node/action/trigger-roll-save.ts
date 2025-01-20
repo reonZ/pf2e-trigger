@@ -5,8 +5,8 @@ import { R } from "module-helpers";
 
 class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {
     protected async _execute(origin: TargetDocuments, options: TriggerExecuteOptions) {
-        const dc = await this.get("dc", origin, options);
-        const save = await this.get("save", origin, options);
+        const dc = await this.get("dc");
+        const save = await this.get("save");
         if (!R.isNumber(dc) || !R.isString(save)) return;
 
         const target = options.target.actor;
