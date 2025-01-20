@@ -163,6 +163,10 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 case "delete-trigger": {
                     return this.#deleteTrigger(triggerId);
                 }
+
+                case "export-trigger": {
+                    return this.blueprint?.exportTrigger(triggerId);
+                }
             }
         });
     }

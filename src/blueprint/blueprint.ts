@@ -13,6 +13,7 @@ import {
     MODULE,
     R,
     distanceBetweenPoints,
+    info,
     setSetting,
     subtractPoints,
 } from "module-helpers";
@@ -79,9 +80,25 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
-    saveTrigger() {
-        const serialized = R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
-        setSetting("triggers", serialized);
+    serializeTriggers(): TriggerRawData[] {
+        return R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
+    }
+
+    saveTrigger(): Promise<TriggerRawData[]> {
+        return setSetting("triggers", this.serializeTriggers());
+    }
+
+    exportTrigger(id: string) {
+        const trigger = fu.deepClone(this.getTrigger(id));
+        if (!trigger) return;
+
+        // @ts-expect-error
+        delete trigger.id;
+
+        const stringified = `[${JSON.stringify(serializeTrigger(trigger))}]`;
+
+        game.clipboard.copyPlainText(stringified);
+        info("export-trigger.confirm", { name: trigger.name });
     }
 
     destroy(removeView?: boolean, stageOptions?: PIXI.IDestroyOptions | boolean) {
