@@ -67,7 +67,11 @@ abstract class BlueprintValueEntry<
         const fieldText = this.fieldComponent?.children[0];
 
         if (fieldText instanceof PreciseText) {
-            fieldText.text = String(this.value);
+            const text = String(this.value);
+            const placeholder = text.length === 0 ? this.label : undefined;
+
+            fieldText.text = placeholder ?? text;
+            fieldText.style.fill = placeholder ? "#ffffff80" : "#ffffff";
         }
     }
 
@@ -106,10 +110,12 @@ abstract class BlueprintValueEntry<
         return this.isField ? null : super._createConnector();
     }
 
-    protected _createInputField(width: number, text: string, faded?: boolean) {
+    protected _createInputField(width: number, value: string | number) {
         const padding = 4;
-        const textEl = this.node.preciseText(text, {
-            fill: faded ? "#ffffff80" : "#ffffff",
+        const text = String(value);
+        const placeholder = text.length === 0 ? this.label : undefined;
+        const textEl = this.node.preciseText(placeholder ?? text, {
+            fill: placeholder ? "#ffffff80" : "#ffffff",
             fontSize: this.inputFontSize,
         });
 

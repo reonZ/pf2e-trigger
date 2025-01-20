@@ -6,9 +6,7 @@ class BlueprintUuidEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintInputEntry<TCategory, "uuid"> {
     protected _createText(): PreciseText | PIXI.Graphics {
-        const value = this.value;
-        const label = value.length ? value : this.label;
-        return this._createInputField(120, label, !value.length);
+        return this._createInputField(120, this.value);
     }
 
     protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {
