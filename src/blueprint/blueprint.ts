@@ -88,14 +88,30 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return setSetting("triggers", this.serializeTriggers());
     }
 
+    exportTriggers() {
+        const serialized = R.pipe(
+            R.values(this.#triggers),
+            R.map((trigger) => {
+                const serialized = serializeTrigger(trigger);
+                delete serialized.id;
+                return serialized;
+            })
+        );
+
+        const stringified = JSON.stringify(serialized);
+
+        game.clipboard.copyPlainText(stringified);
+        info("export-all.confirm");
+    }
+
     exportTrigger(id: string) {
-        const trigger = fu.deepClone(this.getTrigger(id));
+        const trigger = this.getTrigger(id);
         if (!trigger) return;
 
-        // @ts-expect-error
-        delete trigger.id;
+        const serialized = serializeTrigger(trigger);
+        delete serialized.id;
 
-        const stringified = `[${JSON.stringify(serializeTrigger(trigger))}]`;
+        const stringified = `[${JSON.stringify(serialized)}]`;
 
         game.clipboard.copyPlainText(stringified);
         info("export-trigger.confirm", { name: trigger.name });

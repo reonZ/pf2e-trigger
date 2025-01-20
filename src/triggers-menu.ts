@@ -139,6 +139,10 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 case "close-window": {
                     return this.#closeAndSave();
                 }
+
+                case "export-all": {
+                    return this.blueprint?.exportTriggers();
+                }
             }
         });
 

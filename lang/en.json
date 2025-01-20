@@ -31,6 +31,9 @@
         "export-trigger": {
             "confirm": "The trigger <strong>{name}</strong> has been copied to the clipboard."
         },
+        "export-all": {
+            "confirm": "The triggers have been copied to the clipboard."
+        },
         "add-trigger": {
             "title": "Add Trigger",
             "label": "Event Type",

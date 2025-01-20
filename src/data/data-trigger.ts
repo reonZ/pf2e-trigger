@@ -2,7 +2,7 @@ import { R } from "module-helpers";
 import { NodeEntryId } from "./data-entry";
 import { NodeData, NodeRawData, processNodeData } from "./data-node";
 
-function processTriggerData(data: TriggerRawData): TriggerData | null {
+function processTriggerData(data: Maybe<TriggerRawData>): TriggerData | null {
     if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) {
         return null;
     }
@@ -54,11 +54,11 @@ function processTriggerData(data: TriggerRawData): TriggerData | null {
     };
 }
 
-function serializeTrigger(trigger: TriggerData): TriggerRawData {
+function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawData {
     return {
         id: trigger.id,
         name: trigger.name,
-        nodes: R.values(trigger.nodes),
+        nodes: fu.deepClone(R.values(trigger.nodes)),
     };
 }
 
@@ -67,7 +67,7 @@ type TriggerData = BaseTriggerData & {
     event: NodeData;
 };
 
-type TriggerRawData = MaybePartial<
+type TriggerRawData = Partial<
     BaseTriggerData & {
         nodes: NodeRawData[];
     }
