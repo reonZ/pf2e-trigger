@@ -1,15 +1,11 @@
 import { getAurasInMemory } from "helpers/helpers-aura";
-import { actorsRespectAlliance, isCurrentCombatant } from "module-helpers";
+import { actorsRespectAlliance } from "module-helpers";
 import { insideAuraSchema } from "schema/condition/schema-inside-aura";
 import { TriggerExecuteOptions } from "trigger/trigger";
 import { TriggerNode } from "../trigger-node";
 
 class InsideAuraTriggerNode extends TriggerNode<typeof insideAuraSchema> {
     protected async _execute(origin: TargetDocuments, options: TriggerExecuteOptions) {
-        if (!isCurrentCombatant(origin.actor)) {
-            return this.send("false", origin, options);
-        }
-
         const slug = await this.get("slug");
         if (!slug?.trim()) {
             return this.send("false", origin, options);
