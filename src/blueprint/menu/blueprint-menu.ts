@@ -128,7 +128,8 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
             left: `${mark.top.x}px`,
             top: `${y}px`,
             minWidth: mark.width,
-        });
+            maxHeight: `${viewBounds.height}px`,
+        } satisfies Partial<CSSStyleDeclaration>);
 
         return position;
     }
