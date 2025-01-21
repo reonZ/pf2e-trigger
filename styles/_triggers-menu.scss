@@ -16,17 +16,6 @@
     position: absolute;
     top: 5px;
 
-    .window-header {
-        display: none;
-    }
-
-    .window-content {
-        padding: 0;
-        position: relative;
-        background: none;
-        overflow: hidden;
-    }
-
     .sidebar {
         --background-accent: #0000003b;
         --sidebar-width: 300px;
@@ -45,6 +34,8 @@
         transition: all 0.1s;
         color: var(--text-light);
         transform: translateX(calc(100% * -1));
+        display: flex;
+        flex-direction: column;
 
         &.show {
             --indicator-width: 0px;
@@ -55,6 +46,8 @@
         .menu {
             padding-bottom: 0.5em;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
 
             .header {
                 font-size: 1.2em;
@@ -85,6 +78,11 @@
                         }
                     }
                 }
+            }
+
+            .scroll {
+                overflow: auto;
+                flex: 1;
             }
 
             ul {

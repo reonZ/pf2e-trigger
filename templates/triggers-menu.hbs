@@ -19,26 +19,28 @@
                 </a>
             </div>
         </div>
-        <ul class="triggers">
-            {{#each triggers as |trigger|}}
-            <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
-                data-id="{{trigger.id}}">
-                <div class="name" data-action="select-trigger">
-                    {{trigger.name}}
-                </div>
-                <div class="controls">
-                    <a data-action="export-trigger"
-                        data-tooltip="{{@root.i18n.path 'trigger.export'}}">
-                        <i class="fa-solid fa-file-export"></i>
-                    </a>
-                    <a data-action="delete-trigger"
-                        data-tooltip="{{@root.i18n.path 'trigger.delete.title'}}">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </div>
-            </li>
-            {{/each}}
-        </ul>
+        <div class="scroll">
+            <ul class="triggers">
+                {{#each triggers as |trigger|}}
+                <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
+                    data-id="{{trigger.id}}">
+                    <div class="name" data-action="select-trigger">
+                        {{trigger.name}}
+                    </div>
+                    <div class="controls">
+                        <a data-action="export-trigger"
+                            data-tooltip="{{@root.i18n.path 'trigger.export'}}">
+                            <i class="fa-solid fa-file-export"></i>
+                        </a>
+                        <a data-action="delete-trigger"
+                            data-tooltip="{{@root.i18n.path 'trigger.delete.title'}}">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
     <div class="indicator">
         <i class="fa-solid fa-chevrons-right"></i>
