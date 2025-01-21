@@ -14,6 +14,7 @@ import { GteNumberTriggerNode } from "./logic/trigger-gte-number";
 import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
 import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
 import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
+import { AuraEventTriggerNode } from "./event/trigger-aura-event";
 
 const NODES = {
     action: {
@@ -22,9 +23,11 @@ const NODES = {
     },
     condition: {
         "has-item": HasItemTriggerNode,
-        "in-aura": InsideAuraTriggerNode,
+        "inside-aura": InsideAuraTriggerNode,
     },
     event: {
+        "aura-enter": AuraEventTriggerNode,
+        "aura-leave": AuraEventTriggerNode,
         "turn-end": EventTriggerNode,
         "turn-start": EventTriggerNode,
     },

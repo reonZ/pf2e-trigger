@@ -1,4 +1,4 @@
-import { NodeConditionKey } from "schema/schema-list";
+import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
 import {
     ActorPF2e,
     R,
@@ -38,10 +38,12 @@ class AuraHook extends TriggerHook {
         ),
     ];
 
-    // TODO add aura events
+    get events(): NodeEventKey[] {
+        return ["aura-enter", "aura-leave"];
+    }
 
     get conditions(): NodeConditionKey[] {
-        return ["in-aura"];
+        return ["inside-aura"];
     }
 
     protected _activate(): void {
@@ -112,7 +114,7 @@ class AuraHook extends TriggerHook {
 
                     if (isCurrentCombatant(actor)) {
                         const target = { actor, token: actorTokens.at(0) };
-                        // this._executeTriggers("aura-leave", { target, source });
+                        this._executeTriggers("aura-leave", { target, source, aura });
                     }
                 }
             }
@@ -147,7 +149,7 @@ class AuraHook extends TriggerHook {
 
                 if (!already && isCurrentCombatant(actor)) {
                     const target = { actor, token };
-                    // this._executeTriggers("aura-enter", { target, source });
+                    this._executeTriggers("aura-enter", { target, source, aura: auraData });
                 }
             }
         }

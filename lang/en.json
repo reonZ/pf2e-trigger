@@ -67,6 +67,12 @@
             "event": {
                 "title": "Events",
                 "subtitle": "Event",
+                "aura-enter": {
+                    "title": "Enter Aura"
+                },
+                "aura-leave": {
+                    "title": "Leave Aura"
+                },
                 "turn-start": {
                     "title": "Turn Start"
                 },
@@ -80,11 +86,8 @@
                 "has-item": {
                     "title": "Has Item"
                 },
-                "in-aura": {
-                    "title": "Is Inside Aura",
-                    "slug": {
-                        "label": "Aura Slug"
-                    }
+                "inside-aura": {
+                    "title": "Is Inside Aura"
                 }
             },
             "value": {
@@ -134,7 +137,8 @@
                 "item": "Item",
                 "uuid": "Source UUID",
                 "result": "Result",
-                "value": "Value"
+                "value": "Value",
+                "aura-slug": "aura-slug"
             }
         },
         "select": {
