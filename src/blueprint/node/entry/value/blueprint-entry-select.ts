@@ -19,7 +19,9 @@ class BlueprintSelectEntry<
         const schema = this.schema;
         const option = getSelectOption(schema.field, value);
 
-        return R.isPlainObject(option) ? this.processOptionLabel(option) : value;
+        return R.isPlainObject(option)
+            ? this.processOptionLabel(option)
+            : localizeIfExist("select", value) ?? value;
     }
 
     refreshField() {
