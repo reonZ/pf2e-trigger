@@ -15,6 +15,7 @@ import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
 import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
 import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
 import { AuraEventTriggerNode } from "./event/trigger-aura-event";
+import { HasOptionTriggerNode } from "./condition/trigger-has-option";
 
 const NODES = {
     action: {
@@ -23,6 +24,7 @@ const NODES = {
     },
     condition: {
         "has-item": HasItemTriggerNode,
+        "has-option": HasOptionTriggerNode,
         "inside-aura": InsideAuraTriggerNode,
     },
     event: {

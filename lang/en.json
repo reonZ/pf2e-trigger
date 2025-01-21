@@ -88,6 +88,9 @@
                 },
                 "inside-aura": {
                     "title": "Is Inside Aura"
+                },
+                "has-option": {
+                    "title": "Has RollOption"
                 }
             },
             "value": {
@@ -136,6 +139,7 @@
                 "false": "False",
                 "item": "Item",
                 "uuid": "Source UUID",
+                "option": "roll:option",
                 "result": "Result",
                 "value": "Value",
                 "aura-slug": "aura-slug"

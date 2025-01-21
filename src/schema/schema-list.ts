@@ -18,6 +18,7 @@ import { successValueSchema } from "./value/schema-success-value";
 import { rollDamageSchema } from "./action/schema-roll-damage";
 import { insideAuraSchema } from "./condition/schema-inside-aura";
 import { auraEventSchema } from "./event/schema-aura-event";
+import { hasOptionSchema } from "./condition/schema-has-option";
 
 const SCHEMAS = {
     action: {
@@ -26,6 +27,7 @@ const SCHEMAS = {
     },
     condition: {
         "has-item": hasItemSchema,
+        "has-option": hasOptionSchema,
         "inside-aura": insideAuraSchema,
     },
     event: {
