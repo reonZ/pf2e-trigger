@@ -15,26 +15,29 @@ abstract class TriggerHook {
         const events = this.events;
         const conditions = this.conditions;
 
+        let active = false;
+
         triggerLoop: for (const trigger of triggers) {
             if (events?.includes(trigger.event.key as NodeEventKey)) {
                 this.#triggersData.push(trigger);
+                active = true;
                 continue;
             }
 
-            if (!conditions) continue;
+            if (active || !conditions) continue;
 
             for (const node of R.values(trigger.nodes)) {
                 if (
                     node.type === "condition" &&
                     conditions.includes(node.key as NodeConditionKey)
                 ) {
-                    this.#triggersData.push(trigger);
+                    active = true;
                     continue triggerLoop;
                 }
             }
         }
 
-        if (this.#triggersData.length) {
+        if (active) {
             MODULE.debug("activate", this.constructor.name);
             this._activate();
         } else {
@@ -43,8 +46,19 @@ abstract class TriggerHook {
         }
     }
 
-    protected _executeTriggers(options: TriggerExecuteOptions) {
+    protected _executeTriggers(event: NodeEventKey, options: TriggerExecuteOptions): void;
+    protected _executeTriggers(options: TriggerExecuteOptions): void;
+    protected _executeTriggers(
+        arg0: NodeEventKey | TriggerExecuteOptions,
+        arg1?: TriggerExecuteOptions
+    ) {
+        const [event, options] = R.isString(arg0)
+            ? [arg0, arg1 as TriggerExecuteOptions]
+            : [undefined, arg0];
+
         for (const data of this.#triggersData) {
+            if (event && data.event.key !== event) continue;
+
             const trigger = new Trigger(data);
             trigger.execute(options);
         }
