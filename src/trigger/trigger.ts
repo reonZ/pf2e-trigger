@@ -2,7 +2,7 @@ import { TriggerData } from "@data/data-trigger";
 import { TriggerNode } from "./node/trigger-node";
 import { createTriggerNode } from "./node/trigger-node-list";
 import { NodeEntryId, segmentEntryId } from "@data/data-entry";
-import { MODULE } from "module-helpers";
+import { AuraData, MODULE } from "module-helpers";
 
 class Trigger {
     #data: TriggerData;
@@ -32,7 +32,7 @@ class Trigger {
     }
 }
 
-type TriggerExecuteOptions = { target: TargetDocuments; source?: TargetDocuments };
+type TriggerExecuteOptions = { target: TargetDocuments; source?: TargetDocuments; aura?: AuraData };
 
 export { Trigger };
 export type { TriggerExecuteOptions };

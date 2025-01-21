@@ -16,23 +16,20 @@ import { createLogicSchema } from "./logic/schema-logic";
 import { createValueSchema } from "./value/schema-value";
 import { successValueSchema } from "./value/schema-success-value";
 import { rollDamageSchema } from "./action/schema-roll-damage";
+import { insideAuraSchema } from "./condition/schema-inside-aura";
 
 const SCHEMAS = {
     action: {
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
     },
+    condition: {
+        "has-item": hasItemSchema,
+        "in-aura": insideAuraSchema,
+    },
     event: {
         "turn-start": eventSchema,
         "turn-end": eventSchema,
-    },
-    condition: {
-        "has-item": hasItemSchema,
-    },
-    value: {
-        "item-source": itemSourceSchema,
-        "number-value": createValueSchema("number"),
-        "success-value": successValueSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),
@@ -41,6 +38,11 @@ const SCHEMAS = {
         "gte-number": createLogicSchema("number"),
         "lte-number": createLogicSchema("number"),
         // "eq-text": createLogicSchema("text"),
+    },
+    value: {
+        "item-source": itemSourceSchema,
+        "number-value": createValueSchema("number"),
+        "success-value": successValueSchema,
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
 

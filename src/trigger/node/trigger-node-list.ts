@@ -13,23 +13,20 @@ import { LtNumberTriggerNode } from "./logic/trigger-lt-number";
 import { GteNumberTriggerNode } from "./logic/trigger-gte-number";
 import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
 import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
+import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
 
 const NODES = {
+    action: {
+        "roll-save": RollSaveTriggerNode,
+        "roll-damage": RollDamageTriggerNode,
+    },
     condition: {
         "has-item": HasItemTriggerNode,
+        "in-aura": InsideAuraTriggerNode,
     },
     event: {
         "turn-end": EventTriggerNode,
         "turn-start": EventTriggerNode,
-    },
-    value: {
-        "item-source": ItemSourceTriggerNode,
-        "number-value": TriggerNode,
-        "success-value": SuccessValueTriggerNode,
-    },
-    action: {
-        "roll-save": RollSaveTriggerNode,
-        "roll-damage": RollDamageTriggerNode,
     },
     logic: {
         "eq-number": EqNumberTriggerNode,
@@ -37,6 +34,11 @@ const NODES = {
         "lt-number": LtNumberTriggerNode,
         "gte-number": GteNumberTriggerNode,
         "lte-number": LteNumberTriggerNode,
+    },
+    value: {
+        "item-source": ItemSourceTriggerNode,
+        "number-value": TriggerNode,
+        "success-value": SuccessValueTriggerNode,
     },
 } satisfies ExtractNodeMap<typeof TriggerNode<any>>;
 

@@ -79,6 +79,12 @@
                 "subtitle": "Condition",
                 "has-item": {
                     "title": "Has Item"
+                },
+                "in-aura": {
+                    "title": "Is Inside Aura",
+                    "slug": {
+                        "label": "Aura Slug"
+                    }
                 }
             },
             "value": {
@@ -122,6 +128,7 @@
                 "in": "In",
                 "out": "Out",
                 "target": "Target",
+                "source": "Source",
                 "true": "True",
                 "false": "False",
                 "item": "Item",
@@ -132,7 +139,10 @@
         },
         "select": {
             "delete": "Delete",
-            "disconnect": "Disconnect"
+            "disconnect": "Disconnect",
+            "all": "All",
+            "allies": "Allies",
+            "enemies": "Enemies"
         }
     }
 }

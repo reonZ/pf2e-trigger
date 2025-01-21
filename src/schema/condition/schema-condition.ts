@@ -1,5 +1,6 @@
 import {
     BooleanSchemaOutputs,
+    BridgeNodeEntry,
     NodeSchemaInputEntry,
     createBooleanSchemaOutputs,
 } from "@schema/schema";
@@ -16,12 +17,19 @@ function createConditionSchema<TInputs extends NodeSchemaInputEntry>(
     };
 }
 
-type ConditionSchema<TInputs extends NodeSchemaInputEntry> = {
-    in: true;
-    isUnique?: boolean;
-    inputs: TInputs[];
+type ConditionSchema<TInputs extends NodeSchemaInputEntry> = Omit<
+    BaseConditionSchema<TInputs>,
+    "outputs"
+> & {
     outputs: BooleanSchemaOutputs;
 };
 
+type BaseConditionSchema<TInputs extends NodeSchemaInputEntry = NodeSchemaInputEntry> = {
+    in: true;
+    isUnique?: boolean;
+    inputs: TInputs[];
+    outputs: BridgeNodeEntry[];
+};
+
 export { createConditionSchema };
-export type { ConditionSchema };
+export type { BaseConditionSchema };

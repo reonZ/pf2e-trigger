@@ -212,6 +212,11 @@ type NodeSchemaOutputEntry = {
     type?: NodeEntryType;
 };
 
+type BridgeNodeEntry = {
+    key: string;
+    label?: string;
+};
+
 type NodeSchema = {
     isUnique?: boolean;
     in?: boolean;
@@ -241,6 +246,7 @@ export {
 };
 export type {
     BooleanSchemaOutputs,
+    BridgeNodeEntry,
     ExtractInputSchemaEntry,
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,

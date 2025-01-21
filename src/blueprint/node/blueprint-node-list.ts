@@ -12,6 +12,7 @@ import { LtValueBlueprintNode } from "./logic/blueprint-lt-value";
 import { GteValueBlueprintNode } from "./logic/blueprint-gte-value";
 import { LteValueBlueprintNode } from "./logic/blueprint-lte-value";
 import { RollDamageBlueprintNode } from "./action/blueprint-roll-damage";
+import { InsideAuraBlueprintNode } from "./condition/blueprint-inside-aura";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -20,15 +21,11 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     },
     condition: {
         "has-item": HasItemBlueprintNode,
+        "in-aura": InsideAuraBlueprintNode,
     },
     event: {
         "turn-end": EndTurnBlueprintNode,
         "turn-start": StartTurnBlueprintNode,
-    },
-    value: {
-        "item-source": ItemSourceBlueprintNode,
-        "number-value": ValueBlueprintNode,
-        "success-value": ValueBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,
@@ -37,6 +34,11 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "gte-number": GteValueBlueprintNode,
         "lte-number": LteValueBlueprintNode,
         // "eq-text": EqValueBlueprintNode,
+    },
+    value: {
+        "item-source": ItemSourceBlueprintNode,
+        "number-value": ValueBlueprintNode,
+        "success-value": ValueBlueprintNode,
     },
 };
 
