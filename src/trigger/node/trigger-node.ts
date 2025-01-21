@@ -43,7 +43,7 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
 
     async get<K extends ExtractSchemaInputsKeys<TSchema>>(
         key: K
-    ): Promise<ExtractSchemaInputValueType<TSchema, K> | undefined> {
+    ): Promise<ExtractSchemaInputValueType<TSchema, K>> {
         const input = this.#data.inputs[key] as NodeDataEntry | undefined;
 
         if (input) {
