@@ -7,12 +7,12 @@ import {
 
 function createConditionSchema<TInputs extends NodeSchemaInputEntry>(
     inputs: TInputs[],
-    isUnique?: boolean
+    unique?: boolean
 ): ConditionSchema<TInputs> {
     return {
         in: true,
-        isUnique: isUnique,
-        inputs: inputs,
+        unique,
+        inputs,
         outputs: createBooleanSchemaOutputs(),
     };
 }
@@ -26,7 +26,7 @@ type ConditionSchema<TInputs extends NodeSchemaInputEntry> = Omit<
 
 type BaseConditionSchema<TInputs extends NodeSchemaInputEntry = NodeSchemaInputEntry> = {
     in: true;
-    isUnique?: boolean;
+    unique?: boolean;
     inputs: TInputs[];
     outputs: BridgeNodeEntry[];
 };

@@ -17,6 +17,7 @@ import { createValueSchema } from "./value/schema-value";
 import { successValueSchema } from "./value/schema-success-value";
 import { rollDamageSchema } from "./action/schema-roll-damage";
 import { insideAuraSchema } from "./condition/schema-inside-aura";
+import { auraEventSchema } from "./event/schema-aura-event";
 
 const SCHEMAS = {
     action: {
@@ -25,9 +26,11 @@ const SCHEMAS = {
     },
     condition: {
         "has-item": hasItemSchema,
-        "in-aura": insideAuraSchema,
+        "inside-aura": insideAuraSchema,
     },
     event: {
+        "aura-enter": auraEventSchema,
+        "aura-leave": auraEventSchema,
         "turn-start": eventSchema,
         "turn-end": eventSchema,
     },
@@ -54,7 +57,7 @@ const SCHEMA_MAP = R.pipe(
             R.mapValues((schema: NodeSchema): NodeSchemaMap => {
                 return {
                     in: schema.in,
-                    isUnique: schema.isUnique,
+                    unique: schema.unique,
                     inputs: R.mapToObj(schema.inputs ?? [], (input) => [input.key, input]),
                     outputs: R.mapToObj(schema.outputs, (output) => [output.key, output]),
                 };
@@ -101,13 +104,26 @@ const FILTERS: NodeFilter[] = R.pipe(
 function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     const uniques = R.pipe(
         R.values(trigger?.nodes ?? {}),
-        R.filter((node) => !!(getSchema(node) as NodeSchema).isUnique),
-        R.map(({ type, key }) => ({ key, type }))
+        R.map(({ key, type }) => {
+            const { unique } = getSchema({ key, type });
+            if (!unique) return;
+
+            return { key, type, unique };
+        }),
+        R.filter(R.isTruthy)
     );
 
     return R.pipe(
         FILTERS,
-        R.filter((filter) => !uniques.some((unique) => R.hasSubObject(filter, unique)))
+        R.filter(
+            (filter) =>
+                !uniques.some(({ key, type, unique }) => {
+                    return (
+                        (key === filter.key && type === filter.type) ||
+                        (R.isArray(unique) && unique.includes(filter.key))
+                    );
+                })
+        )
     );
 }
 

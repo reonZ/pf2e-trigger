@@ -218,7 +218,7 @@ type BridgeNodeEntry = {
 };
 
 type NodeSchema = {
-    isUnique?: boolean;
+    unique?: boolean | string[];
     in?: boolean;
     inputs?: NodeSchemaInputEntry[];
     outputs: NodeSchemaOutputEntry[];

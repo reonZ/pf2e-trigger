@@ -1,6 +1,6 @@
 import { NodeSchema } from "schema/schema";
 
-type ActionSchema = Omit<NodeSchema, "isUnique" | "in"> & {
+type ActionSchema = Omit<NodeSchema, "unique" | "in"> & {
     in: true;
 };
 

@@ -1,10 +1,10 @@
 const eventSchema = {
-    isUnique: true,
+    unique: true,
     outputs: [{ key: "out", label: "target" }],
 } as const satisfies EventSchema;
 
 type EventSchema = {
-    isUnique: true;
+    unique: true;
     outputs: [{ key: "out"; label?: string }];
 };
 
