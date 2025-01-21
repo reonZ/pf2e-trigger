@@ -1,4 +1,4 @@
-import { NodeEntryCategory, NodeType } from "@schema/schema";
+import { NodeEntryCategory, NodeType } from "schema/schema";
 import { BlueprintEntry } from "./blueprint-entry";
 import { ItemPF2e } from "module-helpers";
 

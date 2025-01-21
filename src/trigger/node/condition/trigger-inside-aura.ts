@@ -1,5 +1,5 @@
-import { insideAuraSchema } from "@schema/condition/schema-inside-aura";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { insideAuraSchema } from "schema/condition/schema-inside-aura";
+import { TriggerExecuteOptions } from "trigger/trigger";
 import { actorsRespectAlliance, isCurrentCombatant } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 import { getAurasInMemory } from "helpers/helpers-aura";

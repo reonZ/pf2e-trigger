@@ -1,4 +1,4 @@
-import { NodeEventKey } from "@schema/schema-list";
+import { NodeEventKey } from "schema/schema-list";
 import { TriggerHook } from "./trigger-hook";
 import { CombatantPF2e, EncounterPF2e, Hook, createHook } from "module-helpers";
 

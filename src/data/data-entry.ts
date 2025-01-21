@@ -5,7 +5,7 @@ import {
     isEntryCategory,
     isInputConnection,
     isInputValue,
-} from "@schema/schema";
+} from "schema/schema";
 import { R } from "module-helpers";
 import { NodeEntryValue } from "./data-node";
 

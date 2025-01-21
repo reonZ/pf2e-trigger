@@ -1,4 +1,4 @@
-import { NodeEntryValue } from "@data/data-node";
+import { NodeEntryValue } from "data/data-node";
 import { R } from "module-helpers";
 
 const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;

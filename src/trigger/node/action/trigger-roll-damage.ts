@@ -1,6 +1,6 @@
-import { rollDamageSchema } from "@schema/action/schema-roll-damage";
+import { rollDamageSchema } from "schema/action/schema-roll-damage";
 import { TriggerNode } from "../trigger-node";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { TriggerExecuteOptions } from "trigger/trigger";
 import { R, rollDamageFromFormula } from "module-helpers";
 
 class RollDamageTriggerNode extends TriggerNode<typeof rollDamageSchema> {

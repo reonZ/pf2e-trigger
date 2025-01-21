@@ -1,5 +1,5 @@
-import { ExtractSchemaInputsKeys } from "@schema/schema";
-import { successValueSchema } from "@schema/value/schema-success-value";
+import { ExtractSchemaInputsKeys } from "schema/schema";
+import { successValueSchema } from "schema/value/schema-success-value";
 import { TriggerNode } from "../trigger-node";
 
 class SuccessValueTriggerNode extends TriggerNode<typeof successValueSchema> {

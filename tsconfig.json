@@ -20,13 +20,7 @@
         "types": ["module-helpers"],
         "rootDir": "src",
         "outDir": "scripts",
-        "baseUrl": "src",
-        "paths": {
-            "@data/*": ["data/*"],
-            "@schema/*": ["schema/*"],
-            "@trigger/*": ["trigger/*"],
-            "@blueprint/*": ["blueprint/*"]
-        }
+        "baseUrl": "src"
     },
     "include": ["./src/**/*"]
 }

@@ -1,8 +1,4 @@
-import {
-    ExtractSchemaEntryType,
-    NodeEntryCategory,
-    NonNullableNodeEntryType,
-} from "@schema/schema";
+import { ExtractSchemaEntryType, NodeEntryCategory, NonNullableNodeEntryType } from "schema/schema";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 
 class BlueprintInputEntry<

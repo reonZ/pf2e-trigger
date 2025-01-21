@@ -1,4 +1,4 @@
-import { TriggerData } from "@data/data-trigger";
+import { TriggerData } from "data/data-trigger";
 import { EndTurnHook, StartTurnHook } from "./hook-turn";
 import { AuraHook } from "./hook-aura";
 

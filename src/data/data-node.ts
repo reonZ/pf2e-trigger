@@ -1,5 +1,5 @@
-import { NodeType, isNodeType } from "@schema/schema";
-import { getSchema, isNodeKey } from "@schema/schema-list";
+import { NodeType, isNodeType } from "schema/schema";
+import { getSchema, isNodeKey } from "schema/schema-list";
 import { R } from "module-helpers";
 import { NodeEntryMap, processInputEntryData, processOutputEntryData } from "./data-entry";
 

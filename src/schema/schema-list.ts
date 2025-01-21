@@ -1,4 +1,4 @@
-import { TriggerData } from "@data/data-trigger";
+import { TriggerData } from "data/data-trigger";
 import { R } from "module-helpers";
 import { rollSaveSchema } from "./action/schema-roll-save";
 import { hasItemSchema } from "./condition/schema-has-item";

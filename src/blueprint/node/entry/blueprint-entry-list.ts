@@ -1,4 +1,4 @@
-import { NodeEntryCategory, NodeSchemaInputEntry, NodeSchemaOutputEntry } from "@schema/schema";
+import { NodeEntryCategory, NodeSchemaInputEntry, NodeSchemaOutputEntry } from "schema/schema";
 import { BlueprintNodeBody } from "../blueprint-node-body";
 import { BlueprintEntry } from "./blueprint-entry";
 import { BlueprintBridgeEntry } from "./blueprint-entry-bridge";

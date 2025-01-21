@@ -1,5 +1,5 @@
-import { Blueprint } from "@blueprint/blueprint";
-import { EventNodeKey, getEventKeys } from "@schema/schema-list";
+import { Blueprint } from "blueprint/blueprint";
+import { EventNodeKey, getEventKeys } from "schema/schema-list";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,

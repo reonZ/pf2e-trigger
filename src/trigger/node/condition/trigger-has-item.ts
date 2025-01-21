@@ -1,5 +1,5 @@
-import { hasItemSchema } from "@schema/condition/schema-has-item";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { hasItemSchema } from "schema/condition/schema-has-item";
+import { TriggerExecuteOptions } from "trigger/trigger";
 import { hasItemWithSourceId } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 

@@ -1,4 +1,4 @@
-import { Blueprint } from "@blueprint/blueprint";
+import { Blueprint } from "blueprint/blueprint";
 import { BlueprintNode } from "./blueprint-node";
 
 abstract class BlueprintNodeChild extends PIXI.Graphics {

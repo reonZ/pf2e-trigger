@@ -1,5 +1,5 @@
-import { LogicSchema } from "@schema/logic/schema-logic";
-import { ExtractSchemaEntryType, NonNullableNodeEntryType } from "@schema/schema";
+import { LogicSchema } from "schema/logic/schema-logic";
+import { ExtractSchemaEntryType, NonNullableNodeEntryType } from "schema/schema";
 import { ItemPF2e } from "module-helpers";
 
 type ExtractInValueType<S extends LogicSchema> = S["inputs"][0] extends {

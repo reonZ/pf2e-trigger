@@ -1,6 +1,6 @@
-import { rollSaveSchema } from "@schema/action/schema-roll-save";
+import { rollSaveSchema } from "schema/action/schema-roll-save";
 import { TriggerNode } from "../trigger-node";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { TriggerExecuteOptions } from "trigger/trigger";
 import { R } from "module-helpers";
 
 class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {

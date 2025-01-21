@@ -1,6 +1,6 @@
-import { TriggerData } from "@data/data-trigger";
-import { NodeConditionKey, NodeEventKey } from "@schema/schema-list";
-import { Trigger, TriggerExecuteOptions } from "@trigger/trigger";
+import { TriggerData } from "data/data-trigger";
+import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
+import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
 import { MODULE, R } from "module-helpers";
 
 abstract class TriggerHook {

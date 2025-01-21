@@ -1,4 +1,4 @@
-import { NodeEntryCategory } from "@schema/schema";
+import { NodeEntryCategory } from "schema/schema";
 import { R } from "module-helpers";
 import { BlueprintInputEntry } from "./blueprint-entry-input";
 

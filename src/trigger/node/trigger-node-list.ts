@@ -1,6 +1,6 @@
-import { NodeData } from "@data/data-node";
-import { ExtractNodeMap } from "@schema/schema-list";
-import { Trigger } from "@trigger/trigger";
+import { NodeData } from "data/data-node";
+import { ExtractNodeMap } from "schema/schema-list";
+import { Trigger } from "trigger/trigger";
 import { RollSaveTriggerNode } from "./action/trigger-roll-save";
 import { HasItemTriggerNode } from "./condition/trigger-has-item";
 import { EventTriggerNode } from "./event/trigger-node-event";

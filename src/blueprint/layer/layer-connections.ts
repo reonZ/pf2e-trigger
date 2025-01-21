@@ -1,7 +1,7 @@
-import { BlueprintNodesMenu } from "@blueprint/menu/blueprint-nodes-menu";
-import { BlueprintNode } from "@blueprint/node/blueprint-node";
-import { BlueprintEntry } from "@blueprint/node/entry/blueprint-entry";
-import { NodeEntryId } from "@data/data-entry";
+import { BlueprintNodesMenu } from "blueprint/menu/blueprint-nodes-menu";
+import { BlueprintNode } from "blueprint/node/blueprint-node";
+import { BlueprintEntry } from "blueprint/node/entry/blueprint-entry";
+import { NodeEntryId } from "data/data-entry";
 import { subtractPoints } from "module-helpers";
 import { BlueprintLayer } from "./layer";
 import { BlueprintNodesLayer } from "./layer-nodes";

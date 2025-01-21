@@ -1,4 +1,4 @@
-import { NodeSchema } from "@schema/schema";
+import { NodeSchema } from "schema/schema";
 
 type ActionSchema = Omit<NodeSchema, "isUnique" | "in"> & {
     in: true;

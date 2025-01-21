@@ -1,4 +1,4 @@
-import { Blueprint } from "@blueprint/blueprint";
+import { Blueprint } from "blueprint/blueprint";
 
 class BlueprintGridLayer extends PIXI.TilingSprite {
     #gridSize: number;

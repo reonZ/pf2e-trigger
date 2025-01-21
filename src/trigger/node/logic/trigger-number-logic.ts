@@ -1,5 +1,5 @@
-import { LogicSchema } from "@schema/logic/schema-logic";
-import { TriggerExecuteOptions } from "@trigger/trigger";
+import { LogicSchema } from "schema/logic/schema-logic";
+import { TriggerExecuteOptions } from "trigger/trigger";
 import { R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 import { ExtractInValueType } from "./trigger-node-logic";

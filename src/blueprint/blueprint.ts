@@ -1,13 +1,13 @@
-import { processNodeData } from "@data/data-node";
+import { processNodeData } from "data/data-node";
 import {
     TriggerData,
     TriggerRawData,
     processTriggerData,
     serializeTrigger,
-} from "@data/data-trigger";
-import { getTriggersDataMap } from "@data/data-trigger-list";
-import { NodeType } from "@schema/schema";
-import { EventNodeKey } from "@schema/schema-list";
+} from "data/data-trigger";
+import { getTriggersDataMap } from "data/data-trigger-list";
+import { NodeType } from "schema/schema";
+import { EventNodeKey } from "schema/schema-list";
 import {
     ItemPF2e,
     MODULE,

@@ -1,10 +1,10 @@
-import { BlueprintNode } from "@blueprint/node/blueprint-node";
+import { BlueprintNode } from "blueprint/node/blueprint-node";
 import { BlueprintLayer } from "./layer";
-import { NodeData } from "@data/data-node";
-import { createBlueprintNode } from "@blueprint/node/blueprint-node-list";
+import { NodeData } from "data/data-node";
+import { createBlueprintNode } from "blueprint/node/blueprint-node-list";
 import { R } from "module-helpers";
-import { NodeEntryId, segmentEntryId } from "@data/data-entry";
-import { BlueprintEntry } from "@blueprint/node/entry/blueprint-entry";
+import { NodeEntryId, segmentEntryId } from "data/data-entry";
+import { BlueprintEntry } from "blueprint/node/entry/blueprint-entry";
 
 class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     #nodes: Collection<BlueprintNode> = new Collection();

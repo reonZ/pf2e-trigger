@@ -1,7 +1,7 @@
-import { TriggerData } from "@data/data-trigger";
+import { TriggerData } from "data/data-trigger";
 import { TriggerNode } from "./node/trigger-node";
 import { createTriggerNode } from "./node/trigger-node-list";
-import { NodeEntryId, segmentEntryId } from "@data/data-entry";
+import { NodeEntryId, segmentEntryId } from "data/data-entry";
 import { AuraData, MODULE } from "module-helpers";
 
 class Trigger {

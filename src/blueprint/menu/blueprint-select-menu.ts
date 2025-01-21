@@ -6,8 +6,8 @@ import {
     localize,
 } from "module-helpers";
 import { BlueprintMenu, BlueprintMenuOptions, BlueprintMenuResolve } from "./blueprint-menu";
-import { Blueprint } from "@blueprint/blueprint";
-import { NodeSchemaSelectOption } from "@schema/schema";
+import { Blueprint } from "blueprint/blueprint";
+import { NodeSchemaSelectOption } from "schema/schema";
 
 class BlueprintSelectMenu<
     T extends BlueprintSelectEntries

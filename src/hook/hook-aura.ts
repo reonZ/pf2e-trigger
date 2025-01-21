@@ -1,4 +1,4 @@
-import { NodeConditionKey } from "@schema/schema-list";
+import { NodeConditionKey } from "schema/schema-list";
 import {
     ActorPF2e,
     R,

@@ -3,7 +3,7 @@ import {
     BridgeNodeEntry,
     NodeSchemaInputEntry,
     createBooleanSchemaOutputs,
-} from "@schema/schema";
+} from "schema/schema";
 
 function createConditionSchema<TInputs extends NodeSchemaInputEntry>(
     inputs: TInputs[],

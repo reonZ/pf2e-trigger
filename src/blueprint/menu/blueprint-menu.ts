@@ -1,5 +1,5 @@
-import { Blueprint } from "@blueprint/blueprint";
-import { TriggerData } from "@data/data-trigger";
+import { Blueprint } from "blueprint/blueprint";
+import { TriggerData } from "data/data-trigger";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,

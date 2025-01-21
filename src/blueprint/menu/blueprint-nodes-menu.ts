@@ -1,5 +1,5 @@
-import { NodeType } from "@schema/schema";
-import { NodeFilter, getFilters } from "@schema/schema-list";
+import { NodeType } from "schema/schema";
+import { NodeFilter, getFilters } from "schema/schema-list";
 import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
@@ -10,8 +10,8 @@ import {
     templateLocalize,
 } from "module-helpers";
 import { BlueprintMenu, BlueprintMenuOptions, BlueprintMenuResolve } from "./blueprint-menu";
-import { BlueprintEntry } from "@blueprint/node/entry/blueprint-entry";
-import { Blueprint } from "@blueprint/blueprint";
+import { BlueprintEntry } from "blueprint/node/entry/blueprint-entry";
+import { Blueprint } from "blueprint/blueprint";
 
 class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
     #source: BlueprintEntry | undefined;

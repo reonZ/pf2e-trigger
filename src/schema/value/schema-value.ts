@@ -1,4 +1,4 @@
-import { NodeEntryType, NodeSchemaInputEntry, NodeSchemaOutputEntry } from "@schema/schema";
+import { NodeEntryType, NodeSchemaInputEntry, NodeSchemaOutputEntry } from "schema/schema";
 
 function createValueSchema<T extends Exclude<NodeEntryType, "select" | undefined>>(
     type: T

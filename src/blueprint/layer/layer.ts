@@ -1,5 +1,5 @@
-import { Blueprint } from "@blueprint/blueprint";
-import { TriggerData } from "@data/data-trigger";
+import { Blueprint } from "blueprint/blueprint";
+import { TriggerData } from "data/data-trigger";
 
 abstract class BlueprintLayer<T extends PIXI.DisplayObject> extends PIXI.Container<T> {
     #blueprint: Blueprint;

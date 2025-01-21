@@ -1,4 +1,4 @@
-import { BooleanSchemaOutputs, NodeEntryType, createBooleanSchemaOutputs } from "@schema/schema";
+import { BooleanSchemaOutputs, NodeEntryType, createBooleanSchemaOutputs } from "schema/schema";
 
 function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T): LogicSchema<T> {
     return {

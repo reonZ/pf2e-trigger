@@ -1,4 +1,4 @@
-import { prepareTriggersData } from "@data/data-trigger-list";
+import { prepareTriggersData } from "data/data-trigger-list";
 import { MODULE, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
 import { TriggersMenu } from "triggers-menu";
 

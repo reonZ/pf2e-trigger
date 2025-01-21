@@ -1,6 +1,6 @@
 import { BlueprintNodeLayout } from "./blueprint-node-child";
-import { NodeEntryId } from "@data/data-entry";
-import { NodeEntryCategory, NodeEntryType } from "@schema/schema";
+import { NodeEntryId } from "data/data-entry";
+import { NodeEntryCategory, NodeEntryType } from "schema/schema";
 import { BlueprintEntry } from "./entry/blueprint-entry";
 import { R } from "module-helpers";
 import { createBlueprintEntry } from "./entry/blueprint-entry-list";

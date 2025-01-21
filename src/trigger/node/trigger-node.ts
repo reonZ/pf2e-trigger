@@ -1,5 +1,5 @@
-import { NodeDataEntry } from "@data/data-entry";
-import { NodeData, NodeEntryValue } from "@data/data-node";
+import { NodeDataEntry } from "data/data-entry";
+import { NodeData, NodeEntryValue } from "data/data-node";
 import {
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,
@@ -11,9 +11,9 @@ import {
     NonNullableNodeEntryType,
     getDefaultInputValue,
     isInputSchemaEntry,
-} from "@schema/schema";
-import { NodeSchemaMap, getSchemaMap } from "@schema/schema-list";
-import { Trigger, TriggerExecuteOptions } from "@trigger/trigger";
+} from "schema/schema";
+import { NodeSchemaMap, getSchemaMap } from "schema/schema-list";
+import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
 import { ItemPF2e, R } from "module-helpers";
 
 abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {

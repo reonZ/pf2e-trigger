@@ -1,10 +1,10 @@
-import { Blueprint } from "@blueprint/blueprint";
-import { BlueprintNodesLayer } from "@blueprint/layer/layer-nodes";
-import { BlueprintSelectMenu } from "@blueprint/menu/blueprint-select-menu";
-import { NodeEntryId } from "@data/data-entry";
-import { NodeData, NodeEntryValue } from "@data/data-node";
-import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "@schema/schema";
-import { getSchema } from "@schema/schema-list";
+import { Blueprint } from "blueprint/blueprint";
+import { BlueprintNodesLayer } from "blueprint/layer/layer-nodes";
+import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
+import { NodeEntryId } from "data/data-entry";
+import { NodeData, NodeEntryValue } from "data/data-node";
+import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "schema/schema";
+import { getSchema } from "schema/schema-list";
 import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
 import { BlueprintNodeBody } from "./blueprint-node-body";
 import { BlueprintNodeBorder } from "./blueprint-node-border";

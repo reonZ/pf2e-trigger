@@ -1,5 +1,5 @@
-import { ExtractSchemaInputsKeys } from "@schema/schema";
-import { itemSourceSchema } from "@schema/value/schema-item-source";
+import { ExtractSchemaInputsKeys } from "schema/schema";
+import { itemSourceSchema } from "schema/value/schema-item-source";
 import { ItemPF2e, R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 

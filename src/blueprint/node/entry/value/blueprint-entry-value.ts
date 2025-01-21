@@ -8,7 +8,7 @@ import {
     getDefaultInputValue,
     isInputConnection,
     setToSchemaValue,
-} from "@schema/schema";
+} from "schema/schema";
 import { ItemPF2e } from "module-helpers";
 import { BlueprintEntry } from "../blueprint-entry";
 

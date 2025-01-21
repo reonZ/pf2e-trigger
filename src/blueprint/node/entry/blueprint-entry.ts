@@ -1,10 +1,10 @@
-import { Blueprint } from "@blueprint/blueprint";
-import { NodeEntryId, segmentEntryId } from "@data/data-entry";
-import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "@schema/schema";
+import { Blueprint } from "blueprint/blueprint";
+import { NodeEntryId, segmentEntryId } from "data/data-entry";
+import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "schema/schema";
 import { ItemPF2e, localize, localizeIfExist } from "module-helpers";
 import { BlueprintNode } from "../blueprint-node";
 import { BlueprintNodeBody } from "../blueprint-node-body";
-import { BlueprintSelectMenu } from "@blueprint/menu/blueprint-select-menu";
+import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
 
 const CONNECTION_CONTEXT = ["disconnect"] as const;
 

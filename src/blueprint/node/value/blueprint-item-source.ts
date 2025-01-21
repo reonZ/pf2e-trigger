@@ -1,7 +1,7 @@
 import { ItemPF2e, R, isItemEntry } from "module-helpers";
 import { ValueBlueprintNode } from "./blueprint-value-node";
-import { NodeEntryCategory } from "@schema/schema";
-import { NodeEntryValue } from "@data/data-node";
+import { NodeEntryCategory } from "schema/schema";
+import { NodeEntryValue } from "data/data-node";
 
 class ItemSourceBlueprintNode extends ValueBlueprintNode {
     #item: Maybe<ItemPF2e | CompendiumIndexData>;

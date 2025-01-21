@@ -1,5 +1,5 @@
-import { BlueprintSelectMenu } from "@blueprint/menu/blueprint-select-menu";
-import { NodeEntryCategory, NodeSchemaSelectOption, getSelectOption } from "@schema/schema";
+import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
+import { NodeEntryCategory, NodeSchemaSelectOption, getSelectOption } from "schema/schema";
 import { R, localize, localizeIfExist } from "module-helpers";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 
