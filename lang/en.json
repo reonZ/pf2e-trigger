@@ -68,6 +68,9 @@
                     "formula": {
                         "label": "Formula"
                     }
+                },
+                "remove-item": {
+                    "title": "Remove Item"
                 }
             },
             "event": {

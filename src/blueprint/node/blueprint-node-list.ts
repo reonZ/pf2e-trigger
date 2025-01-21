@@ -15,11 +15,13 @@ import { RollDamageBlueprintNode } from "./action/blueprint-roll-damage";
 import { InsideAuraBlueprintNode } from "./condition/blueprint-inside-aura";
 import { EnterAuraBlueprintNode, LeaveAuraBlueprintNode } from "./event/blueprint-aura-event";
 import { HasOptionBlueprintNode } from "./condition/blueprint-has-option";
+import { RemoveItemBlueprintNode } from "./action/blueprint-remove-item";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,
+        "remove-item": RemoveItemBlueprintNode,
     },
     condition: {
         "has-item": HasItemBlueprintNode,

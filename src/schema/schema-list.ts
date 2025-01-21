@@ -19,11 +19,13 @@ import { rollDamageSchema } from "./action/schema-roll-damage";
 import { insideAuraSchema } from "./condition/schema-inside-aura";
 import { auraEventSchema } from "./event/schema-aura-event";
 import { hasOptionSchema } from "./condition/schema-has-option";
+import { removeItemSchema } from "./action/schema-remove-item";
 
 const SCHEMAS = {
     action: {
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
+        "remove-item": removeItemSchema,
     },
     condition: {
         "has-item": hasItemSchema,

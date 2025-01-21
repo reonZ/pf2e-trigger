@@ -16,11 +16,13 @@ import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
 import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
 import { AuraEventTriggerNode } from "./event/trigger-aura-event";
 import { HasOptionTriggerNode } from "./condition/trigger-has-option";
+import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
 
 const NODES = {
     action: {
         "roll-save": RollSaveTriggerNode,
         "roll-damage": RollDamageTriggerNode,
+        "remove-item": RemoveItemTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerNode,
