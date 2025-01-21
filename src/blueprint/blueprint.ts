@@ -88,6 +88,12 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return setSetting("triggers", this.serializeTriggers());
     }
 
+    addTriggers(triggers: TriggerData[]) {
+        for (const trigger of triggers) {
+            this.#triggers[trigger.id] = trigger;
+        }
+    }
+
     exportTriggers() {
         const serialized = R.pipe(
             R.values(this.#triggers),

@@ -2,17 +2,17 @@ import { R } from "module-helpers";
 import { NodeEntryId } from "./data-entry";
 import { NodeData, NodeRawData, processNodeData } from "./data-node";
 
-function processTriggerData(data: Maybe<TriggerRawData>): TriggerData | null {
-    if (!R.isPlainObject(data) || !R.isString(data.id) || !R.isString(data.name)) {
+function processTriggerData(triggerData: Maybe<TriggerRawData>): TriggerData | null {
+    if (!R.isPlainObject(triggerData)) {
         return null;
     }
 
     let event: NodeData | undefined;
 
     const nodes: TriggerData["nodes"] = R.pipe(
-        data.nodes ?? [],
-        R.map((data) => {
-            const node = processNodeData(data);
+        triggerData.nodes ?? [],
+        R.map((nodeData) => {
+            const node = processNodeData(nodeData);
 
             if (node?.type === "event") {
                 if (event) return null;
@@ -46,9 +46,11 @@ function processTriggerData(data: Maybe<TriggerRawData>): TriggerData | null {
         }
     }
 
+    const id = R.isString(triggerData.id) ? triggerData.id : fu.randomID();
+
     return {
-        id: data.id,
-        name: data.name.trim() || data.id,
+        id,
+        name: triggerData.name?.trim() || id,
         nodes,
         event,
     };

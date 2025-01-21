@@ -34,6 +34,12 @@
         "export-all": {
             "confirm": "The triggers have been copied to the clipboard."
         },
+        "import": {
+            "title": "Import Triggers",
+            "yes": "Import",
+            "no": "Cancel",
+            "error": "The data provided is invalid, no trigger were imported."
+        },
         "add-trigger": {
             "title": "Add Trigger",
             "label": "Event Type",

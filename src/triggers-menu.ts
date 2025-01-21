@@ -1,5 +1,5 @@
 import { Blueprint } from "blueprint/blueprint";
-import { EventNodeKey, getEventKeys } from "schema/schema-list";
+import { processTriggers } from "data/data-trigger-list";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,
@@ -10,6 +10,7 @@ import {
     addListenerAll,
     confirmDialog,
     createHTMLElement,
+    error,
     htmlClosest,
     htmlQuery,
     localize,
@@ -17,6 +18,7 @@ import {
     templateLocalize,
     waitDialog,
 } from "module-helpers";
+import { EventNodeKey, getEventKeys } from "schema/schema-list";
 
 class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     #blueprint: Blueprint | null = null;
@@ -142,6 +144,11 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
                 case "export-all": {
                     return this.blueprint?.exportTriggers();
+                }
+
+                case "import": {
+                    this.#import();
+                    return;
                 }
             }
         });
@@ -274,6 +281,40 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
         this.blueprint?.editTrigger(id, result);
         this.refresh();
+    }
+
+    async #import() {
+        const result = await waitDialog({
+            title: localize("import.title"),
+            content: "<textarea></textarea>",
+            yes: {
+                label: localize("import.yes"),
+                icon: "fa-solid fa-file-import",
+                callback: async (event, btn, html) => {
+                    return htmlQuery(html, "textarea")?.value;
+                },
+            },
+            no: {
+                label: localize("import.no"),
+            },
+        });
+
+        if (!result) return;
+
+        try {
+            const data = JSON.parse(result as any);
+
+            if (!R.isArray(data)) {
+                throw new Error();
+            }
+
+            const validated = processTriggers(data as any);
+
+            this.blueprint?.addTriggers(validated);
+            this.refresh();
+        } catch {
+            error("import.error");
+        }
     }
 }
 
