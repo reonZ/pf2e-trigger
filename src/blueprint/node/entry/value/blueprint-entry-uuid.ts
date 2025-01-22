@@ -1,5 +1,4 @@
 import { NodeEntryCategory } from "schema/schema";
-import { ItemPF2e } from "module-helpers";
 import { BlueprintInputEntry } from "./blueprint-entry-input";
 
 class BlueprintUuidEntry<
@@ -9,8 +8,8 @@ class BlueprintUuidEntry<
         return this._createInputField(120, this.value);
     }
 
-    protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {
-        this.value = item.uuid;
+    protected _onDocumentDropped(document: ClientDocument | CompendiumIndexData) {
+        this.value = document.uuid;
     }
 }
 

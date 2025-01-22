@@ -17,12 +17,15 @@ import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
 import { AuraEventTriggerNode } from "./event/trigger-aura-event";
 import { HasOptionTriggerNode } from "./condition/trigger-has-option";
 import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
+import { RunMacroTriggerNode } from "./action/trigger-run-macro";
+import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
 
 const NODES = {
     action: {
         "roll-save": RollSaveTriggerNode,
         "roll-damage": RollDamageTriggerNode,
         "remove-item": RemoveItemTriggerNode,
+        "run-macro": RunMacroTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerNode,
@@ -44,6 +47,7 @@ const NODES = {
     },
     value: {
         "item-source": ItemSourceTriggerNode,
+        "macro-source": MacroSourceTriggerNode,
         "number-value": TriggerNode,
         "success-value": SuccessValueTriggerNode,
     },

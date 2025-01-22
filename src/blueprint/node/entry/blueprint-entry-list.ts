@@ -8,10 +8,12 @@ import { BlueprintNumberEntry } from "./value/blueprint-entry-number";
 import { BlueprintSelectEntry } from "./value/blueprint-entry-select";
 import { BlueprintTextEntry } from "./value/blueprint-entry-text";
 import { BlueprintUuidEntry } from "./value/blueprint-entry-uuid";
+import { BlueprintMacroEntry } from "./value/blueprint-entry-macro";
 
 const INPUTS_ENTRIES = {
     boolean: BlueprintBooleanEntry,
     item: BlueprintItemEntry,
+    macro: BlueprintMacroEntry,
     number: BlueprintNumberEntry,
     select: BlueprintSelectEntry,
     text: BlueprintTextEntry,

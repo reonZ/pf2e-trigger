@@ -3,7 +3,9 @@ import { R } from "module-helpers";
 
 const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
-const NODE_ENTRY_TYPES = ["item", "boolean", "uuid", "text", "number", "select"] as const;
+const NODE_ENTRY_TYPES = ["item", "macro", "boolean", "uuid", "text", "number", "select"] as const;
+
+const NULL_NODE_TYPES = ["item", "macro"] as const;
 
 const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
@@ -16,14 +18,18 @@ const ENTRY_VALUE_TYPE = {
     StringConstructor | NumberConstructor | BooleanConstructor
 >;
 
+function isNullNodeType(type: NodeEntryType): type is NullNodeType {
+    return NULL_NODE_TYPES.includes(type as any);
+}
+
 function isInputConnection(
     schema: NodeSchemaInputEntry
 ): schema is NodeSchemaInputEntry & { type: Exclude<NodeEntryType, undefined> } {
-    return !!schema.type && (schema.type === "item" || !schema.field);
+    return !!schema.type && (isNullNodeType(schema.type) || !schema.field);
 }
 
 function isInputSchemaEntry(schema: NodeSchemaInputEntry): schema is NonNullableInputEntry {
-    return !!schema.type && schema.type !== "item";
+    return !!schema.type && !isNullNodeType(schema.type);
 }
 
 function isInputValue(
@@ -127,7 +133,7 @@ function createBooleanSchemaOutputs(): BooleanSchemaOutputs {
 type NodeType = (typeof NODE_TYPES)[number];
 type NodeEntryCategory = (typeof NODE_ENTRY_CATEGORIES)[number];
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number] | undefined;
-type NonNullableNodeEntryType = Exclude<NodeEntryType, undefined | "item">;
+type NonNullableNodeEntryType = Exclude<NodeEntryType, undefined | NullNodeType>;
 
 type BaseNodeSchemaInputEntry<
     TType extends NodeEntryType,
@@ -148,6 +154,8 @@ type NodeSchemaUuidEntry = BaseNodeSchemaInputEntry<"uuid", NodeSchemaUuidField>
 type NodeSchemaUuidField = {};
 
 type NodeSchemaItemEntry = BaseNodeSchemaInputEntry<"item">;
+
+type NodeSchemaMacroEntry = BaseNodeSchemaInputEntry<"macro">;
 
 type NodeSchemaBooleanEntry = BaseNodeSchemaInputEntry<"boolean", NodeSchemaBooleanField>;
 type NodeSchemaBooleanField = {
@@ -181,6 +189,7 @@ type NodeSchemaInputEntry =
     | NodeSchemaTextEntry
     | NodeSchemaUuidEntry
     | NodeSchemaItemEntry
+    | NodeSchemaMacroEntry
     | NodeSchemaBooleanEntry
     | NodeSchemaNumberEntry
     | NodeSchemaSelectEntry;
@@ -232,6 +241,8 @@ type BooleanSchemaOutputs = [
     { key: "true"; label?: string | undefined },
     { key: "false"; label?: string | undefined }
 ];
+
+type NullNodeType = (typeof NULL_NODE_TYPES)[number];
 
 export {
     createBooleanSchemaOutputs,

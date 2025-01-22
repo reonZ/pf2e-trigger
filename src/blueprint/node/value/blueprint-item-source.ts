@@ -1,43 +1,13 @@
-import { ItemPF2e, R, isItemEntry } from "module-helpers";
-import { ValueBlueprintNode } from "./blueprint-value-node";
-import { NodeEntryCategory } from "schema/schema";
-import { NodeEntryValue } from "data/data-node";
+import { ItemPF2e, isItemEntry } from "module-helpers";
+import { DocumentSourceBlueprintNode } from "./blueprint-document-source";
 
-class ItemSourceBlueprintNode extends ValueBlueprintNode {
-    #item: Maybe<ItemPF2e | CompendiumIndexData>;
-
-    get title(): string | null {
-        const item = this.item;
-        return item?.name || super.title;
-    }
-
-    get icon(): string | PIXI.Sprite | null {
-        const item = this.item;
-        return item === null ? "\uf127" : item ? PIXI.Sprite.from(item.img) : super.icon;
-    }
-
-    get item(): Maybe<ItemPF2e | CompendiumIndexData> {
-        return this.#item;
-    }
-
-    initialize(): void {
-        this.#item = this.#getItem();
-        super.initialize();
-    }
-
-    setValue(category: NodeEntryCategory, key: string, value: NodeEntryValue) {
-        super.setValue(category, key, value);
-        this.refresh();
-    }
-
-    #getItem(): Maybe<ItemPF2e | CompendiumIndexData> {
-        const value = this.getValue("inputs", "uuid");
-        if (!R.isString(value) || !value.trim()) return;
-
-        const item = fromUuidSync<ItemPF2e>(value);
-        if (item instanceof Item && item.sourceId !== value) return null;
-
-        return isItemEntry(item) ? item : null;
+class ItemSourceBlueprintNode extends DocumentSourceBlueprintNode<ItemPF2e> {
+    protected _isValidDocument(
+        item: Maybe<ItemPF2e | CompendiumIndexData>,
+        value: string
+    ): item is ItemPF2e | CompendiumIndexData {
+        if (item instanceof Item && item.sourceId !== value) return false;
+        return isItemEntry(item);
     }
 }
 

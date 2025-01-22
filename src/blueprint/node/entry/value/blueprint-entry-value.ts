@@ -9,7 +9,6 @@ import {
     isInputConnection,
     setToSchemaValue,
 } from "schema/schema";
-import { ItemPF2e } from "module-helpers";
 import { BlueprintEntry } from "../blueprint-entry";
 
 abstract class BlueprintValueEntry<
@@ -91,13 +90,13 @@ abstract class BlueprintValueEntry<
         }
     }
 
-    onDropItem({ x, y }: Point, item: ItemPF2e | CompendiumIndexData): boolean {
+    onDropDocument({ x, y }: Point, document: ClientDocument | CompendiumIndexData): boolean {
         if (!this.isField || !this.textComponent.getBounds().contains(x, y)) return false;
-        this._onItemDropped(item);
+        this._onDocumentDropped(document);
         return true;
     }
 
-    protected _onItemDropped(item: ItemPF2e | CompendiumIndexData) {
+    protected _onDocumentDropped(document: ClientDocument | CompendiumIndexData) {
         return;
     }
 

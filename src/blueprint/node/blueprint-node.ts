@@ -3,9 +3,9 @@ import { BlueprintNodesLayer } from "blueprint/layer/layer-nodes";
 import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
 import { NodeEntryId } from "data/data-entry";
 import { NodeData, NodeEntryValue } from "data/data-node";
+import { R, localize, subtractPoints } from "module-helpers";
 import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "schema/schema";
 import { getSchema } from "schema/schema-list";
-import { ItemPF2e, R, localize, subtractPoints } from "module-helpers";
 import { BlueprintNodeBody } from "./blueprint-node-body";
 import { BlueprintNodeBorder } from "./blueprint-node-border";
 import { BlueprintNodeHeader } from "./blueprint-node-header";
@@ -166,11 +166,11 @@ class BlueprintNode extends PIXI.Container {
         return null;
     }
 
-    onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean {
+    onDropDocument(point: Point, document: ClientDocument | CompendiumIndexData): boolean {
         if (!this.getBounds().contains(point.x, point.y)) return false;
 
         for (const entry of this.entries()) {
-            if (entry.onDropItem(point, item)) break;
+            if (entry.onDropDocument(point, document)) break;
         }
 
         return true;

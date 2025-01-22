@@ -14,7 +14,7 @@ import {
 } from "schema/schema";
 import { NodeSchemaMap, getSchemaMap } from "schema/schema-list";
 import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
-import { ItemPF2e, R } from "module-helpers";
+import { ItemPF2e, MacroPF2e, R } from "module-helpers";
 
 abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     #data: NodeData;
@@ -82,6 +82,8 @@ type ExtractSchemaValueType<T extends NodeEntryType> = T extends NonNullableNode
     ? ExtractSchemaEntryType<T>
     : T extends "item"
     ? ItemPF2e
+    : T extends "macro"
+    ? MacroPF2e
     : never;
 
 type ExtractSchemaInputValueType<
@@ -102,7 +104,7 @@ type ExtracSchemaOutputValueType<
     ? ExtractSchemaValueType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
-type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e;
+type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e | MacroPF2e;
 
 export { TriggerNode };
 export type { TriggerNodeEntryValue };

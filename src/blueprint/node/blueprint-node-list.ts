@@ -16,12 +16,15 @@ import { InsideAuraBlueprintNode } from "./condition/blueprint-inside-aura";
 import { EnterAuraBlueprintNode, LeaveAuraBlueprintNode } from "./event/blueprint-aura-event";
 import { HasOptionBlueprintNode } from "./condition/blueprint-has-option";
 import { RemoveItemBlueprintNode } from "./action/blueprint-remove-item";
+import { RunMacroBlueprintNode } from "./action/blueprint-run-macro";
+import { MacroSourceBlueprintNode } from "./value/blueprint-macro-source";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,
         "remove-item": RemoveItemBlueprintNode,
+        "run-macro": RunMacroBlueprintNode,
     },
     condition: {
         "has-item": HasItemBlueprintNode,
@@ -44,6 +47,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     },
     value: {
         "item-source": ItemSourceBlueprintNode,
+        "macro-source": MacroSourceBlueprintNode,
         "number-value": ValueBlueprintNode,
         "success-value": ValueBlueprintNode,
     },

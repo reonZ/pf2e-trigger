@@ -71,6 +71,9 @@
                 },
                 "remove-item": {
                     "title": "Remove Item"
+                },
+                "run-macro": {
+                    "title": "Run Macro"
                 }
             },
             "event": {
@@ -107,6 +110,9 @@
                 "subtitle": "value",
                 "item-source": {
                     "title": "Item Source"
+                },
+                "macro-source": {
+                    "title": "Macro Source"
                 },
                 "number-value": {
                     "title": "Number"
@@ -147,6 +153,7 @@
                 "true": "True",
                 "false": "False",
                 "item": "Item",
+                "macro": "Macro",
                 "uuid": "Source UUID",
                 "option": "roll:option",
                 "result": "Result",

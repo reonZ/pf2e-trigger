@@ -120,8 +120,12 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
 
         let y = mark.bottom.y - 1;
 
-        if (y + bounds.height > viewBounds.bottom && y > viewBounds.height / 2) {
+        if (y + bounds.height > viewBounds.bottom) {
             y = mark.top.y - bounds.height + 2;
+        }
+
+        if (y < viewBounds.top) {
+            y = viewBounds.top;
         }
 
         Object.assign(el.style, {

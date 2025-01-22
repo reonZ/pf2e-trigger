@@ -6,17 +6,9 @@ import {
     serializeTrigger,
 } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
+import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
 import { NodeType } from "schema/schema";
 import { EventNodeKey } from "schema/schema-list";
-import {
-    ItemPF2e,
-    MODULE,
-    R,
-    distanceBetweenPoints,
-    info,
-    setSetting,
-    subtractPoints,
-} from "module-helpers";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
@@ -279,19 +271,25 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
     #onDropCanvasData(event: DragEvent) {
         const data = TextEditor.getDragEventData(event) as unknown as DropCanvasData;
-        if (!R.isPlainObject(data) || data.type !== "Item" || !R.isString(data.uuid)) return;
+        console.log(data);
+        if (
+            !R.isPlainObject(data) ||
+            !["Item", "Macro"].includes(data.type ?? "") ||
+            !R.isString(data.uuid)
+        )
+            return;
 
-        const item = fromUuidSync<ItemPF2e | CompendiumIndexData>(data.uuid);
-        if (item) {
-            this.#onDropItem(event, item);
+        const document = fromUuidSync<ClientDocument | CompendiumIndexData>(data.uuid);
+        if (document) {
+            this.#onDropDocument(event, document);
         }
     }
 
-    #onDropItem(event: DragEvent, item: ItemPF2e | CompendiumIndexData) {
+    #onDropDocument(event: DragEvent, document: ClientDocument | CompendiumIndexData) {
         const localPoint = this.getLocalCoordinates(event);
 
         for (const node of this.#nodesLayer.nodes()) {
-            const dropped = node.onDropItem(localPoint, item);
+            const dropped = node.onDropDocument(localPoint, document);
             if (dropped) return;
         }
     }

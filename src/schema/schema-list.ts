@@ -20,12 +20,15 @@ import { insideAuraSchema } from "./condition/schema-inside-aura";
 import { auraEventSchema } from "./event/schema-aura-event";
 import { hasOptionSchema } from "./condition/schema-has-option";
 import { removeItemSchema } from "./action/schema-remove-item";
+import { runMacroSchema } from "./action/schema-run-macro";
+import { macroSourceSchema } from "./value/schema-macro-source";
 
 const SCHEMAS = {
     action: {
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
         "remove-item": removeItemSchema,
+        "run-macro": runMacroSchema,
     },
     condition: {
         "has-item": hasItemSchema,
@@ -48,6 +51,7 @@ const SCHEMAS = {
     },
     value: {
         "item-source": itemSourceSchema,
+        "macro-source": macroSourceSchema,
         "number-value": createValueSchema("number"),
         "success-value": successValueSchema,
     },

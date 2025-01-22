@@ -1,10 +1,10 @@
 import { Blueprint } from "blueprint/blueprint";
+import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
 import { NodeEntryId, segmentEntryId } from "data/data-entry";
+import { localize, localizeIfExist } from "module-helpers";
 import { NodeEntryCategory, NodeEntryType, NodeSchema, NodeType } from "schema/schema";
-import { ItemPF2e, localize, localizeIfExist } from "module-helpers";
 import { BlueprintNode } from "../blueprint-node";
 import { BlueprintNodeBody } from "../blueprint-node-body";
-import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
 
 const CONNECTION_CONTEXT = ["disconnect"] as const;
 
@@ -32,7 +32,7 @@ abstract class BlueprintEntry<
     abstract get canConnect(): boolean;
     abstract get isActive(): boolean;
     abstract get isValue(): boolean;
-    abstract onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean;
+    abstract onDropDocument(point: Point, item: ClientDocument | CompendiumIndexData): boolean;
     abstract canConnectoToBridge(target: NodeType): boolean;
     protected abstract _fillConnector(connector: PIXI.Graphics): void;
 

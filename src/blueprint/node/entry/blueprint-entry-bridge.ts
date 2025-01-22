@@ -1,6 +1,5 @@
 import { NodeEntryCategory, NodeType } from "schema/schema";
 import { BlueprintEntry } from "./blueprint-entry";
-import { ItemPF2e } from "module-helpers";
 
 const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
     inputs: {
@@ -34,7 +33,7 @@ class BlueprintBridgeEntry<
         return false;
     }
 
-    onDropItem(point: Point, item: ItemPF2e | CompendiumIndexData): boolean {
+    onDropDocument(point: Point, document: ClientDocument | CompendiumIndexData): boolean {
         return false;
     }
 
