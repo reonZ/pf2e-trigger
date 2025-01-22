@@ -4,10 +4,6 @@ import { TriggersMenu } from "triggers-menu";
 
 MODULE.register("pf2e-trigger");
 
-// TODO remove this
-// @ts-expect-error
-CONFIG.debug.modules = true;
-
 Hooks.once("init", () => {
     registerSetting({
         key: "triggers",
