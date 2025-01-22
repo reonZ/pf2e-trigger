@@ -63,14 +63,14 @@ abstract class BlueprintValueEntry<
     }
 
     refreshField() {
-        const fieldText = this.fieldComponent?.children[0];
+        const field = this.fieldComponent?.children[0];
 
-        if (fieldText instanceof PreciseText) {
+        if (field instanceof PreciseText) {
             const text = String(this.value);
             const placeholder = text.length === 0 ? this.label : undefined;
 
-            fieldText.text = placeholder ?? text;
-            fieldText.style.fill = placeholder ? "#ffffff80" : "#ffffff";
+            field.text = placeholder ?? text;
+            field.style.fill = placeholder ? "#ffffff80" : "#ffffff";
         }
     }
 
