@@ -18,6 +18,7 @@ import { HasOptionBlueprintNode } from "./condition/blueprint-has-option";
 import { RemoveItemBlueprintNode } from "./action/blueprint-remove-item";
 import { RunMacroBlueprintNode } from "./action/blueprint-run-macro";
 import { MacroSourceBlueprintNode } from "./value/blueprint-macro-source";
+import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blueprint-token.event";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -36,6 +37,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "aura-leave": LeaveAuraBlueprintNode,
         "turn-end": EndTurnBlueprintNode,
         "turn-start": StartTurnBlueprintNode,
+        "token-create": CreateTokenBlueprintNode,
+        "token-delete": DeleteTokenBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

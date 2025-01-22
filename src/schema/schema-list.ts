@@ -40,6 +40,8 @@ const SCHEMAS = {
         "aura-leave": auraEventSchema,
         "turn-start": eventSchema,
         "turn-end": eventSchema,
+        "token-create": eventSchema,
+        "token-delete": eventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

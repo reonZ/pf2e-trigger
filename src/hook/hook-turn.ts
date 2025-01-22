@@ -1,6 +1,6 @@
 import { NodeEventKey } from "schema/schema-list";
 import { TriggerHook } from "./trigger-hook";
-import { CombatantPF2e, EncounterPF2e, Hook, createHook } from "module-helpers";
+import { CombatantPF2e, EncounterPF2e, Hook, createHook, userIsActiveGM } from "module-helpers";
 
 abstract class TurnHook extends TriggerHook {
     #hook: Hook;
@@ -19,6 +19,8 @@ abstract class TurnHook extends TriggerHook {
     }
 
     #onHook(combatant: CombatantPF2e, encounter: EncounterPF2e, userId: string) {
+        if (!userIsActiveGM()) return;
+
         const actor = combatant.actor;
         if (!actor) return;
 

@@ -37,6 +37,8 @@ const NODES = {
         "aura-leave": AuraEventTriggerNode,
         "turn-end": EventTriggerNode,
         "turn-start": EventTriggerNode,
+        "token-create": EventTriggerNode,
+        "token-delete": EventTriggerNode,
     },
     logic: {
         "eq-number": EqNumberTriggerNode,

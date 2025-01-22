@@ -90,6 +90,12 @@
                 },
                 "turn-end": {
                     "title": "Turn End"
+                },
+                "token-create": {
+                    "title": "Create Token"
+                },
+                "token-delete": {
+                    "title": "Delete Token"
                 }
             },
             "condition": {
