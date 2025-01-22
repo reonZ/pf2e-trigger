@@ -19,11 +19,13 @@ import { HasOptionTriggerNode } from "./condition/trigger-has-option";
 import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
 import { RunMacroTriggerNode } from "./action/trigger-run-macro";
 import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
+import { AddItemTriggerNode } from "./action/rtigger-add-item";
 
 const NODES = {
     action: {
         "roll-save": RollSaveTriggerNode,
         "roll-damage": RollDamageTriggerNode,
+        "add-item": AddItemTriggerNode,
         "remove-item": RemoveItemTriggerNode,
         "run-macro": RunMacroTriggerNode,
     },

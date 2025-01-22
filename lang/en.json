@@ -69,6 +69,12 @@
                         "label": "Formula"
                     }
                 },
+                "add-item": {
+                    "title": "Add Item",
+                    "duplicate": {
+                        "label": "Duplicates?"
+                    }
+                },
                 "remove-item": {
                     "title": "Remove Item"
                 },

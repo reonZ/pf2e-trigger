@@ -1,8 +1,16 @@
 import { TriggerData } from "data/data-trigger";
 import { R } from "module-helpers";
+import { addItemSchema } from "./action/schema-add-item";
+import { removeItemSchema } from "./action/schema-remove-item";
+import { rollDamageSchema } from "./action/schema-roll-damage";
 import { rollSaveSchema } from "./action/schema-roll-save";
+import { runMacroSchema } from "./action/schema-run-macro";
 import { hasItemSchema } from "./condition/schema-has-item";
+import { hasOptionSchema } from "./condition/schema-has-option";
+import { insideAuraSchema } from "./condition/schema-inside-aura";
+import { auraEventSchema } from "./event/schema-aura-event";
 import { eventSchema } from "./event/schema-event";
+import { createLogicSchema } from "./logic/schema-logic";
 import {
     NodeEntryType,
     NodeSchema,
@@ -12,21 +20,15 @@ import {
     isInputConnection,
 } from "./schema";
 import { itemSourceSchema } from "./value/schema-item-source";
-import { createLogicSchema } from "./logic/schema-logic";
-import { createValueSchema } from "./value/schema-value";
-import { successValueSchema } from "./value/schema-success-value";
-import { rollDamageSchema } from "./action/schema-roll-damage";
-import { insideAuraSchema } from "./condition/schema-inside-aura";
-import { auraEventSchema } from "./event/schema-aura-event";
-import { hasOptionSchema } from "./condition/schema-has-option";
-import { removeItemSchema } from "./action/schema-remove-item";
-import { runMacroSchema } from "./action/schema-run-macro";
 import { macroSourceSchema } from "./value/schema-macro-source";
+import { successValueSchema } from "./value/schema-success-value";
+import { createValueSchema } from "./value/schema-value";
 
 const SCHEMAS = {
     action: {
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
+        "add-item": addItemSchema,
         "remove-item": removeItemSchema,
         "run-macro": runMacroSchema,
     },
@@ -99,12 +101,7 @@ const FILTERS: NodeFilter[] = R.pipe(
                     R.unique()
                 );
 
-                return {
-                    type,
-                    key,
-                    inputs,
-                    outputs,
-                };
+                return { type, key, inputs, outputs };
             })
         );
     }),
@@ -204,6 +201,6 @@ export type {
     NodeEventKey,
     NodeFilter,
     NodeKey,
-    NodeSchemas,
     NodeSchemaMap,
+    NodeSchemas,
 };

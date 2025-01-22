@@ -19,11 +19,13 @@ import { RemoveItemBlueprintNode } from "./action/blueprint-remove-item";
 import { RunMacroBlueprintNode } from "./action/blueprint-run-macro";
 import { MacroSourceBlueprintNode } from "./value/blueprint-macro-source";
 import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blueprint-token.event";
+import { AddItemBlueprintNode } from "./action/blueprint-add-item";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,
+        "add-item": AddItemBlueprintNode,
         "remove-item": RemoveItemBlueprintNode,
         "run-macro": RunMacroBlueprintNode,
     },
