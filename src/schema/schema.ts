@@ -82,7 +82,7 @@ function getDefaultInputValue(schema: NonNullableInputEntry): NonNullable<NodeEn
         return R.isPlainObject(option) ? option.value : option;
     }
 
-    return new ENTRY_VALUE_TYPE[schema.type]() as NonNullable<NodeEntryValue>;
+    return new ENTRY_VALUE_TYPE[schema.type]().valueOf();
 }
 
 function setToSchemaValue(schema: NonNullableInputEntry, value: unknown): NodeEntryValue {
