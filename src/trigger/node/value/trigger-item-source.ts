@@ -4,19 +4,21 @@ import { ItemPF2e, R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 
 class ItemSourceTriggerNode extends TriggerNode<typeof itemSourceSchema> {
-    #cached: ItemPF2e | null | undefined = undefined;
+    #cached: ItemPF2e | undefined = undefined;
 
     protected async _query(
         key: ExtractSchemaInputsKeys<typeof itemSourceSchema>
     ): Promise<ItemPF2e | undefined> {
-        if (this.#cached === undefined) {
+        if (!this.#cached) {
             const uuid = await this.get("uuid");
             const item = R.isString(uuid) && uuid.trim() ? await fromUuid<ItemPF2e>(uuid) : null;
 
-            this.#cached = item instanceof Item ? item : null;
+            if (item instanceof Item && item.pack) {
+                this.#cached = item;
+            }
         }
 
-        return this.#cached ?? undefined;
+        return this.#cached;
     }
 }
 

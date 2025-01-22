@@ -1,16 +1,15 @@
-import { TriggerData } from "data/data-trigger";
 import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
 import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
 import { MODULE, R } from "module-helpers";
 
 abstract class TriggerHook {
-    #triggersData: TriggerData[] = [];
+    #triggers: Trigger[] = [];
 
     protected abstract _activate(): void;
     protected abstract _disable(): void;
 
-    initialize(triggers: TriggerData[]) {
-        this.#triggersData.length = 0;
+    initialize(triggers: Trigger[]) {
+        this.#triggers.length = 0;
 
         const events = this.events;
         const conditions = this.conditions;
@@ -18,15 +17,15 @@ abstract class TriggerHook {
         let active = false;
 
         triggerLoop: for (const trigger of triggers) {
-            if (events?.includes(trigger.event.key as NodeEventKey)) {
-                this.#triggersData.push(trigger);
+            if (events?.includes(trigger.eventKey)) {
+                this.#triggers.push(trigger);
                 active = true;
                 continue;
             }
 
             if (active || !conditions) continue;
 
-            for (const node of R.values(trigger.nodes)) {
+            for (const node of trigger.nodes) {
                 if (
                     node.type === "condition" &&
                     conditions.includes(node.key as NodeConditionKey)
@@ -56,10 +55,8 @@ abstract class TriggerHook {
             ? [arg0, arg1 as TriggerExecuteOptions]
             : [undefined, arg0];
 
-        for (const data of this.#triggersData) {
-            if (event && data.event.key !== event) continue;
-
-            const trigger = new Trigger(data);
+        for (const trigger of this.#triggers) {
+            if (event && trigger.eventKey !== event) continue;
             trigger.execute(options);
         }
     }
