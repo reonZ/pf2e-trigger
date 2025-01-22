@@ -63,7 +63,12 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
                 };
             }),
             R.groupBy(R.prop("type")),
-            R.mapValues((nodes, type) => ({ title: localize(`node.${type}.title`), nodes }))
+            R.mapValues((nodes, type) => {
+                return {
+                    title: localize(`node.${type}.title`),
+                    nodes: R.sortBy(nodes, R.prop("label")),
+                };
+            })
         );
 
         return {
