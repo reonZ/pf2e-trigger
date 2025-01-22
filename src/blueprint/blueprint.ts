@@ -271,7 +271,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
     #onDropCanvasData(event: DragEvent) {
         const data = TextEditor.getDragEventData(event) as unknown as DropCanvasData;
-        console.log(data);
+
         if (
             !R.isPlainObject(data) ||
             !["Item", "Macro"].includes(data.type ?? "") ||
