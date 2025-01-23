@@ -110,8 +110,6 @@ const FILTERS: NodeFilter[] = R.pipe(
     R.filter(({ type }) => type !== "event")
 );
 
-console.log(FILTERS);
-
 function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     const uniques = R.pipe(
         R.values(trigger?.nodes ?? {}),
