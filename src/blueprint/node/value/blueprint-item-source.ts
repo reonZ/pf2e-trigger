@@ -6,7 +6,6 @@ class ItemSourceBlueprintNode extends DocumentSourceBlueprintNode<ItemPF2e> {
         item: Maybe<ItemPF2e | CompendiumIndexData>,
         value: string
     ): item is ItemPF2e | CompendiumIndexData {
-        if (item instanceof Item && item.sourceId !== value) return false;
         return isItemEntry(item);
     }
 }
