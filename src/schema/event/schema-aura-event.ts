@@ -13,7 +13,7 @@ const auraEventSchema = {
             },
         },
     ],
-    outputs: [{ key: "target" }, { key: "source" }],
+    outputs: [{ key: "target", label: "this" }, { key: "source" }],
 } as const satisfies NodeSchema;
 
 export { auraEventSchema };

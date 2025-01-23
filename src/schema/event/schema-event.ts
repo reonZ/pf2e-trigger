@@ -1,6 +1,6 @@
 const eventSchema = {
     unique: true,
-    outputs: [{ key: "out" }],
+    outputs: [{ key: "out", label: "this" }],
 } as const satisfies EventSchema;
 
 type EventSchema = {
