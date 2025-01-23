@@ -15,6 +15,8 @@ class ItemSourceTriggerNode extends TriggerNode<typeof itemSourceSchema> {
 
             if (item instanceof Item && item.pack) {
                 this.#cached = item;
+            } else {
+                return item ?? undefined;
             }
         }
 
