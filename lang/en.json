@@ -153,6 +153,9 @@
                 },
                 "eq-text": {
                     "title": "Equals (Text)"
+                },
+                "success-split": {
+                    "title": "Degree of Success (Splitter)"
                 }
             },
             "entry": {
@@ -170,7 +173,8 @@
                 "option": "roll:option",
                 "result": "Result",
                 "value": "Value",
-                "aura-slug": "aura-slug"
+                "aura-slug": "aura-slug",
+                "input": "Input"
             }
         },
         "select": {

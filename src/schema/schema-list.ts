@@ -23,6 +23,7 @@ import { itemSourceSchema } from "./value/schema-item-source";
 import { macroSourceSchema } from "./value/schema-macro-source";
 import { successValueSchema } from "./value/schema-success-value";
 import { createValueSchema } from "./value/schema-value";
+import { successSplitSchema } from "./logic/schema-success-split";
 
 const SCHEMAS = {
     action: {
@@ -52,6 +53,7 @@ const SCHEMAS = {
         "gte-number": createLogicSchema("number"),
         "lte-number": createLogicSchema("number"),
         // "eq-text": createLogicSchema("text"),
+        "success-split": successSplitSchema,
     },
     value: {
         "item-source": itemSourceSchema,
@@ -107,6 +109,8 @@ const FILTERS: NodeFilter[] = R.pipe(
     }),
     R.filter(({ type }) => type !== "event")
 );
+
+console.log(FILTERS);
 
 function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     const uniques = R.pipe(

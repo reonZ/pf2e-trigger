@@ -20,6 +20,7 @@ import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
 import { RunMacroTriggerNode } from "./action/trigger-run-macro";
 import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
 import { AddItemTriggerNode } from "./action/trigger-add-item";
+import { SuccessSplitTriggerNode } from "./logic/trigger-success-split";
 
 const NODES = {
     action: {
@@ -48,6 +49,7 @@ const NODES = {
         "lt-number": LtNumberTriggerNode,
         "gte-number": GteNumberTriggerNode,
         "lte-number": LteNumberTriggerNode,
+        "success-split": SuccessSplitTriggerNode,
     },
     value: {
         "item-source": ItemSourceTriggerNode,

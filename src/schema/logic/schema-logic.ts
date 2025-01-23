@@ -15,5 +15,10 @@ type LogicSchema<T extends NonNullable<NodeEntryType> = NonNullable<NodeEntryTyp
     outputs: BooleanSchemaOutputs;
 };
 
+type SplitLogicSchema<T extends NonNullable<NodeEntryType> = NonNullable<NodeEntryType>> = {
+    inputs: [{ key: "input"; type: T }];
+    outputs: { key: string; label?: string }[];
+};
+
 export { createLogicSchema };
-export type { LogicSchema };
+export type { LogicSchema, SplitLogicSchema };

@@ -1,8 +1,7 @@
+import { R } from "module-helpers";
 import { LogicSchema } from "schema/logic/schema-logic";
 import { TriggerExecuteOptions } from "trigger/trigger";
-import { R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
-import { ExtractInValueType } from "./trigger-node-logic";
 
 abstract class NumberLogicTriggerNode extends TriggerNode<LogicSchema<"number">> {
     protected abstract _logic(value: number, input: number): boolean;
@@ -10,7 +9,7 @@ abstract class NumberLogicTriggerNode extends TriggerNode<LogicSchema<"number">>
     protected async _execute(
         origin: TargetDocuments,
         options: TriggerExecuteOptions,
-        value?: ExtractInValueType<LogicSchema<"number">>
+        value?: number
     ) {
         const input = await this.get("b");
         if (!R.isNumber(value) || !R.isNumber(input)) return;
