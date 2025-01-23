@@ -8,8 +8,8 @@ class RunMacroTriggerNode extends TriggerNode<typeof runMacroSchema> {
         if (!macro) return;
 
         const result = await macro.execute({
-            actor: origin.actor,
-            token: origin.token?.object ?? undefined,
+            actor: options.target.actor,
+            token: options.target.token?.object ?? undefined,
             options,
         });
 
