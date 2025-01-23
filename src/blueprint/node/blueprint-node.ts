@@ -10,6 +10,7 @@ import { BlueprintNodeBody } from "./blueprint-node-body";
 import { BlueprintNodeBorder } from "./blueprint-node-border";
 import { BlueprintNodeHeader } from "./blueprint-node-header";
 import { BlueprintEntry } from "./entry/blueprint-entry";
+import { TriggerData } from "data/data-trigger";
 
 const NODE_CONTEXT = ["delete"] as const;
 
@@ -72,6 +73,10 @@ class BlueprintNode extends PIXI.Container {
         return this.parent.blueprint;
     }
 
+    get trigger(): TriggerData | null {
+        return this.blueprint.trigger;
+    }
+
     get outerPadding(): number {
         return 10;
     }
@@ -116,7 +121,7 @@ class BlueprintNode extends PIXI.Container {
         return 0x0;
     }
 
-    get innerWidth() {
+    get innerWidth(): number {
         return Math.max(this.#header?.innerWidth ?? 0, this.#body.innerWidth);
     }
 

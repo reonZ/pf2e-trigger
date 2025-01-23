@@ -24,7 +24,7 @@ abstract class TokenHook extends TriggerHook {
         const actor = token.actor;
         if (!actor) return;
 
-        this._executeTriggers({ target: { actor, token } });
+        this._executeTriggers({ this: { actor, token } });
     }
 }
 

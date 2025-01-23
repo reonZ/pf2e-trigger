@@ -1,15 +1,14 @@
-import { hasItemSchema } from "schema/condition/schema-has-item";
-import { TriggerExecuteOptions } from "trigger/trigger";
 import { hasItemWithSourceId } from "module-helpers";
+import { hasItemSchema } from "schema/condition/schema-has-item";
 import { TriggerNode } from "../trigger-node";
 
 class HasItemTriggerNode extends TriggerNode<typeof hasItemSchema> {
-    protected async _execute(origin: TargetDocuments, options: TriggerExecuteOptions) {
+    protected async _execute(target: TargetDocuments) {
         const item = await this.get("item");
-        const hasItem = item ? hasItemWithSourceId(origin.actor, item.uuid) : false;
+        const hasItem = item ? hasItemWithSourceId(target.actor, item.uuid) : false;
         const sendKey = hasItem ? "true" : "false";
 
-        this.send(sendKey, origin, options);
+        this.send(sendKey, target);
     }
 }
 

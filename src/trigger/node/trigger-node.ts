@@ -5,6 +5,7 @@ import {
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,
     ExtractSchemaOuputsKeys,
+    ExtractSchemaVariableType,
     NodeSchema,
     NodeSchemaInputEntry,
     NodeSchemaOutputEntry,
@@ -13,6 +14,7 @@ import {
     isInputSchemaEntry,
 } from "schema/schema";
 import { NodeSchemaMap, getSchemaMap } from "schema/schema-list";
+import { schemaVariable } from "schema/schema-variable";
 import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
 
 abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
@@ -20,19 +22,16 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     #schema: NodeSchemaMap;
     #trigger: Trigger;
     #get: Record<string, () => Promisable<any>> = {};
-    #send: Record<
-        string,
-        (
-            origin: TargetDocuments,
-            options: TriggerExecuteOptions,
-            value?: TriggerNodeEntryValue
-        ) => void
-    > = {};
+    #send: Record<string, (target: TargetDocuments, value?: TriggerNodeEntryValue) => void> = {};
 
     constructor(trigger: Trigger, data: NodeData) {
         this.#data = data;
         this.#trigger = trigger;
         this.#schema = getSchemaMap(data);
+    }
+
+    get id(): string {
+        return this.#data.id;
     }
 
     get type(): NodeType {
@@ -43,30 +42,50 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         return this.#data.key;
     }
 
+    get options(): TriggerExecuteOptions {
+        return this.#trigger.options;
+    }
+
+    executeTrigger(options: Partial<TriggerExecuteOptions> = {}) {
+        const newOptions = fu.mergeObject(options, {
+            this: this.options.this,
+            variables: {},
+        } satisfies TriggerExecuteOptions);
+
+        this.#trigger.execute(newOptions);
+    }
+
+    setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
+        this.#trigger.setOption(key, value);
+    }
+
+    getVariable(nodeId: string, key: string): TriggerNodeEntryValue {
+        return this.#trigger.getVariable(nodeId, key);
+    }
+
+    setVariable(key: ExtractSchemaVariableType<TSchema>, value: TriggerNodeEntryValue) {
+        this.#trigger.setVariable(this.id, key, value);
+    }
+
     send<K extends ExtractSchemaOuputsKeys<TSchema>>(
         key: K,
-        origin: TargetDocuments,
-        options: TriggerExecuteOptions,
+        target: TargetDocuments,
         value?: ExtracSchemaOutputValueType<TSchema, K>
     ) {
         if (this.#send[key]) {
-            return this.#send[key](origin, options, value);
+            return this.#send[key](target, value);
         }
 
         const output = this.#data.outputs[key] as NodeDataEntry | undefined;
-        const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNode(id));
+        const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNodeFromEntryId(id));
 
-        this.#send[key] = (
-            origin: TargetDocuments,
-            options: TriggerExecuteOptions,
-            value?: TriggerNodeEntryValue
-        ) => {
+        this.#send[key] = (target: TargetDocuments, value?: TriggerNodeEntryValue) => {
             for (const otherNode of otherNodes) {
-                otherNode._execute(origin, options, value);
+                otherNode._execute(target, value);
             }
         };
 
-        this.#send[key](origin, options, value);
+        this.#send[key](target, value);
     }
 
     async get<K extends ExtractSchemaInputsKeys<TSchema>>(
@@ -81,8 +100,17 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
             if ("value" in input) {
                 this.#get[key] = () => input.value;
             } else if (R.isArray(input.ids)) {
-                const otherNode = this.#trigger.getNode(input.ids[0]);
-                this.#get[key] = () => otherNode._query(key);
+                const otherNode = this.#trigger.getNodeFromEntryId(input.ids[0]);
+
+                if (otherNode.type === "variable") {
+                    const node = otherNode as TriggerNode<typeof schemaVariable>;
+                    const nodeId = await node.get("id");
+                    const variableKey = await node.get("key");
+
+                    this.#get[key] = () => this.getVariable(nodeId, variableKey);
+                } else {
+                    this.#get[key] = () => otherNode._query(key);
+                }
             } else {
                 this.#get[key] = () => undefined;
             }
@@ -101,15 +129,14 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     }
 
     protected async _execute(
-        origin: TargetDocuments,
-        options: TriggerExecuteOptions,
+        target: TargetDocuments,
         value?: TriggerNodeEntryValue
     ): Promise<void> {
         throw new Error("_execute not implemented.");
     }
 
     protected async _query(
-        key: ExtractSchemaInputsKeys<TSchema>
+        key: ExtractSchemaOuputsKeys<TSchema>
     ): Promise<TriggerNodeEntryValue | undefined> {
         throw new Error("_query not implemented.");
     }
@@ -133,7 +160,7 @@ type ExtracSchemaOutputValueType<
     ? ExtractSchemaEntryType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
-type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e | MacroPF2e;
+type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e | MacroPF2e | TargetDocuments;
 
 export { TriggerNode };
 export type { TriggerNodeEntryValue };

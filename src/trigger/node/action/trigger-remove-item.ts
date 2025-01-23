@@ -1,17 +1,16 @@
+import { getItemWithSourceId } from "module-helpers";
 import { removeItemSchema } from "schema/action/schema-remove-item";
 import { TriggerNode } from "../trigger-node";
-import { TriggerExecuteOptions } from "trigger/trigger";
-import { getItemWithSourceId } from "module-helpers";
 
 class RemoveItemTriggerNode extends TriggerNode<typeof removeItemSchema> {
-    protected async _execute(origin: TargetDocuments, options: TriggerExecuteOptions) {
+    protected async _execute(target: TargetDocuments) {
         const item = await this.get("item");
         if (!item) return;
 
-        const exist = getItemWithSourceId(options.target.actor, item.uuid);
+        const exist = getItemWithSourceId(this.options.this.actor, item.uuid);
         await exist?.delete();
 
-        this.send("out", origin, options);
+        this.send("out", target);
     }
 }
 

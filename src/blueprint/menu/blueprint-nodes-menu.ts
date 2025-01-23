@@ -1,5 +1,5 @@
-import { NodeType } from "schema/schema";
-import { NodeFilter, getFilters } from "schema/schema-list";
+import { NodeEntryType, NodeType } from "schema/schema";
+import { NodeFilter, getFilters, getSchema } from "schema/schema-list";
 import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
@@ -59,11 +59,11 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
                 return {
                     key,
                     type,
-                    label: localize(`node.${type}.${key}.title`),
+                    label: localize("node", type, key, "title"),
                 };
             }),
             R.groupBy(R.prop("type")),
-            R.mapValues((nodes, type) => {
+            R.mapValues((nodes, type): DataNodesGroup => {
                 return {
                     title: localize(`node.${type}.title`),
                     nodes: R.sortBy(nodes, R.prop("label")),
@@ -71,16 +71,63 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             })
         );
 
+        const variables = this.#getVariables();
+        if (variables.length) {
+            groups.variable = {
+                title: localize("node.variable.title"),
+                nodes: variables,
+            };
+        }
+
         return {
             groups,
             i18n: templateLocalize("node"),
         };
     }
 
+    #getVariables(): DataNode[] {
+        const entry = this.source;
+
+        if (entry && (entry.category === "outputs" || !entry.isValue)) {
+            return [];
+        }
+
+        const variables = R.pipe(
+            R.values(this.trigger?.nodes ?? {}),
+            R.flatMap((node) =>
+                getSchema(node).variables?.map(
+                    (variable): DataNode & { entryType: NodeEntryType } => {
+                        return {
+                            type: "variable",
+                            entryType: variable.type,
+                            key: `${node.id}.${variable.key}.${variable.type}`,
+                            label: localize("node.variable", variable.key, "title"),
+                        };
+                    }
+                )
+            ),
+            R.filter(R.isTruthy)
+        );
+
+        if (!entry) {
+            return variables;
+        }
+
+        return R.pipe(
+            variables,
+            R.filter((variable) => {
+                return entry.type === variable.entryType;
+            })
+        );
+    }
+
     #getFilters(): NodeFilter[] {
         const filters = getFilters(this.trigger);
         const entry = this.source;
-        if (!entry) return filters;
+
+        if (!entry) {
+            return filters;
+        }
 
         const isValue = entry.isValue;
         const targetCategory = entry.oppositeCategory;

@@ -1,0 +1,118 @@
+[
+    {
+        "name": "Enter Thermal Nimbus",
+        "nodes": [
+            {
+                "id": "hTdXyYXErVBT7yLj",
+                "key": "aura-enter",
+                "type": "event",
+                "x": 100,
+                "y": 200,
+                "inputs": { "slug": { "value": "kinetic-aura" } },
+                "outputs": { "source": { "ids": ["mv8Nsq6wGbQvRPRs.inputs.in"] } }
+            },
+            {
+                "id": "mv8Nsq6wGbQvRPRs",
+                "key": "has-option",
+                "type": "condition",
+                "x": 365,
+                "y": 224.38,
+                "inputs": {
+                    "in": { "ids": ["hTdXyYXErVBT7yLj.outputs.source"] },
+                    "option": { "value": "self:effect:thermal-nimbus" }
+                },
+                "outputs": { "true": { "ids": ["jZvRRvQnpy0U2k5n.inputs.in"] } }
+            },
+            {
+                "id": "jZvRRvQnpy0U2k5n",
+                "key": "roll-damage",
+                "type": "action",
+                "x": 615,
+                "y": 264.38,
+                "inputs": {
+                    "in": { "ids": ["mv8Nsq6wGbQvRPRs.outputs.true"] },
+                    "formula": {
+                        "value": "(floor(@actor.level/2))[@actor.flags.pf2e.kineticist.thermalNimbus]"
+                    },
+                    "item": { "ids": ["T21rEcVZfrAHox37.outputs.item"] }
+                },
+                "outputs": {}
+            },
+            {
+                "id": "T21rEcVZfrAHox37",
+                "key": "item-source",
+                "type": "value",
+                "x": 369,
+                "y": 326.88,
+                "inputs": {
+                    "uuid": { "value": "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve" }
+                },
+                "outputs": { "item": { "ids": ["jZvRRvQnpy0U2k5n.inputs.item"] } }
+            }
+        ]
+    },
+    {
+        "name": "Start in Thermal Nimbus",
+        "nodes": [
+            {
+                "id": "FhtLSf9MoCpYW2OB",
+                "key": "turn-start",
+                "type": "event",
+                "x": 100,
+                "y": 200,
+                "inputs": {},
+                "outputs": { "out": { "ids": ["6f5RVCV7htMMwWEN.inputs.in"] } }
+            },
+            {
+                "id": "6f5RVCV7htMMwWEN",
+                "key": "inside-aura",
+                "type": "condition",
+                "x": 240,
+                "y": 200.38,
+                "inputs": {
+                    "in": { "ids": ["FhtLSf9MoCpYW2OB.outputs.out"] },
+                    "slug": { "value": "kinetic-aura" }
+                },
+                "outputs": { "source": { "ids": ["atDTg3HTkjfV7E8P.inputs.in"] } }
+            },
+            {
+                "id": "atDTg3HTkjfV7E8P",
+                "key": "has-option",
+                "type": "condition",
+                "x": 476,
+                "y": 225.38,
+                "inputs": {
+                    "in": { "ids": ["6f5RVCV7htMMwWEN.outputs.source"] },
+                    "option": { "value": "self:effect:thermal-nimbus" }
+                },
+                "outputs": { "true": { "ids": ["aeLxLJ2POzyYALZe.inputs.in"] } }
+            },
+            {
+                "id": "aeLxLJ2POzyYALZe",
+                "key": "roll-damage",
+                "type": "action",
+                "x": 700,
+                "y": 261.38,
+                "inputs": {
+                    "in": { "ids": ["atDTg3HTkjfV7E8P.outputs.true"] },
+                    "formula": {
+                        "value": "(floor(@actor.level/2))[@actor.flags.pf2e.kineticist.thermalNimbus]"
+                    },
+                    "item": { "ids": ["7PlNnj8Vp6rpMOvz.outputs.item"] }
+                },
+                "outputs": {}
+            },
+            {
+                "id": "7PlNnj8Vp6rpMOvz",
+                "key": "item-source",
+                "type": "value",
+                "x": 481,
+                "y": 324.88,
+                "inputs": {
+                    "uuid": { "value": "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve" }
+                },
+                "outputs": { "item": { "ids": ["aeLxLJ2POzyYALZe.inputs.item"] } }
+            }
+        ]
+    }
+]

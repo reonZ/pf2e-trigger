@@ -14,6 +14,10 @@ const auraEventSchema = {
         },
     ],
     outputs: [{ key: "target", label: "this" }, { key: "source" }],
+    variables: [
+        { key: "this", type: "target" },
+        { key: "aura-source", type: "target" },
+    ],
 } as const satisfies NodeSchema;
 
 export { auraEventSchema };

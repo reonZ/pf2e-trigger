@@ -21,6 +21,7 @@ import { MacroSourceBlueprintNode } from "./value/blueprint-macro-source";
 import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blueprint-token.event";
 import { AddItemBlueprintNode } from "./action/blueprint-add-item";
 import { SuccessSplitBlueprintNode } from "./logic/blueprint-success-split";
+import { VariableBlueprintNode } from "./blueprint-variable-node";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -57,6 +58,9 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "macro-source": MacroSourceBlueprintNode,
         "number-value": ValueBlueprintNode,
         "success-value": ValueBlueprintNode,
+    },
+    variable: {
+        variable: VariableBlueprintNode,
     },
 };
 

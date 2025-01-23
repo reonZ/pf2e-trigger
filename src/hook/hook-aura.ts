@@ -99,22 +99,22 @@ class AuraHook extends TriggerHook {
 
             const actorTokens = actor.getActiveTokens(true, true);
 
-            for (const { data: aura, origin: source } of actorAuras) {
-                if (source.actor === actor) continue;
+            for (const aura of actorAuras) {
+                if (aura.origin.actor === actor) continue;
 
                 const tokenAura = tokensAuras.find(
-                    ({ slug, token }) => slug === aura.slug && token === source.token
+                    ({ slug, token }) => slug === aura.data.slug && token === aura.origin.token
                 );
                 const token = tokenAura
                     ? actorTokens.find((token) => tokenAura.containsToken(token))
                     : undefined;
 
                 if (!token) {
-                    removeAuraFromMemory(actor, aura, source);
+                    removeAuraFromMemory(actor, aura.data, aura.origin);
 
                     if (isCurrentCombatant(actor)) {
                         const target = { actor, token: actorTokens.at(0) };
-                        this._executeTriggers("aura-leave", { target, source, aura });
+                        this._executeTriggers("aura-leave", { this: target, aura });
                     }
                 }
             }
@@ -149,7 +149,10 @@ class AuraHook extends TriggerHook {
 
                 if (!already && isCurrentCombatant(actor)) {
                     const target = { actor, token };
-                    this._executeTriggers("aura-enter", { target, source, aura: auraData });
+                    this._executeTriggers("aura-enter", {
+                        this: target,
+                        aura: { data: auraData, origin: source },
+                    });
                 }
             }
         }

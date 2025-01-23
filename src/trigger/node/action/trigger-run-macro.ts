@@ -1,20 +1,21 @@
 import { runMacroSchema } from "schema/action/schema-run-macro";
 import { TriggerNode } from "../trigger-node";
-import { TriggerExecuteOptions } from "trigger/trigger";
 
 class RunMacroTriggerNode extends TriggerNode<typeof runMacroSchema> {
-    protected async _execute(origin: TargetDocuments, options: TriggerExecuteOptions) {
+    protected async _execute(target: TargetDocuments) {
         const macro = await this.get("macro");
         if (!macro) return;
 
+        const options = this.options;
+
         const result = await macro.execute({
-            actor: options.target.actor,
-            token: options.target.token?.object ?? undefined,
+            actor: options.this.actor,
+            token: options.this.token?.object ?? undefined,
             options,
         });
 
         const sendKey = result === false ? "false" : "true";
-        this.send(sendKey, origin, options);
+        this.send(sendKey, target);
     }
 }
 

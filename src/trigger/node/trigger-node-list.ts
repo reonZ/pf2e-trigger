@@ -1,26 +1,27 @@
 import { NodeData } from "data/data-node";
 import { ExtractNodeMap } from "schema/schema-list";
 import { Trigger } from "trigger/trigger";
-import { RollSaveTriggerNode } from "./action/trigger-roll-save";
-import { HasItemTriggerNode } from "./condition/trigger-has-item";
-import { EventTriggerNode } from "./event/trigger-node-event";
-import { TriggerNode } from "./trigger-node";
-import { ItemSourceTriggerNode } from "./value/trigger-item-source";
-import { SuccessValueTriggerNode } from "./value/trigger-success-value";
-import { EqNumberTriggerNode } from "./logic/trigger-eq-number";
-import { GtNumberTriggerNode } from "./logic/trigger-gt-number";
-import { LtNumberTriggerNode } from "./logic/trigger-lt-number";
-import { GteNumberTriggerNode } from "./logic/trigger-gte-number";
-import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
+import { AddItemTriggerNode } from "./action/trigger-add-item";
+import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
 import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
+import { RollSaveTriggerNode } from "./action/trigger-roll-save";
+import { RunMacroTriggerNode } from "./action/trigger-run-macro";
+import { HasItemTriggerNode } from "./condition/trigger-has-item";
+import { HasOptionTriggerNode } from "./condition/trigger-has-option";
 import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
 import { AuraEventTriggerNode } from "./event/trigger-aura-event";
-import { HasOptionTriggerNode } from "./condition/trigger-has-option";
-import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
-import { RunMacroTriggerNode } from "./action/trigger-run-macro";
-import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
-import { AddItemTriggerNode } from "./action/trigger-add-item";
+import { EventTriggerNode } from "./event/trigger-node-event";
+import { EqNumberTriggerNode } from "./logic/trigger-eq-number";
+import { GtNumberTriggerNode } from "./logic/trigger-gt-number";
+import { GteNumberTriggerNode } from "./logic/trigger-gte-number";
+import { LtNumberTriggerNode } from "./logic/trigger-lt-number";
+import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
 import { SuccessSplitTriggerNode } from "./logic/trigger-success-split";
+import { TriggerNode } from "./trigger-node";
+import { VariableTriggerNode } from "./trigger-variable";
+import { ItemSourceTriggerNode } from "./value/trigger-item-source";
+import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
+import { SuccessValueTriggerNode } from "./value/trigger-success-value";
 
 const NODES = {
     action: {
@@ -56,6 +57,9 @@ const NODES = {
         "macro-source": MacroSourceTriggerNode,
         "number-value": TriggerNode,
         "success-value": SuccessValueTriggerNode,
+    },
+    variable: {
+        variable: VariableTriggerNode,
     },
 } satisfies ExtractNodeMap<typeof TriggerNode<any>>;
 

@@ -24,6 +24,7 @@ import { macroSourceSchema } from "./value/schema-macro-source";
 import { successValueSchema } from "./value/schema-success-value";
 import { createValueSchema } from "./value/schema-value";
 import { successSplitSchema } from "./logic/schema-success-split";
+import { schemaVariable } from "./schema-variable";
 
 const SCHEMAS = {
     action: {
@@ -60,6 +61,9 @@ const SCHEMAS = {
         "macro-source": macroSourceSchema,
         "number-value": createValueSchema("number"),
         "success-value": successValueSchema,
+    },
+    variable: {
+        variable: schemaVariable,
     },
 } satisfies Record<NodeType, Record<string, NodeSchema>>;
 
@@ -107,7 +111,7 @@ const FILTERS: NodeFilter[] = R.pipe(
             })
         );
     }),
-    R.filter(({ type }) => type !== "event")
+    R.filter(({ type }) => !["event", "variable"].includes(type))
 );
 
 function getFilters(trigger?: TriggerData | null): NodeFilter[] {
@@ -158,7 +162,7 @@ function getEventKeys(): EventNodeKey[] {
 }
 
 function isNodeKey<T extends NodeType>(type: T, key: any): key is NodeKey<T> {
-    return R.isString(key) && key in SCHEMAS[type];
+    return R.isString(key) && (type === "variable" || key in SCHEMAS[type]);
 }
 
 type NodeSchemas = typeof SCHEMAS;

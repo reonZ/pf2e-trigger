@@ -1,4 +1,4 @@
-import { processNodeData } from "data/data-node";
+import { NodeRawData, processNodeData } from "data/data-node";
 import {
     TriggerData,
     TriggerRawData,
@@ -6,9 +6,20 @@ import {
     serializeTrigger,
 } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
-import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
+import {
+    MODULE,
+    R,
+    distanceBetweenPoints,
+    info,
+    localize,
+    render,
+    setSetting,
+    subtractPoints,
+    templateLocalize,
+    waitDialog,
+} from "module-helpers";
 import { NodeType } from "schema/schema";
-import { EventNodeKey } from "schema/schema-list";
+import { EventNodeKey, getSchema } from "schema/schema-list";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
@@ -206,14 +217,40 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         delete this.#triggers[id];
     }
 
-    createNode(type: NodeType, key: string, x: number, y: number): BlueprintNode | undefined {
-        if (!this.trigger) return;
+    async createNode(
+        type: NodeType,
+        key: string,
+        x: number,
+        y: number
+    ): Promise<BlueprintNode | undefined> {
+        const trigger = this.trigger;
+        if (!trigger) return;
 
         const id = fu.randomID();
-        const data = processNodeData({ id, type, key, x, y });
+        const dataRaw: NodeRawData = { id, type, key, x, y };
+
+        if (type === "variable") {
+            const [nodeId, variableKey, variableType] = key.split(".");
+            const node = trigger.nodes[nodeId];
+            const schema = getSchema(node);
+            if (!node || !schema) return;
+
+            const name = schema.unique ? undefined : await this.#getVariableName();
+
+            dataRaw.key = "variable";
+
+            dataRaw.inputs = {
+                id: { value: nodeId },
+                key: { value: variableKey },
+                type: { value: variableType },
+                label: { value: name?.trim() || localize("node.variable", variableKey, "title") },
+            };
+        }
+
+        const data = processNodeData(dataRaw);
         if (!data) return;
 
-        this.trigger.nodes[data.id] = data;
+        trigger.nodes[data.id] = data;
         return this.#nodesLayer.addNode(data);
     }
 
@@ -228,6 +265,28 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#nodesLayer.removeNode(id);
 
         delete this.trigger?.nodes[id];
+    }
+
+    async #getVariableName(): Promise<string | undefined> {
+        const result = await waitDialog<{ name: string }>(
+            {
+                title: localize("add-variable.title"),
+                content: await render("add-variable", {
+                    i18n: templateLocalize("add-variable"),
+                }),
+                yes: {
+                    label: localize("add-variable.yes"),
+                    icon: "fa-solid fa-check",
+                },
+                no: {
+                    label: localize("add-variable.no"),
+                    icon: "fa-solid fa-xmark",
+                },
+            },
+            { animation: false }
+        );
+
+        return !!result ? result.name : undefined;
     }
 
     #initialize() {
@@ -350,7 +409,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!result) return;
 
         const { key, type } = result;
-        const node = this.createNode(type, key, x, y);
+        const node = await this.createNode(type, key, x, y);
         if (!node) return;
 
         const center = {

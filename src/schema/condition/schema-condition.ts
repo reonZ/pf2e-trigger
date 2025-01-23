@@ -2,6 +2,7 @@ import {
     BooleanSchemaOutputs,
     BridgeNodeEntry,
     NodeSchemaInputEntry,
+    NodeSchemaVariable,
     createBooleanSchemaOutputs,
 } from "schema/schema";
 
@@ -29,6 +30,7 @@ type BaseConditionSchema<TInputs extends NodeSchemaInputEntry = NodeSchemaInputE
     unique?: boolean;
     inputs: TInputs[];
     outputs: BridgeNodeEntry[];
+    variables?: NodeSchemaVariable[];
 };
 
 export { createConditionSchema };

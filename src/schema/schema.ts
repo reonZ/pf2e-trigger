@@ -1,11 +1,20 @@
 import { NodeEntryValue } from "data/data-node";
 import { ItemPF2e, MacroPF2e, R } from "module-helpers";
 
-const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
+const NODE_TYPES = ["event", "condition", "value", "action", "logic", "variable"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
-const NODE_ENTRY_TYPES = ["item", "macro", "boolean", "uuid", "text", "number", "select"] as const;
+const NODE_ENTRY_TYPES = [
+    "target",
+    "item",
+    "macro",
+    "boolean",
+    "uuid",
+    "text",
+    "number",
+    "select",
+] as const;
 
-const NULL_NODE_ENTRY_TYPES = ["item", "macro"] as const;
+const NULL_NODE_ENTRY_TYPES = ["target", "item", "macro"] as const;
 
 const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
@@ -154,6 +163,8 @@ type NodeSchemaTextField = {
 type NodeSchemaUuidEntry = BaseNodeSchemaInputEntry<"uuid", NodeSchemaUuidField>;
 type NodeSchemaUuidField = {};
 
+type NodeSchemaTargetEntry = BaseNodeSchemaInputEntry<"target">;
+
 type NodeSchemaItemEntry = BaseNodeSchemaInputEntry<"item">;
 
 type NodeSchemaMacroEntry = BaseNodeSchemaInputEntry<"macro">;
@@ -189,6 +200,7 @@ type NodeSchemaSelectOption = {
 type NodeSchemaInputEntry =
     | NodeSchemaTextEntry
     | NodeSchemaUuidEntry
+    | NodeSchemaTargetEntry
     | NodeSchemaItemEntry
     | NodeSchemaMacroEntry
     | NodeSchemaBooleanEntry
@@ -203,13 +215,15 @@ type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
 type ExtractSchemaEntryType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
     ? PrimitiveOf<(typeof ENTRY_VALUE_TYPE)[T]>
     : T extends NullNodeEntryType
-    ? ExtractNullEntryType<T>
+    ? ExtractNullEntryType<T> | undefined
     : never;
 
 type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
     ? ItemPF2e
     : T extends "macro"
     ? MacroPF2e
+    : T extends "target"
+    ? TargetDocuments
     : never;
 
 type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
@@ -220,6 +234,12 @@ type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
 
 type ExtractSchemaOuputsKeys<S extends NodeSchema> = S extends {
     outputs: { key: infer K extends string }[];
+}
+    ? K
+    : never;
+
+type ExtractSchemaVariableType<S extends NodeSchema> = S extends {
+    variables?: { key: infer K extends string }[];
 }
     ? K
     : never;
@@ -240,7 +260,10 @@ type NodeSchema = {
     in?: boolean;
     inputs?: NodeSchemaInputEntry[];
     outputs: NodeSchemaOutputEntry[];
+    variables?: NodeSchemaVariable[];
 };
+
+type NodeSchemaVariable = { key: string; label?: string; type: Required<NodeEntryType> };
 
 type NonNullableInputEntry = NodeSchemaInputEntry & {
     type: NonNullableNodeEntryType;
@@ -269,6 +292,7 @@ export type {
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,
     ExtractSchemaOuputsKeys,
+    ExtractSchemaVariableType,
     NodeEntryCategory,
     NodeEntryType,
     NodeSchema,
@@ -282,6 +306,7 @@ export type {
     NodeSchemaSelectOption,
     NodeSchemaTextEntry,
     NodeSchemaUuidEntry,
+    NodeSchemaVariable,
     NodeType,
     NonNullableInputEntry,
     NonNullableNodeEntryType,

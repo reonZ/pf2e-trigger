@@ -6,6 +6,7 @@ const insideAuraSchema = {
     unique: true,
     inputs: auraEventSchema.inputs,
     outputs: [...auraEventSchema.outputs, { key: "false" }],
+    variables: [{ key: "aura-source", type: "target" }],
 } as const satisfies BaseConditionSchema;
 
 export { insideAuraSchema };

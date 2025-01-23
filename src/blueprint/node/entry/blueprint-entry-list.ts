@@ -9,12 +9,14 @@ import { BlueprintSelectEntry } from "./value/blueprint-entry-select";
 import { BlueprintTextEntry } from "./value/blueprint-entry-text";
 import { BlueprintUuidEntry } from "./value/blueprint-entry-uuid";
 import { BlueprintMacroEntry } from "./value/blueprint-entry-macro";
+import { BlueprintActorEntry } from "./value/blueprint-entry-actor";
 
 const INPUTS_ENTRIES = {
-    boolean: BlueprintBooleanEntry,
+    target: BlueprintActorEntry,
     item: BlueprintItemEntry,
     macro: BlueprintMacroEntry,
     number: BlueprintNumberEntry,
+    boolean: BlueprintBooleanEntry,
     select: BlueprintSelectEntry,
     text: BlueprintTextEntry,
     uuid: BlueprintUuidEntry,

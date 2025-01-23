@@ -24,7 +24,7 @@ abstract class TurnHook extends TriggerHook {
         const actor = combatant.actor;
         if (!actor) return;
 
-        this._executeTriggers({ target: { actor, token: combatant.token } });
+        this._executeTriggers({ this: { actor, token: combatant.token } });
     }
 }
 

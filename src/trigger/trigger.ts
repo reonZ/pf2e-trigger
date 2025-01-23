@@ -1,14 +1,16 @@
 import { NodeEntryId, segmentEntryId } from "data/data-entry";
 import { TriggerData } from "data/data-trigger";
-import { AuraData, MODULE, R } from "module-helpers";
-import { TriggerNode } from "./node/trigger-node";
-import { createTriggerNode } from "./node/trigger-node-list";
+import { ActorAura } from "helpers/helpers-aura";
+import { MODULE, R } from "module-helpers";
 import { NodeEventKey } from "schema/schema-list";
+import { TriggerNode, TriggerNodeEntryValue } from "./node/trigger-node";
+import { createTriggerNode } from "./node/trigger-node-list";
 
 class Trigger {
     #data: TriggerData;
     #nodes: Record<string, TriggerNode>;
     #event: TriggerNode;
+    #options!: TriggerExecuteOptions;
 
     constructor(data: TriggerData) {
         this.#data = data;
@@ -31,10 +33,22 @@ class Trigger {
         return R.values(this.#nodes);
     }
 
+    get options(): TriggerExecuteOptions {
+        return this.#options;
+    }
+
     async execute(options: TriggerExecuteOptions): Promise<void> {
+        options.variables = {
+            [this.#event.id]: {
+                ["this"]: options.this,
+            },
+        };
+
+        this.#options = options;
+
         try {
             MODULE.debug("execute trigger", this);
-            await this.#event["_execute"](options.target, options);
+            await this.#event["_execute"](options.this);
         } catch (error) {
             MODULE.error(
                 `an error occured while processing the trigger: ${this.#data.name}`,
@@ -43,13 +57,35 @@ class Trigger {
         }
     }
 
-    getNode(id: NodeEntryId): TriggerNode {
+    setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
+        this.#options[key] = value;
+    }
+
+    getVariable(nodeId: string, key: string): TriggerNodeEntryValue {
+        return fu.getProperty(this.#options, `variables.${nodeId}.${key}`);
+    }
+
+    setVariable(nodeId: string, key: string, value: TriggerNodeEntryValue) {
+        fu.setProperty(this.#options, `variables.${nodeId}.${key}`, value);
+    }
+
+    getNodeFromEntryId(id: NodeEntryId): TriggerNode {
         const { nodeId } = segmentEntryId(id);
         return this.#nodes[nodeId];
     }
+
+    getNode(id: string): TriggerNode {
+        return this.#nodes[id];
+    }
 }
 
-type TriggerExecuteOptions = { target: TargetDocuments; source?: TargetDocuments; aura?: AuraData };
+type TriggerVariables = Record<string, Record<string, TriggerNodeEntryValue>>;
+
+type TriggerExecuteOptions = {
+    this: TargetDocuments;
+    aura?: ActorAura;
+    variables: TriggerVariables;
+};
 
 export { Trigger };
 export type { TriggerExecuteOptions };

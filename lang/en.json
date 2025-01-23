@@ -40,6 +40,12 @@
             "no": "Cancel",
             "error": "The data provided is invalid, no trigger were imported."
         },
+        "add-variable": {
+            "title": "Create Variable Node",
+            "name": "Variable Name",
+            "yes": "Create",
+            "no": "Cancel"
+        },
         "add-trigger": {
             "title": "Add Trigger",
             "label": "Event Type",
@@ -163,7 +169,8 @@
                 "b": "B",
                 "in": "In",
                 "out": "Out",
-                "this": "This",
+                "this": "Actor",
+                "origin": "Origin",
                 "target": "Target",
                 "source": "Source",
                 "true": "True",
@@ -176,6 +183,15 @@
                 "value": "Value",
                 "aura-slug": "aura-slug",
                 "input": "Input"
+            },
+            "variable": {
+                "title": "Variables",
+                "aura-source": {
+                    "title": "Aura Source"
+                },
+                "this": {
+                    "title": "This Actor"
+                }
             }
         },
         "select": {

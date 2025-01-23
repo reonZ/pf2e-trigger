@@ -33,3 +33,4 @@ type ActorAura = {
 type AuraOrigin = Required<TargetDocuments>;
 
 export { auraSearch, getAurasInMemory, setAuraInMemory, removeAuraFromMemory };
+export type { ActorAura, AuraOrigin };
