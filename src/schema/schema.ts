@@ -1,11 +1,11 @@
 import { NodeEntryValue } from "data/data-node";
-import { R } from "module-helpers";
+import { ItemPF2e, MacroPF2e, R } from "module-helpers";
 
 const NODE_TYPES = ["event", "condition", "value", "action", "logic"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
 const NODE_ENTRY_TYPES = ["item", "macro", "boolean", "uuid", "text", "number", "select"] as const;
 
-const NULL_NODE_TYPES = ["item", "macro"] as const;
+const NULL_NODE_ENTRY_TYPES = ["item", "macro"] as const;
 
 const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
@@ -18,8 +18,8 @@ const ENTRY_VALUE_TYPE = {
     StringConstructor | NumberConstructor | BooleanConstructor
 >;
 
-function isNullNodeType(type: NodeEntryType): type is NullNodeType {
-    return NULL_NODE_TYPES.includes(type as any);
+function isNullNodeType(type: NodeEntryType): type is NullNodeEntryType {
+    return NULL_NODE_ENTRY_TYPES.includes(type as any);
 }
 
 function isInputConnection(
@@ -133,7 +133,8 @@ function createBooleanSchemaOutputs(): BooleanSchemaOutputs {
 type NodeType = (typeof NODE_TYPES)[number];
 type NodeEntryCategory = (typeof NODE_ENTRY_CATEGORIES)[number];
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number] | undefined;
-type NonNullableNodeEntryType = Exclude<NodeEntryType, undefined | NullNodeType>;
+type NullNodeEntryType = (typeof NULL_NODE_ENTRY_TYPES)[number];
+type NonNullableNodeEntryType = Exclude<NodeEntryType, undefined | NullNodeEntryType>;
 
 type BaseNodeSchemaInputEntry<
     TType extends NodeEntryType,
@@ -199,9 +200,17 @@ type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
     { type: T }
 >;
 
-type ExtractSchemaEntryType<T extends NonNullableNodeEntryType> = PrimitiveOf<
-    (typeof ENTRY_VALUE_TYPE)[T]
->;
+type ExtractSchemaEntryType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
+    ? PrimitiveOf<(typeof ENTRY_VALUE_TYPE)[T]>
+    : T extends NullNodeEntryType
+    ? ExtractNullEntryType<T>
+    : never;
+
+type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
+    ? ItemPF2e
+    : T extends "macro"
+    ? MacroPF2e
+    : never;
 
 type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
     inputs?: { key: infer K extends string }[];
@@ -241,8 +250,6 @@ type BooleanSchemaOutputs = [
     { key: "true"; label?: string | undefined },
     { key: "false"; label?: string | undefined }
 ];
-
-type NullNodeType = (typeof NULL_NODE_TYPES)[number];
 
 export {
     createBooleanSchemaOutputs,

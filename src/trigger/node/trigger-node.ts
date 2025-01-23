@@ -5,12 +5,10 @@ import {
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,
     ExtractSchemaOuputsKeys,
-    NodeEntryType,
     NodeSchema,
     NodeSchemaInputEntry,
     NodeSchemaOutputEntry,
     NodeType,
-    NonNullableNodeEntryType,
     getDefaultInputValue,
     isInputSchemaEntry,
 } from "schema/schema";
@@ -117,21 +115,13 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     }
 }
 
-type ExtractSchemaValueType<T extends NodeEntryType> = T extends NonNullableNodeEntryType
-    ? ExtractSchemaEntryType<T>
-    : T extends "item"
-    ? ItemPF2e
-    : T extends "macro"
-    ? MacroPF2e
-    : never;
-
 type ExtractSchemaInputValueType<
     S extends NodeSchema,
     K extends ExtractSchemaInputsKeys<S>
 > = S extends {
     inputs: NodeSchemaInputEntry[];
 }
-    ? ExtractSchemaValueType<Extract<S["inputs"][number], { key: K }>["type"]>
+    ? ExtractSchemaEntryType<Extract<S["inputs"][number], { key: K }>["type"]>
     : never;
 
 type ExtracSchemaOutputValueType<
@@ -140,7 +130,7 @@ type ExtracSchemaOutputValueType<
 > = S extends {
     outputs: NodeSchemaOutputEntry[];
 }
-    ? ExtractSchemaValueType<Extract<S["outputs"][number], { key: K }>["type"]>
+    ? ExtractSchemaEntryType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
 type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e | MacroPF2e;
