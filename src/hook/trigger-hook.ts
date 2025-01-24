@@ -61,9 +61,8 @@ abstract class TriggerHook {
         for (const trigger of this.#triggers) {
             if (event && trigger.eventKey !== event) continue;
 
-            if (trigger.insideAura) {
-                const auras = await trigger.insideAura.getActorAuras(options.this.actor);
-
+            const auras = await trigger.insideAura?.getActorAuras(options.this.actor);
+            if (auras?.length) {
                 for (const aura of auras) {
                     await trigger.execute({
                         ...options,
