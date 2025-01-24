@@ -13,7 +13,7 @@ const auraEventSchema = {
             },
         },
     ],
-    outputs: [{ key: "target", label: "this" }, { key: "source" }],
+    outputs: [{ key: "target" }, { key: "source" }],
     variables: [
         { key: "this", type: "target" },
         { key: "aura-source", type: "target" },

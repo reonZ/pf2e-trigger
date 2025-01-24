@@ -15,7 +15,7 @@ type TypeValueSchema<T extends Exclude<NodeEntryType, "select" | undefined>> = {
 };
 
 type ValueSchema = {
-    inputs?: [NodeSchemaInputEntry];
+    inputs?: NodeSchemaInputEntry[];
     outputs: [WithRequired<NodeSchemaOutputEntry, "type">];
 };
 

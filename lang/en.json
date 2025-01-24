@@ -140,6 +140,9 @@
                 },
                 "success-value": {
                     "title": "Degree of Success"
+                },
+                "roll-data": {
+                    "title": "Roll Data"
                 }
             },
             "logic": {
@@ -185,7 +188,10 @@
                 "result": "Result",
                 "value": "Value",
                 "aura-slug": "aura-slug",
-                "input": "Input"
+                "input": "Input",
+                "roll": "Roll",
+                "options": "Extra Options",
+                "traits": "Extra Traits"
             },
             "variable": {
                 "title": "Variables",
@@ -193,7 +199,7 @@
                     "title": "Aura Source"
                 },
                 "this": {
-                    "title": "This Actor"
+                    "title": "Trigger Actor"
                 }
             }
         },

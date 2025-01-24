@@ -125,6 +125,10 @@ class BlueprintNode extends PIXI.Container {
         return Math.max(this.#header?.innerWidth ?? 0, this.#body.innerWidth);
     }
 
+    get hasVariables(): boolean {
+        return !!this.schema.variables?.length;
+    }
+
     initialize() {
         this.#header = this.title ? new BlueprintNodeHeader(this) : null;
         this.#body = new BlueprintNodeBody(this);

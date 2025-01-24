@@ -12,9 +12,10 @@ const NODE_ENTRY_TYPES = [
     "text",
     "number",
     "select",
+    "roll",
 ] as const;
 
-const NULL_NODE_ENTRY_TYPES = ["target", "item", "macro"] as const;
+const NULL_NODE_ENTRY_TYPES = ["target", "item", "macro", "roll"] as const;
 
 const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
@@ -169,6 +170,8 @@ type NodeSchemaItemEntry = BaseNodeSchemaInputEntry<"item">;
 
 type NodeSchemaMacroEntry = BaseNodeSchemaInputEntry<"macro">;
 
+type NodeSchemaRollEntry = BaseNodeSchemaInputEntry<"roll">;
+
 type NodeSchemaBooleanEntry = BaseNodeSchemaInputEntry<"boolean", NodeSchemaBooleanField>;
 type NodeSchemaBooleanField = {
     default?: boolean;
@@ -205,7 +208,15 @@ type NodeSchemaInputEntry =
     | NodeSchemaMacroEntry
     | NodeSchemaBooleanEntry
     | NodeSchemaNumberEntry
-    | NodeSchemaSelectEntry;
+    | NodeSchemaSelectEntry
+    | NodeSchemaRollEntry;
+
+type RollNodeEntry = {
+    origin: TargetDocuments | undefined;
+    item: ItemPF2e | undefined;
+    options: string[];
+    traits: string[];
+};
 
 type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
     NodeSchemaInputEntry,
@@ -224,6 +235,8 @@ type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
     ? MacroPF2e
     : T extends "target"
     ? TargetDocuments
+    : T extends "roll"
+    ? RollNodeEntry
     : never;
 
 type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
@@ -310,4 +323,5 @@ export type {
     NodeType,
     NonNullableInputEntry,
     NonNullableNodeEntryType,
+    RollNodeEntry,
 };

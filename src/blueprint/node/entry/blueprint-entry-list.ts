@@ -10,6 +10,7 @@ import { BlueprintTextEntry } from "./value/blueprint-entry-text";
 import { BlueprintUuidEntry } from "./value/blueprint-entry-uuid";
 import { BlueprintMacroEntry } from "./value/blueprint-entry-macro";
 import { BlueprintActorEntry } from "./value/blueprint-entry-actor";
+import { BlueprintRollEntry } from "./value/blueprint-entry-roll";
 
 const INPUTS_ENTRIES = {
     target: BlueprintActorEntry,
@@ -20,6 +21,7 @@ const INPUTS_ENTRIES = {
     select: BlueprintSelectEntry,
     text: BlueprintTextEntry,
     uuid: BlueprintUuidEntry,
+    roll: BlueprintRollEntry,
 };
 
 function createBlueprintEntry(

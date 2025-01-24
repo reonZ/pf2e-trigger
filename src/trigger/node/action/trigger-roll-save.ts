@@ -8,7 +8,10 @@ class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {
         const save = await this.get("save");
         if (!R.isNumber(dc) || !R.isString(save)) return;
 
-        const statistic = this.options.this.actor.getStatistic(save);
+        const rollData = await this.get("roll");
+        const originActor = rollData?.origin?.actor ?? this.options.this.actor;
+
+        const statistic = originActor.getStatistic(save);
         if (!statistic) return;
 
         const roll = await statistic.roll({ dc });

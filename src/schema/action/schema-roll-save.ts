@@ -4,11 +4,6 @@ const rollSaveSchema = {
     in: true,
     inputs: [
         {
-            key: "dc",
-            type: "number",
-            field: { min: 0, max: 30, step: 1, default: 15 },
-        },
-        {
             key: "save",
             type: "select",
             field: {
@@ -19,6 +14,12 @@ const rollSaveSchema = {
                 ],
             },
         },
+        {
+            key: "dc",
+            type: "number",
+            field: { min: 0, max: 30, step: 1, default: 15 },
+        },
+        { key: "roll", type: "roll" },
     ],
     outputs: [{ key: "out" }, { key: "result", type: "number" }],
 } as const satisfies ActionSchema;

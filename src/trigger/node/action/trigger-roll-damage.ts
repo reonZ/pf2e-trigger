@@ -4,17 +4,18 @@ import { TriggerNode } from "../trigger-node";
 
 class RollDamageTriggerNode extends TriggerNode<typeof rollDamageSchema> {
     protected async _execute(target: TargetDocuments) {
-        const damageOrigin = await this.get("origin");
         const formula = await this.get("formula");
         if (!R.isString(formula) || !formula.trim()) return;
 
+        const rollData = await this.get("roll");
+
         await rollDamageFromFormula(formula, {
-            item: await this.get("item"),
-            target: this.options.this,
-            origin: damageOrigin,
+            item: rollData?.item,
+            target: (await this.get("target")) ?? this.options.this,
+            origin: rollData?.origin,
         });
 
-        this.send("out", target);
+        return this.send("out", target);
     }
 }
 

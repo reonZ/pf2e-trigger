@@ -25,6 +25,7 @@ import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
 import { BlueprintNodesMenu } from "./menu/blueprint-nodes-menu";
 import { BlueprintNode } from "./node/blueprint-node";
+import { VariableBlueprintNode } from "./node/blueprint-variable-node";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #triggers: Record<string, TriggerData>;
@@ -265,6 +266,14 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#nodesLayer.removeNode(id);
 
         delete this.trigger?.nodes[id];
+
+        if (node.hasVariables) {
+            for (const otherNode of this.#nodesLayer.nodes()) {
+                if (otherNode instanceof VariableBlueprintNode && otherNode.nodeId === id) {
+                    this.deleteNode(otherNode.id);
+                }
+            }
+        }
     }
 
     async #getVariableName(): Promise<string | undefined> {

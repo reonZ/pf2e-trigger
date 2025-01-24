@@ -22,6 +22,7 @@ import { VariableTriggerNode } from "./trigger-variable";
 import { ItemSourceTriggerNode } from "./value/trigger-item-source";
 import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
 import { SuccessValueTriggerNode } from "./value/trigger-success-value";
+import { RollDataTriggerNode } from "./value/trigger-roll-data";
 
 const NODES = {
     action: {
@@ -58,6 +59,7 @@ const NODES = {
         "macro-source": MacroSourceTriggerNode,
         "number-value": TriggerNode,
         "success-value": SuccessValueTriggerNode,
+        "roll-data": RollDataTriggerNode,
     },
     variable: {
         variable: VariableTriggerNode,

@@ -3,115 +3,167 @@
         "name": "Enter Thermal Nimbus",
         "nodes": [
             {
-                "id": "hTdXyYXErVBT7yLj",
+                "id": "EU05YLasxrLsYavx",
                 "key": "aura-enter",
                 "type": "event",
                 "x": 100,
                 "y": 200,
                 "inputs": { "slug": { "value": "kinetic-aura" } },
-                "outputs": { "source": { "ids": ["mv8Nsq6wGbQvRPRs.inputs.in"] } }
+                "outputs": { "source": { "ids": ["IiOoakfe881CZUHF.inputs.in"] } }
             },
             {
-                "id": "mv8Nsq6wGbQvRPRs",
+                "id": "IiOoakfe881CZUHF",
                 "key": "has-option",
                 "type": "condition",
-                "x": 365,
+                "x": 346,
                 "y": 224.38,
                 "inputs": {
-                    "in": { "ids": ["hTdXyYXErVBT7yLj.outputs.source"] },
+                    "in": { "ids": ["EU05YLasxrLsYavx.outputs.source"] },
                     "option": { "value": "self:effect:thermal-nimbus" }
                 },
-                "outputs": { "true": { "ids": ["jZvRRvQnpy0U2k5n.inputs.in"] } }
+                "outputs": { "true": { "ids": ["rFtK7GPh57ZjQreL.inputs.in"] } }
             },
             {
-                "id": "jZvRRvQnpy0U2k5n",
+                "id": "rFtK7GPh57ZjQreL",
                 "key": "roll-damage",
                 "type": "action",
-                "x": 615,
-                "y": 264.38,
+                "x": 636,
+                "y": 224.38,
                 "inputs": {
-                    "in": { "ids": ["mv8Nsq6wGbQvRPRs.outputs.true"] },
+                    "in": { "ids": ["IiOoakfe881CZUHF.outputs.true"] },
                     "formula": {
                         "value": "(floor(@actor.level/2))[@actor.flags.pf2e.kineticist.thermalNimbus]"
                     },
-                    "item": { "ids": ["T21rEcVZfrAHox37.outputs.item"] }
+                    "roll": { "ids": ["cELWWIMLbcDWmfHH.outputs.roll"] }
                 },
                 "outputs": {}
             },
             {
-                "id": "T21rEcVZfrAHox37",
+                "id": "cELWWIMLbcDWmfHH",
+                "key": "roll-data",
+                "type": "value",
+                "x": 398.5,
+                "y": 345.88,
+                "inputs": {
+                    "origin": { "ids": ["Npq6F1TjL5b9BgG6.outputs.value"] },
+                    "item": { "ids": ["cWsqpm92MyqTCx1q.outputs.item"] }
+                },
+                "outputs": { "roll": { "ids": ["rFtK7GPh57ZjQreL.inputs.roll"] } }
+            },
+            {
+                "id": "Npq6F1TjL5b9BgG6",
+                "key": "variable",
+                "type": "variable",
+                "x": 238,
+                "y": 344.88,
+                "inputs": {
+                    "id": { "value": "EU05YLasxrLsYavx" },
+                    "key": { "value": "aura-source" },
+                    "type": { "value": "target" },
+                    "label": { "value": "Aura Source" }
+                },
+                "outputs": { "value": { "ids": ["cELWWIMLbcDWmfHH.inputs.origin"] } }
+            },
+            {
+                "id": "cWsqpm92MyqTCx1q",
                 "key": "item-source",
                 "type": "value",
-                "x": 369,
-                "y": 326.88,
+                "x": 163,
+                "y": 393.88,
                 "inputs": {
                     "uuid": { "value": "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve" }
                 },
-                "outputs": { "item": { "ids": ["jZvRRvQnpy0U2k5n.inputs.item"] } }
+                "outputs": { "item": { "ids": ["cELWWIMLbcDWmfHH.inputs.item"] } }
             }
         ]
     },
     {
-        "name": "Start in Thermal Nimbus",
+        "name": "Start Inside Thermal Nimbus",
         "nodes": [
             {
-                "id": "FhtLSf9MoCpYW2OB",
+                "id": "Ya7reahjFOB2srUZ",
                 "key": "turn-start",
                 "type": "event",
                 "x": 100,
                 "y": 200,
                 "inputs": {},
-                "outputs": { "out": { "ids": ["6f5RVCV7htMMwWEN.inputs.in"] } }
+                "outputs": { "out": { "ids": ["52sfCVmKpYtYmKHc.inputs.in"] } }
             },
             {
-                "id": "6f5RVCV7htMMwWEN",
+                "id": "52sfCVmKpYtYmKHc",
                 "key": "inside-aura",
                 "type": "condition",
-                "x": 240,
+                "x": 255,
                 "y": 200.38,
                 "inputs": {
-                    "in": { "ids": ["FhtLSf9MoCpYW2OB.outputs.out"] },
+                    "in": { "ids": ["Ya7reahjFOB2srUZ.outputs.out"] },
                     "slug": { "value": "kinetic-aura" }
                 },
-                "outputs": { "source": { "ids": ["atDTg3HTkjfV7E8P.inputs.in"] } }
+                "outputs": { "source": { "ids": ["B1wQqVVMaGivHWns.inputs.in"] } }
             },
             {
-                "id": "atDTg3HTkjfV7E8P",
+                "id": "B1wQqVVMaGivHWns",
                 "key": "has-option",
                 "type": "condition",
-                "x": 476,
+                "x": 505,
                 "y": 225.38,
                 "inputs": {
-                    "in": { "ids": ["6f5RVCV7htMMwWEN.outputs.source"] },
+                    "in": { "ids": ["52sfCVmKpYtYmKHc.outputs.source"] },
                     "option": { "value": "self:effect:thermal-nimbus" }
                 },
-                "outputs": { "true": { "ids": ["aeLxLJ2POzyYALZe.inputs.in"] } }
+                "outputs": { "true": { "ids": ["7m0cVtmbgz4vg1JM.inputs.in"] } }
             },
             {
-                "id": "aeLxLJ2POzyYALZe",
+                "id": "7m0cVtmbgz4vg1JM",
                 "key": "roll-damage",
                 "type": "action",
-                "x": 700,
-                "y": 261.38,
+                "x": 737,
+                "y": 271.38,
                 "inputs": {
-                    "in": { "ids": ["atDTg3HTkjfV7E8P.outputs.true"] },
+                    "in": { "ids": ["B1wQqVVMaGivHWns.outputs.true"] },
                     "formula": {
                         "value": "(floor(@actor.level/2))[@actor.flags.pf2e.kineticist.thermalNimbus]"
                     },
-                    "item": { "ids": ["7PlNnj8Vp6rpMOvz.outputs.item"] }
+                    "roll": { "ids": ["sXBsCz1AZnbkRrrb.outputs.roll"] }
                 },
                 "outputs": {}
             },
             {
-                "id": "7PlNnj8Vp6rpMOvz",
+                "id": "sXBsCz1AZnbkRrrb",
+                "key": "roll-data",
+                "type": "value",
+                "x": 510.5,
+                "y": 334.88,
+                "inputs": {
+                    "origin": { "ids": ["4SVLxSCr0dT1sJDg.outputs.value"] },
+                    "item": { "ids": ["1rNmsy9wEVzTyZnH.outputs.item"] }
+                },
+                "outputs": { "roll": { "ids": ["7m0cVtmbgz4vg1JM.inputs.roll"] } }
+            },
+            {
+                "id": "4SVLxSCr0dT1sJDg",
+                "key": "variable",
+                "type": "variable",
+                "x": 336,
+                "y": 335.88,
+                "inputs": {
+                    "id": { "value": "52sfCVmKpYtYmKHc" },
+                    "key": { "value": "aura-source" },
+                    "type": { "value": "target" },
+                    "label": { "value": "Aura Source" }
+                },
+                "outputs": { "value": { "ids": ["sXBsCz1AZnbkRrrb.inputs.origin"] } }
+            },
+            {
+                "id": "1rNmsy9wEVzTyZnH",
                 "key": "item-source",
                 "type": "value",
-                "x": 481,
-                "y": 324.88,
+                "x": 262,
+                "y": 374.88,
                 "inputs": {
                     "uuid": { "value": "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve" }
                 },
-                "outputs": { "item": { "ids": ["aeLxLJ2POzyYALZe.inputs.item"] } }
+                "outputs": { "item": { "ids": ["sXBsCz1AZnbkRrrb.inputs.item"] } }
             }
         ]
     }
