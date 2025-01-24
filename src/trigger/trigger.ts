@@ -37,14 +37,14 @@ class Trigger {
         return this.#options;
     }
 
-    async execute(options: TriggerExecuteOptions): Promise<void> {
-        options.variables = {
+    async execute(options: TriggersExecuteCallOptions): Promise<void> {
+        (options as TriggerExecuteOptions).variables = {
             [this.#event.id]: {
                 ["this"]: options.this,
             },
         };
 
-        this.#options = options;
+        this.#options = options as TriggerExecuteOptions;
 
         try {
             MODULE.debug("execute trigger", this);
@@ -87,5 +87,7 @@ type TriggerExecuteOptions = {
     variables: TriggerVariables;
 };
 
+type TriggersExecuteCallOptions = Omit<TriggerExecuteOptions, "variables">;
+
 export { Trigger };
-export type { TriggerExecuteOptions };
+export type { TriggersExecuteCallOptions, TriggerExecuteOptions };

@@ -46,6 +46,7 @@ const SCHEMAS = {
         "turn-end": eventSchema,
         "token-create": eventSchema,
         "token-delete": eventSchema,
+        "test-event": eventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

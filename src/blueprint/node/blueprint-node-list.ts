@@ -22,6 +22,7 @@ import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blue
 import { AddItemBlueprintNode } from "./action/blueprint-add-item";
 import { SuccessSplitBlueprintNode } from "./logic/blueprint-success-split";
 import { VariableBlueprintNode } from "./blueprint-variable-node";
+import { TestEventBlueprintNode } from "./event/blueprint-test-event";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -43,6 +44,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "turn-start": StartTurnBlueprintNode,
         "token-create": CreateTokenBlueprintNode,
         "token-delete": DeleteTokenBlueprintNode,
+        "test-event": TestEventBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

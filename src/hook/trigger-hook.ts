@@ -1,5 +1,5 @@
 import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
-import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
+import { Trigger, TriggerExecuteOptions, TriggersExecuteCallOptions } from "trigger/trigger";
 import { MODULE, R } from "module-helpers";
 
 abstract class TriggerHook {
@@ -45,19 +45,19 @@ abstract class TriggerHook {
         }
     }
 
-    protected _executeTriggers(event: NodeEventKey, options: TriggerExecuteOptions): void;
-    protected _executeTriggers(options: TriggerExecuteOptions): void;
+    protected _executeTriggers(event: NodeEventKey, options: TriggersExecuteCallOptions): void;
+    protected _executeTriggers(options: TriggersExecuteCallOptions): void;
     protected _executeTriggers(
-        arg0: NodeEventKey | TriggerExecuteOptions,
-        arg1?: TriggerExecuteOptions
+        arg0: NodeEventKey | TriggersExecuteCallOptions,
+        arg1?: TriggersExecuteCallOptions
     ) {
         const [event, options] = R.isString(arg0)
-            ? [arg0, arg1 as TriggerExecuteOptions]
+            ? [arg0, arg1 as TriggersExecuteCallOptions]
             : [undefined, arg0];
 
         for (const trigger of this.#triggers) {
             if (event && trigger.eventKey !== event) continue;
-            trigger.execute(options);
+            trigger.execute(options as TriggerExecuteOptions);
         }
     }
 }

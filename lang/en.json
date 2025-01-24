@@ -108,6 +108,9 @@
                 },
                 "token-delete": {
                     "title": "Delete Token"
+                },
+                "test-event": {
+                    "title": "Test Event"
                 }
             },
             "condition": {

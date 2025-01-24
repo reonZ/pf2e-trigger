@@ -43,6 +43,7 @@ const NODES = {
         "turn-start": EventTriggerNode,
         "token-create": EventTriggerNode,
         "token-delete": EventTriggerNode,
+        "test-event": EventTriggerNode,
     },
     logic: {
         "eq-number": EqNumberTriggerNode,
