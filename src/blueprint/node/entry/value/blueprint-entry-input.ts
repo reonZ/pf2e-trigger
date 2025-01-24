@@ -11,6 +11,8 @@ class BlueprintInputEntry<
 
         el.type = "text";
         el.value = String(value);
+        el.autocomplete = "off";
+        el.spellcheck = false;
 
         return el;
     }
