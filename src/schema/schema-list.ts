@@ -25,6 +25,7 @@ import { successValueSchema } from "./value/schema-success-value";
 import { createValueSchema } from "./value/schema-value";
 import { successSplitSchema } from "./logic/schema-success-split";
 import { schemaVariable } from "./schema-variable";
+import { rollDataSchema } from "./value/schema-roll-data";
 
 const SCHEMAS = {
     action: {
@@ -62,6 +63,7 @@ const SCHEMAS = {
         "macro-source": macroSourceSchema,
         "number-value": createValueSchema("number"),
         "success-value": successValueSchema,
+        "roll-data": rollDataSchema,
     },
     variable: {
         variable: schemaVariable,
@@ -118,26 +120,22 @@ const FILTERS: NodeFilter[] = R.pipe(
 function getFilters(trigger?: TriggerData | null): NodeFilter[] {
     const uniques = R.pipe(
         R.values(trigger?.nodes ?? {}),
-        R.map(({ key, type }) => {
+        R.flatMap(({ key, type }) => {
             const { unique } = getSchema({ key, type });
-            if (!unique) return;
 
-            return { key, type, unique };
-        }),
-        R.filter(R.isTruthy)
+            if (R.isArray(unique)) {
+                return [key, ...unique];
+            } else if (unique) {
+                return [key];
+            } else {
+                return [];
+            }
+        })
     );
 
     return R.pipe(
         FILTERS,
-        R.filter(
-            (filter) =>
-                !uniques.some(({ key, type, unique }) => {
-                    return (
-                        (key === filter.key && type === filter.type) ||
-                        (R.isArray(unique) && unique.includes(filter.key))
-                    );
-                })
-        )
+        R.filter(({ key }) => !uniques.includes(key))
     );
 }
 
