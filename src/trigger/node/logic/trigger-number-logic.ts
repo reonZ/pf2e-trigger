@@ -10,7 +10,7 @@ abstract class NumberLogicTriggerNode extends TriggerNode<LogicSchema<"number">>
         if (!R.isNumber(value) || !R.isNumber(input)) return;
 
         const sendKey = this._logic(value, input) ? "true" : "false";
-        this.send(sendKey, target);
+        return this.send(sendKey, target);
     }
 }
 

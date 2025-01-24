@@ -24,8 +24,8 @@ class AuraEventTriggerNode extends TriggerNode<typeof auraEventSchema> {
         this.setVariable("aura-source", aura.origin);
         this.setOption("aura", aura);
 
-        this.send("target", target);
-        this.send("source", aura.origin);
+        await this.send("target", target);
+        await this.send("source", aura.origin);
     }
 }
 

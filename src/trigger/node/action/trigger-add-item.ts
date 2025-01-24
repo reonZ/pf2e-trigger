@@ -29,7 +29,7 @@ class AddItemTriggerNode extends TriggerNode<typeof addItemSchema> {
         const source = item.toObject();
         await this.options.this.actor.createEmbeddedDocuments("Item", [source]);
 
-        this.send("out", target);
+        return this.send("out", target);
     }
 }
 

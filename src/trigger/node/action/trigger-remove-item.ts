@@ -10,7 +10,7 @@ class RemoveItemTriggerNode extends TriggerNode<typeof removeItemSchema> {
         const exist = getItemWithSourceId(this.options.this.actor, item.uuid);
         await exist?.delete();
 
-        this.send("out", target);
+        return this.send("out", target);
     }
 }
 

@@ -14,8 +14,8 @@ class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {
         const roll = await statistic.roll({ dc });
         if (!roll) return;
 
-        this.send("out", target);
-        this.send("result", target, roll.degreeOfSuccess ?? 2);
+        await this.send("out", target);
+        await this.send("result", target, roll.degreeOfSuccess ?? 2);
     }
 }
 

@@ -27,10 +27,10 @@ class InsideAuraTriggerNode extends TriggerNode<typeof insideAuraSchema> {
 
         if (aura) {
             this.setVariable("aura-source", aura.origin);
-            this.send("target", target);
-            this.send("source", aura.origin);
+            await this.send("target", target);
+            await this.send("source", aura.origin);
         } else {
-            this.send("false", target);
+            await this.send("false", target);
         }
     }
 }

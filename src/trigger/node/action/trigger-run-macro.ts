@@ -15,7 +15,7 @@ class RunMacroTriggerNode extends TriggerNode<typeof runMacroSchema> {
         });
 
         const sendKey = result === false ? "false" : "true";
-        this.send(sendKey, target);
+        return this.send(sendKey, target);
     }
 }
 

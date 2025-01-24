@@ -3,7 +3,7 @@ import { TriggerNode } from "../trigger-node";
 
 class EventTriggerNode extends TriggerNode<EventSchema> {
     protected async _execute(origin: TargetDocuments) {
-        this.send("out", origin);
+        return this.send("out", origin);
     }
 }
 

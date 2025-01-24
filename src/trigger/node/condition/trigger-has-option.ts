@@ -7,7 +7,7 @@ class HasOptionTriggerNode extends TriggerNode<typeof hasOptionSchema> {
         const option = await this.get("option");
         const sendKey = hasRollOption(target.actor, option) ? "true" : "false";
 
-        this.send(sendKey, target);
+        return this.send(sendKey, target);
     }
 }
 

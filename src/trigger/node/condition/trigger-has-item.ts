@@ -8,7 +8,7 @@ class HasItemTriggerNode extends TriggerNode<typeof hasItemSchema> {
         const hasItem = item ? hasItemWithSourceId(target.actor, item.uuid) : false;
         const sendKey = hasItem ? "true" : "false";
 
-        this.send(sendKey, target);
+        return this.send(sendKey, target);
     }
 }
 

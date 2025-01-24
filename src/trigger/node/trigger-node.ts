@@ -59,25 +59,23 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         fu.setProperty(this.options.variables, `${this.id}.${key}`, value);
     }
 
-    send<K extends ExtractSchemaOuputsKeys<TSchema>>(
+    async send<K extends ExtractSchemaOuputsKeys<TSchema>>(
         key: K,
         target: TargetDocuments,
         value?: ExtracSchemaOutputValueType<TSchema, K>
-    ) {
-        if (this.#send[key]) {
-            return this.#send[key](target, value);
+    ): Promise<void> {
+        if (!this.#send[key]) {
+            const output = this.#data.outputs[key] as NodeDataEntry | undefined;
+            const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNode(id));
+
+            this.#send[key] = async (target: TargetDocuments, value?: TriggerNodeEntryValue) => {
+                for (const otherNode of otherNodes) {
+                    await otherNode._execute(target, value);
+                }
+            };
         }
 
-        const output = this.#data.outputs[key] as NodeDataEntry | undefined;
-        const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNode(id));
-
-        this.#send[key] = (target: TargetDocuments, value?: TriggerNodeEntryValue) => {
-            for (const otherNode of otherNodes) {
-                otherNode._execute(target, value);
-            }
-        };
-
-        this.#send[key](target, value);
+        return this.#send[key](target, value);
     }
 
     async get<K extends ExtractSchemaInputsKeys<TSchema>>(
