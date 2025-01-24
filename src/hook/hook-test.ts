@@ -22,7 +22,7 @@ class TestHook extends TriggerHook {
         const actor = token?.actor ?? game.user.character;
 
         if (!actor) {
-            ui.notifications.notify("You need to select at least one actor token.");
+            ui.notifications.warn("You need to select at least one actor token.");
             return;
         }
 
