@@ -14,11 +14,7 @@ const rollSaveSchema = {
                 ],
             },
         },
-        {
-            key: "dc",
-            type: "number",
-            field: { min: 0, max: 30, step: 1, default: 15 },
-        },
+        { key: "dc", type: "dc" },
         { key: "roll", type: "roll" },
     ],
     outputs: [{ key: "out" }, { key: "result", type: "number" }],

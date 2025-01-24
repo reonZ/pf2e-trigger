@@ -1,14 +1,14 @@
 import { NodeEntryCategory } from "schema/schema";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 
-class BlueprintRollEntry<
+class BlueprintDcEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintValueEntry<TCategory> {
     get connectorColor(): number {
-        return 0x86910d;
+        return 0x1682c9;
     }
 
     protected async _onInputFocus(target: PIXI.Graphics) {}
 }
 
-export { BlueprintRollEntry };
+export { BlueprintDcEntry };

@@ -1,5 +1,5 @@
 import { NodeEntryValue } from "data/data-node";
-import { ItemPF2e, MacroPF2e, R } from "module-helpers";
+import { CheckDC, ItemPF2e, MacroPF2e, R } from "module-helpers";
 
 const NODE_TYPES = ["event", "condition", "value", "action", "logic", "variable"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
@@ -13,9 +13,10 @@ const NODE_ENTRY_TYPES = [
     "number",
     "select",
     "roll",
+    "dc",
 ] as const;
 
-const NULL_NODE_ENTRY_TYPES = ["target", "item", "macro", "roll"] as const;
+const NULL_NODE_ENTRY_TYPES = ["target", "item", "macro", "roll", "dc"] as const;
 
 const ENTRY_VALUE_TYPE = {
     boolean: Boolean,
@@ -172,6 +173,8 @@ type NodeSchemaMacroEntry = BaseNodeSchemaInputEntry<"macro">;
 
 type NodeSchemaRollEntry = BaseNodeSchemaInputEntry<"roll">;
 
+type NodeSchemaDcEntry = BaseNodeSchemaInputEntry<"dc">;
+
 type NodeSchemaBooleanEntry = BaseNodeSchemaInputEntry<"boolean", NodeSchemaBooleanField>;
 type NodeSchemaBooleanField = {
     default?: boolean;
@@ -209,7 +212,8 @@ type NodeSchemaInputEntry =
     | NodeSchemaBooleanEntry
     | NodeSchemaNumberEntry
     | NodeSchemaSelectEntry
-    | NodeSchemaRollEntry;
+    | NodeSchemaRollEntry
+    | NodeSchemaDcEntry;
 
 type RollNodeEntry = {
     origin: TargetDocuments | undefined;
@@ -237,6 +241,8 @@ type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
     ? TargetDocuments
     : T extends "roll"
     ? RollNodeEntry
+    : T extends "dc"
+    ? CheckDC
     : never;
 
 type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {

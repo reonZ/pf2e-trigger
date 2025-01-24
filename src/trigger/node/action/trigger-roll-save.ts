@@ -6,7 +6,7 @@ class RollSaveTriggerNode extends TriggerNode<typeof rollSaveSchema> {
     protected async _execute(target: TargetDocuments) {
         const dc = await this.get("dc");
         const save = await this.get("save");
-        if (!R.isNumber(dc) || !R.isString(save)) return;
+        if (!dc || !R.isString(save)) return;
 
         const rollData = await this.get("roll");
         const originActor = rollData?.origin?.actor ?? this.options.this.actor;

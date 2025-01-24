@@ -24,6 +24,7 @@ import { SuccessSplitBlueprintNode } from "./logic/blueprint-success-split";
 import { VariableBlueprintNode } from "./blueprint-variable-node";
 import { TestEventBlueprintNode } from "./event/blueprint-test-event";
 import { RollDataBlueprintNode } from "./value/blueprint-roll-data";
+import { DcDataBlueprintNode } from "./value/blueprint-dc-data";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -62,6 +63,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "number-value": ValueBlueprintNode,
         "success-value": ValueBlueprintNode,
         "roll-data": RollDataBlueprintNode,
+        "dc-data": DcDataBlueprintNode,
     },
     variable: {
         variable: VariableBlueprintNode,

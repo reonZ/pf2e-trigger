@@ -64,10 +64,7 @@
                 "title": "Actions",
                 "subtitle": "Action",
                 "roll-save": {
-                    "title": "Roll Save",
-                    "dc": {
-                        "label": "DC"
-                    }
+                    "title": "Roll Save"
                 },
                 "roll-damage": {
                     "title": "Roll Damage",
@@ -143,6 +140,9 @@
                 },
                 "roll-data": {
                     "title": "Roll Data"
+                },
+                "dc-data": {
+                    "title": "Difficulty Class (DC)"
                 }
             },
             "logic": {
@@ -190,6 +190,7 @@
                 "aura-slug": "aura-slug",
                 "input": "Input",
                 "roll": "Roll",
+                "dc": "DC",
                 "options": "Extra Options",
                 "traits": "Extra Traits"
             },
