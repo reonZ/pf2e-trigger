@@ -141,8 +141,17 @@
                 "roll-data": {
                     "title": "Roll Data"
                 },
-                "dc-data": {
+                "dc-value": {
                     "title": "Difficulty Class (DC)"
+                },
+                "dc-target": {
+                    "title": "Difficulty Class (Target)",
+                    "against": {
+                        "label": "Against"
+                    },
+                    "adjustment": {
+                        "label": "Adjustment"
+                    }
                 }
             },
             "logic": {

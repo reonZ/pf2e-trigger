@@ -17,7 +17,7 @@ class BlueprintNumberEntry<
         const wrapper = new PIXI.Container();
         const field = this._createInputField(40, this.value);
 
-        if (this.node.type !== "value") {
+        if (this.node.key !== "number-value") {
             const textEl = wrapper.addChild(super._createText());
             field.x = textEl.x + textEl.width + this.spacing;
         }

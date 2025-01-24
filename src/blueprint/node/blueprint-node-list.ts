@@ -63,7 +63,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "number-value": ValueBlueprintNode,
         "success-value": ValueBlueprintNode,
         "roll-data": RollDataBlueprintNode,
-        "dc-data": DcDataBlueprintNode,
+        "dc-value": DcDataBlueprintNode,
+        "dc-target": DcDataBlueprintNode,
     },
     variable: {
         variable: VariableBlueprintNode,

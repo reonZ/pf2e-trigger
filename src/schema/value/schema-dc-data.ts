@@ -1,6 +1,6 @@
 import { ValueSchema } from "./schema-value";
 
-const dcDataSchema = {
+const dcValueSchema = {
     inputs: [
         {
             key: "dc",
@@ -11,4 +11,21 @@ const dcDataSchema = {
     outputs: [{ key: "dc", type: "dc" }],
 } as const satisfies ValueSchema;
 
-export { dcDataSchema };
+const dcTargetSchema = {
+    inputs: [
+        { key: "target", type: "target" },
+        { key: "against", type: "text", field: true },
+        {
+            key: "adjustment",
+            type: "number",
+            field: {
+                min: -10,
+                max: 10,
+                default: 0,
+            },
+        },
+    ],
+    outputs: [{ key: "dc", type: "dc" }],
+} as const satisfies ValueSchema;
+
+export { dcValueSchema, dcTargetSchema };

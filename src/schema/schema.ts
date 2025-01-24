@@ -1,5 +1,5 @@
 import { NodeEntryValue } from "data/data-node";
-import { CheckDC, ItemPF2e, MacroPF2e, R } from "module-helpers";
+import { ItemPF2e, MacroPF2e, R } from "module-helpers";
 
 const NODE_TYPES = ["event", "condition", "value", "action", "logic", "variable"] as const;
 const NODE_ENTRY_CATEGORIES = ["inputs", "outputs"] as const;
@@ -222,6 +222,13 @@ type RollNodeEntry = {
     traits: string[];
 };
 
+type DcNodeEntry = {
+    value?: number;
+    target?: TargetDocuments;
+    adjustment?: number;
+    against?: string;
+};
+
 type ExtractInputSchemaEntry<T extends NonNullable<NodeEntryType>> = Extract<
     NodeSchemaInputEntry,
     { type: T }
@@ -242,7 +249,7 @@ type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
     : T extends "roll"
     ? RollNodeEntry
     : T extends "dc"
-    ? CheckDC
+    ? DcNodeEntry
     : never;
 
 type ExtractSchemaInputsKeys<S extends NodeSchema> = S extends {
@@ -307,6 +314,7 @@ export {
 export type {
     BooleanSchemaOutputs,
     BridgeNodeEntry,
+    DcNodeEntry,
     ExtractInputSchemaEntry,
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,

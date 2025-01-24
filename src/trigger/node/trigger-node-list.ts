@@ -19,7 +19,7 @@ import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
 import { SuccessSplitTriggerNode } from "./logic/trigger-success-split";
 import { TriggerNode } from "./trigger-node";
 import { VariableTriggerNode } from "./trigger-variable";
-import { DcDataTriggerNode } from "./value/trigger-dc-data";
+import { DcTargetTriggerNode, DcValueTriggerNode } from "./value/trigger-dc-data";
 import { ItemSourceTriggerNode } from "./value/trigger-item-source";
 import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
 import { NumberValueTriggerNode } from "./value/trigger-number-value";
@@ -62,7 +62,8 @@ const NODES = {
         "number-value": NumberValueTriggerNode,
         "success-value": SuccessValueTriggerNode,
         "roll-data": RollDataTriggerNode,
-        "dc-data": DcDataTriggerNode,
+        "dc-value": DcValueTriggerNode,
+        "dc-target": DcTargetTriggerNode,
     },
     variable: {
         variable: VariableTriggerNode,

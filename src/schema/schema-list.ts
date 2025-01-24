@@ -26,7 +26,7 @@ import { createValueSchema } from "./value/schema-value";
 import { successSplitSchema } from "./logic/schema-success-split";
 import { schemaVariable } from "./schema-variable";
 import { rollDataSchema } from "./value/schema-roll-data";
-import { dcDataSchema } from "./value/schema-dc-data";
+import { dcValueSchema, dcTargetSchema } from "./value/schema-dc-data";
 
 const SCHEMAS = {
     action: {
@@ -65,7 +65,8 @@ const SCHEMAS = {
         "number-value": createValueSchema("number"),
         "success-value": successValueSchema,
         "roll-data": rollDataSchema,
-        "dc-data": dcDataSchema,
+        "dc-value": dcValueSchema,
+        "dc-target": dcTargetSchema,
     },
     variable: {
         variable: schemaVariable,
