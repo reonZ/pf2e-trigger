@@ -18,7 +18,7 @@ class RollDataTriggerNode extends TriggerNode<typeof rollDataSchema> {
         );
 
         this.#traits ??= R.pipe(
-            await this.get("options"),
+            await this.get("traits"),
             R.split(","),
             R.map((x) => x.trim()),
             R.filter(R.isTruthy)
