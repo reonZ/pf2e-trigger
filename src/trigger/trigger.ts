@@ -5,11 +5,13 @@ import { MODULE, R } from "module-helpers";
 import { NodeEventKey } from "schema/schema-list";
 import { TriggerNode, TriggerNodeEntryValue } from "./node/trigger-node";
 import { createTriggerNode } from "./node/trigger-node-list";
+import { InsideAuraTriggerNode } from "./node/condition/trigger-inside-aura";
 
 class Trigger {
     #data: TriggerData;
     #nodes: Record<string, TriggerNode>;
     #event: TriggerNode;
+    #insideAura: InsideAuraTriggerNode | undefined;
     #options!: TriggerExecuteOptions;
 
     constructor(data: TriggerData) {
@@ -19,6 +21,9 @@ class Trigger {
             R.mapValues((data) => createTriggerNode(this, data))
         );
         this.#event = this.#nodes[data.event.id];
+        this.#insideAura = R.values(this.#nodes).find((x) => x instanceof InsideAuraTriggerNode) as
+            | InsideAuraTriggerNode
+            | undefined;
     }
 
     get id(): string {
@@ -35,6 +40,10 @@ class Trigger {
 
     get options(): TriggerExecuteOptions {
         return this.#options;
+    }
+
+    get insideAura(): InsideAuraTriggerNode | undefined {
+        return this.#insideAura;
     }
 
     async execute(options: TriggersExecuteCallOptions): Promise<void> {

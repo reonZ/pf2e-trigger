@@ -1,50 +1,36 @@
-import { getAurasInMemory } from "helpers/helpers-aura";
-import { actorsRespectAlliance } from "module-helpers";
 import { insideAuraSchema } from "schema/condition/schema-inside-aura";
 import { TriggerNode } from "../trigger-node";
+import { ActorPF2e, actorsRespectAlliance } from "module-helpers";
+import { ActorAura, getAurasInMemory } from "helpers/helpers-aura";
 
 class InsideAuraTriggerNode extends TriggerNode<typeof insideAuraSchema> {
-    protected async _execute(target: TargetDocuments) {
-        const existingAura = this.options.aura;
-
-        if (existingAura) {
-            this.setVariable("aura-source", existingAura.origin);
-
-            this.send("target", target);
-            this.send("source", existingAura.origin);
-
-            return;
-        }
-
+    async getActorAuras(actor: ActorPF2e): Promise<ActorAura[]> {
         const slug = await this.get("slug");
+
         if (!slug?.trim()) {
-            return this.send("false", target);
+            return [];
         }
 
+        const actorUuid = actor.uuid;
         const targets = (await this.get("targets")) as "all" | "allies" | "enemies";
-        const auras = getAurasInMemory(target.actor).filter(
+
+        return getAurasInMemory(actor).filter(
             (aura) =>
                 aura.data.slug === slug &&
-                aura.origin.actor.uuid !== target.actor.uuid &&
-                actorsRespectAlliance(aura.origin.actor, target.actor, targets)
+                aura.origin.actor.uuid !== actorUuid &&
+                actorsRespectAlliance(aura.origin.actor, actor, targets)
         );
+    }
 
-        if (!auras || !auras.length) {
-            return this.send("false", target);
-        }
+    protected async _execute(target: TargetDocuments) {
+        const aura = this.options.aura;
 
-        if (auras.length === 1) {
-            const aura = auras[0];
-
+        if (aura) {
             this.setVariable("aura-source", aura.origin);
-            this.setOption("aura", aura);
-
             this.send("target", target);
             this.send("source", aura.origin);
         } else {
-            for (const aura of auras) {
-                this.executeTrigger({ aura });
-            }
+            this.send("false", target);
         }
     }
 }

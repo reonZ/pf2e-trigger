@@ -10,6 +10,7 @@ import {
     NodeSchemaInputEntry,
     NodeSchemaOutputEntry,
     NodeType,
+    RollNodeEntry,
     getDefaultInputValue,
     isInputSchemaEntry,
 } from "schema/schema";
@@ -44,15 +45,6 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
 
     get options(): TriggerExecuteOptions {
         return this.#trigger.options;
-    }
-
-    executeTrigger(options: Partial<TriggerExecuteOptions> = {}) {
-        const newOptions = fu.mergeObject(options, {
-            this: this.options.this,
-            variables: {},
-        } satisfies TriggerExecuteOptions);
-
-        this.#trigger.execute(newOptions);
     }
 
     setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
@@ -160,7 +152,12 @@ type ExtracSchemaOutputValueType<
     ? ExtractSchemaEntryType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
-type TriggerNodeEntryValue = NodeEntryValue | ItemPF2e | MacroPF2e | TargetDocuments;
+type TriggerNodeEntryValue =
+    | NodeEntryValue
+    | ItemPF2e
+    | MacroPF2e
+    | TargetDocuments
+    | RollNodeEntry;
 
 export { TriggerNode };
 export type { TriggerNodeEntryValue };

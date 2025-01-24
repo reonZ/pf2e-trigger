@@ -1,6 +1,6 @@
-import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
-import { Trigger, TriggerExecuteOptions, TriggersExecuteCallOptions } from "trigger/trigger";
 import { MODULE, R } from "module-helpers";
+import { NodeConditionKey, NodeEventKey } from "schema/schema-list";
+import { Trigger, TriggersExecuteCallOptions } from "trigger/trigger";
 
 abstract class TriggerHook {
     #triggers: Trigger[] = [];
@@ -45,9 +45,12 @@ abstract class TriggerHook {
         }
     }
 
-    protected _executeTriggers(event: NodeEventKey, options: TriggersExecuteCallOptions): void;
-    protected _executeTriggers(options: TriggersExecuteCallOptions): void;
-    protected _executeTriggers(
+    protected async _executeTriggers(
+        event: NodeEventKey,
+        options: TriggersExecuteCallOptions
+    ): Promise<void>;
+    protected async _executeTriggers(options: TriggersExecuteCallOptions): Promise<void>;
+    protected async _executeTriggers(
         arg0: NodeEventKey | TriggersExecuteCallOptions,
         arg1?: TriggersExecuteCallOptions
     ) {
@@ -57,7 +60,19 @@ abstract class TriggerHook {
 
         for (const trigger of this.#triggers) {
             if (event && trigger.eventKey !== event) continue;
-            trigger.execute(options as TriggerExecuteOptions);
+
+            if (trigger.insideAura) {
+                const auras = await trigger.insideAura.getActorAuras(options.this.actor);
+
+                for (const aura of auras) {
+                    await trigger.execute({
+                        ...options,
+                        aura,
+                    });
+                }
+            } else {
+                await trigger.execute(options);
+            }
         }
     }
 }
