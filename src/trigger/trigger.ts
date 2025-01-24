@@ -66,25 +66,9 @@ class Trigger {
         }
     }
 
-    setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
-        this.#options[key] = value;
-    }
-
-    getVariable(nodeId: string, key: string): TriggerNodeEntryValue {
-        return fu.getProperty(this.#options, `variables.${nodeId}.${key}`);
-    }
-
-    setVariable(nodeId: string, key: string, value: TriggerNodeEntryValue) {
-        fu.setProperty(this.#options, `variables.${nodeId}.${key}`, value);
-    }
-
-    getNodeFromEntryId(id: NodeEntryId): TriggerNode {
+    getNode(id: NodeEntryId): TriggerNode {
         const { nodeId } = segmentEntryId(id);
         return this.#nodes[nodeId];
-    }
-
-    getNode(id: string): TriggerNode {
-        return this.#nodes[id];
     }
 }
 

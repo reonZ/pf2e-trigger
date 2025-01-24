@@ -48,15 +48,15 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
     }
 
     setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
-        this.#trigger.setOption(key, value);
+        this.options[key] = value;
     }
 
-    getVariable(nodeId: string, key: string): TriggerNodeEntryValue {
-        return this.#trigger.getVariable(nodeId, key);
+    getNodeVariable(nodeId: string, key: string): TriggerNodeEntryValue {
+        return fu.getProperty(this.options.variables, `${nodeId}.${key}`);
     }
 
     setVariable(key: ExtractSchemaVariableType<TSchema>, value: TriggerNodeEntryValue) {
-        this.#trigger.setVariable(this.id, key, value);
+        fu.setProperty(this.options.variables, `${this.id}.${key}`, value);
     }
 
     send<K extends ExtractSchemaOuputsKeys<TSchema>>(
@@ -69,7 +69,7 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         }
 
         const output = this.#data.outputs[key] as NodeDataEntry | undefined;
-        const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNodeFromEntryId(id));
+        const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNode(id));
 
         this.#send[key] = (target: TargetDocuments, value?: TriggerNodeEntryValue) => {
             for (const otherNode of otherNodes) {
@@ -92,14 +92,14 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
             if ("value" in input) {
                 this.#get[key] = () => input.value;
             } else if (R.isArray(input.ids)) {
-                const otherNode = this.#trigger.getNodeFromEntryId(input.ids[0]);
+                const otherNode = this.#trigger.getNode(input.ids[0]);
 
                 if (otherNode.type === "variable") {
                     const node = otherNode as TriggerNode<typeof schemaVariable>;
                     const nodeId = await node.get("id");
                     const variableKey = await node.get("key");
 
-                    this.#get[key] = () => this.getVariable(nodeId, variableKey);
+                    this.#get[key] = () => this.getNodeVariable(nodeId, variableKey);
                 } else {
                     this.#get[key] = () => otherNode._query(key);
                 }
