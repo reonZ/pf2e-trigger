@@ -1,16 +1,16 @@
 import { NodeDataEntry } from "data/data-entry";
-import { NodeData, NodeEntryValue } from "data/data-node";
-import { ItemPF2e, MacroPF2e, R } from "module-helpers";
+import { NodeData } from "data/data-node";
+import { R } from "module-helpers";
 import {
     ExtractSchemaEntryType,
     ExtractSchemaInputsKeys,
     ExtractSchemaOuputsKeys,
     ExtractSchemaVariableType,
+    NodeEntryType,
     NodeSchema,
     NodeSchemaInputEntry,
     NodeSchemaOutputEntry,
     NodeType,
-    RollNodeEntry,
     getDefaultInputValue,
     isInputSchemaEntry,
 } from "schema/schema";
@@ -150,12 +150,7 @@ type ExtracSchemaOutputValueType<
     ? ExtractSchemaEntryType<Extract<S["outputs"][number], { key: K }>["type"]>
     : never;
 
-type TriggerNodeEntryValue =
-    | NodeEntryValue
-    | ItemPF2e
-    | MacroPF2e
-    | TargetDocuments
-    | RollNodeEntry;
+type TriggerNodeEntryValue = ExtractSchemaEntryType<NodeEntryType>;
 
 export { TriggerNode };
 export type { TriggerNodeEntryValue };
