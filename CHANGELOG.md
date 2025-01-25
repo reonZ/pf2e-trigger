@@ -11,6 +11,7 @@
 -   add `Duplicate` option to nodes
 -   add `Test Event` event node
     -   type `game.trigger.test()` in the console with a selected token to run the `Test Event` triggers
+-   add `Add Condition` action node
 -   add `Roll Data` value node
 -   add `Effect Duration (Encounter)`, `Effect Duration (Unlimited)` and `Effect Duration (Unit)` value nodes
 -   add `Difficulty Class (DC)` and `Difficulty Class (Target)` value nodes
