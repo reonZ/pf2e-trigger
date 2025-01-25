@@ -205,12 +205,9 @@
             },
             "variable": {
                 "title": "Variables",
-                "aura-source": {
-                    "title": "Aura Source"
-                },
-                "this": {
-                    "title": "Trigger Actor"
-                }
+                "aura-source": "Aura Source",
+                "this": "Trigger Actor",
+                "has-item": "Has Item"
             }
         },
         "select": {

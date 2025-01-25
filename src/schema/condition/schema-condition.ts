@@ -8,13 +8,14 @@ import {
 
 function createConditionSchema<TInputs extends NodeSchemaInputEntry>(
     inputs: TInputs[],
-    unique?: boolean
+    { unique, variables }: { unique?: boolean; variables?: NodeSchemaVariable[] } = {}
 ): ConditionSchema<TInputs> {
     return {
         in: true,
         unique,
         inputs,
         outputs: createBooleanSchemaOutputs(),
+        variables,
     };
 }
 
