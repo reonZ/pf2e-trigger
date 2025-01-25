@@ -1,5 +1,10 @@
 import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
-import { NodeEntryCategory, NodeSchemaSelectOption, getSelectOption } from "schema/schema";
+import {
+    NodeEntryCategory,
+    NodeSchemaSelectOption,
+    getSelectOption,
+    getSelectOptions,
+} from "schema/schema";
 import { R, localize, localizeIfExist } from "module-helpers";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 
@@ -7,7 +12,7 @@ class BlueprintSelectEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintValueEntry<TCategory, "select"> {
     get options(): NodeSchemaSelectOption[] {
-        return this.schema.field.options.map((option) => {
+        return getSelectOptions(this.schema.field).map((option) => {
             return R.isPlainObject(option)
                 ? { value: option.value, label: this.processOptionLabel(option) }
                 : { value: option, label: localize("select", option) };

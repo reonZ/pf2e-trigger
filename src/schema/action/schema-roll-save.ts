@@ -7,11 +7,7 @@ const rollSaveSchema = {
             key: "save",
             type: "select",
             field: {
-                options: [
-                    { value: "fortitude", label: "PF2E.SavesFortitude" },
-                    { value: "reflex", label: "PF2E.SavesReflex" },
-                    { value: "will", label: "PF2E.SavesWill" },
-                ],
+                options: "CONFIG.PF2E.saves",
             },
         },
         { key: "dc", type: "dc" },

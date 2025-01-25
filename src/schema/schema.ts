@@ -73,12 +73,24 @@ function isInputValue(
     return true;
 }
 
+function getSelectOptions(field: NodeSchemaSelectField): (string | NodeSchemaSelectOption)[] {
+    return R.isArray(field.options)
+        ? field.options
+        : R.pipe(
+              fu.getProperty(window, field.options) as Record<string, string>,
+              R.entries(),
+              R.map(([value, label]) => ({ value, label }))
+          );
+}
+
 function getSelectOption(
     field: NodeSchemaSelectField,
     value: string
 ): string | NodeSchemaSelectOption | undefined {
     const trimmed = value.trim();
-    return field.options.find((option) =>
+    const options = getSelectOptions(field);
+
+    return options.find((option) =>
         R.isString(option) ? trimmed === option : option.value === trimmed
     );
 }
@@ -89,7 +101,7 @@ function getDefaultInputValue(schema: NonNullableInputEntry): NonNullable<NodeEn
     }
 
     if (schema.type === "select") {
-        const [option] = schema.field.options;
+        const [option] = getSelectOptions(schema.field);
         return R.isPlainObject(option) ? option.value : option;
     }
 
@@ -196,7 +208,7 @@ type NodeSchemaSelectEntry = Omit<
 };
 type NodeSchemaSelectField = {
     default?: string;
-    options: (string | NodeSchemaSelectOption)[];
+    options: (string | NodeSchemaSelectOption)[] | string;
 };
 type NodeSchemaSelectOption = {
     value: string;
@@ -304,6 +316,7 @@ export {
     createBooleanSchemaOutputs,
     getDefaultInputValue,
     getSelectOption,
+    getSelectOptions,
     isEntryCategory,
     isInputConnection,
     isInputSchemaEntry,
