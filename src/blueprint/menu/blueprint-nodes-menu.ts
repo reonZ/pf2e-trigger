@@ -1,5 +1,5 @@
-import { NodeEntryType, NodeType } from "schema/schema";
-import { NodeFilter, getFilters, getSchema } from "schema/schema-list";
+import { Blueprint } from "blueprint/blueprint";
+import { BlueprintEntry } from "blueprint/node/entry/blueprint-entry";
 import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
@@ -9,9 +9,9 @@ import {
     localize,
     templateLocalize,
 } from "module-helpers";
+import { NodeEntryType, NodeType } from "schema/schema";
+import { NodeFilter, getFilters, getSchema } from "schema/schema-list";
 import { BlueprintMenu, BlueprintMenuOptions, BlueprintMenuResolve } from "./blueprint-menu";
-import { BlueprintEntry } from "blueprint/node/entry/blueprint-entry";
-import { Blueprint } from "blueprint/blueprint";
 
 class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
     #source: BlueprintEntry | undefined;
@@ -94,18 +94,25 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
 
         const variables = R.pipe(
             R.values(this.trigger?.nodes ?? {}),
-            R.flatMap((node) =>
-                getSchema(node).variables?.map(
-                    (variable): DataNode & { entryType: NodeEntryType } => {
-                        return {
-                            type: "variable",
-                            entryType: variable.type,
-                            key: `${node.id}.${variable.key}.${variable.type}`,
-                            label: localize("node.variable", variable.key, "title"),
-                        };
-                    }
-                )
-            ),
+            R.flatMap((node, _, nodes) => {
+                const schema = getSchema(node);
+                if (!schema.variables?.length) return;
+
+                const counter = !!schema.unique
+                    ? 0
+                    : nodes.filter((x) => x.key === node.key).length;
+
+                return schema.variables.map((variable): DataNode & { entryType: NodeEntryType } => {
+                    const label = localize("node.variable", variable.key);
+
+                    return {
+                        type: "variable",
+                        entryType: variable.type,
+                        key: `${node.id}.${variable.key}.${variable.type}`,
+                        label: counter > 1 ? `${label} (${counter})` : label,
+                    };
+                });
+            }),
             R.filter(R.isTruthy)
         );
 

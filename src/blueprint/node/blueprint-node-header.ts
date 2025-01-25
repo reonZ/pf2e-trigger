@@ -92,7 +92,10 @@ class BlueprintNodeHeader extends BlueprintNodeLayout {
     }
 
     #createTitle(): PreciseText {
-        const titleEl = this.node.preciseText(this.parent.title ?? "");
+        const title = this.parent.title ?? "";
+        const counter = this.parent.counter;
+        const titleEl = this.node.preciseText(counter ? `${title} (${counter})` : title);
+
         return this.addChild(titleEl);
     }
 

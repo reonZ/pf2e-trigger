@@ -36,7 +36,8 @@ class BlueprintNodesLayer extends BlueprintLayer<BlueprintNode> {
     }
 
     addNode(node: NodeData | BlueprintNode): BlueprintNode {
-        const blueprintNode = node instanceof BlueprintNode ? node : createBlueprintNode(node);
+        const blueprintNode =
+            node instanceof BlueprintNode ? node : createBlueprintNode(this.blueprint, node);
 
         this.#nodes.set(node.id, blueprintNode);
         this.addChild(blueprintNode);

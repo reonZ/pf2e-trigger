@@ -6,20 +6,9 @@ import {
     serializeTrigger,
 } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
-import {
-    MODULE,
-    R,
-    distanceBetweenPoints,
-    info,
-    localize,
-    render,
-    setSetting,
-    subtractPoints,
-    templateLocalize,
-    waitDialog,
-} from "module-helpers";
+import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
 import { NodeType } from "schema/schema";
-import { EventNodeKey, getSchema } from "schema/schema-list";
+import { EventNodeKey } from "schema/schema-list";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
@@ -232,11 +221,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         if (type === "variable") {
             const [nodeId, variableKey, variableType] = key.split(".");
-            const node = trigger.nodes[nodeId];
-            const schema = getSchema(node);
-            if (!node || !schema) return;
-
-            const name = schema.unique ? undefined : await this.#getVariableName();
 
             dataRaw.key = "variable";
 
@@ -244,7 +228,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 id: { value: nodeId },
                 key: { value: variableKey },
                 type: { value: variableType },
-                label: { value: name?.trim() || localize("node.variable", variableKey, "title") },
             };
         }
 
@@ -274,28 +257,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 }
             }
         }
-    }
-
-    async #getVariableName(): Promise<string | undefined> {
-        const result = await waitDialog<{ name: string }>(
-            {
-                title: localize("add-variable.title"),
-                content: await render("add-variable", {
-                    i18n: templateLocalize("add-variable"),
-                }),
-                yes: {
-                    label: localize("add-variable.yes"),
-                    icon: "fa-solid fa-check",
-                },
-                no: {
-                    label: localize("add-variable.no"),
-                    icon: "fa-solid fa-xmark",
-                },
-            },
-            { animation: false }
-        );
-
-        return !!result ? result.name : undefined;
     }
 
     #initialize() {

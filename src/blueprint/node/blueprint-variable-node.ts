@@ -1,5 +1,6 @@
 import { NodeEntryType, NodeSchema, NodeSchemaOutputEntry } from "schema/schema";
 import { BlueprintNode } from "./blueprint-node";
+import { localize } from "module-helpers";
 
 class VariableBlueprintNode extends BlueprintNode {
     get title(): null {
@@ -7,11 +8,22 @@ class VariableBlueprintNode extends BlueprintNode {
     }
 
     get schema(): NodeSchema {
+        const nodeId = this.getValue("inputs", "id") as string;
+        const node = this.blueprint.layers.nodes.getNode(nodeId);
+
+        if (!node) {
+            return super.schema;
+        }
+
+        const key = this.getValue("inputs", "key") as string;
+        const label = localize("node.variable", key);
+        const counter = node.counter;
+
         const outputs: NodeSchemaOutputEntry[] = [
             {
                 key: "value",
                 type: this.getValue("inputs", "type") as NodeEntryType,
-                label: this.getValue("inputs", "label") as string,
+                label: counter > 1 ? `${label} (${counter})` : label,
             },
         ];
 

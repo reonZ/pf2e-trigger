@@ -21,12 +21,14 @@ class BlueprintNode extends PIXI.Container {
     #header: BlueprintNodeHeader | null = null;
     #body!: BlueprintNodeBody;
     #border!: BlueprintNodeBorder;
+    #blueprint: Blueprint;
 
-    constructor(data: NodeData) {
+    constructor(blueprint: Blueprint, data: NodeData) {
         super();
 
         this.#data = data;
         this.#schema = getSchema(data);
+        this.#blueprint = blueprint;
 
         this.x = data.x;
         this.y = data.y;
@@ -70,7 +72,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get blueprint(): Blueprint {
-        return this.parent.blueprint;
+        return this.#blueprint;
     }
 
     get trigger(): TriggerData | null {
@@ -127,6 +129,26 @@ class BlueprintNode extends PIXI.Container {
 
     get hasVariables(): boolean {
         return !!this.schema.variables?.length;
+    }
+
+    get counter(): number {
+        if (!this.schema.variables?.length || !!this.schema.unique) {
+            return 0;
+        }
+
+        let counter = 0;
+
+        for (const node of R.values(this.trigger?.nodes ?? {})) {
+            if (node.key !== this.key) continue;
+
+            counter++;
+
+            if (node.id === this.id) {
+                return counter > 1 ? counter : 0;
+            }
+        }
+
+        return 0;
     }
 
     initialize() {

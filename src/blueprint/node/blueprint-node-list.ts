@@ -25,6 +25,7 @@ import { VariableBlueprintNode } from "./blueprint-variable-node";
 import { TestEventBlueprintNode } from "./event/blueprint-test-event";
 import { RollDataBlueprintNode } from "./value/blueprint-roll-data";
 import { DcDataBlueprintNode } from "./value/blueprint-dc-data";
+import { Blueprint } from "blueprint/blueprint";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -71,9 +72,9 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     },
 };
 
-function createBlueprintNode(data: NodeData): BlueprintNode {
+function createBlueprintNode(blueprint: Blueprint, data: NodeData): BlueprintNode {
     // @ts-expect-error
-    const node = new NODES[data.type][data.key](data) as BlueprintNode;
+    const node = new NODES[data.type][data.key](blueprint, data) as BlueprintNode;
     node.initialize();
 
     return node;
