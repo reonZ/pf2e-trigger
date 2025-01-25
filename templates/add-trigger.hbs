@@ -1,10 +1,12 @@
+{{#unless convert}}
 <div class="form-group">
     <label>{{@root.i18n 'name'}}</label>
     <div class="form-fields">
         <input type="text" name="name" value="{{name}}">
     </div>
 </div>
-{{#unless name}}
+{{/unless}}
+{{#if events}}
 <div class="form-group">
     <label>{{@root.i18n 'label'}}</label>
     <div class="form-fields">
@@ -13,4 +15,4 @@
         </select>
     </div>
 </div>
-{{/unless}}
+{{/if}}

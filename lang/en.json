@@ -49,9 +49,11 @@
         },
         "edit-trigger": {
             "title": "Edit Trigger",
-            "name": "Trigger Name",
-            "yes": "Edit",
-            "no": "Cancel"
+            "yes": "Edit"
+        },
+        "convert-trigger": {
+            "title": "Convert Trigger",
+            "yes": "Convert"
         },
         "node": {
             "action": {
@@ -210,7 +212,8 @@
             "disconnect": "Disconnect",
             "all": "All",
             "allies": "Allies",
-            "enemies": "Enemies"
+            "enemies": "Enemies",
+            "convert": "Convert"
         }
     }
 }

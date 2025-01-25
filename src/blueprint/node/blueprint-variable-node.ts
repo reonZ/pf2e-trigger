@@ -37,6 +37,10 @@ class VariableBlueprintNode extends BlueprintNode {
     get nodeId(): string {
         return this.getValue("inputs", "id") as string;
     }
+
+    get variableKey(): string {
+        return this.getValue("inputs", "key") as string;
+    }
 }
 
 export { VariableBlueprintNode };

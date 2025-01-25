@@ -197,14 +197,14 @@ abstract class BlueprintEntry<
             this.blueprint.layers.connections.startConnection(this);
         } else if (event.button === 2 && this.isActive) {
             const { x, y } = event.global;
-            const result = await BlueprintSelectMenu.open(
+            const context = await BlueprintSelectMenu.open(
                 this.blueprint,
                 { x, y },
                 CONNECTION_CONTEXT
             );
-            if (!result) return;
+            if (!context) return;
 
-            switch (result) {
+            switch (context) {
                 case "disconnect": {
                     this.removeConnections();
                 }

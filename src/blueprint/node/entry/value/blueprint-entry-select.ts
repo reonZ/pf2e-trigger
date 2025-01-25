@@ -80,7 +80,7 @@ class BlueprintSelectEntry<
     }
 
     protected async _onInputFocus(target: PIXI.Graphics) {
-        const result = await BlueprintSelectMenu.open(this.blueprint, target, this.options, {
+        const context = await BlueprintSelectMenu.open(this.blueprint, target, this.options, {
             classes: ["input-select"],
             style: {
                 fontSize: `${this.inputFontSize}px`,
@@ -89,9 +89,9 @@ class BlueprintSelectEntry<
             },
         });
 
-        if (!result) return;
+        if (!context) return;
 
-        this.value = result;
+        this.value = context;
     }
 }
 

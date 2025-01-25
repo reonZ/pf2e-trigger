@@ -1,5 +1,6 @@
 import { Blueprint } from "blueprint/blueprint";
 import { processTriggers } from "data/data-trigger-list";
+import { openAddTriggerDialog } from "helpers/add-trigger";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,
@@ -18,7 +19,6 @@ import {
     templateLocalize,
     waitDialog,
 } from "module-helpers";
-import { EventNodeKey, getEventKeys } from "schema/schema-list";
 
 class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     #blueprint: Blueprint | null = null;
@@ -220,34 +220,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     async #addTrigger() {
-        const events = R.pipe(
-            getEventKeys(),
-            R.map((key) => ({
-                value: key,
-                label: localize("node.event", key, "title"),
-            })),
-            R.sortBy(R.prop("label"))
-        );
-
-        const result = await waitDialog<{ name: string; event: EventNodeKey }>(
-            {
-                title: localize("add-trigger.title"),
-                content: await render("add-trigger", {
-                    events,
-                    i18n: templateLocalize("add-trigger"),
-                }),
-                yes: {
-                    label: localize("add-trigger.yes"),
-                    icon: "fa-solid fa-check",
-                },
-                no: {
-                    label: localize("add-trigger.no"),
-                    icon: "fa-solid fa-xmark",
-                },
-            },
-            { animation: false }
-        );
-
+        const result = await openAddTriggerDialog();
         if (!result) return;
 
         this.blueprint?.createTrigger(result);
@@ -258,25 +231,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         const trigger = this.blueprint?.getTrigger(id);
         if (!trigger) return;
 
-        const result = await waitDialog<{ name: string }>(
-            {
-                title: localize("edit-trigger.title"),
-                content: await render("add-trigger", {
-                    name: trigger.name,
-                    i18n: templateLocalize("edit-trigger"),
-                }),
-                yes: {
-                    label: localize("edit-trigger.yes"),
-                    icon: "fa-solid fa-check",
-                },
-                no: {
-                    label: localize("edit-trigger.no"),
-                    icon: "fa-solid fa-xmark",
-                },
-            },
-            { animation: false }
-        );
-
+        const result = await openAddTriggerDialog(trigger);
         if (!result || result.name === trigger.name) return;
 
         this.blueprint?.editTrigger(id, result);

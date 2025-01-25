@@ -8,7 +8,7 @@ import {
 import { getTriggersDataMap } from "data/data-trigger-list";
 import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
 import { NodeType } from "schema/schema";
-import { EventNodeKey } from "schema/schema-list";
+import { EventNodeKey, getSchema } from "schema/schema-list";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
 import { BlueprintNodesLayer } from "./layer/layer-nodes";
@@ -211,12 +211,12 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         type: NodeType,
         key: string,
         x: number,
-        y: number
+        y: number,
+        id: string = fu.randomID()
     ): Promise<BlueprintNode | undefined> {
         const trigger = this.trigger;
         if (!trigger) return;
 
-        const id = fu.randomID();
         const dataRaw: NodeRawData = { id, type, key, x, y };
 
         if (type === "variable") {
@@ -251,12 +251,41 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         delete this.trigger?.nodes[id];
 
         if (node.hasVariables) {
+            const skipThis = node.type === "event";
+
             for (const otherNode of this.#nodesLayer.nodes()) {
-                if (otherNode instanceof VariableBlueprintNode && otherNode.nodeId === id) {
+                if (
+                    otherNode instanceof VariableBlueprintNode &&
+                    otherNode.nodeId === id &&
+                    (!skipThis || otherNode.variableKey !== "this")
+                ) {
                     this.deleteNode(otherNode.id);
                 }
             }
         }
+    }
+
+    convertTrigger(event: EventNodeKey) {
+        const newSchema = getSchema({ type: "event", key: event });
+        const previousEvent = this.#nodesLayer.getNode(this.trigger?.event.id ?? "");
+        if (!previousEvent || !newSchema) return;
+
+        const previsouId = previousEvent.id;
+        const uniques = R.isArray(newSchema.unique) ? newSchema.unique : [];
+
+        for (const otherNode of this.#nodesLayer.nodes()) {
+            if (
+                uniques.includes(otherNode.key) ||
+                (otherNode instanceof VariableBlueprintNode &&
+                    otherNode.nodeId === previsouId &&
+                    otherNode.variableKey !== "this")
+            ) {
+                this.deleteNode(otherNode.id);
+            }
+        }
+
+        this.deleteNode(previsouId);
+        this.createNode("event", event, 100, 200, previsouId);
     }
 
     #initialize() {

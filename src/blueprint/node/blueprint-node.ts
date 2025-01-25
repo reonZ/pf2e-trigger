@@ -14,7 +14,7 @@ import { TriggerData } from "data/data-trigger";
 
 const NODE_CONTEXT = ["delete"] as const;
 
-class BlueprintNode extends PIXI.Container {
+abstract class BlueprintNode extends PIXI.Container {
     #data: NodeData;
     #dragOffset: Point = { x: 0, y: 0 };
     #schema: NodeSchema;
@@ -35,11 +35,10 @@ class BlueprintNode extends PIXI.Container {
 
         this.eventMode = "static";
 
+        this.on("pointerdown", this.#onPointerDown, this);
+
         if (this.canDrag) {
             this.cursor = "move";
-            this.on("pointerdown", this.#onPointerDown, this);
-        } else {
-            this.on("pointerdown", (event) => event.stopPropagation());
         }
     }
 
@@ -293,6 +292,18 @@ class BlueprintNode extends PIXI.Container {
         delete this.#data[category][key]?.ids;
     }
 
+    protected async _onContextMenu(event: PIXI.FederatedPointerEvent): Promise<void> {
+        const { x, y } = event.global;
+        const context = await BlueprintSelectMenu.open(this.blueprint, { x, y }, NODE_CONTEXT);
+        if (!context) return;
+
+        switch (context) {
+            case "delete": {
+                return this.blueprint.deleteNode(this.id);
+            }
+        }
+    }
+
     #paint() {
         const maxInner = this.innerWidth;
         const maxWidth = maxInner + this.outerPadding * 2;
@@ -307,19 +318,11 @@ class BlueprintNode extends PIXI.Container {
     async #onPointerDown(event: PIXI.FederatedPointerEvent) {
         event.stopPropagation();
 
-        if (event.button === 0) {
+        if (event.button === 0 && this.canDrag) {
             this.bringToTop();
             this.#onDragStart(event);
         } else if (event.button === 2) {
-            const { x, y } = event.global;
-            const result = await BlueprintSelectMenu.open(this.blueprint, { x, y }, NODE_CONTEXT);
-            if (!result) return;
-
-            switch (result) {
-                case "delete": {
-                    return this.blueprint.deleteNode(this.id);
-                }
-            }
+            this._onContextMenu(event);
         }
     }
 
