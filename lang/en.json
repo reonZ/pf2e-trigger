@@ -107,7 +107,8 @@
                     "title": "Delete Token"
                 },
                 "test-event": {
-                    "title": "Test Event"
+                    "title": "Test Event",
+                    "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
                 }
             },
             "condition": {

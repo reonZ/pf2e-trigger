@@ -1,4 +1,4 @@
-import { R } from "module-helpers";
+import { R, warn } from "module-helpers";
 import { NodeEventKey } from "schema/schema-list";
 import { TriggerHook } from "./trigger-hook";
 
@@ -22,7 +22,7 @@ class TestHook extends TriggerHook {
         const actor = token?.actor ?? game.user.character;
 
         if (!actor) {
-            ui.notifications.warn("You need to select at least one actor token.");
+            warn("node.event.test-event.warning");
             return;
         }
 
