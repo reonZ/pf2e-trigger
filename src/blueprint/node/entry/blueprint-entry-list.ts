@@ -12,6 +12,7 @@ import { BlueprintMacroEntry } from "./value/blueprint-entry-macro";
 import { BlueprintActorEntry } from "./value/blueprint-entry-actor";
 import { BlueprintRollEntry } from "./value/blueprint-entry-roll";
 import { BlueprintDcEntry } from "./value/blueprint-entry-dc";
+import { BlueprintDurationEntry } from "./value/blueprint-entry-duration";
 
 const INPUTS_ENTRIES = {
     target: BlueprintActorEntry,
@@ -24,6 +25,7 @@ const INPUTS_ENTRIES = {
     uuid: BlueprintUuidEntry,
     roll: BlueprintRollEntry,
     dc: BlueprintDcEntry,
+    duration: BlueprintDurationEntry,
 };
 
 function createBlueprintEntry(
