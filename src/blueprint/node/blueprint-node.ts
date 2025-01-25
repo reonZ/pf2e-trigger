@@ -12,7 +12,7 @@ import { BlueprintNodeHeader } from "./blueprint-node-header";
 import { BlueprintEntry } from "./entry/blueprint-entry";
 import { TriggerData } from "data/data-trigger";
 
-const NODE_CONTEXT = ["delete"] as const;
+const NODE_CONTEXT = ["duplicate", "delete"] as const;
 
 abstract class BlueprintNode extends PIXI.Container {
     #data: NodeData;
@@ -148,6 +148,10 @@ abstract class BlueprintNode extends PIXI.Container {
         }
 
         return 0;
+    }
+
+    protected get context(): ReadonlyArray<(typeof NODE_CONTEXT)[number]> {
+        return NODE_CONTEXT;
     }
 
     initialize() {
@@ -294,12 +298,16 @@ abstract class BlueprintNode extends PIXI.Container {
 
     protected async _onContextMenu(event: PIXI.FederatedPointerEvent): Promise<void> {
         const { x, y } = event.global;
-        const context = await BlueprintSelectMenu.open(this.blueprint, { x, y }, NODE_CONTEXT);
+        const context = await BlueprintSelectMenu.open(this.blueprint, { x, y }, this.context);
         if (!context) return;
 
         switch (context) {
             case "delete": {
                 return this.blueprint.deleteNode(this.id);
+            }
+
+            case "duplicate": {
+                return this.blueprint.cloneNode(this.id);
             }
         }
     }

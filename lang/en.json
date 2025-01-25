@@ -213,7 +213,8 @@
             "all": "All",
             "allies": "Allies",
             "enemies": "Enemies",
-            "convert": "Convert"
+            "convert": "Convert",
+            "duplicate": "Duplicate"
         }
     }
 }

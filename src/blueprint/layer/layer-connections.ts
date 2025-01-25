@@ -170,7 +170,7 @@ class BlueprintConnectionsLayer extends BlueprintLayer<PIXI.Graphics> {
         if (!result) return;
 
         const { key, type } = result;
-        const node = await this.blueprint.createNode(type, key, x, y);
+        const node = await this.blueprint.createNode({ type, key, x, y });
         if (!node) return;
 
         const target = node.getEntryFromType(origin.oppositeCategory, origin.type);

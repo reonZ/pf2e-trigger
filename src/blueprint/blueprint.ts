@@ -7,7 +7,6 @@ import {
 } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
 import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
-import { NodeType } from "schema/schema";
 import { EventNodeKey, getSchema } from "schema/schema-list";
 import { BlueprintConnectionsLayer } from "./layer/layer-connections";
 import { BlueprintGridLayer } from "./layer/layer-grid";
@@ -214,17 +213,35 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         delete this.#triggers[id];
     }
 
-    async createNode(
-        type: NodeType,
-        key: string,
-        x: number,
-        y: number,
-        id: string = fu.randomID()
-    ): Promise<BlueprintNode | undefined> {
+    cloneNode(id: string) {
+        const node = this.trigger?.nodes[id];
+        if (!node) return;
+
+        const clone = fu.deepClone(node);
+        clone.id = fu.randomID();
+        clone.inputs = R.mapValues(clone.inputs, (input) => {
+            return "ids" in input ? {} : input;
+        });
+        clone.outputs = {};
+        clone.x += 50;
+        clone.y += 50;
+
+        this.createNode(clone);
+    }
+
+    async createNode({
+        key,
+        type,
+        x = 100,
+        y = 200,
+        id = fu.randomID(),
+        inputs,
+        outputs,
+    }: WithRequired<NonNullable<NodeRawData>, "type" | "key">): Promise<BlueprintNode | undefined> {
         const trigger = this.trigger;
         if (!trigger) return;
 
-        const dataRaw: NodeRawData = { id, type, key, x, y };
+        const dataRaw: NodeRawData = { id, type, key, x, y, inputs, outputs };
 
         if (type === "variable") {
             const [nodeId, variableKey, variableType] = key.split(".");
@@ -292,7 +309,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         }
 
         this.deleteNode(previsouId);
-        this.createNode("event", event, 100, 200, previsouId);
+        this.createNode({ type: "event", key: event, id: previsouId });
     }
 
     #initialize() {
@@ -415,7 +432,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!result) return;
 
         const { key, type } = result;
-        const node = await this.createNode(type, key, x, y);
+        const node = await this.createNode({ type, key, x, y });
         if (!node) return;
 
         const center = {

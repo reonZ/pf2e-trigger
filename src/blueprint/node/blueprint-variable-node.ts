@@ -41,6 +41,10 @@ class VariableBlueprintNode extends BlueprintNode {
     get variableKey(): string {
         return this.getValue("inputs", "key") as string;
     }
+
+    protected get context() {
+        return super.context.filter((x) => x !== "duplicate");
+    }
 }
 
 export { VariableBlueprintNode };
