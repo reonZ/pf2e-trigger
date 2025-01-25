@@ -12,11 +12,15 @@ class BlueprintSelectEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintValueEntry<TCategory, "select"> {
     get options(): NodeSchemaSelectOption[] {
-        return getSelectOptions(this.schema.field).map((option) => {
-            return R.isPlainObject(option)
-                ? { value: option.value, label: this.processOptionLabel(option) }
-                : { value: option, label: localize("select", option) };
-        });
+        return R.pipe(
+            getSelectOptions(this.schema.field),
+            R.map((option) => {
+                return R.isPlainObject(option)
+                    ? { value: option.value, label: this.processOptionLabel(option) }
+                    : { value: option, label: localize("select", option) };
+            }),
+            R.sortBy(R.prop("label"))
+        );
     }
 
     get labeledValue(): string {
