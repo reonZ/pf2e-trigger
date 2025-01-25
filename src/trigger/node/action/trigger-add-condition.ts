@@ -1,6 +1,7 @@
 import { ConditionSlug, EffectSource, GrantItemSource } from "module-helpers";
 import { addConditionSchema } from "schema/action/schema-add-condition";
 import { TriggerNode } from "../trigger-node";
+import { getUnilimitedDuration } from "helpers/helpers-duration";
 
 class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
     protected async _execute(target: TargetDocuments) {
@@ -9,7 +10,7 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
         if (!condition) return;
 
         const source = condition.toObject();
-        const duration = await this.get("duration");
+        const duration = (await this.get("duration")) ?? getUnilimitedDuration();
         const actor = (await this.get("target"))?.actor ?? this.options.this.actor;
         const counter = await this.get("counter");
         const unided = await this.get("unidentified");

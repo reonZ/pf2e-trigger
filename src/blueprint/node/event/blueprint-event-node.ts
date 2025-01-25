@@ -1,6 +1,6 @@
 import { BlueprintSelectMenu } from "blueprint/menu/blueprint-select-menu";
 import { BlueprintNode } from "../blueprint-node";
-import { openAddTriggerDialog } from "helpers/add-trigger";
+import { openAddTriggerDialog } from "helpers/helpers-add-trigger";
 
 const CONTEXT = ["convert"] as const;
 

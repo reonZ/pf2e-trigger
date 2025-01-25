@@ -1,6 +1,6 @@
 import { Blueprint } from "blueprint/blueprint";
 import { processTriggers } from "data/data-trigger-list";
-import { openAddTriggerDialog } from "helpers/add-trigger";
+import { openAddTriggerDialog } from "helpers/helpers-add-trigger";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,

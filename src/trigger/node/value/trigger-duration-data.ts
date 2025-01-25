@@ -2,16 +2,13 @@ import { durationSingleSchema, durationUnitSchema } from "schema/value/schema-du
 import { TriggerNode } from "../trigger-node";
 import { ExtractSchemaOuputsKeys } from "schema/schema";
 import { DurationData, EffectExpiryType, TimeUnit } from "module-helpers";
+import { getUnilimitedDuration } from "helpers/helpers-duration";
 
 class DurationUnlimitedTriggerNode extends TriggerNode<typeof durationSingleSchema> {
     protected async _query(
         key: ExtractSchemaOuputsKeys<typeof durationSingleSchema>
     ): Promise<DurationData> {
-        return {
-            expiry: null,
-            unit: "unlimited",
-            value: -1,
-        };
+        return getUnilimitedDuration();
     }
 }
 
