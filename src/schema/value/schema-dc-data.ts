@@ -25,7 +25,7 @@ const dcTargetSchema = {
             },
         },
     ],
-    outputs: [{ key: "dc", type: "dc" }],
+    outputs: dcValueSchema.outputs,
 } as const satisfies ValueSchema;
 
 export { dcValueSchema, dcTargetSchema };

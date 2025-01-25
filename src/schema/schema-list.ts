@@ -27,6 +27,8 @@ import { successSplitSchema } from "./logic/schema-success-split";
 import { schemaVariable } from "./schema-variable";
 import { rollDataSchema } from "./value/schema-roll-data";
 import { dcValueSchema, dcTargetSchema } from "./value/schema-dc-data";
+import { addConditionSchema } from "./action/schema-add-condition";
+import { durationSingleSchema, durationUnitSchema } from "./value/schema-duration.data";
 
 const SCHEMAS = {
     action: {
@@ -35,6 +37,7 @@ const SCHEMAS = {
         "add-item": addItemSchema,
         "remove-item": removeItemSchema,
         "run-macro": runMacroSchema,
+        "add-condition": addConditionSchema,
     },
     condition: {
         "has-item": hasItemSchema,
@@ -67,6 +70,9 @@ const SCHEMAS = {
         "roll-data": rollDataSchema,
         "dc-value": dcValueSchema,
         "dc-target": dcTargetSchema,
+        "duration-encounter": durationSingleSchema,
+        "duration-unlimited": durationSingleSchema,
+        "duration-unit": durationUnitSchema,
     },
     variable: {
         variable: schemaVariable,

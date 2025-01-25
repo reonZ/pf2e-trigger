@@ -25,6 +25,12 @@ import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
 import { NumberValueTriggerNode } from "./value/trigger-number-value";
 import { RollDataTriggerNode } from "./value/trigger-roll-data";
 import { SuccessValueTriggerNode } from "./value/trigger-success-value";
+import { AddConditionTriggerNode } from "./action/trigger-add-condition";
+import {
+    DurationEncounterTriggerNode,
+    DurationUnitTriggerNode,
+    DurationUnlimitedTriggerNode,
+} from "./value/trigger-duration-data";
 
 const NODES = {
     action: {
@@ -33,6 +39,7 @@ const NODES = {
         "add-item": AddItemTriggerNode,
         "remove-item": RemoveItemTriggerNode,
         "run-macro": RunMacroTriggerNode,
+        "add-condition": AddConditionTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerNode,
@@ -64,6 +71,9 @@ const NODES = {
         "roll-data": RollDataTriggerNode,
         "dc-value": DcValueTriggerNode,
         "dc-target": DcTargetTriggerNode,
+        "duration-encounter": DurationEncounterTriggerNode,
+        "duration-unit": DurationUnitTriggerNode,
+        "duration-unlimited": DurationUnlimitedTriggerNode,
     },
     variable: {
         variable: VariableTriggerNode,

@@ -79,6 +79,9 @@
                 },
                 "run-macro": {
                     "title": "Run Macro"
+                },
+                "add-condition": {
+                    "title": "Add Condition"
                 }
             },
             "event": {
@@ -149,6 +152,15 @@
                     "adjustment": {
                         "label": "Adjustment"
                     }
+                },
+                "duration-encounter": {
+                    "title": "Effect Duration (Encounter)"
+                },
+                "duration-unlimited": {
+                    "title": "Effect Duration (Unlimited)"
+                },
+                "duration-unit": {
+                    "title": "Effect Duration (Unit)"
                 }
             },
             "logic": {
@@ -198,7 +210,8 @@
                 "roll": "Roll",
                 "dc": "DC",
                 "options": "Extra Options",
-                "traits": "Extra Traits"
+                "traits": "Extra Traits",
+                "duration": "Duration"
             },
             "variable": {
                 "title": "Variables",

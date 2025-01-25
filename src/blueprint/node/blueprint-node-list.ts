@@ -26,6 +26,8 @@ import { TestEventBlueprintNode } from "./event/blueprint-test-event";
 import { RollDataBlueprintNode } from "./value/blueprint-roll-data";
 import { DcDataBlueprintNode } from "./value/blueprint-dc-data";
 import { Blueprint } from "blueprint/blueprint";
+import { AddConditionBlueprintNode } from "./action/blueprint-add-condition";
+import { DurationDataBlueprintNode } from "./value/blueprint-duration-data";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -34,6 +36,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "add-item": AddItemBlueprintNode,
         "remove-item": RemoveItemBlueprintNode,
         "run-macro": RunMacroBlueprintNode,
+        "add-condition": AddConditionBlueprintNode,
     },
     condition: {
         "has-item": HasItemBlueprintNode,
@@ -66,6 +69,9 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "roll-data": RollDataBlueprintNode,
         "dc-value": DcDataBlueprintNode,
         "dc-target": DcDataBlueprintNode,
+        "duration-encounter": DurationDataBlueprintNode,
+        "duration-unlimited": DurationDataBlueprintNode,
+        "duration-unit": DurationDataBlueprintNode,
     },
     variable: {
         variable: VariableBlueprintNode,
