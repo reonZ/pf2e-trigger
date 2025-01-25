@@ -83,10 +83,10 @@ class BlueprintNodeHeader extends BlueprintNodeLayout {
             this.#subtitle.x = offset + (this.#icon ? 0 : 2);
             this.#subtitle.y = this.#title.y + this.#title.height + spacing.y;
 
-            this.#innerWidth += Math.min(Math.max(this.#title.width, this.#subtitle.width), 150);
+            this.#innerWidth += Math.min(Math.max(this.#title.width, this.#subtitle.width), 200);
             this.#innerHeight = this.#title.height + this.#subtitle.height + spacing.y;
         } else {
-            this.#innerWidth += Math.min(this.#title.width, 150);
+            this.#innerWidth += Math.min(this.#title.width, 200);
             this.#innerHeight = this.#title.height;
         }
     }
