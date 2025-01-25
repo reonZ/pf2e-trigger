@@ -8,6 +8,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         event: [],
         logic: [],
         value: [],
+        variable: [],
     },
     outputs: {
         action: ["action"],
@@ -15,6 +16,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         event: ["condition", "action"],
         logic: ["action"],
         value: [],
+        variable: [],
     },
 };
 
@@ -22,7 +24,7 @@ class BlueprintBridgeEntry<
     TCategory extends NodeEntryCategory = NodeEntryCategory
 > extends BlueprintEntry<TCategory> {
     get canConnect(): boolean {
-        return this.category === "inputs" || !this.isActive;
+        return !this.isActive;
     }
 
     get isActive(): boolean {
