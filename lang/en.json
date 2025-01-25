@@ -40,12 +40,6 @@
             "no": "Cancel",
             "error": "The data provided is invalid, no trigger were imported."
         },
-        "add-variable": {
-            "title": "Create Variable Node",
-            "name": "Variable Name",
-            "yes": "Create",
-            "no": "Cancel"
-        },
         "add-trigger": {
             "title": "Add Trigger",
             "label": "Event Type",
