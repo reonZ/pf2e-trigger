@@ -1,6 +1,16 @@
 import { R } from "module-helpers";
 import { NodeEntryId } from "./data-entry";
 import { NodeData, NodeRawData, processNodeData } from "./data-node";
+import { NodeType } from "schema/schema";
+
+const NODE_TYPE_ORDER: Record<NodeType, number> = {
+    event: 0,
+    condition: 1,
+    action: 2,
+    logic: 3,
+    value: 4,
+    variable: 5,
+};
 
 function processTriggerData(triggerData: Maybe<TriggerRawData>): TriggerData | null {
     if (!R.isPlainObject(triggerData)) {
@@ -57,10 +67,15 @@ function processTriggerData(triggerData: Maybe<TriggerRawData>): TriggerData | n
 }
 
 function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawData {
+    const nodes = R.pipe(
+        R.values(trigger.nodes),
+        R.sortBy((node) => NODE_TYPE_ORDER[node.type])
+    );
+
     return {
         id: trigger.id,
         name: trigger.name,
-        nodes: fu.deepClone(R.values(trigger.nodes)),
+        nodes: fu.deepClone(nodes),
     };
 }
 
