@@ -162,6 +162,16 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             this.#editTrigger(triggerId);
         });
 
+        addListenerAll(
+            html,
+            ".trigger [name='enabled']",
+            "change",
+            (event, el: HTMLInputElement) => {
+                const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+                this.blueprint?.enableTrigger(triggerId, el.checked);
+            }
+        );
+
         addListenerAll(html, ".trigger [data-action]", (event, el) => {
             const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
 

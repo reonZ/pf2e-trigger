@@ -63,6 +63,7 @@ function processTriggerData(triggerData: Maybe<TriggerRawData>): TriggerData | n
         name: triggerData.name?.trim() || id,
         nodes,
         event,
+        disabled: !!triggerData.disabled,
     };
 }
 
@@ -76,6 +77,7 @@ function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawDa
         id: trigger.id,
         name: trigger.name,
         nodes: fu.deepClone(nodes),
+        disabled: trigger.disabled,
     };
 }
 
@@ -93,6 +95,7 @@ type TriggerRawData = Partial<
 type BaseTriggerData = {
     id: string;
     name: string;
+    disabled: boolean;
 };
 
 export { processTriggerData, serializeTrigger };

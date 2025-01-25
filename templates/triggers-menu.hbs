@@ -24,6 +24,8 @@
                 {{#each triggers as |trigger|}}
                 <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
                     data-id="{{trigger.id}}">
+                    <input class="enabled" type="checkbox" name="enabled" {{checked
+                        trigger.enabled}}>
                     <div class="name" data-action="select-trigger">
                         {{trigger.name}}
                     </div>

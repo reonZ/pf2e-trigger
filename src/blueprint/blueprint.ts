@@ -66,10 +66,10 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return this.#triggers[this.#trigger ?? ""] ?? null;
     }
 
-    get triggersList(): { name: string; id: string }[] {
+    get triggersList(): { name: string; id: string; enabled: boolean }[] {
         return R.pipe(
             R.values(this.#triggers),
-            R.flatMap(({ id, name }) => ({ id, name }))
+            R.flatMap(({ id, name, disabled }) => ({ id, name, enabled: !disabled }))
         );
     }
 
@@ -187,6 +187,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         this.#triggers[trigger.id] = trigger;
         this.setTrigger(trigger);
+    }
+
+    enableTrigger(id: string, enabled: boolean) {
+        const trigger = this.#triggers[id];
+        if (!trigger) return;
+
+        trigger.disabled = !enabled;
     }
 
     editTrigger(id: string, { name }: { name: string }) {

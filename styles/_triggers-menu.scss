@@ -95,10 +95,14 @@
                     white-space: nowrap;
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
 
                     > * {
                         padding-block: 0.6em;
+                    }
+
+                    .enabled {
+                        height: 16px;
+                        width: 16px;
                     }
 
                     .name {

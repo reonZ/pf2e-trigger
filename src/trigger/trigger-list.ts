@@ -4,7 +4,7 @@ import { Trigger } from "./trigger";
 import { MODULE } from "module-helpers";
 
 function prepareTriggers() {
-    const triggersData = prepareTriggersData();
+    const triggersData = prepareTriggersData().filter((trigger) => !trigger.disabled);
     const triggers = triggersData.map((data) => new Trigger(data));
 
     MODULE.debug("TRIGGERS", triggers);
