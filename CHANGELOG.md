@@ -1,3 +1,8 @@
+# 0.11.0 (beta)
+
+-   change workflow of triggers and nodes instantiation
+-   fix issue with sub-trigger returned values being lost in the ether
+
 # 0.10.0 (beta)
 
 -   complete rewrite of the module
