@@ -28,6 +28,7 @@ declare global {
     type TriggerData = BaseTriggerData & {
         nodes: Record<string, NodeData>;
         event: NodeData;
+        aura: NodeData | undefined;
         isSub: boolean;
     };
 

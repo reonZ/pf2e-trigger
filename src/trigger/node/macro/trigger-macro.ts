@@ -3,21 +3,16 @@ import { MODULE, MacroPF2e, R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 
 class TriggerMacro extends TriggerNode {
-    #macro: MacroPF2e | undefined | null;
-
     async execute(): Promise<void> {
-        if (this.#macro === undefined) {
-            const uuid = await this.get("uuid");
+        const uuid = await this.get("uuid");
 
-            if (!R.isString(uuid) || !uuid.trim()) {
-                return this.send("out");
-            }
-
-            const macro = await fromUuid<MacroPF2e>(uuid);
-            this.#macro = macro instanceof Macro && macro.type === "script" ? macro : null;
+        if (!R.isString(uuid) || !uuid.trim()) {
+            return this.send("out");
         }
 
-        if (!this.#macro) {
+        const macro = await fromUuid<MacroPF2e>(uuid);
+
+        if (!(macro instanceof Macro && macro.type === "script")) {
             return this.send("out");
         }
 
@@ -27,7 +22,7 @@ class TriggerMacro extends TriggerNode {
         );
 
         try {
-            const returnedValues = await this.#macro.execute({
+            const returnedValues = await macro.execute({
                 actor: target.actor,
                 token: target.token?.object ?? undefined,
                 values,
@@ -53,7 +48,7 @@ class TriggerMacro extends TriggerNode {
                 }
             }
         } catch (error) {
-            MODULE.error(`an error occured while processing the macro: ${this.#macro.name}`, error);
+            MODULE.error(`an error occured while processing the macro: ${macro.name}`, error);
         }
 
         return this.send("out");

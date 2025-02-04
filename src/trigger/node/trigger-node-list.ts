@@ -1,5 +1,5 @@
 import { MODULE } from "module-helpers";
-import { BaseTrigger } from "trigger/trigger-base";
+import { Trigger } from "trigger/trigger";
 import { RemoveItemTriggerAction } from "./action/trigger-action-remove-item";
 import { RollDamageTriggerAction } from "./action/trigger-action-roll-damage";
 import { HasItemTriggerCondition } from "./condition/trigger-condition-has-item";
@@ -95,16 +95,18 @@ const NODES = {
 } satisfies ExtractNodeMap<typeof TriggerNode<NodeRawSchema>>;
 
 function createTriggerNode(
-    trigger: BaseTrigger,
+    trigger: Trigger,
     data: NodeData,
     schema: NodeSchema
-): TriggerNode | undefined {
+): TriggerNode | null {
     try {
         // @ts-expect-error
         return new NODES[data.type][data.key](trigger, data, schema);
     } catch (error) {
         MODULE.error(`an error occured while creating the node: ${data.type} - ${data.key}`);
     }
+
+    return null;
 }
 
 export { createTriggerNode };

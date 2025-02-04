@@ -11,6 +11,7 @@ const NODE_TYPE_ORDER: Record<NodeType, number> = {
     subtrigger: 6,
     variable: 7,
     converter: 8,
+    splitter: 9,
 };
 
 function createTriggerData(name: string, event?: NodeEventKey): TriggerData | null {
@@ -74,6 +75,7 @@ function processTriggerData(
     }
 
     let event: NodeData | undefined;
+    let aura: NodeData | undefined;
 
     const nodes: TriggerData["nodes"] = R.pipe(
         triggerData.nodes ?? [],
@@ -84,6 +86,8 @@ function processTriggerData(
             if (isEventNode(node)) {
                 if (event) return null;
                 event = node;
+            } else if (node.type === "condition" && node.key === "inside-aura") {
+                aura = node;
             }
 
             // if (node.type === "subtrigger" && R.isString(node.subId)) {
@@ -124,6 +128,7 @@ function processTriggerData(
         name: triggerData.name?.trim() || id,
         nodes,
         event,
+        aura,
         disabled: !!triggerData.disabled,
         isSub: event.type === "subtrigger" && !event.subId,
     };

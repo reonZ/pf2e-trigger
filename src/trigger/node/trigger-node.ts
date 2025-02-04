@@ -1,15 +1,14 @@
 import { getDefaultInputValue, isNonNullNodeEntry } from "data/data-entry";
 import { ActorPF2e, ItemPF2e, R, getItemWithSourceId } from "module-helpers";
-import { BaseTrigger } from "trigger/trigger-base";
+import { Trigger } from "trigger/trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     #data: NodeData;
     #schema: NodeSchemaMap;
-    #trigger: BaseTrigger;
+    #trigger: Trigger;
     #get: Record<string, () => Promisable<any>> = {};
-    #send: Record<string, () => Promise<void>> = {};
 
-    constructor(trigger: BaseTrigger, data: NodeData, schema: NodeSchema) {
+    constructor(trigger: Trigger, data: NodeData, schema: NodeSchema) {
         this.#data = data;
         this.#trigger = trigger;
 
@@ -65,16 +64,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     }
 
     async send<K extends ExtractSchemaOutsKeys<TSchema>>(key: K): Promise<void> {
-        if (!this.#send[key]) {
-            const outputId = this.#data.outputs[key]?.ids?.[0];
-            const otherNode = outputId ? this.#trigger.getNodeFromEntryId(outputId) : undefined;
+        const outputId = this.#data.outputs[key]?.ids?.[0];
+        const otherNode = outputId ? this.#trigger.getNodeFromEntryId(outputId) : undefined;
 
-            this.#send[key] = async () => {
-                await otherNode?.execute();
-            };
-        }
-
-        return this.#send[key]();
+        return otherNode?.execute();
     }
 
     async get<K extends ExtractSchemaInputs<TSchema>>(

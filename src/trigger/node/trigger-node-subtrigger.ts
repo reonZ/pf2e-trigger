@@ -1,14 +1,13 @@
 import { R } from "module-helpers";
-import { BaseTrigger } from "trigger/trigger-base";
-import { Subtrigger } from "trigger/trigger-subtrigger";
+import { Trigger } from "trigger/trigger";
 import { TriggerNode } from "./trigger-node";
 import { subtriggerSchema } from "schema/subtrigger/schema-subtrigger";
 
 class SubtriggerNode extends TriggerNode<typeof subtriggerSchema> {
-    #subtrigger: Subtrigger;
+    #subtrigger: Trigger;
     #variables: (readonly [string, () => Promise<TriggerEntryValue>])[];
 
-    constructor(trigger: BaseTrigger, data: NodeData, schema: NodeSchema, subtrigger: Subtrigger) {
+    constructor(trigger: Trigger, data: NodeData, schema: NodeSchema, subtrigger: Trigger) {
         super(trigger, data, schema);
 
         this.#subtrigger = subtrigger;

@@ -1,28 +1,23 @@
 import { prepareTriggersData } from "data/data-trigger-list";
-import { MODULE, R } from "module-helpers";
-import { Trigger } from "./trigger";
 import { prepareHooks } from "hook/hook-list";
-import { Subtrigger } from "./trigger-subtrigger";
+import { R } from "module-helpers";
+
+let SUBTRIGGERS: Record<string, TriggerData> = {};
 
 function prepareTriggers() {
-    const [subtriggersData, triggersData] = R.pipe(
+    const [subtriggers, triggers] = R.pipe(
         prepareTriggersData(),
         R.filter((trigger) => !trigger.disabled),
         R.partition((trigger) => trigger.isSub)
     );
 
-    const subtriggers = R.pipe(
-        subtriggersData,
-        R.map((data) => new Subtrigger(data)),
-        R.mapToObj((trigger) => [trigger.id, trigger])
-    );
-
-    const triggers = triggersData.map((data) => new Trigger(data, subtriggers));
-
-    MODULE.debug("SUBTRIGGERS", subtriggers);
-    MODULE.debug("TRIGGERS", triggers);
+    SUBTRIGGERS = R.mapToObj(subtriggers, (trigger) => [trigger.id, trigger]);
 
     prepareHooks(triggers);
 }
 
-export { prepareTriggers };
+function getSubtrigger(id: string): TriggerData | undefined {
+    return SUBTRIGGERS[id];
+}
+
+export { getSubtrigger, prepareTriggers };

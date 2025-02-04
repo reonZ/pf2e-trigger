@@ -1,15 +1,14 @@
-import { R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 
 class OutputSubtrigger extends TriggerNode {
     async execute(): Promise<void> {
-        this.options.parentVariables = R.fromEntries(
-            await Promise.all(
-                this.custom.inputs.map(
-                    async (input) => [input.key, await this.get(input.key)] as const
-                )
-            )
+        const variables = await Promise.all(
+            this.custom.inputs.map(async (input) => [input.key, await this.get(input.key)] as const)
         );
+
+        for (const [key, value] of variables) {
+            this.options.parentVariables[key] = value;
+        }
 
         this.options.send.out = true;
     }

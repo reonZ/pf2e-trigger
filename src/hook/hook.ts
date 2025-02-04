@@ -2,12 +2,12 @@ import { MODULE, R } from "module-helpers";
 import { Trigger } from "trigger/trigger";
 
 abstract class TriggerHook {
-    #triggers: Trigger[] = [];
+    #triggers: TriggerData[] = [];
 
     protected abstract _activate(): void;
     protected abstract _disable(): void;
 
-    initialize(triggers: Trigger[]) {
+    initialize(triggers: TriggerData[]) {
         this.#triggers.length = 0;
 
         const events = this.events;
@@ -16,7 +16,7 @@ abstract class TriggerHook {
         let active = false;
 
         triggerLoop: for (const trigger of triggers) {
-            if (events?.includes(trigger.eventKey)) {
+            if (events?.includes(trigger.event.key as NodeEventKey)) {
                 this.#triggers.push(trigger);
                 active = true;
                 continue;
@@ -24,7 +24,7 @@ abstract class TriggerHook {
 
             if (active || !conditions) continue;
 
-            for (const node of trigger.nodes) {
+            for (const node of R.values(trigger.nodes)) {
                 if (
                     node.type === "condition" &&
                     conditions.includes(node.key as NodeConditionKey)
@@ -57,10 +57,12 @@ abstract class TriggerHook {
             ? [arg0, arg1 as PreTriggerExecuteOptions]
             : [undefined, arg0];
 
-        for (const trigger of this.#triggers) {
-            if (event && trigger.eventKey !== event) continue;
+        for (const data of this.#triggers) {
+            if (event && data.event.key !== event) continue;
 
+            const trigger = new Trigger(data);
             const auras = await trigger.insideAura?.getActorAuras(options.this.actor);
+
             if (auras?.length) {
                 for (const aura of auras) {
                     await trigger.execute({
