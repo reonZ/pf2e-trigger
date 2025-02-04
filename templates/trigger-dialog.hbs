@@ -1,0 +1,18 @@
+{{#if name}}
+<div class="form-group">
+    <label>{{@root.i18n 'name'}}</label>
+    <div class="form-fields">
+        <input type="text" name="name" value="{{name.value}}" placeholder="{{name.placeholder}}">
+    </div>
+</div>
+{{/if}}
+{{#if events}}
+<div class="form-group">
+    <label>{{@root.i18n 'label'}}</label>
+    <div class="form-fields">
+        <select name="event">
+            {{selectOptions events valueAttr="value" labelAttr="label"}}
+        </select>
+    </div>
+</div>
+{{/if}}

@@ -1,6 +1,6 @@
 import { Blueprint } from "blueprint/blueprint";
 import { processTriggers } from "data/data-trigger-list";
-import { openAddTriggerDialog } from "helpers/helpers-add-trigger";
+import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,
@@ -14,6 +14,7 @@ import {
     error,
     htmlClosest,
     htmlQuery,
+    htmlQueryAll,
     localize,
     render,
     templateLocalize,
@@ -21,7 +22,7 @@ import {
 } from "module-helpers";
 
 class TriggersMenu extends foundry.applications.api.ApplicationV2 {
-    #blueprint: Blueprint | null = null;
+    #blueprint: Blueprint;
     #timeout: NodeJS.Timeout | null = null;
 
     static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
@@ -35,7 +36,13 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         classes: ["app", "window-app"],
     };
 
-    get blueprint(): Blueprint | null {
+    constructor(options?: DeepPartial<ApplicationConfiguration>) {
+        super(options);
+
+        this.#blueprint = new Blueprint(this);
+    }
+
+    get blueprint(): Blueprint {
         return this.#blueprint;
     }
 
@@ -56,13 +63,17 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     _onClose() {
-        this.#blueprint?.destroy();
+        this.blueprint?.destroy();
     }
 
     protected async _prepareContext(options?: ApplicationRenderOptions): Promise<TriggersMenuData> {
+        const allTriggers = this.blueprint.triggersList ?? [];
+        const [triggers, subtriggers] = R.partition(allTriggers, (trigger) => !trigger.sub);
+
         return {
-            triggers: this.blueprint?.triggersList ?? [],
-            selected: this.blueprint?.trigger?.id,
+            triggers,
+            subtriggers,
+            selected: this.blueprint.trigger?.id,
             i18n: templateLocalize("triggers-menu"),
         };
     }
@@ -82,7 +93,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
     _onFirstRender(context: TriggersMenuData, options: ApplicationRenderOptions) {
         requestAnimationFrame(() => {
-            this.#blueprint = new Blueprint(this.element);
+            this.blueprint.initialize();
             this.refresh();
         });
     }
@@ -94,15 +105,17 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
         const oldTitle = htmlQuery(this.element, ".trigger-title");
         if (oldTitle) {
-            oldTitle.innerText = this.blueprint?.trigger?.name ?? "";
+            oldTitle.innerText = this.blueprint.trigger?.name ?? "";
         }
 
-        const newTriggers = htmlQuery(wrapper, "ul.triggers");
-        const oldTriggers = htmlQuery(this.sidebar, "ul.triggers");
+        const newTriggers = htmlQueryAll(wrapper, "ul.triggers");
+        const oldTriggers = htmlQueryAll(this.sidebar, "ul.triggers");
 
-        if (newTriggers && oldTriggers) {
-            oldTriggers.replaceWith(newTriggers);
-            this.#activateTriggersListeners(newTriggers);
+        if (newTriggers.length && newTriggers.length === oldTriggers.length) {
+            oldTriggers[0].replaceWith(newTriggers[0]);
+            oldTriggers[1].replaceWith(newTriggers[1]);
+
+            this.#activateTriggersListeners(this.element);
         }
 
         if (close) {
@@ -116,82 +129,6 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         });
     }
 
-    #activateListeners(html: HTMLElement) {
-        addListener(html, ".sidebar", "pointerenter", (event, el) => {
-            if (this.#timeout) {
-                clearTimeout(this.#timeout);
-                this.#timeout = null;
-            }
-            el.classList.add("show");
-        });
-
-        addListener(html, ".sidebar", "pointerleave", (event, el) => {
-            this.#timeout = setTimeout(() => {
-                el.classList.remove("show");
-                this.#timeout = null;
-            }, 200);
-        });
-
-        addListenerAll(html, ".header [data-action]", (event, el) => {
-            switch (el.dataset.action as MenuEventAction) {
-                case "add-trigger": {
-                    return this.#addTrigger();
-                }
-
-                case "close-window": {
-                    return this.#closeAndSave();
-                }
-
-                case "export-all": {
-                    return this.blueprint?.exportTriggers();
-                }
-
-                case "import": {
-                    this.#import();
-                    return;
-                }
-            }
-        });
-
-        this.#activateTriggersListeners(html);
-    }
-
-    #activateTriggersListeners(html: HTMLElement) {
-        addListenerAll(html, ".trigger .name", "contextmenu", (event, el) => {
-            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
-            this.#editTrigger(triggerId);
-        });
-
-        addListenerAll(
-            html,
-            ".trigger [name='enabled']",
-            "change",
-            (event, el: HTMLInputElement) => {
-                const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
-                this.blueprint?.enableTrigger(triggerId, el.checked);
-            }
-        );
-
-        addListenerAll(html, ".trigger [data-action]", (event, el) => {
-            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
-
-            switch (el.dataset.action as TriggersEventAction) {
-                case "select-trigger": {
-                    this.blueprint?.setTrigger(triggerId);
-                    return this.refresh(true);
-                }
-
-                case "delete-trigger": {
-                    return this.#deleteTrigger(triggerId);
-                }
-
-                case "export-trigger": {
-                    return this.blueprint?.exportTrigger(triggerId);
-                }
-            }
-        });
-    }
-
     async #closeAndSave() {
         const result = await confirmDialog(
             {
@@ -202,14 +139,14 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         );
 
         if (result) {
-            this.blueprint?.saveTrigger();
+            this.blueprint.saveTriggers();
         }
 
         this.close();
     }
 
     async #deleteTrigger(id: string) {
-        const trigger = this.blueprint?.getTrigger(id);
+        const trigger = this.blueprint.getTrigger(id);
         if (!trigger) return;
 
         const result = await confirmDialog(
@@ -222,29 +159,36 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
         if (!result) return;
 
-        const isCurrent = this.blueprint?.trigger?.id === id;
+        const isCurrent = this.blueprint.trigger?.id === id;
 
-        this.blueprint?.deleteTrigger(id);
-
+        this.blueprint.deleteTrigger(id);
         this.refresh(isCurrent);
     }
 
     async #addTrigger() {
-        const result = await openAddTriggerDialog();
+        const result = await openTriggerDialog("add");
         if (!result) return;
 
-        this.blueprint?.createTrigger(result);
+        this.blueprint.createTrigger(result);
+        this.refresh(true);
+    }
+
+    async #addSubtrigger() {
+        const result = await openTriggerDialog("add-sub");
+        if (!result) return;
+
+        this.blueprint.createTrigger(result);
         this.refresh(true);
     }
 
     async #editTrigger(id: string) {
-        const trigger = this.blueprint?.getTrigger(id);
+        const trigger = this.blueprint.getTrigger(id);
         if (!trigger) return;
 
-        const result = await openAddTriggerDialog(trigger);
+        const result = await openTriggerDialog("edit", trigger);
         if (!result || result.name === trigger.name) return;
 
-        this.blueprint?.editTrigger(id, result);
+        trigger.name = result.name;
         this.refresh();
     }
 
@@ -275,19 +219,104 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
             const validated = processTriggers(data as any);
 
-            this.blueprint?.addTriggers(validated);
+            this.blueprint.addTriggers(validated);
             this.refresh();
         } catch {
             error("import.error");
         }
     }
+
+    #activateListeners(html: HTMLElement) {
+        addListener(html, ".sidebar", "pointerenter", (event, el) => {
+            if (this.#timeout) {
+                clearTimeout(this.#timeout);
+                this.#timeout = null;
+            }
+            el.classList.add("show");
+        });
+
+        addListener(html, ".sidebar", "pointerleave", (event, el) => {
+            this.#timeout = setTimeout(() => {
+                el.classList.remove("show");
+                this.#timeout = null;
+            }, 200);
+        });
+
+        addListenerAll(html, ".header [data-action]", (event, el) => {
+            switch (el.dataset.action as MenuEventAction) {
+                case "add-trigger": {
+                    return this.#addTrigger();
+                }
+
+                case "add-subtrigger": {
+                    return this.#addSubtrigger();
+                }
+
+                case "close-window": {
+                    return this.#closeAndSave();
+                }
+
+                case "export-all": {
+                    return this.blueprint.exportTriggers();
+                }
+
+                case "import": {
+                    this.#import();
+                    return;
+                }
+            }
+        });
+
+        this.#activateTriggersListeners(html);
+    }
+
+    #activateTriggersListeners(html: HTMLElement) {
+        addListenerAll(html, ".trigger .name", "contextmenu", (event, el) => {
+            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+            this.#editTrigger(triggerId);
+        });
+
+        addListenerAll(
+            html,
+            ".trigger [name='enabled']",
+            "change",
+            (event, el: HTMLInputElement) => {
+                const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+                const trigger = this.blueprint.getTrigger(triggerId);
+
+                if (trigger) {
+                    trigger.disabled = !el.checked;
+                }
+            }
+        );
+
+        addListenerAll(html, ".trigger [data-action]", (event, el) => {
+            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+
+            switch (el.dataset.action as TriggersEventAction) {
+                case "select-trigger": {
+                    this.blueprint.setTrigger(triggerId);
+                    return this.refresh(true);
+                }
+
+                case "delete-trigger": {
+                    return this.#deleteTrigger(triggerId);
+                }
+
+                case "export-trigger": {
+                    return this.blueprint.exportTrigger(triggerId);
+                }
+            }
+        });
+    }
 }
 
-type MenuEventAction = "close-window" | "add-trigger" | "export-all" | "import";
+type MenuEventAction = "close-window" | "add-trigger" | "export-all" | "import" | "add-subtrigger";
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
 
 type TriggersMenuData = {
     triggers: { name: string; id: string }[];
+    subtriggers: { name: string; id: string }[];
     selected: Maybe<string>;
     i18n: TemplateLocalize;
 };

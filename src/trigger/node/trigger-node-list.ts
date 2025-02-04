@@ -1,88 +1,110 @@
-import { NodeData } from "data/data-node";
-import { ExtractNodeMap } from "schema/schema-list";
-import { Trigger } from "trigger/trigger";
-import { AddItemTriggerNode } from "./action/trigger-add-item";
-import { RemoveItemTriggerNode } from "./action/trigger-remove-item";
-import { RollDamageTriggerNode } from "./action/trigger-roll-damage";
-import { RollSaveTriggerNode } from "./action/trigger-roll-save";
-import { RunMacroTriggerNode } from "./action/trigger-run-macro";
-import { HasItemTriggerNode } from "./condition/trigger-has-item";
-import { HasOptionTriggerNode } from "./condition/trigger-has-option";
-import { InsideAuraTriggerNode } from "./condition/trigger-inside-aura";
-import { AuraEventTriggerNode } from "./event/trigger-aura-event";
-import { EventTriggerNode } from "./event/trigger-node-event";
-import { EqNumberTriggerNode } from "./logic/trigger-eq-number";
-import { GtNumberTriggerNode } from "./logic/trigger-gt-number";
-import { GteNumberTriggerNode } from "./logic/trigger-gte-number";
-import { LtNumberTriggerNode } from "./logic/trigger-lt-number";
-import { LteNumberTriggerNode } from "./logic/trigger-lte-number";
-import { SuccessSplitTriggerNode } from "./logic/trigger-success-split";
+import { MODULE } from "module-helpers";
+import { BaseTrigger } from "trigger/trigger-base";
+import { RemoveItemTriggerAction } from "./action/trigger-action-remove-item";
+import { RollDamageTriggerAction } from "./action/trigger-action-roll-damage";
+import { HasItemTriggerCondition } from "./condition/trigger-condition-has-item";
+import { HasOptionTriggerCondition } from "./condition/trigger-condition-has-option";
+import { InsideAuraTriggerCondition } from "./condition/trigger-condition-inside-aura";
+import { ItemTriggerConverter } from "./converter/trigger-converter-item";
+import { TriggerEvent } from "./event/trigger-event";
+import { AuraTriggerEvent } from "./event/trigger-event-aura";
+import { InputSubtrigger } from "./subtrigger/trigger-subtrigger-input";
+import { NodeSubtrigger } from "./subtrigger/trigger-subtrigger-node";
+import { OutputSubtrigger } from "./subtrigger/trigger-subtrigger-output";
 import { TriggerNode } from "./trigger-node";
-import { VariableTriggerNode } from "./trigger-variable";
-import { DcTargetTriggerNode, DcValueTriggerNode } from "./value/trigger-dc-data";
-import { ItemSourceTriggerNode } from "./value/trigger-item-source";
-import { MacroSourceTriggerNode } from "./value/trigger-macro-source";
-import { NumberValueTriggerNode } from "./value/trigger-number-value";
-import { RollDataTriggerNode } from "./value/trigger-roll-data";
-import { SuccessValueTriggerNode } from "./value/trigger-success-value";
-import { AddConditionTriggerNode } from "./action/trigger-add-condition";
-import {
-    DurationEncounterTriggerNode,
-    DurationUnitTriggerNode,
-    DurationUnlimitedTriggerNode,
-} from "./value/trigger-duration-data";
+import { ItemSourceTriggerValue } from "./value/trigger-value-item-source";
+import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
+import { AddItemTriggerAction } from "./action/trigger-action-add-item";
+import { RollSaveTriggerAction } from "./action/trigger-action-roll-save";
+import { AddConditionTriggerNode } from "./action/trigger-action-add-condition";
+import { NumberTriggerValue } from "./value/trigger-value-number";
+import { TextTriggerValue } from "./value/trigger-value-text";
+import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
+import { GtNumberTriggerLogic } from "./logic/trigger-logic-number-gt";
+import { GteNumberTriggerLogic } from "./logic/trigger-logic-number-gte";
+import { LtNumberTriggerLogic } from "./logic/trigger-logic-number-lt";
+import { LteNumberTriggerLogic } from "./logic/trigger-logic-number-lte";
+import { TriggerVariable } from "./variable/trigger-variable";
+import { TriggerMacro } from "./macro/trigger-macro";
+import { DcTriggerValue } from "./value/trigger-value-dc";
+import { TargetDcTriggerValue } from "./value/trigger-value-dc-target";
+import { SimpleDurationTriggerValue } from "./value/trigger-value-duration-simple";
+import { UnitDurationTriggerValue } from "./value/trigger-value-duration-unit";
+import { SuccessTriggerValue } from "./value/trigger-value-success";
+import { SuccessTriggerSplitter } from "./splitter/trigger-splitter-success";
+import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
 
 const NODES = {
     action: {
-        "roll-save": RollSaveTriggerNode,
-        "roll-damage": RollDamageTriggerNode,
-        "add-item": AddItemTriggerNode,
-        "remove-item": RemoveItemTriggerNode,
-        "run-macro": RunMacroTriggerNode,
         "add-condition": AddConditionTriggerNode,
+        "add-item": AddItemTriggerAction,
+        "remove-item": RemoveItemTriggerAction,
+        "roll-damage": RollDamageTriggerAction,
+        "roll-save": RollSaveTriggerAction,
     },
     condition: {
-        "has-item": HasItemTriggerNode,
-        "has-option": HasOptionTriggerNode,
-        "inside-aura": InsideAuraTriggerNode,
+        "has-item": HasItemTriggerCondition,
+        "has-option": HasOptionTriggerCondition,
+        "inside-aura": InsideAuraTriggerCondition,
+    },
+    converter: {
+        "item-converter": ItemTriggerConverter,
     },
     event: {
-        "aura-enter": AuraEventTriggerNode,
-        "aura-leave": AuraEventTriggerNode,
-        "turn-end": EventTriggerNode,
-        "turn-start": EventTriggerNode,
-        "token-create": EventTriggerNode,
-        "token-delete": EventTriggerNode,
-        "test-event": EventTriggerNode,
+        "aura-enter": AuraTriggerEvent,
+        "aura-leave": AuraTriggerEvent,
+        "test-event": TriggerEvent,
+        "token-create": TriggerEvent,
+        "token-delete": TriggerEvent,
+        "turn-end": TriggerEvent,
+        "turn-start": TriggerEvent,
     },
     logic: {
-        "eq-number": EqNumberTriggerNode,
-        "gt-number": GtNumberTriggerNode,
-        "lt-number": LtNumberTriggerNode,
-        "gte-number": GteNumberTriggerNode,
-        "lte-number": LteNumberTriggerNode,
-        "success-split": SuccessSplitTriggerNode,
+        "eq-number": EqNumberTriggerLogic,
+        "gt-number": GtNumberTriggerLogic,
+        "gte-number": GteNumberTriggerLogic,
+        "lt-number": LtNumberTriggerLogic,
+        "lte-number": LteNumberTriggerLogic,
+    },
+    macro: {
+        macro: TriggerMacro,
+    },
+    splitter: {
+        "success-splitter": SuccessTriggerSplitter,
+        "boolean-splitter": BooleanTriggerSplitter,
+    },
+    subtrigger: {
+        "subtrigger-input": InputSubtrigger,
+        "subtrigger-node": NodeSubtrigger,
+        "subtrigger-output": OutputSubtrigger,
     },
     value: {
-        "item-source": ItemSourceTriggerNode,
-        "macro-source": MacroSourceTriggerNode,
-        "number-value": NumberValueTriggerNode,
-        "success-value": SuccessValueTriggerNode,
-        "roll-data": RollDataTriggerNode,
-        "dc-value": DcValueTriggerNode,
-        "dc-target": DcTargetTriggerNode,
-        "duration-encounter": DurationEncounterTriggerNode,
-        "duration-unit": DurationUnitTriggerNode,
-        "duration-unlimited": DurationUnlimitedTriggerNode,
+        "item-source": ItemSourceTriggerValue,
+        "number-value": NumberTriggerValue,
+        "roll-data": RollDataTriggerValue,
+        "text-value": TextTriggerValue,
+        "dc-target": TargetDcTriggerValue,
+        "dc-value": DcTriggerValue,
+        "duration-simple": SimpleDurationTriggerValue,
+        "duration-unit": UnitDurationTriggerValue,
+        "success-value": SuccessTriggerValue,
     },
     variable: {
-        variable: VariableTriggerNode,
+        variable: TriggerVariable,
     },
-} satisfies ExtractNodeMap<typeof TriggerNode<any>>;
+} satisfies ExtractNodeMap<typeof TriggerNode<NodeRawSchema>>;
 
-function createTriggerNode(trigger: Trigger, data: NodeData): TriggerNode {
-    // @ts-expect-error
-    return new NODES[data.type][data.key](trigger, data);
+function createTriggerNode(
+    trigger: BaseTrigger,
+    data: NodeData,
+    schema: NodeSchema
+): TriggerNode | undefined {
+    try {
+        // @ts-expect-error
+        return new NODES[data.type][data.key](trigger, data, schema);
+    } catch (error) {
+        MODULE.error(`an error occured while creating the node: ${data.type} - ${data.key}`);
+    }
 }
 
 export { createTriggerNode };

@@ -1,7 +1,5 @@
 import { R } from "module-helpers";
-import { NodeEntryId } from "./data-entry";
-import { NodeData, NodeRawData, processNodeData } from "./data-node";
-import { NodeType } from "schema/schema";
+import { isEventNode, processNodeData } from "./data-node";
 
 const NODE_TYPE_ORDER: Record<NodeType, number> = {
     event: 0,
@@ -9,62 +7,48 @@ const NODE_TYPE_ORDER: Record<NodeType, number> = {
     action: 2,
     logic: 3,
     value: 4,
-    variable: 5,
+    macro: 5,
+    subtrigger: 6,
+    variable: 7,
+    converter: 8,
 };
 
-function processTriggerData(triggerData: Maybe<TriggerRawData>): TriggerData | null {
-    if (!R.isPlainObject(triggerData)) {
-        return null;
-    }
-
-    let event: NodeData | undefined;
-
-    const nodes: TriggerData["nodes"] = R.pipe(
-        triggerData.nodes ?? [],
-        R.map((nodeData) => {
-            const node = processNodeData(nodeData);
-
-            if (node?.type === "event") {
-                if (event) return null;
-                event = node;
-            }
-
-            return node;
-        }),
-        R.filter(R.isTruthy),
-        R.mapToObj((node) => [node.id, node])
-    );
-
-    if (!event) {
-        return null;
-    }
-
-    for (const node of R.values(nodes)) {
-        for (const category of ["inputs", "outputs"] as const) {
-            for (const [key, entry] of R.entries(node[category])) {
-                if (!entry.ids) continue;
-
-                const originId = `${node.id}.${category}.${key}` as NodeEntryId;
-
-                for (const targetId of entry.ids) {
-                    const targetIds = fu.getProperty(nodes, `${targetId}.ids`);
-                    if (!R.isArray(targetIds) || targetIds.includes(originId)) continue;
-
-                    node[category][key].ids?.findSplice((x) => x === targetId);
-                }
-            }
-        }
-    }
-
-    const id = R.isString(triggerData.id) ? triggerData.id : fu.randomID();
-
-    return {
-        id,
-        name: triggerData.name?.trim() || id,
-        nodes,
-        event,
-        disabled: !!triggerData.disabled,
+function createTriggerData(name: string, event?: NodeEventKey): TriggerData | null {
+    const data: Required<TriggerRawData> = {
+        id: fu.randomID(),
+        name,
+        disabled: false,
+        nodes: [],
     };
+
+    if (event) {
+        data.nodes.push({
+            id: fu.randomID(),
+            type: "event",
+            key: event,
+            x: 100,
+            y: 200,
+        });
+    } else {
+        data.nodes.push(
+            {
+                id: fu.randomID(),
+                type: "subtrigger",
+                key: "subtrigger-input",
+                x: 100,
+                y: 200,
+            },
+            {
+                id: fu.randomID(),
+                type: "subtrigger",
+                key: "subtrigger-output",
+                x: 700,
+                y: 200,
+            }
+        );
+    }
+
+    return processTriggerData(data);
 }
 
 function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawData {
@@ -81,22 +65,68 @@ function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawDa
     };
 }
 
-type TriggerData = BaseTriggerData & {
-    nodes: Record<string, NodeData>;
-    event: NodeData;
-};
-
-type TriggerRawData = Partial<
-    BaseTriggerData & {
-        nodes: NodeRawData[];
+function processTriggerData(
+    triggerData: Maybe<TriggerRawData>,
+    subtriggers?: TriggerData[]
+): TriggerData | null {
+    if (!R.isPlainObject(triggerData)) {
+        return null;
     }
->;
 
-type BaseTriggerData = {
-    id: string;
-    name: string;
-    disabled: boolean;
-};
+    let event: NodeData | undefined;
 
-export { processTriggerData, serializeTrigger };
-export type { TriggerData, TriggerRawData };
+    const nodes: TriggerData["nodes"] = R.pipe(
+        triggerData.nodes ?? [],
+        R.map((nodeData) => {
+            const node = processNodeData(nodeData);
+            if (!node) return;
+
+            if (isEventNode(node)) {
+                if (event) return null;
+                event = node;
+            }
+
+            // if (node.type === "subtrigger" && R.isString(node.subId)) {
+            //
+            // }
+
+            return node;
+        }),
+        R.filter(R.isTruthy),
+        R.mapToObj((node) => [node.id, node])
+    );
+
+    if (!event) {
+        return null;
+    }
+
+    // for (const node of R.values(nodes)) {
+    //     for (const category of ["inputs", "outputs"] as const) {
+    //         for (const [key, entry] of R.entries(node[category])) {
+    //             if (!entry.ids) continue;
+
+    //             const originId = `${node.id}.${category}.${key}` as NodeEntryId;
+
+    //             for (const targetId of entry.ids) {
+    //                 const targetIds = fu.getProperty(nodes, `${targetId}.ids`);
+    //                 if (!R.isArray(targetIds) || targetIds.includes(originId)) continue;
+
+    //                 node[category][key].ids?.findSplice((x) => x === targetId);
+    //             }
+    //         }
+    //     }
+    // }
+
+    const id = R.isString(triggerData.id) ? triggerData.id : fu.randomID();
+
+    return {
+        id,
+        name: triggerData.name?.trim() || id,
+        nodes,
+        event,
+        disabled: !!triggerData.disabled,
+        isSub: event.type === "subtrigger" && !event.subId,
+    };
+}
+
+export { createTriggerData, processTriggerData, serializeTrigger };

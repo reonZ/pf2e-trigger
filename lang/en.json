@@ -12,20 +12,53 @@
         "triggers-menu": {
             "title": "Triggers Menu",
             "triggers": "Triggers",
+            "subtriggers": "Sub-Triggers",
             "close": "Close Window",
-            "import": "Import Trigger(s)",
-            "export-all": "Export All Triggers",
+            "import": "Import",
+            "export-all": "Export All",
             "save": {
                 "title": "Save Triggers",
                 "prompt": "Do you want to save the triggers?"
             },
             "trigger": {
-                "add": "Add Trigger",
-                "export": "Export Trigger",
+                "add": "Create Trigger",
+                "export": "Export",
                 "delete": {
-                    "title": "Delete Trigger",
-                    "prompt": "Are you sure you want to delete the <strong>{name}</strong> trigger?"
+                    "title": "Delete",
+                    "prompt": "Are you sure you want to delete <strong>{name}</strong>?"
                 }
+            },
+            "subtrigger": {
+                "add": "Create Sub-Trigger"
+            }
+        },
+        "add-entry": {
+            "inputs": "Add Input",
+            "outputs": "Add Output",
+            "label": "Entry Type",
+            "name": "Entry Label",
+            "yes": "Add",
+            "no": "Cancel"
+        },
+        "trigger-dialog": {
+            "label": "Event Type",
+            "name": "Trigger Name",
+            "no": "Cancel",
+            "add": {
+                "title": "Create Trigger",
+                "yes": "Create"
+            },
+            "add-sub": {
+                "title": "Create Sub-Trigger",
+                "yes": "Create"
+            },
+            "edit": {
+                "title": "Edit Trigger",
+                "yes": "Edit"
+            },
+            "convert": {
+                "title": "Convert Trigger",
+                "yes": "Convert"
             }
         },
         "export-trigger": {
@@ -39,21 +72,6 @@
             "yes": "Import",
             "no": "Cancel",
             "error": "The data provided is invalid, no trigger were imported."
-        },
-        "add-trigger": {
-            "title": "Add Trigger",
-            "label": "Event Type",
-            "name": "Trigger Name",
-            "yes": "Create",
-            "no": "Cancel"
-        },
-        "edit-trigger": {
-            "title": "Edit Trigger",
-            "yes": "Edit"
-        },
-        "convert-trigger": {
-            "title": "Convert Trigger",
-            "yes": "Convert"
         },
         "node": {
             "action": {
@@ -76,9 +94,6 @@
                 },
                 "remove-item": {
                     "title": "Remove Item"
-                },
-                "run-macro": {
-                    "title": "Run Macro"
                 },
                 "add-condition": {
                     "title": "Add Condition"
@@ -126,17 +141,14 @@
             "value": {
                 "title": "Values",
                 "subtitle": "value",
-                "item-source": {
-                    "title": "Item Source"
-                },
-                "macro-source": {
-                    "title": "Macro Source"
-                },
                 "number-value": {
                     "title": "Number"
                 },
-                "success-value": {
-                    "title": "Degree of Success"
+                "text-value": {
+                    "title": "Text"
+                },
+                "item-source": {
+                    "title": "Item Source"
                 },
                 "roll-data": {
                     "title": "Roll Data"
@@ -153,21 +165,21 @@
                         "label": "Adjustment"
                     }
                 },
-                "duration-encounter": {
-                    "title": "Effect Duration (Encounter)"
-                },
-                "duration-unlimited": {
-                    "title": "Effect Duration (Unlimited)"
+                "duration-simple": {
+                    "title": "Effect Duration"
                 },
                 "duration-unit": {
                     "title": "Effect Duration (Unit)"
+                },
+                "success-value": {
+                    "title": "Degree of Success"
                 }
             },
             "logic": {
                 "title": "Logic",
                 "subtitle": "Logic",
                 "eq-number": {
-                    "title": "Equals (Number)"
+                    "title": "Equals"
                 },
                 "gt-number": {
                     "title": "Greater Than"
@@ -180,12 +192,41 @@
                 },
                 "lte-number": {
                     "title": "Less Than or Equal"
+                }
+            },
+            "splitter": {
+                "title": "Splitters",
+                "success-splitter": {
+                    "title": "Degree of Success"
                 },
-                "eq-text": {
-                    "title": "Equals (Text)"
+                "boolean-splitter": {
+                    "title": "Boolean"
+                }
+            },
+            "subtrigger": {
+                "title": "Sub-Triggers",
+                "subtitle": "Sub-Trigger",
+                "subtrigger-input": {
+                    "title": "Input"
                 },
-                "success-split": {
-                    "title": "Degree of Success (Splitter)"
+                "subtrigger-output": {
+                    "title": "Output"
+                }
+            },
+            "variable": {
+                "title": "Variables"
+            },
+            "macro": {
+                "title": "Macros",
+                "header": "Run Macro",
+                "macro": {
+                    "title": "Run Macro"
+                }
+            },
+            "converter": {
+                "title": "Converters",
+                "item-converter": {
+                    "title": "Item <-> Source UUID"
                 }
             },
             "entry": {
@@ -193,14 +234,13 @@
                 "b": "B",
                 "in": "In",
                 "out": "Out",
-                "this": "Actor",
+                "this": "Trigger Target",
                 "origin": "Origin",
                 "target": "Target",
                 "source": "Source",
                 "true": "True",
                 "false": "False",
                 "item": "Item",
-                "macro": "Macro",
                 "uuid": "Source UUID",
                 "option": "roll:option",
                 "result": "Result",
@@ -211,23 +251,25 @@
                 "dc": "DC",
                 "options": "Extra Options",
                 "traits": "Extra Traits",
-                "duration": "Duration"
-            },
-            "variable": {
-                "title": "Variables",
-                "aura-source": "Aura Source",
-                "this": "Trigger Actor",
-                "has-item": "Has Item"
+                "duration": "Duration",
+                "boolean": "Boolean",
+                "text": "Text",
+                "number": "Number",
+                "aura-source": "Aura Source"
             }
         },
         "select": {
             "delete": "Delete",
             "disconnect": "Disconnect",
+            "remove": "Remove",
             "all": "All",
             "allies": "Allies",
             "enemies": "Enemies",
             "convert": "Convert",
-            "duplicate": "Duplicate"
+            "duplicate": "Duplicate",
+            "connection": "Add Connection",
+            "add-input": "Add Input",
+            "add-output": "Add Output"
         }
     }
 }

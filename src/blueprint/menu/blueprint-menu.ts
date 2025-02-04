@@ -1,5 +1,4 @@
 import { Blueprint } from "blueprint/blueprint";
-import { TriggerData } from "data/data-trigger";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,
@@ -139,11 +138,4 @@ abstract class BlueprintMenu<TReturn extends any> extends foundry.applications.a
     }
 }
 
-type BlueprintMenuOptions = ApplicationConfiguration & {
-    style: Partial<CSSStyleDeclaration>;
-};
-
-type BlueprintMenuResolve<T> = (value: T | null | PromiseLike<T | null>) => void;
-
 export { BlueprintMenu };
-export type { BlueprintMenuOptions, BlueprintMenuResolve };

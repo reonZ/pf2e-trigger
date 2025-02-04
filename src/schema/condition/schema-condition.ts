@@ -1,38 +1,15 @@
-import {
-    BooleanSchemaOutputs,
-    BridgeNodeEntry,
-    NodeSchemaInputEntry,
-    NodeSchemaVariable,
-    createBooleanSchemaOutputs,
-} from "schema/schema";
+import { booleanSchemaOuts } from "schema/schema";
 
-function createConditionSchema<TInputs extends NodeSchemaInputEntry>(
-    inputs: TInputs[],
-    { unique, variables }: { unique?: boolean; variables?: NodeSchemaVariable[] } = {}
-): ConditionSchema<TInputs> {
+function createConditionSchema<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable>(
+    inputs: TInput[],
+    variables?: TOutput[]
+): ConditionSchema<TInput, TOutput> {
     return {
         in: true,
-        unique,
-        inputs,
-        outputs: createBooleanSchemaOutputs(),
+        outs: booleanSchemaOuts,
+        inputs: [...inputs, { key: "target", type: "target" }],
         variables,
-    };
+    } as const;
 }
 
-type ConditionSchema<TInputs extends NodeSchemaInputEntry> = Omit<
-    BaseConditionSchema<TInputs>,
-    "outputs"
-> & {
-    outputs: BooleanSchemaOutputs;
-};
-
-type BaseConditionSchema<TInputs extends NodeSchemaInputEntry = NodeSchemaInputEntry> = {
-    in: true;
-    unique?: boolean;
-    inputs: TInputs[];
-    outputs: BridgeNodeEntry[];
-    variables?: NodeSchemaVariable[];
-};
-
 export { createConditionSchema };
-export type { BaseConditionSchema };

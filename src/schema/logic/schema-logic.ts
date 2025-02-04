@@ -1,24 +1,14 @@
-import { BooleanSchemaOutputs, NodeEntryType, createBooleanSchemaOutputs } from "schema/schema";
+import { booleanSchemaOuts } from "schema/schema";
 
-function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T): LogicSchema<T> {
+function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T) {
     return {
+        in: true,
+        outs: booleanSchemaOuts,
         inputs: [
             { key: "a", type },
             { key: "b", type },
         ],
-        outputs: createBooleanSchemaOutputs(),
-    };
+    } as const;
 }
 
-type LogicSchema<T extends NonNullable<NodeEntryType> = NonNullable<NodeEntryType>> = {
-    inputs: [{ key: "a"; type: T }, { key: "b"; type: T }];
-    outputs: BooleanSchemaOutputs;
-};
-
-type SplitLogicSchema<T extends NonNullable<NodeEntryType> = NonNullable<NodeEntryType>> = {
-    inputs: [{ key: "input"; type: T }];
-    outputs: { key: string; label?: string }[];
-};
-
 export { createLogicSchema };
-export type { LogicSchema, SplitLogicSchema };

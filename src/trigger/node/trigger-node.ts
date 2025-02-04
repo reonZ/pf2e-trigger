@@ -1,34 +1,23 @@
-import { NodeDataEntry } from "data/data-entry";
-import { NodeData } from "data/data-node";
-import { R } from "module-helpers";
-import {
-    ExtractSchemaEntryType,
-    ExtractSchemaInputsKeys,
-    ExtractSchemaOuputsKeys,
-    ExtractSchemaVariableType,
-    NodeEntryType,
-    NodeSchema,
-    NodeSchemaInputEntry,
-    NodeSchemaOutputEntry,
-    NodeType,
-    getDefaultInputValue,
-    isInputSchemaEntry,
-} from "schema/schema";
-import { NodeSchemaMap, getSchemaMap } from "schema/schema-list";
-import { schemaVariable } from "schema/schema-variable";
-import { Trigger, TriggerExecuteOptions } from "trigger/trigger";
+import { getDefaultInputValue, isNonNullNodeEntry } from "data/data-entry";
+import { ActorPF2e, ItemPF2e, R, getItemWithSourceId } from "module-helpers";
+import { BaseTrigger } from "trigger/trigger-base";
 
-abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
+class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     #data: NodeData;
     #schema: NodeSchemaMap;
-    #trigger: Trigger;
+    #trigger: BaseTrigger;
     #get: Record<string, () => Promisable<any>> = {};
-    #send: Record<string, (target: TargetDocuments, value?: TriggerNodeEntryValue) => void> = {};
+    #send: Record<string, () => Promise<void>> = {};
 
-    constructor(trigger: Trigger, data: NodeData) {
+    constructor(trigger: BaseTrigger, data: NodeData, schema: NodeSchema) {
         this.#data = data;
         this.#trigger = trigger;
-        this.#schema = getSchemaMap(data);
+
+        this.#schema = {
+            ...schema,
+            inputs: R.mapToObj(schema.inputs, (input) => [input.key, input]),
+            outputs: R.mapToObj(schema.outputs, (output) => [output.key, output]),
+        };
     }
 
     get id(): string {
@@ -47,38 +36,48 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         return this.#trigger.options;
     }
 
-    setOption<K extends keyof TriggerExecuteOptions>(key: K, value: TriggerExecuteOptions[K]) {
-        this.options[key] = value;
+    get schema(): NodeSchemaMap {
+        return this.#schema;
     }
 
-    getNodeVariable(nodeId: string, key: string): TriggerNodeEntryValue {
-        return fu.getProperty(this.options.variables, `${nodeId}.${key}`);
+    get target(): TargetDocuments {
+        return this.options.this;
     }
 
-    setVariable(key: ExtractSchemaVariableType<TSchema>, value: TriggerNodeEntryValue) {
-        fu.setProperty(this.options.variables, `${this.id}.${key}`, value);
+    get custom(): NodeDataCustom {
+        return this.#data.custom;
     }
 
-    async send<K extends ExtractSchemaOuputsKeys<TSchema>>(
+    setVariable<K extends ExtractSchemaVariableKeys<TSchema>>(
         key: K,
-        target: TargetDocuments,
-        value?: ExtracSchemaOutputValueType<TSchema, K>
-    ): Promise<void> {
-        if (!this.#send[key]) {
-            const output = this.#data.outputs[key] as NodeDataEntry | undefined;
-            const otherNodes = (output?.ids ?? []).map((id) => this.#trigger.getNode(id));
+        value: ExtractSchemaVariableValueType<TSchema, K>
+    ) {
+        const id: NodeEntryId = `${this.id}.outputs.${key}`;
+        this.options.variables[id] = value;
+    }
 
-            this.#send[key] = async (target: TargetDocuments, value?: TriggerNodeEntryValue) => {
-                for (const otherNode of otherNodes) {
-                    await otherNode._execute(target, value);
-                }
+    async execute(): Promise<void> {
+        throw new Error(`execute not implemented in ${this.constructor.name}.`);
+    }
+
+    async query(key: ExtractSchemaVariableKeys<TSchema>): Promise<TriggerEntryValue> {
+        throw new Error(`query not implemented in ${this.constructor.name}.`);
+    }
+
+    async send<K extends ExtractSchemaOutsKeys<TSchema>>(key: K): Promise<void> {
+        if (!this.#send[key]) {
+            const outputId = this.#data.outputs[key]?.ids?.[0];
+            const otherNode = outputId ? this.#trigger.getNodeFromEntryId(outputId) : undefined;
+
+            this.#send[key] = async () => {
+                await otherNode?.execute();
             };
         }
 
-        return this.#send[key](target, value);
+        return this.#send[key]();
     }
 
-    async get<K extends ExtractSchemaInputsKeys<TSchema>>(
+    async get<K extends ExtractSchemaInputs<TSchema>>(
         key: K
     ): Promise<ExtractSchemaInputValueType<TSchema, K>> {
         if (this.#get[key]) {
@@ -86,71 +85,54 @@ abstract class TriggerNode<TSchema extends NodeSchema = NodeSchema> {
         }
 
         const input = this.#data.inputs[key] as NodeDataEntry | undefined;
-        if (input) {
-            if ("value" in input) {
-                this.#get[key] = () => input.value;
-            } else if (R.isArray(input.ids)) {
-                const otherNode = this.#trigger.getNode(input.ids[0]);
 
-                if (otherNode.type === "variable") {
-                    const node = otherNode as TriggerNode<typeof schemaVariable>;
-                    const nodeId = await node.get("id");
-                    const variableKey = await node.get("key");
-
-                    this.#get[key] = () => this.getNodeVariable(nodeId, variableKey);
-                } else {
-                    this.#get[key] = () => otherNode._query(key);
-                }
+        const setToDefault = () => {
+            const schemaInput = this.#schema.inputs[key];
+            if (isNonNullNodeEntry(schemaInput)) {
+                this.#get[key] = () => getDefaultInputValue(schemaInput);
             } else {
                 this.#get[key] = () => undefined;
             }
+        };
 
-            return this.#get[key]();
-        }
+        if (input) {
+            if (input.ids?.length) {
+                const entryId = input.ids[0];
+                const otherNode = this.#trigger.getNodeFromEntryId(entryId);
 
-        const schemaInput = this.#schema.inputs[key];
-        if (isInputSchemaEntry(schemaInput)) {
-            this.#get[key] = () => getDefaultInputValue(schemaInput);
+                if (otherNode) {
+                    if (["value", "variable", "converter"].includes(otherNode.type)) {
+                        this.#get[key] = () => otherNode.query(key);
+                    } else {
+                        this.#get[key] = () => this.options.variables[entryId];
+                    }
+                } else {
+                    setToDefault();
+                }
+            } else if ("value" in input) {
+                this.#get[key] = () => input.value;
+            } else {
+                setToDefault();
+            }
         } else {
-            this.#get[key] = () => undefined;
+            setToDefault();
         }
 
         return this.#get[key]();
     }
 
-    protected async _execute(
-        target: TargetDocuments,
-        value?: TriggerNodeEntryValue
-    ): Promise<void> {
-        throw new Error("_execute not implemented.");
-    }
-
-    protected async _query(
-        key: ExtractSchemaOuputsKeys<TSchema>
-    ): Promise<TriggerNodeEntryValue | undefined> {
-        throw new Error("_query not implemented.");
+    getExistingItem({ actor }: TargetDocuments, item?: ItemPF2e): ItemPF2e<ActorPF2e> | null {
+        return item?.parent === actor
+            ? (item as ItemPF2e<ActorPF2e>)
+            : !!item
+            ? getItemWithSourceId(actor, item.sourceId ?? item.uuid)
+            : null;
     }
 }
 
-type ExtractSchemaInputValueType<
-    S extends NodeSchema,
-    K extends ExtractSchemaInputsKeys<S>
-> = S extends {
-    inputs: NodeSchemaInputEntry[];
-}
-    ? ExtractSchemaEntryType<Extract<S["inputs"][number], { key: K }>["type"]>
-    : never;
-
-type ExtracSchemaOutputValueType<
-    S extends NodeSchema,
-    K extends ExtractSchemaOuputsKeys<S>
-> = S extends {
-    outputs: NodeSchemaOutputEntry[];
-}
-    ? ExtractSchemaEntryType<Extract<S["outputs"][number], { key: K }>["type"]>
-    : never;
-
-type TriggerNodeEntryValue = ExtractSchemaEntryType<NodeEntryType>;
+type NodeSchemaMap = Omit<NodeSchema, "inputs" | "outputs"> & {
+    inputs: Record<string, NodeSchemaInput | NodeSchemaBridge>;
+    outputs: Record<string, NodeSchemaVariable | NodeSchemaBridge>;
+};
 
 export { TriggerNode };
-export type { TriggerNodeEntryValue };

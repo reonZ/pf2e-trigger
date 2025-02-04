@@ -44,6 +44,7 @@
         }
 
         .menu {
+            flex: 1;
             padding-bottom: 0.5em;
             overflow: hidden;
             display: flex;
@@ -83,6 +84,10 @@
             .scroll {
                 overflow: auto;
                 flex: 1;
+
+                &.scroll-triggers {
+                    flex-basis: 30%;
+                }
             }
 
             ul {

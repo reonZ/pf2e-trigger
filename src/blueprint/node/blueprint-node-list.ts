@@ -1,77 +1,84 @@
-import { ExtractNodeMap } from "schema/schema-list";
-import { BlueprintNode } from "./blueprint-node";
-import { NodeData } from "data/data-node";
-import { ItemSourceBlueprintNode } from "./value/blueprint-item-source";
-import { EndTurnBlueprintNode, StartTurnBlueprintNode } from "./event/blueprint-turn-event";
-import { HasItemBlueprintNode } from "./condition/blueprint-has-item";
-import { RollSaveBlueprintNode } from "./action/blueprint-roll-save";
-import { ValueBlueprintNode } from "./value/blueprint-value-node";
-import { EqValueBlueprintNode } from "./logic/blueprint-eq-value";
-import { GtValueBlueprintNode } from "./logic/blueprint-gt-value";
-import { LtValueBlueprintNode } from "./logic/blueprint-lt-value";
-import { GteValueBlueprintNode } from "./logic/blueprint-gte-value";
-import { LteValueBlueprintNode } from "./logic/blueprint-lte-value";
-import { RollDamageBlueprintNode } from "./action/blueprint-roll-damage";
-import { InsideAuraBlueprintNode } from "./condition/blueprint-inside-aura";
-import { EnterAuraBlueprintNode, LeaveAuraBlueprintNode } from "./event/blueprint-aura-event";
-import { HasOptionBlueprintNode } from "./condition/blueprint-has-option";
-import { RemoveItemBlueprintNode } from "./action/blueprint-remove-item";
-import { RunMacroBlueprintNode } from "./action/blueprint-run-macro";
-import { MacroSourceBlueprintNode } from "./value/blueprint-macro-source";
-import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blueprint-token.event";
-import { AddItemBlueprintNode } from "./action/blueprint-add-item";
-import { SuccessSplitBlueprintNode } from "./logic/blueprint-success-split";
-import { VariableBlueprintNode } from "./blueprint-variable-node";
-import { TestEventBlueprintNode } from "./event/blueprint-test-event";
-import { RollDataBlueprintNode } from "./value/blueprint-roll-data";
-import { DcDataBlueprintNode } from "./value/blueprint-dc-data";
 import { Blueprint } from "blueprint/blueprint";
-import { AddConditionBlueprintNode } from "./action/blueprint-add-condition";
-import { DurationDataBlueprintNode } from "./value/blueprint-duration-data";
+import { AddConditionBlueprintNode } from "./action/blueprint-action-add-condition";
+import { AddItemBlueprintNode } from "./action/blueprint-action-add-item";
+import { RemoveItemBlueprintNode } from "./action/blueprint-action-remove-item";
+import { RollDamageBlueprintNode } from "./action/blueprint-action-roll-damage";
+import { RollSaveBlueprintNode } from "./action/blueprint-action-roll-save";
+import { BlueprintNode } from "./blueprint-node";
+import { ConditionBlueprintNode } from "./condition/blueprint-condition";
+import { ConverterBlueprintNode } from "./converter/blueprint-converter";
+import { EnterAuraBlueprintNode, LeaveAuraBlueprintNode } from "./event/blueprint-event-aura";
+import { TestEventBlueprintNode } from "./event/blueprint-event-test";
+import { CreateTokenBlueprintNode, DeleteTokenBlueprintNode } from "./event/blueprint-event-token";
+import { EndTurnBlueprintNode, StartTurnBlueprintNode } from "./event/blueprint-event-turn";
+import { EqValueBlueprintNode } from "./logic/blueprint-logic-eq";
+import { GtValueBlueprintNode } from "./logic/blueprint-logic.gt";
+import { GteValueBlueprintNode } from "./logic/blueprint-logic.gte";
+import { LtValueBlueprintNode } from "./logic/blueprint-logic.lt";
+import { LteValueBlueprintNode } from "./logic/blueprint-logic.lte";
+import { InputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-input";
+import { SubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-node";
+import { OutputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-output";
+import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
+import { ValueBlueprintNode } from "./value/blueprint-value-node";
+import { VariableBlueprintNode } from "./variable/blueprint-variable";
+import { MacroBlueprintNode } from "./macro/blueprint-macro";
+import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
+        "add-item": AddItemBlueprintNode,
+        "add-condition": AddConditionBlueprintNode,
+        "remove-item": RemoveItemBlueprintNode,
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,
-        "add-item": AddItemBlueprintNode,
-        "remove-item": RemoveItemBlueprintNode,
-        "run-macro": RunMacroBlueprintNode,
-        "add-condition": AddConditionBlueprintNode,
     },
     condition: {
-        "has-item": HasItemBlueprintNode,
-        "has-option": HasOptionBlueprintNode,
-        "inside-aura": InsideAuraBlueprintNode,
+        "has-item": ConditionBlueprintNode,
+        "has-option": ConditionBlueprintNode,
+        "inside-aura": ConditionBlueprintNode,
+    },
+    converter: {
+        "item-converter": ConverterBlueprintNode,
     },
     event: {
-        "aura-enter": EnterAuraBlueprintNode,
-        "aura-leave": LeaveAuraBlueprintNode,
-        "turn-end": EndTurnBlueprintNode,
-        "turn-start": StartTurnBlueprintNode,
+        "test-event": TestEventBlueprintNode,
         "token-create": CreateTokenBlueprintNode,
         "token-delete": DeleteTokenBlueprintNode,
-        "test-event": TestEventBlueprintNode,
+        "turn-end": EndTurnBlueprintNode,
+        "turn-start": StartTurnBlueprintNode,
+        "aura-enter": EnterAuraBlueprintNode,
+        "aura-leave": LeaveAuraBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,
         "gt-number": GtValueBlueprintNode,
-        "lt-number": LtValueBlueprintNode,
         "gte-number": GteValueBlueprintNode,
+        "lt-number": LtValueBlueprintNode,
         "lte-number": LteValueBlueprintNode,
-        // "eq-text": EqValueBlueprintNode,
-        "success-split": SuccessSplitBlueprintNode,
+    },
+    macro: {
+        macro: MacroBlueprintNode,
+    },
+    splitter: {
+        "success-splitter": SplitterBlueprintNode,
+        "boolean-splitter": SplitterBlueprintNode,
+    },
+    subtrigger: {
+        "subtrigger-input": InputSubtriggerBlueprintNode,
+        "subtrigger-output": OutputSubtriggerBlueprintNode,
+        "subtrigger-node": SubtriggerBlueprintNode,
     },
     value: {
-        "item-source": ItemSourceBlueprintNode,
-        "macro-source": MacroSourceBlueprintNode,
         "number-value": ValueBlueprintNode,
+        "text-value": ValueBlueprintNode,
+        "item-source": ItemSourceBlueprintNode,
+        "roll-data": ValueBlueprintNode,
+        "dc-target": ValueBlueprintNode,
+        "dc-value": ValueBlueprintNode,
+        "duration-simple": ValueBlueprintNode,
+        "duration-unit": ValueBlueprintNode,
         "success-value": ValueBlueprintNode,
-        "roll-data": RollDataBlueprintNode,
-        "dc-value": DcDataBlueprintNode,
-        "dc-target": DcDataBlueprintNode,
-        "duration-encounter": DurationDataBlueprintNode,
-        "duration-unlimited": DurationDataBlueprintNode,
-        "duration-unit": DurationDataBlueprintNode,
     },
     variable: {
         variable: VariableBlueprintNode,

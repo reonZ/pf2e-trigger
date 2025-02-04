@@ -2,30 +2,29 @@ import { Blueprint } from "blueprint/blueprint";
 import { BlueprintNode } from "./blueprint-node";
 
 abstract class BlueprintNodeChild extends PIXI.Graphics {
-    constructor(parent: BlueprintNode) {
+    #node: BlueprintNode;
+
+    constructor(node: BlueprintNode) {
         super();
 
-        parent.addChild(this);
+        this.#node = node;
+
+        node.addChild(this);
     }
 
-    abstract initialize(): void;
     abstract paint(maxWidth: number): void;
 
     get node(): BlueprintNode {
-        return this.parent;
+        return this.#node;
     }
 
     get blueprint(): Blueprint {
-        return this.parent.blueprint;
+        return this.node.blueprint;
+    }
+
+    get schema(): NodeSchema {
+        return this.#node.schema;
     }
 }
 
-interface BlueprintNodeChild extends PIXI.Graphics {
-    parent: BlueprintNode;
-}
-
-abstract class BlueprintNodeLayout extends BlueprintNodeChild {
-    abstract get innerWidth(): number;
-}
-
-export { BlueprintNodeChild, BlueprintNodeLayout };
+export { BlueprintNodeChild };

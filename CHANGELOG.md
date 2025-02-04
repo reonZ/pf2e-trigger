@@ -1,3 +1,28 @@
+# 0.10.0 (beta)
+
+-   complete rewrite of the module
+-   bridge connections (the white "triangles") no longer carry any context with them, the module now fully works with variables instead
+    -   unique nodes (e.g. `Event`s and the `Is Inside Aura` condition) will automatically generate global variables
+    -   custom variables will most likely see the day in a future update
+-   you can now create `Sub-Trigger`s
+    -   they are a subset of a regular `Trigger` without being attached to any specific event
+    -   you can customize the `Input` & `Output` nodes of a `Sub-Trigger` to contain any type of connection
+    -   once a `Sub-Trigger` is created, it can be used in any regular `Trigger` as a node
+    -   unique nodes cannot be used inside a `Sub-Trigger` for obvious reason
+-   `Run Macro` isn't an action node anymore but its own type
+    -   you can customize the inputs out outputs connections of a macro node
+    -   the `actor` & `token` arguments of the macro are now always the `Trigger Target`'s
+    -   inputs are sent to the macro as an array available in the macro context as `values`
+    -   to feed back values from the macro to the macro node, you need to return an array
+    -   both the input & output arrays correspond to the custom connections added (in the same order), they don't include immutable connections from the module (e.g. the `Source UUID` connection)
+-   `Splitter` are now their own node type and make use of the bridge connections
+-   `Logic` nodes now make use of the bridge connections
+-   add new `Converter` node type
+    -   though only one exist as of now and its use is pretty much useless
+    -   the module is smart enough to auto apply converters when needed and allows a one-step remove connection
+-   Due to the drastic changes, previous data will unlikely be compatible, you can either delete them before updating the module or type the following command in your console:
+    -   `game.settings.set("pf2e-trigger", "triggers", [])`
+
 # 0.9.0 (beta)
 
 -   big refactor of the core logic to support variables

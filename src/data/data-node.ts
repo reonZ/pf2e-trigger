@@ -1,24 +1,36 @@
 import { R } from "module-helpers";
-import { NodeType, isNodeType } from "schema/schema";
-import { getSchema, isNodeKey } from "schema/schema-list";
-import { NodeEntryMap, processInputEntryData, processOutputEntryData } from "./data-entry";
+import { processCustomSchema } from "schema/schema";
+import { processDataInputs, processDataOutputs } from "./data-entry";
+
+const CUSTOM_TYPES = ["macro", "subtrigger"] as const;
+
+const NODE_TYPES = [
+    ...CUSTOM_TYPES,
+    "event",
+    "condition",
+    "value",
+    "action",
+    "logic",
+    "variable",
+    "converter",
+    "splitter",
+] as const;
 
 function processNodeData(data: NodeRawData): NodeData | null {
     if (
         !R.isPlainObject(data) ||
         !R.isString(data.id) ||
         !isNodeType(data.type) ||
-        !isNodeKey(data.type, data.key) ||
+        !R.isString(data.key) ||
         !R.isNumber(data.x) ||
         !R.isNumber(data.y)
     ) {
         return null;
     }
 
-    const schema = getSchema({ type: data.type, key: data.key });
-
-    const inputs = processInputEntryData(data.inputs, schema.inputs);
-    const outputs = processOutputEntryData(data.outputs);
+    const inputs = processDataInputs(data);
+    const outputs = processDataOutputs(data);
+    const custom = processCustomSchema(data.custom);
 
     return {
         id: data.id,
@@ -28,30 +40,21 @@ function processNodeData(data: NodeRawData): NodeData | null {
         y: data.y,
         inputs,
         outputs,
+        subId: data.subId,
+        custom,
     };
 }
 
-type NodeData<T extends NodeType = NodeType> = BaseNodeData<T> & {
-    inputs: NodeEntryMap;
-    outputs: NodeEntryMap;
-};
+function isNodeType(type: any): type is NodeType {
+    return R.isString(type) && NODE_TYPES.includes(type as NodeType);
+}
 
-type NodeRawData<T extends NodeType = NodeType> = MaybePartial<
-    BaseNodeData<T> & {
-        inputs: NodeEntryMap;
-        outputs: NodeEntryMap;
-    }
->;
+function isEventNode(node: NodeData): boolean {
+    return node.type === "event" || (node.type === "subtrigger" && node.key === "subtrigger-input");
+}
 
-type BaseNodeData<T extends NodeType = NodeType> = {
-    id: string;
-    type: T;
-    key: string;
-    x: number;
-    y: number;
-};
+function isCustomNodeType(type: NodeType): type is CustomNodeType {
+    return CUSTOM_TYPES.includes(type as CustomNodeType);
+}
 
-type NodeEntryValue = string | number | boolean | undefined;
-
-export { processNodeData };
-export type { NodeData, NodeEntryValue, NodeRawData };
+export { CUSTOM_TYPES, NODE_TYPES, isCustomNodeType, isEventNode, isNodeType, processNodeData };

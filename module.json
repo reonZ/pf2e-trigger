@@ -16,11 +16,11 @@
         "verified": "12.331",
         "maximum": "12"
     },
-    "version": "0.9.0",
+    "version": "0.10.0",
     "url": "https://github.com/reonZ/pf2e-trigger",
     "readme": "https://github.com/reonZ/pf2e-trigger/blob/master/README.md",
     "manifest": "https://raw.githubusercontent.com/reonZ/pf2e-trigger/master/module.json",
-    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/0.9.0/module.zip",
+    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/0.10.0/module.zip",
     "changelog": "https://github.com/reonZ/pf2e-trigger/blob/master/CHANGELOG.md",
     "bugs": "https://github.com/reonZ/pf2e-trigger/issues",
     "styles": [
@@ -33,7 +33,7 @@
                 "type": "system",
                 "manifest": "https://raw.githubusercontent.com/foundryvtt/pf2e/master/system.json",
                 "compatibility": {
-                    "minimum": "6.8.1"
+                    "minimum": "6.8.5"
                 }
             }
         ],

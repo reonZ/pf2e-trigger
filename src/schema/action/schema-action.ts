@@ -1,7 +1,13 @@
-import { NodeSchema } from "schema/schema";
+function createAction<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable>(
+    inputs: TInput[],
+    variables?: TOutput[]
+): ActionSchema<TInput, TOutput> {
+    return {
+        in: true,
+        outs: [{ key: "out" }],
+        inputs: [...inputs, { key: "target", type: "target" }],
+        variables,
+    } as const;
+}
 
-type ActionSchema = Omit<NodeSchema, "unique" | "in"> & {
-    in: true;
-};
-
-export type { ActionSchema };
+export { createAction };

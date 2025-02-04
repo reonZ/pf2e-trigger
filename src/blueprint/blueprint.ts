@@ -1,118 +1,92 @@
-import { NodeRawData, processNodeData } from "data/data-node";
-import {
-    TriggerData,
-    TriggerRawData,
-    processTriggerData,
-    serializeTrigger,
-} from "data/data-trigger";
+import { processNodeData } from "data/data-node";
+import { createTriggerData, serializeTrigger } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
 import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
-import { EventNodeKey, getSchema } from "schema/schema-list";
-import { BlueprintConnectionsLayer } from "./layer/layer-connections";
-import { BlueprintGridLayer } from "./layer/layer-grid";
-import { BlueprintNodesLayer } from "./layer/layer-nodes";
-import { BlueprintNodesMenu } from "./menu/blueprint-nodes-menu";
+import { getSchema } from "schema/schema-list";
+import { BlueprintNodeConnections } from "./blueprint-connections";
+import { BlueprintNodesMenu } from "./menu/blueprint-menu-nodes";
 import { BlueprintNode } from "./node/blueprint-node";
-import { VariableBlueprintNode } from "./node/blueprint-variable-node";
+import { createBlueprintNode } from "./node/blueprint-node-list";
+import { VariableBlueprintNode } from "./node/variable/blueprint-variable";
+import { segmentEntryId } from "data/data-entry";
+import { BlueprintEntry } from "./entry/blueprint-entry";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
+    #initialized: boolean = false;
+    #gridLayer: PIXI.TilingSprite;
+    #nodesLayer: PIXI.Container;
+    #connectionsLayer: BlueprintNodeConnections;
+    #hitArea: PIXI.Rectangle = new PIXI.Rectangle();
+    #parent: foundry.applications.api.ApplicationV2;
+    #nodes: Collection<BlueprintNode> = new Collection();
     #triggers: Record<string, TriggerData>;
     #trigger: string | null = null;
-    #hitArea: PIXI.Rectangle;
-    #gridLayer: BlueprintGridLayer;
-    #nodesLayer: BlueprintNodesLayer;
-    #connectionsLayer: BlueprintConnectionsLayer;
     #drag: { origin: Point; dragging?: boolean } | null = null;
 
-    constructor(parent: HTMLElement) {
+    constructor(parent: foundry.applications.api.ApplicationV2) {
         super({
             backgroundAlpha: 0,
-            width: parent.clientWidth,
-            height: parent.clientHeight,
             antialias: true,
             autoDensity: true,
             resolution: window.devicePixelRatio,
         });
 
-        this.#hitArea = new PIXI.Rectangle(0, 0, this.screen.width, this.screen.height);
+        this.#parent = parent;
+        this.#triggers = getTriggersDataMap();
+
+        this.#gridLayer = this.#drawGrid();
+        this.#connectionsLayer = new BlueprintNodeConnections(this);
+        this.#nodesLayer = this.stage.addChild(new PIXI.Container());
 
         this.stage.hitArea = this.#hitArea;
         this.stage.eventMode = "static";
 
-        this.#triggers = getTriggersDataMap();
-
-        this.#gridLayer = new BlueprintGridLayer(this);
-        this.#nodesLayer = new BlueprintNodesLayer(this);
-        this.#connectionsLayer = new BlueprintConnectionsLayer(this);
-
-        this.#sortLayers();
-
         this.view.addEventListener("drop", this.#onDropCanvasData.bind(this));
-
-        parent.prepend(this.view);
 
         MODULE.debug(this);
     }
 
-    get layers() {
-        return {
-            nodes: this.#nodesLayer,
-            connections: this.#connectionsLayer,
-        };
+    get gridSize(): number {
+        return 16;
+    }
+
+    get parent(): HTMLElement {
+        return this.#parent.element;
     }
 
     get trigger(): TriggerData | null {
         return this.#triggers[this.#trigger ?? ""] ?? null;
     }
 
-    get triggersList(): { name: string; id: string; enabled: boolean }[] {
+    get subtriggers(): TriggerData[] {
         return R.pipe(
             R.values(this.#triggers),
-            R.flatMap(({ id, name, disabled }) => ({ id, name, enabled: !disabled }))
+            R.filter((trigger) => trigger.event.type === "subtrigger")
         );
     }
 
-    serializeTriggers(): TriggerRawData[] {
-        return R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
-    }
-
-    saveTrigger(): Promise<TriggerRawData[]> {
-        return setSetting("triggers", this.serializeTriggers());
-    }
-
-    addTriggers(triggers: TriggerData[]) {
-        for (const trigger of triggers) {
-            this.#triggers[trigger.id] = trigger;
-        }
-    }
-
-    exportTriggers() {
-        const serialized = R.pipe(
+    get triggersList(): { name: string; id: string; enabled: boolean; sub: boolean }[] {
+        return R.pipe(
             R.values(this.#triggers),
-            R.map((trigger) => {
-                const serialized = serializeTrigger(trigger);
-                delete serialized.id;
-                return serialized;
-            })
+            R.flatMap(({ id, name, disabled, event }) => ({
+                id,
+                name,
+                enabled: !disabled,
+                sub: event.type === "subtrigger",
+            }))
         );
-
-        const stringified = JSON.stringify(serialized);
-
-        game.clipboard.copyPlainText(stringified);
-        info("export-all.confirm");
     }
 
-    exportTrigger(id: string) {
-        const trigger = this.getTrigger(id);
-        if (!trigger) return;
+    get nodes(): Generator<BlueprintNode, void, undefined> {
+        return this.nodesGenerator();
+    }
 
-        const serialized = serializeTrigger(trigger);
-        delete serialized.id;
+    get triggers(): TriggerData[] {
+        return R.values(this.#triggers);
+    }
 
-        const stringified = `[${JSON.stringify(serialized)}]`;
-
-        game.clipboard.copyPlainText(stringified);
-        info("export-trigger.confirm", { name: trigger.name });
+    get connections(): BlueprintNodeConnections {
+        return this.#connectionsLayer;
     }
 
     destroy(removeView?: boolean, stageOptions?: PIXI.IDestroyOptions | boolean) {
@@ -130,8 +104,37 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         //@ts-expect-error
         this.#connectionsLayer = null;
         this.#drag = null;
+        //@ts-expect-error
+        this.#parent = null;
+        this.#nodes.clear();
 
         super.destroy(true, true);
+    }
+
+    initialize() {
+        if (this.#initialized) return;
+
+        this.#initialized = true;
+
+        this.parent.prepend(this.view);
+
+        this.resizeAll();
+    }
+
+    resizeAll() {
+        const parent = this.parent;
+
+        this.renderer.resize(parent.clientWidth, parent.clientHeight);
+
+        this.#gridLayer.width = this.screen.width;
+        this.#gridLayer.height = this.screen.height;
+
+        this.#hitArea.width = this.screen.width;
+        this.#hitArea.height = this.screen.height;
+    }
+
+    enableNodesInteraction(enabled: boolean) {
+        this.#nodesLayer.interactiveChildren = enabled;
     }
 
     getLocalCoordinates(point: Point) {
@@ -144,73 +147,273 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
     }
 
+    *nodesGenerator(): Generator<BlueprintNode, void, undefined> {
+        for (const node of this.#nodes) {
+            yield node;
+        }
+    }
+
+    addTriggers(triggers: TriggerData[]) {
+        for (const trigger of triggers) {
+            this.#triggers[trigger.id] = trigger;
+        }
+    }
+
+    exportTriggers() {
+        const serialized = R.pipe(
+            R.values(this.#triggers),
+            R.map((trigger) => {
+                const serialized = serializeTrigger(trigger);
+
+                if (!trigger.isSub) {
+                    delete serialized.id;
+                }
+                delete serialized.disabled;
+
+                return serialized;
+            })
+        );
+
+        const stringified = JSON.stringify(serialized);
+
+        game.clipboard.copyPlainText(stringified);
+        info("export-all.confirm");
+    }
+
+    saveTriggers(): Promise<TriggerRawData[]> {
+        return setSetting("triggers", this.serializeTriggers());
+    }
+
+    serializeTriggers(): TriggerRawData[] {
+        return R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
+    }
+
+    createTrigger({ name, event }: { event?: NodeEventKey; name: string }) {
+        const trigger = createTriggerData(name, event);
+        if (!trigger) return;
+
+        this.#triggers[trigger.id] = trigger;
+        this.setTrigger(trigger.id);
+    }
+
     getTrigger(id: string): TriggerData | undefined {
         return this.#triggers[id];
     }
 
-    setTrigger(triggerOrId: Maybe<string | TriggerData>) {
-        const trigger = R.isPlainObject(triggerOrId)
-            ? triggerOrId
-            : this.#triggers[triggerOrId ?? ""];
+    setTrigger(id: Maybe<string>) {
+        const trigger = this.#triggers[id ?? ""];
 
         if (this.trigger?.id !== trigger?.id) {
             this.#reset();
 
-            this.#trigger = trigger?.id ?? null;
+            this.#trigger = id ?? null;
 
             if (trigger) {
-                this.#initialize();
+                this.#render();
             }
         }
 
         this.#resetPosition();
     }
 
-    createTrigger({ name, event }: { event: EventNodeKey; name: string }) {
-        const data: TriggerRawData = {
-            id: fu.randomID(),
-            name,
-            nodes: [
-                {
-                    id: fu.randomID(),
-                    type: "event",
-                    key: event,
-                    x: 100,
-                    y: 200,
-                },
-            ],
-        };
-
-        const trigger = processTriggerData(data);
+    deleteTrigger(triggerId: string) {
+        const trigger = this.#triggers[triggerId];
         if (!trigger) return;
 
-        this.#triggers[trigger.id] = trigger;
-        this.setTrigger(trigger);
-    }
+        let refreshCurrent = false;
 
-    enableTrigger(id: string, enabled: boolean) {
-        const trigger = this.#triggers[id];
-        if (!trigger) return;
+        if (trigger.isSub === true) {
+            for (const otherTrigger of this.triggers) {
+                if (otherTrigger.isSub) continue;
 
-        trigger.disabled = !enabled;
-    }
+                if (otherTrigger.id === this.#trigger) {
+                    refreshCurrent = true;
+                }
 
-    editTrigger(id: string, { name }: { name: string }) {
-        const trigger = this.#triggers[id];
-        if (!trigger) return;
+                for (const node of R.values(otherTrigger.nodes)) {
+                    if (node.subId !== triggerId) continue;
 
-        trigger.name = name;
-    }
+                    const entries = R.pipe(
+                        ["inputs", "outputs"] as const,
+                        R.flatMap((category) => {
+                            return R.pipe(
+                                R.entries(node[category]),
+                                R.flatMap(([key, { ids = [] }]) =>
+                                    ids.map((id) => [`${node.id}.${category}.${key}`, id] as const)
+                                )
+                            );
+                        })
+                    );
 
-    deleteTrigger(id: string) {
-        const trigger = this.#triggers[id];
-        if (!trigger) return;
+                    for (const [entryId, targetId] of entries) {
+                        const { nodeId, category, key } = segmentEntryId(targetId);
+                        otherTrigger.nodes[nodeId]?.[category][key]?.ids?.findSplice(
+                            (x) => x === entryId
+                        );
+                    }
 
-        if (this.#trigger === id) {
-            this.setTrigger(null);
+                    delete otherTrigger.nodes[node.id];
+                }
+            }
         }
 
-        delete this.#triggers[id];
+        if (this.#trigger === triggerId) {
+            this.setTrigger(null);
+        } else if (refreshCurrent) {
+            const id = this.#trigger;
+            this.#reset();
+            this.#trigger = id;
+            this.#render();
+        }
+
+        delete this.#triggers[triggerId];
+    }
+
+    convertTrigger(event: NodeEventKey) {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
+        const newSchema = getSchema({ type: "event", key: event });
+        const previousEvent = this.getNode(trigger.event.id ?? "");
+        if (!previousEvent || !newSchema) return;
+
+        const previsouId = previousEvent.id;
+        const uniques = R.isArray(newSchema.unique) ? newSchema.unique : [];
+
+        this.deleteNode(previsouId);
+        this.createNode({ type: "event", key: event, id: previsouId });
+
+        this.deleteVariables(previsouId, { skipThis: true });
+
+        if (uniques.length) {
+            for (const otherNode of this.nodes) {
+                if (uniques.includes(otherNode.key)) {
+                    this.deleteNode(otherNode.id);
+                }
+            }
+        }
+
+        trigger.event = this.trigger.nodes[previsouId];
+    }
+
+    exportTrigger(id: string) {
+        const trigger = this.getTrigger(id);
+        if (!trigger) return;
+
+        const serialized = serializeTrigger(trigger);
+
+        delete serialized.id;
+        delete serialized.disabled;
+
+        const stringified = `[${JSON.stringify(serialized)}]`;
+
+        game.clipboard.copyPlainText(stringified);
+        info("export-trigger.confirm", { name: trigger.name });
+    }
+
+    getEntry(id: NodeEntryId): BlueprintEntry | undefined {
+        return this.getNodeFromEntryId(id)?.getEntry(id);
+    }
+
+    getNodeFromEntryId(id: NodeEntryId): BlueprintNode | undefined {
+        const { nodeId } = segmentEntryId(id);
+        return this.getNode(nodeId);
+    }
+
+    getNode(id: string): BlueprintNode | undefined {
+        return this.#nodes.get(id);
+    }
+
+    addNode(node: NodeData | BlueprintNode): BlueprintNode {
+        const blueprintNode =
+            node instanceof BlueprintNode ? node : createBlueprintNode(this, node);
+
+        this.#nodes.set(node.id, blueprintNode);
+        this.#nodesLayer.addChild(blueprintNode);
+
+        return blueprintNode;
+    }
+
+    createNode(dataRaw: CreateNodeData): BlueprintNode | undefined {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
+        dataRaw.id ??= fu.randomID();
+        dataRaw.x ??= 100;
+        dataRaw.y ??= 200;
+
+        if (dataRaw.type === "variable") {
+            const variableKey = dataRaw.key as BlueprintMenuVariableKey;
+            const [nodeId, category, entryKey, entryType, entryLabel] = R.split(variableKey, ".");
+
+            dataRaw.key = "variable";
+
+            dataRaw.inputs = {
+                input: { ids: [`${nodeId}.${category}.${entryKey}`] },
+            };
+
+            dataRaw.custom = {
+                inputs: [
+                    {
+                        type: entryType,
+                        key: "input",
+                    },
+                ],
+                outputs: [
+                    {
+                        type: entryType,
+                        key: "output",
+                        label: entryLabel,
+                    },
+                ],
+            };
+        } else if (dataRaw.type === "subtrigger") {
+            dataRaw.subId = dataRaw.key;
+            dataRaw.key = "subtrigger-node";
+        }
+
+        const data = processNodeData(dataRaw);
+        if (!data) return;
+
+        trigger.nodes[data.id] = data;
+        return this.addNode(data);
+    }
+
+    deleteNode(id: string) {
+        const node = this.getNode(id);
+        if (!node) return;
+
+        for (const entry of node.entries()) {
+            entry.removeConnections(true);
+        }
+
+        node.eventMode = "none";
+
+        this.#nodes.delete(node.id);
+
+        if (this.#nodesLayer.removeChild(node)) {
+            node.destroy();
+        }
+
+        this.deleteVariables(id, { skipThis: node.type === "event" });
+
+        delete this.trigger?.nodes[id];
+    }
+
+    deleteVariables(
+        nodeId: string,
+        { skipThis, variableKey }: { skipThis?: boolean; variableKey?: string } = {}
+    ) {
+        for (const otherNode of this.nodes) {
+            if (
+                otherNode instanceof VariableBlueprintNode &&
+                otherNode.nodeId === nodeId &&
+                !(variableKey && otherNode.variableKey !== variableKey) &&
+                !(skipThis && otherNode.variableKey === "this")
+            ) {
+                this.deleteNode(otherNode.id);
+            }
+        }
     }
 
     cloneNode(id: string) {
@@ -229,103 +432,32 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.createNode(clone);
     }
 
-    async createNode({
-        key,
-        type,
-        x = 100,
-        y = 200,
-        id = fu.randomID(),
-        inputs,
-        outputs,
-    }: WithRequired<NonNullable<NodeRawData>, "type" | "key">): Promise<BlueprintNode | undefined> {
-        const trigger = this.trigger;
-        if (!trigger) return;
-
-        const dataRaw: NodeRawData = { id, type, key, x, y, inputs, outputs };
-
-        if (type === "variable") {
-            const [nodeId, variableKey, variableType] = key.split(".");
-
-            dataRaw.key = "variable";
-
-            dataRaw.inputs = {
-                id: { value: nodeId },
-                key: { value: variableKey },
-                type: { value: variableType },
-            };
-        }
-
-        const data = processNodeData(dataRaw);
-        if (!data) return;
-
-        trigger.nodes[data.id] = data;
-        return this.#nodesLayer.addNode(data);
-    }
-
-    deleteNode(id: string) {
-        const node = this.#nodesLayer.getNode(id);
-        if (!node) return;
-
-        for (const entry of node.entries()) {
-            entry.removeConnections();
-        }
-
-        this.#nodesLayer.removeNode(id);
-
-        delete this.trigger?.nodes[id];
-
-        if (node.hasVariables) {
-            const skipThis = node.type === "event";
-
-            for (const otherNode of this.#nodesLayer.nodes()) {
-                if (
-                    otherNode instanceof VariableBlueprintNode &&
-                    otherNode.nodeId === id &&
-                    (!skipThis || otherNode.variableKey !== "this")
-                ) {
-                    this.deleteNode(otherNode.id);
-                }
-            }
-        }
-    }
-
-    convertTrigger(event: EventNodeKey) {
-        const newSchema = getSchema({ type: "event", key: event });
-        const previousEvent = this.#nodesLayer.getNode(this.trigger?.event.id ?? "");
-        if (!previousEvent || !newSchema) return;
-
-        const previsouId = previousEvent.id;
-        const uniques = R.isArray(newSchema.unique) ? newSchema.unique : [];
-
-        for (const otherNode of this.#nodesLayer.nodes()) {
-            if (
-                uniques.includes(otherNode.key) ||
-                (otherNode instanceof VariableBlueprintNode &&
-                    otherNode.nodeId === previsouId &&
-                    otherNode.variableKey !== "this")
-            ) {
-                this.deleteNode(otherNode.id);
-            }
-        }
-
-        this.deleteNode(previsouId);
-        this.createNode({ type: "event", key: event, id: previsouId });
-    }
-
-    #initialize() {
+    #render() {
         this.stage.on("pointerdown", this.#onPointerDown, this);
 
-        this.#nodesLayer.initialize();
+        for (const node of R.values(this.trigger?.nodes ?? {})) {
+            this.addNode(node);
+        }
+
         this.#connectionsLayer.initialize();
     }
 
     #reset() {
         this.#trigger = null;
+        this.#nodes.clear();
+        this.#connectionsLayer.reset();
 
         this.stage.removeAllListeners();
 
-        this.#nodesLayer.reset();
-        this.#connectionsLayer.reset();
+        for (const layer of [this.#nodesLayer, this.#connectionsLayer]) {
+            layer.removeAllListeners();
+
+            const removed = layer.removeChildren();
+
+            for (let i = 0; i < removed.length; ++i) {
+                removed[i].destroy(true);
+            }
+        }
     }
 
     #resetPosition() {
@@ -343,12 +475,35 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
-    #sortLayers() {
-        this.#gridLayer.zIndex = 0;
-        this.#connectionsLayer.zIndex = 1;
-        this.#nodesLayer.zIndex = 2;
+    #drawGrid(): PIXI.TilingSprite {
+        const gridSize = this.gridSize;
+        const textureSize = gridSize * 10;
 
-        this.stage.sortChildren();
+        const renderTexture = PIXI.RenderTexture.create({
+            width: textureSize * devicePixelRatio,
+            height: textureSize * devicePixelRatio,
+            resolution: devicePixelRatio,
+        });
+
+        const gridLayer = new PIXI.TilingSprite(renderTexture);
+        const grid = new PIXI.Graphics();
+
+        for (let i = 0; i <= 10; i++) {
+            const size = this.gridSize * i;
+            const color = i === 0 || i === 10 ? 0x000000 : 0x808080;
+
+            grid.lineStyle(1, color, 0.2, 1);
+
+            grid.moveTo(0, size);
+            grid.lineTo(textureSize, size);
+
+            grid.moveTo(size, 0);
+            grid.lineTo(size, textureSize);
+        }
+
+        this.renderer.render(grid, { renderTexture });
+
+        return this.stage.addChild(gridLayer);
     }
 
     #onDropCanvasData(event: DragEvent) {
@@ -362,15 +517,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             return;
 
         const document = fromUuidSync<ClientDocument | CompendiumIndexData>(data.uuid);
-        if (document) {
-            this.#onDropDocument(event, document);
-        }
-    }
+        if (!document) return;
 
-    #onDropDocument(event: DragEvent, document: ClientDocument | CompendiumIndexData) {
         const localPoint = this.getLocalCoordinates(event);
 
-        for (const node of this.#nodesLayer.nodes()) {
+        for (const node of this.nodes) {
             const dropped = node.onDropDocument(localPoint, document);
             if (dropped) return;
         }
@@ -384,6 +535,22 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.on("pointerup", this.#onPointerUp, this);
         this.stage.on("pointerupoutside", this.#onPointerUp, this);
         this.stage.on("pointermove", this.#onDragMove, this);
+    }
+
+    async #onPointerUp(event: PIXI.FederatedPointerEvent) {
+        const wasDragging = !!this.#drag?.dragging;
+
+        this.#drag = null;
+        this.#nodesLayer.interactiveChildren = true;
+
+        this.stage.cursor = "default";
+        this.stage.off("pointerup", this.#onPointerUp, this);
+        this.stage.off("pointerupoutside", this.#onPointerUp, this);
+        this.stage.off("pointermove", this.#onDragMove, this);
+
+        if (!wasDragging && this.trigger) {
+            this.#onMenu(event.global);
+        }
     }
 
     #onDragMove(event: PIXI.FederatedPointerEvent) {
@@ -408,23 +575,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.cursor = "grabbing";
         this.stage.position.set(x, y);
 
-        this.#gridLayer.reverseTilePosition(x, y);
-    }
-
-    async #onPointerUp(event: PIXI.FederatedPointerEvent) {
-        const wasDragging = !!this.#drag?.dragging;
-
-        this.#drag = null;
-        this.#nodesLayer.interactiveChildren = true;
-
-        this.stage.cursor = "default";
-        this.stage.off("pointerup", this.#onPointerUp, this);
-        this.stage.off("pointerupoutside", this.#onPointerUp, this);
-        this.stage.off("pointermove", this.#onDragMove, this);
-
-        if (!wasDragging && this.trigger) {
-            this.#onMenu(event.global);
-        }
+        this.#gridLayer.position.set(-x, -y);
+        this.#gridLayer.tilePosition.set(x, y);
     }
 
     async #onMenu({ x, y }: Point) {
@@ -432,7 +584,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!result) return;
 
         const { key, type } = result;
-        const node = await this.createNode({ type, key, x, y });
+        const node = this.createNode({ type, key, x, y });
         if (!node) return;
 
         const center = {

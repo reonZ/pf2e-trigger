@@ -1,57 +1,56 @@
-import { TriggerData } from "data/data-trigger";
 import { R } from "module-helpers";
-import { addItemSchema } from "./action/schema-add-item";
-import { removeItemSchema } from "./action/schema-remove-item";
-import { rollDamageSchema } from "./action/schema-roll-damage";
-import { rollSaveSchema } from "./action/schema-roll-save";
-import { runMacroSchema } from "./action/schema-run-macro";
-import { hasItemSchema } from "./condition/schema-has-item";
-import { hasOptionSchema } from "./condition/schema-has-option";
-import { insideAuraSchema } from "./condition/schema-inside-aura";
-import { auraEventSchema } from "./event/schema-aura-event";
+import { addConditionSchema } from "./action/schema-action-add-condition";
+import { addItemSchema } from "./action/schema-action-add-item";
+import { removeItemSchema } from "./action/schema-action-remove-item";
+import { rollDamageSchema } from "./action/schema-action-roll-damage";
+import { rollSaveSchema } from "./action/schema-action-roll-save";
+import { hasItemSchema } from "./condition/schema-condition-has-item";
+import { hasOptionsSchema } from "./condition/schema-condition-has-option";
+import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
+import { itemConverterSchema } from "./converter/schema-converter-item";
 import { eventSchema } from "./event/schema-event";
+import { auraEventSchema } from "./event/schema-event-aura";
 import { createLogicSchema } from "./logic/schema-logic";
-import {
-    NodeEntryType,
-    NodeSchema,
-    NodeSchemaInputEntry,
-    NodeSchemaOutputEntry,
-    NodeType,
-    isInputConnection,
-} from "./schema";
-import { itemSourceSchema } from "./value/schema-item-source";
-import { macroSourceSchema } from "./value/schema-macro-source";
-import { successValueSchema } from "./value/schema-success-value";
-import { createValueSchema } from "./value/schema-value";
-import { successSplitSchema } from "./logic/schema-success-split";
-import { schemaVariable } from "./schema-variable";
-import { rollDataSchema } from "./value/schema-roll-data";
-import { dcValueSchema, dcTargetSchema } from "./value/schema-dc-data";
-import { addConditionSchema } from "./action/schema-add-condition";
-import { durationSingleSchema, durationUnitSchema } from "./value/schema-duration.data";
+import { successSplitterSchema } from "./splitter/schema-splitter-success";
+import { macroSchema } from "./macro/schema-macro";
+import { subtriggerSchema } from "./subtrigger/schema-subtrigger";
+import { outputSubtriggerSchema } from "./subtrigger/schema-subtrigger-output";
+import { dcValueSchema } from "./value/schema-value-dc";
+import { dcTargetSchema } from "./value/schema-value-dc-target";
+import { simpleDurationSchema } from "./value/schema-value-duration-simple";
+import { unitDurationSchema } from "./value/schema-value-duration-unit";
+import { itemSourceSchema } from "./value/schema-value-item-source";
+import { createValueSchema } from "./value/schema-value-primitive";
+import { rollDataSchema } from "./value/schema-value-roll-data";
+import { successValueSchema } from "./value/schema-value-success";
+import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
+
+const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
 const SCHEMAS = {
     action: {
+        "add-item": addItemSchema,
+        "add-condition": addConditionSchema,
+        "remove-item": removeItemSchema,
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
-        "add-item": addItemSchema,
-        "remove-item": removeItemSchema,
-        "run-macro": runMacroSchema,
-        "add-condition": addConditionSchema,
     },
     condition: {
         "has-item": hasItemSchema,
-        "has-option": hasOptionSchema,
+        "has-option": hasOptionsSchema,
         "inside-aura": insideAuraSchema,
     },
+    converter: {
+        "item-converter": itemConverterSchema,
+    },
     event: {
-        "aura-enter": auraEventSchema,
-        "aura-leave": auraEventSchema,
         "turn-start": eventSchema,
         "turn-end": eventSchema,
         "token-create": eventSchema,
         "token-delete": eventSchema,
         "test-event": eventSchema,
+        "aura-enter": auraEventSchema,
+        "aura-leave": auraEventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),
@@ -59,74 +58,78 @@ const SCHEMAS = {
         "lt-number": createLogicSchema("number"),
         "gte-number": createLogicSchema("number"),
         "lte-number": createLogicSchema("number"),
-        // "eq-text": createLogicSchema("text"),
-        "success-split": successSplitSchema,
+    },
+    macro: {
+        macro: macroSchema,
+    },
+    splitter: {
+        "success-splitter": successSplitterSchema,
+        "boolean-splitter": booleanSplitterSchema,
+    },
+    subtrigger: {
+        "subtrigger-input": eventSchema,
+        "subtrigger-output": outputSubtriggerSchema,
+        "subtrigger-node": subtriggerSchema,
     },
     value: {
-        "item-source": itemSourceSchema,
-        "macro-source": macroSourceSchema,
         "number-value": createValueSchema("number"),
-        "success-value": successValueSchema,
+        "text-value": createValueSchema("text"),
+        "item-source": itemSourceSchema,
         "roll-data": rollDataSchema,
         "dc-value": dcValueSchema,
         "dc-target": dcTargetSchema,
-        "duration-encounter": durationSingleSchema,
-        "duration-unlimited": durationSingleSchema,
-        "duration-unit": durationUnitSchema,
+        "duration-simple": simpleDurationSchema,
+        "duration-unit": unitDurationSchema,
+        "success-value": successValueSchema,
     },
     variable: {
-        variable: schemaVariable,
+        variable: {},
     },
-} satisfies Record<NodeType, Record<string, NodeSchema>>;
+} satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
-const SCHEMA_MAP = R.pipe(
-    SCHEMAS,
-    R.mapValues((group) =>
-        R.pipe(
-            group,
-            R.mapValues((schema: NodeSchema): NodeSchemaMap => {
-                return {
-                    in: schema.in,
-                    unique: schema.unique,
-                    inputs: R.mapToObj(schema.inputs ?? [], (input) => [input.key, input]),
-                    outputs: R.mapToObj(schema.outputs, (output) => [output.key, output]),
-                };
-            })
-        )
-    )
-);
-
-const FILTERS: NodeFilter[] = R.pipe(
+const FILTERS: NodeSchemaFilter[] = R.pipe(
     R.entries(SCHEMAS),
+    R.filter(([type]) => !["event", "subtrigger", "variable"].includes(type)),
     R.flatMap(([type, schemas]) => {
         return R.pipe(
             R.entries(schemas),
-            R.map(([key, schema]: [string, NodeSchema]): NodeFilter => {
+            R.map(([key]: [string, NodeRawSchema]): NodeSchemaFilter => {
+                const schema = getSchema({ type, key });
+
                 const inputs: NodeEntryType[] = R.pipe(
-                    schema.inputs ?? [],
-                    R.filter(isInputConnection),
-                    R.map((input) => input.type),
+                    (schema.inputs ?? []) as NodeSchemaInput[],
+                    R.filter((input) => inputHasConnector(input, type)),
+                    R.map((input) => ("type" in input ? input.type : undefined)),
                     R.unique()
                 );
-
-                if (schema.in) {
-                    inputs.unshift(undefined);
-                }
 
                 const outputs = R.pipe(
                     schema.outputs,
-                    R.map((output) => output.type),
+                    R.map((output) => ("type" in output ? output.type : undefined)),
                     R.unique()
                 );
 
-                return { type, key, inputs, outputs };
+                return {
+                    type,
+                    key,
+                    inputs,
+                    outputs,
+                    unique: !!schema.unique,
+                };
             })
         );
-    }),
-    R.filter(({ type }) => !["event", "variable"].includes(type))
+    })
 );
 
-function getFilters(trigger?: TriggerData | null): NodeFilter[] {
+function inputHasConnector(input: NodeSchemaInput, type: NodeType) {
+    return input.connection !== false && !NO_CONNECTOR_TYPES.includes(type);
+}
+
+function getFilters(trigger?: TriggerData | null): NodeSchemaFilter[] {
+    if (trigger?.isSub) {
+        return FILTERS.filter(({ unique }) => !unique);
+    }
+
     const uniques = R.pipe(
         R.values(trigger?.nodes ?? {}),
         R.flatMap(({ key, type }) => {
@@ -142,79 +145,62 @@ function getFilters(trigger?: TriggerData | null): NodeFilter[] {
         })
     );
 
-    return R.pipe(
-        FILTERS,
-        R.filter(({ key }) => !uniques.includes(key))
-    );
+    return FILTERS.filter(({ key }) => !uniques.includes(key));
 }
 
-function getSchemaMap<T extends NodeType>({ type, key }: { type: T; key: string }): NodeSchemaMap {
+function getSchema(data: WithRequired<Partial<NodeData>, "type" | "key">): NodeSchema {
     // @ts-expect-error
-    return SCHEMA_MAP[type][key];
-}
+    const rawSchema = foundry.utils.deepClone(SCHEMAS[data.type][data.key]) as NodeRawSchema;
 
-function getSchema<T extends NodeType>({ type, key }: { type: T; key: string }): NodeSchema {
-    // @ts-expect-error
-    const schema = fu.deepClone(SCHEMAS[type][key]);
+    const outs = rawSchema.outs ?? [];
+    const variables = rawSchema.variables ?? [];
+    const schema: NodeSchema = {
+        unique: R.isArray(rawSchema.unique) ? rawSchema.unique : !!rawSchema.unique,
+        inputs: (rawSchema.inputs ?? []) as NodeSchemaInputs,
+        outputs: [...outs, ...variables],
+        variables,
+    };
 
-    if (schema.in) {
-        schema.inputs ??= [];
+    if (rawSchema.in) {
         schema.inputs.unshift({ key: "in" });
+    }
+
+    if (data.custom) {
+        schema.inputs.push(...data.custom.inputs);
+        schema.outputs.push(...data.custom.outputs);
     }
 
     return schema;
 }
 
-function getEventKeys(): EventNodeKey[] {
+function getSubtriggerSchema(data: TriggerData): NodeSchema {
+    const schema = getSchema({ type: "subtrigger", key: "subtrigger-node" });
+
+    const outputNode = R.values(data.nodes).find(
+        (node) => node.type === "subtrigger" && node.key !== "subtrigger-input"
+    );
+
+    return {
+        ...schema,
+        inputs: [{ key: "in" }, ...data.event.custom.outputs] as NodeSchemaInputs,
+        outputs: [...schema.outputs, ...(outputNode?.custom.inputs ?? [])],
+    };
+}
+
+function getEventKeys(): NodeEventKey[] {
     return R.keys(SCHEMAS.event);
 }
 
 function isNodeKey<T extends NodeType>(type: T, key: any): key is NodeKey<T> {
-    return R.isString(key) && (type === "variable" || key in SCHEMAS[type]);
+    return R.isString(key) && (["subtrigger"].includes(type) || key in SCHEMAS[type]);
 }
 
-type NodeSchemas = typeof SCHEMAS;
-
-type ExtractNodeMap<T> = {
-    [t in NodeType]: NodeSchemas[t] extends Record<infer K extends string, NodeSchema>
-        ? { [k in K]: T }
-        : never;
-};
-
-type ExtractPartialNodeMap<T> = {
-    [t in NodeType]?: NodeSchemas[t] extends Record<infer K extends string, NodeSchema>
-        ? { [k in K]?: T }
-        : never;
-};
-
-type NodeKey<T extends NodeType> = keyof NodeSchemas[T];
-
-type NodeEventKey = keyof (typeof SCHEMAS)["event"];
-type NodeConditionKey = keyof (typeof SCHEMAS)["condition"];
-
-type NodeFilter = {
-    type: NodeType;
-    key: string;
-    inputs: NodeEntryType[];
-    outputs: NodeEntryType[];
-};
-
-type EventNodeKey = keyof (typeof SCHEMAS)["event"];
-
-type NodeSchemaMap = Omit<NodeSchema, "inputs" | "outputs"> & {
-    inputs: Record<string, NodeSchemaInputEntry>;
-    outputs: Record<string, NodeSchemaOutputEntry>;
-};
-
-export { getEventKeys, getFilters, getSchema, getSchemaMap, isNodeKey };
-export type {
-    EventNodeKey,
-    ExtractNodeMap,
-    ExtractPartialNodeMap,
-    NodeConditionKey,
-    NodeEventKey,
-    NodeFilter,
-    NodeKey,
-    NodeSchemaMap,
-    NodeSchemas,
+export {
+    SCHEMAS,
+    getEventKeys,
+    getFilters,
+    getSchema,
+    getSubtriggerSchema,
+    inputHasConnector,
+    isNodeKey,
 };

@@ -25,12 +25,4 @@ function removeAuraFromMemory(actor: ActorPF2e, aura: AuraData, origin: AuraOrig
     return setInMemory(actor, "auras", auras);
 }
 
-type ActorAura = {
-    data: AuraData;
-    origin: AuraOrigin;
-};
-
-type AuraOrigin = Required<TargetDocuments>;
-
 export { auraSearch, getAurasInMemory, setAuraInMemory, removeAuraFromMemory };
-export type { ActorAura, AuraOrigin };
