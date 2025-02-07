@@ -125,7 +125,7 @@ class AuraHook extends TriggerHook {
 
         const auraActor = aura.token.actor;
         const auraData = auraActor?.auras.get(aura.slug);
-        if (!(auraActor && auraData?.effects.length)) return;
+        if (!auraActor || !auraData) return;
 
         const source = { actor: auraActor, token: aura.token };
         const affectedActors: Set<ActorPF2e> = new Set();
@@ -171,7 +171,8 @@ function initialAuraCheck() {
     for (const aura of auras) {
         const auraActor = aura.token.actor;
         const auraData = auraActor?.auras.get(aura.slug);
-        if (!(auraActor && auraData?.effects.length)) return;
+
+        if (!auraActor || !auraData) return;
 
         const auradTokens = scene.tokens.filter((token) => aura.containsToken(token));
         const affectedActors = getTokensActors(auradTokens);
