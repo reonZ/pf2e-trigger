@@ -1,3 +1,10 @@
+# 0.12.0 (beta)
+
+-   add `Origin` to the `Duration (Unit)` value node
+    -   used to set the effect actor origin
+-   add new `Add Persistent Damage` action node
+-   fix auras without any effect not being handled by the module
+
 # 0.11.0 (beta)
 
 -   change workflow of triggers and nodes instantiation
