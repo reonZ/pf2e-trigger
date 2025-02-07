@@ -24,6 +24,7 @@ import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
 import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
+import { addPersistentSchema } from "./action/schema-action-add-persistent";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -31,6 +32,7 @@ const SCHEMAS = {
     action: {
         "add-item": addItemSchema,
         "add-condition": addConditionSchema,
+        "add-persistent": addPersistentSchema,
         "remove-item": removeItemSchema,
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,

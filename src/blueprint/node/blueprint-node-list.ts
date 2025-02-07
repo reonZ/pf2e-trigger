@@ -24,11 +24,13 @@ import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { MacroBlueprintNode } from "./macro/blueprint-macro";
 import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
+import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "add-item": AddItemBlueprintNode,
         "add-condition": AddConditionBlueprintNode,
+        "add-persistent": AddPersistentBlueprintNode,
         "remove-item": RemoveItemBlueprintNode,
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,

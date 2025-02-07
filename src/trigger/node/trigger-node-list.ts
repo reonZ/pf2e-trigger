@@ -33,10 +33,12 @@ import { UnitDurationTriggerValue } from "./value/trigger-value-duration-unit";
 import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { SuccessTriggerSplitter } from "./splitter/trigger-splitter-success";
 import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
+import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
 
 const NODES = {
     action: {
         "add-condition": AddConditionTriggerNode,
+        "add-persistent": AddPersistentTriggerAction,
         "add-item": AddItemTriggerAction,
         "remove-item": RemoveItemTriggerAction,
         "roll-damage": RollDamageTriggerAction,

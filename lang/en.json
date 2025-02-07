@@ -97,6 +97,9 @@
                 },
                 "add-condition": {
                     "title": "Add Condition"
+                },
+                "add-persistent": {
+                    "title": "Add Persistent Damage"
                 }
             },
             "event": {
