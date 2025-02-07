@@ -1,4 +1,4 @@
-import { CheckDC, DurationData, ItemPF2e } from "module-helpers";
+import { CheckDC, DurationData, EffectContextData, ItemPF2e } from "module-helpers";
 import {
     NODE_ENTRY_CATEGORIES,
     NODE_ENTRY_TYPES,
@@ -68,6 +68,10 @@ declare global {
         key: string;
     };
 
+    type TriggerDurationData = DurationData & {
+        context?: EffectContextData;
+    };
+
     type ExtractEntryType<T extends NodeEntryType> = T extends NonNullNodeEntryType
         ? PrimitiveOf<(typeof NODE_ENTRY_VALUE_TYPE)[T]>
         : T extends NullNodeEntryType
@@ -83,7 +87,7 @@ declare global {
         : T extends "dc"
         ? NodeDCEntry
         : T extends "duration"
-        ? DurationData
+        ? TriggerDurationData
         : never;
 
     type NodeDCEntry = CheckDC & {

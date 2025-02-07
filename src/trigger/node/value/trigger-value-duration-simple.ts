@@ -6,7 +6,7 @@ import { getUnilimitedDuration } from "helpers/helpers-duration";
 class SimpleDurationTriggerValue extends TriggerNode<typeof simpleDurationSchema> {
     #cached: DurationData | undefined;
 
-    async query(key: "duration"): Promise<DurationData> {
+    async query(key: "duration"): Promise<TriggerDurationData> {
         this.#cached ??=
             (await this.get("unit")) === "encounter"
                 ? { expiry: null, unit: "encounter", value: -1 }

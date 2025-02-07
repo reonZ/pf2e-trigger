@@ -3,11 +3,15 @@ import { simpleDurationSchema } from "./schema-value-duration-simple";
 const unitDurationSchema = {
     inputs: [
         {
+            key: "origin",
+            type: "target",
+        },
+        {
             key: "value",
             type: "number",
             label: "PF2E.Time.Duration",
             field: {
-                default: 0,
+                default: 1,
                 min: 0,
             },
         },

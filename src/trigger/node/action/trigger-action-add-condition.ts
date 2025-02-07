@@ -1,6 +1,6 @@
 import { addConditionSchema } from "schema/action/schema-action-add-condition";
 import { TriggerNode } from "../trigger-node";
-import { ConditionSlug, EffectSource, GrantItemSource } from "module-helpers";
+import { ConditionSlug, DurationData, EffectSource, GrantItemSource } from "module-helpers";
 import { getUnilimitedDuration } from "helpers/helpers-duration";
 
 class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
@@ -14,12 +14,15 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
 
         const isValued = condition.system.value.isValued;
         const source = condition.toObject();
-        const duration = (await this.get("duration")) ?? getUnilimitedDuration();
         const actor = (await this.get("target"))?.actor ?? this.target.actor;
         const counter = (await this.get("counter")) ?? 1;
         const unided = !!(await this.get("unidentified"));
 
-        if (duration.unit === "unlimited" && !unided) {
+        const duration = (await this.get("duration")) ?? getUnilimitedDuration();
+        const context = duration.context;
+        delete duration.context;
+
+        if (duration.unit === "unlimited" && !unided && !origin) {
             if (isValued && counter > 1) {
                 source.system.value.value = Math.max(counter, 1);
             }
@@ -47,7 +50,9 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
                 ];
             }
 
-            const effect: PreCreate<EffectSource> = {
+            const effect: PreCreate<EffectSource> & {
+                system: { unidentified: boolean; duration: DurationData };
+            } = {
                 type: "effect",
                 name: `${prefix}: ${condition.name}`,
                 img: condition.img,
@@ -56,6 +61,7 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
                     unidentified: unided,
                     duration,
                     rules: [rule],
+                    context,
                 },
             };
 

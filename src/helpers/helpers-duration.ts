@@ -1,6 +1,4 @@
-import { DurationData } from "module-helpers";
-
-function getUnilimitedDuration(): DurationData {
+function getUnilimitedDuration(): TriggerDurationData {
     return {
         expiry: null,
         unit: "unlimited",
