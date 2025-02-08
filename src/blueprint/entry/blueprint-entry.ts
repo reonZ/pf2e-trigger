@@ -16,6 +16,7 @@ const ENTRY_COLORS: Record<NonNullable<NodeEntryType>, number> = {
     target: 0xf5115d,
     text: 0xf79442,
     uuid: 0xf79442,
+    label: 0x000000,
 };
 
 abstract class BlueprintEntry<

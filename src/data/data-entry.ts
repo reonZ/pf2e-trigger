@@ -12,6 +12,7 @@ const NODE_ENTRY_TYPES = [
     "roll",
     "dc",
     "duration",
+    "label",
 ] as const;
 
 const NODE_ENTRY_VALUE_TYPE = {
@@ -96,7 +97,9 @@ function processEntryIds(ids: unknown): NodeEntryId[] {
 function getNodeEntryValueList(): { value: CustomNodeEntryType; label: string }[] {
     return R.pipe(
         NODE_ENTRY_TYPES,
-        R.filter((value): value is CustomNodeEntryType => !["select", "uuid"].includes(value)),
+        R.filter(
+            (value): value is CustomNodeEntryType => !["select", "uuid", "label"].includes(value)
+        ),
         R.map((value) => {
             return {
                 value,

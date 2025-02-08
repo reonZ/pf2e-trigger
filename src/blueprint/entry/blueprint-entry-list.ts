@@ -9,6 +9,7 @@ import { BlueprintTextEntry } from "./blueprint-entry-input/blueprint-entry-text
 import { BlueprintUuidEntry } from "./blueprint-entry-input/blueprint-entry-uuid";
 import { BlueprintValueEntry } from "./blueprint-entry-value";
 import { BlueprintConverterEntry } from "./blueprint-entry-converter";
+import { BlueprintLabelEntry } from "./blueprint-entry-label";
 
 const INPUTS_ENTRIES = {
     number: BlueprintNumberEntry,
@@ -27,6 +28,8 @@ function createBlueprintEntry(
         "type" in schema && schema.type
             ? node.type === "converter"
                 ? new BlueprintConverterEntry(category, node, schema)
+                : schema.type === "label"
+                ? new BlueprintLabelEntry(category, node, schema)
                 : category === "inputs" &&
                   isNonNullNodeEntryType(schema.type) &&
                   node.type !== "splitter" &&

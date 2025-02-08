@@ -26,7 +26,8 @@ declare global {
         | NodeSchemaItem
         | NodeSchemaRoll
         | NodeSchemaDc
-        | NodeSchemaDuration;
+        | NodeSchemaDuration
+        | NodeSchemaLabel;
 
     type NodeSchemaText = BaseNodeSchemaInputEntry<"text", NodeSchemaTextField>;
     type NodeSchemaTextField = {
@@ -45,6 +46,8 @@ declare global {
     type NodeSchemaBooleanField = {
         default?: boolean;
     };
+
+    type NodeSchemaLabel = BaseNodeSchemaInputEntry<"label">;
 
     type NodeSchemaTarget = BaseNodeSchemaInputEntry<"target">;
     type NodeSchemaItem = BaseNodeSchemaInputEntry<"item">;
