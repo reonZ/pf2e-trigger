@@ -36,6 +36,7 @@ import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
 import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
+import { AddImmunityTriggerNode } from "./action/trigger-action-add-immunity";
 
 const NODES = {
     action: {
@@ -46,6 +47,7 @@ const NODES = {
         "roll-damage": RollDamageTriggerAction,
         "roll-save": RollSaveTriggerAction,
         "console-log": ConsoleLogTriggerNode,
+        "add-immunity": AddImmunityTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

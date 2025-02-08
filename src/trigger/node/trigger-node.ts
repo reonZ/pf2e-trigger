@@ -51,6 +51,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#trigger.name;
     }
 
+    get localizePath(): string {
+        return `node.${this.type}.${this.key}`;
+    }
+
     setVariable<K extends ExtractSchemaVariableKeys<TSchema>>(
         key: K,
         value: ExtractSchemaVariableValueType<TSchema, K>
@@ -74,9 +78,11 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return otherNode?.execute();
     }
 
-    async get<K extends ExtractSchemaInputs<TSchema>>(
+    get<K extends ExtractSchemaInputs<TSchema>>(
         key: K
-    ): Promise<ExtractSchemaInputValueType<TSchema, K>> {
+    ): Promise<ExtractSchemaInputValueType<TSchema, K>>;
+    get(key: string): Promise<NodeEntryValue>;
+    async get(key: string) {
         if (this.#get[key]) {
             return this.#get[key]();
         }

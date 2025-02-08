@@ -103,6 +103,10 @@
                 },
                 "console-log": {
                     "title": "Console Log"
+                },
+                "add-immunity": {
+                    "title": "Add Immunity",
+                    "immunity": "Immunity"
                 }
             },
             "event": {
@@ -280,7 +284,8 @@
             "connection": "Add Connection",
             "add-input": "Add Input",
             "add-output": "Add Output",
-            "copy-id": "Copy ID"
+            "copy-id": "Copy ID",
+            "add-exception": "Add Exception"
         }
     }
 }
