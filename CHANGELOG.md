@@ -1,3 +1,7 @@
+# 0.12.1 (beta)
+
+-   fix conditions always being created behind a locking effect even when not using any options requiring it
+
 # 0.12.0 (beta)
 
 -   add `Origin` to the `Duration (Unit)` value node
