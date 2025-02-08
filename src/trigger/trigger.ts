@@ -16,6 +16,10 @@ class Trigger {
         this.#data = data;
     }
 
+    get name(): string {
+        return this.#data.name;
+    }
+
     get id(): string {
         return this.#data.id;
     }

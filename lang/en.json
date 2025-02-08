@@ -100,6 +100,9 @@
                 },
                 "add-persistent": {
                     "title": "Add Persistent Damage"
+                },
+                "console-log": {
+                    "title": "Console Log"
                 }
             },
             "event": {

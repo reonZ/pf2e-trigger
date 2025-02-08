@@ -25,6 +25,7 @@ import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
 import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
 import { addPersistentSchema } from "./action/schema-action-add-persistent";
+import { consoleLogSchema } from "./action/schema-action-console-log";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -36,6 +37,7 @@ const SCHEMAS = {
         "remove-item": removeItemSchema,
         "roll-save": rollSaveSchema,
         "roll-damage": rollDamageSchema,
+        "console-log": consoleLogSchema,
     },
     condition: {
         "has-item": hasItemSchema,

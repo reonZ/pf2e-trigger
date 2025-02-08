@@ -26,6 +26,7 @@ import { MacroBlueprintNode } from "./macro/blueprint-macro";
 import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
 import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
+import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -35,6 +36,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "remove-item": RemoveItemBlueprintNode,
         "roll-save": RollSaveBlueprintNode,
         "roll-damage": RollDamageBlueprintNode,
+        "console-log": ConsoleLogBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

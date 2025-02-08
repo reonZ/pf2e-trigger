@@ -47,6 +47,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.custom;
     }
 
+    get triggerName() {
+        return this.#trigger.name;
+    }
+
     setVariable<K extends ExtractSchemaVariableKeys<TSchema>>(
         key: K,
         value: ExtractSchemaVariableValueType<TSchema, K>
