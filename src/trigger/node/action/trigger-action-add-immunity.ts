@@ -1,4 +1,4 @@
-import { executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-effect";
 import { ImmunityType, imagePath, localize } from "module-helpers";
 import { addImmunitySchema } from "schema/action/schema-action-add-immunity";
 import { TriggerNode } from "../trigger-node";
@@ -18,7 +18,7 @@ class AddImmunityTriggerNode extends TriggerNode<typeof addImmunitySchema> {
             };
 
             for (const { key } of this.custom.inputs) {
-                const value = (await this.get(key)) as ImmunityType;
+                const value = await this.get(key);
                 rule.exceptions.push(value);
             }
 
@@ -31,6 +31,14 @@ class AddImmunityTriggerNode extends TriggerNode<typeof addImmunitySchema> {
 
         return this.send("out");
     }
+}
+
+interface AddImmunityTriggerNode extends TriggerNode<typeof addImmunitySchema> {
+    get<K extends ExtractSchemaInputs<typeof addImmunitySchema>>(
+        key: K
+    ): Promise<ExtractSchemaInputValueType<typeof addImmunitySchema, K>>;
+    get(key: string): Promise<ImmunityType>;
+    get(key: string): NodeEntryValue;
 }
 
 export { AddImmunityTriggerNode };

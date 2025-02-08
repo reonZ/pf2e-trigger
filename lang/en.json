@@ -109,6 +109,13 @@
                 },
                 "remove-immunity": {
                     "title": "Remove Immunity"
+                },
+                "add-temporary": {
+                    "title": "Add Trigger Effect",
+                    "effect": "Trigger"
+                },
+                "remove-temporary": {
+                    "title": "Remove Trigger Effect"
                 }
             },
             "event": {
@@ -271,7 +278,8 @@
                 "boolean": "Boolean",
                 "text": "Text",
                 "number": "Number",
-                "aura-source": "Aura Source"
+                "aura-source": "Aura Source",
+                "temporary-slug": "trigger-slug"
             }
         },
         "select": {

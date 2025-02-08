@@ -1,4 +1,4 @@
-import { executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-effect";
 import { ConditionSlug, GrantItemSource } from "module-helpers";
 import { addConditionSchema } from "schema/action/schema-action-add-condition";
 import { TriggerNode } from "../trigger-node";

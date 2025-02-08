@@ -1,7 +1,7 @@
 import { removeImmunitySchema } from "schema/action/schema-action-remove-immunity";
 import { TriggerNode } from "../trigger-node";
 import { ImmunityType, imagePath, localize } from "module-helpers";
-import { executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-effect";
 
 class RemoveImmunityTriggerNode extends TriggerNode<typeof removeImmunitySchema> {
     async execute(): Promise<void> {

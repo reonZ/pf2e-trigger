@@ -28,6 +28,8 @@ import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persis
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
 import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
 import { AddImmunityBlueprintNode } from "./action/blueprint-action-add-immunity";
+import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-temporary";
+import { RemoveTemporartyBlueprintNode } from "./action/blueprint-action-remove-temporary";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -40,6 +42,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "console-log": ConsoleLogBlueprintNode,
         "add-immunity": AddImmunityBlueprintNode,
         "remove-immunity": RemoveItemBlueprintNode,
+        "add-temporary": AddTemporartyBlueprintNode,
+        "remove-temporary": RemoveTemporartyBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

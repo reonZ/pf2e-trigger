@@ -1,7 +1,7 @@
 import { simpleDurationSchema } from "schema/value/schema-value-duration-simple";
 import { TriggerNode } from "../trigger-node";
 import { DurationData } from "module-helpers";
-import { getUnilimitedDuration } from "helpers/helpers-duration";
+import { getUnilimitedDuration } from "helpers/helpers-effect";
 
 class SimpleDurationTriggerValue extends TriggerNode<typeof simpleDurationSchema> {
     #cached: DurationData | undefined;

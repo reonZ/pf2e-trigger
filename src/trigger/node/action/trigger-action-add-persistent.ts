@@ -1,4 +1,4 @@
-import { executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-effect";
 import {
     DamageType,
     GrantItemSource,

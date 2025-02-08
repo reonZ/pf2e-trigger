@@ -11,7 +11,7 @@ class ConsoleLogTriggerNode extends TriggerNode {
             )
         );
 
-        console.group(this.triggerName);
+        console.group(this.trigger.name);
         console.log(`${localize("node.entry.this")}:`, target);
 
         for (const [label, value] of entries) {

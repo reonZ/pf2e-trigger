@@ -1,5 +1,6 @@
 import { ActorPF2e, EffectSource, ItemSourcePF2e } from "module-helpers";
 import { TriggerNode } from "trigger/node/trigger-node";
+import { Trigger } from "trigger/trigger";
 
 function getUnilimitedDuration(): TriggerDurationData {
     return {
@@ -13,7 +14,7 @@ async function executeWithDuration(
     node: TriggerNode,
     actor: ActorPF2e,
     getUnlimitedSource: (() => Promise<ItemSourcePF2e>) | null,
-    getEffectData: () => Promise<{ name: string; img: ImageFilePath; rule: object }>
+    getEffectData: () => Promise<{ name: string; img: ImageFilePath; rule?: object; slug?: string }>
 ) {
     const unided = !!(await (node as DurationNode).get("unidentified"));
     const duration = (await (node as DurationNode).get("duration")) ?? getUnilimitedDuration();
@@ -24,10 +25,10 @@ async function executeWithDuration(
         const source = await getUnlimitedSource();
         await actor.createEmbeddedDocuments("Item", [source]);
     } else {
-        const { name, img, rule } = await getEffectData();
+        const { name, img, rule, slug } = await getEffectData();
 
         const prefix = game.i18n.localize("TYPES.Item.effect");
-        const effect: PreCreate<EffectSource> = {
+        const effect: PreCreate<EffectSource> & { system: DeepPartial<EffectSource["system"]> } = {
             type: "effect",
             name: `${prefix}: ${name}`,
             img,
@@ -35,17 +36,28 @@ async function executeWithDuration(
                 tokenIcon: { show: false },
                 unidentified: unided,
                 duration,
-                rules: [rule],
                 context,
             },
         };
 
+        if (rule) {
+            effect.system.rules = [rule];
+        }
+
+        if (slug) {
+            effect.system.slug = slug;
+        }
+
         await actor.createEmbeddedDocuments("Item", [effect]);
     }
+}
+
+function getTriggerSlug(trigger: Trigger, slug: string) {
+    return game.pf2e.system.sluggify(`${trigger.id}-${slug}`);
 }
 
 type DurationNode = TriggerNode<{
     inputs: [{ key: "duration"; type: "duration" }, { key: "unidentified"; type: "boolean" }];
 }>;
 
-export { executeWithDuration, getUnilimitedDuration };
+export { executeWithDuration, getUnilimitedDuration, getTriggerSlug };

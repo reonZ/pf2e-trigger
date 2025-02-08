@@ -28,6 +28,8 @@ import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { consoleLogSchema } from "./action/schema-action-console-log";
 import { addImmunitySchema } from "./action/schema-action-add-immunity";
 import { removeImmunitySchema } from "./action/schema-action-remove-immunity";
+import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
+import { addTemporarySchema } from "./action/schema-action-add-temporary";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -42,6 +44,8 @@ const SCHEMAS = {
         "console-log": consoleLogSchema,
         "add-immunity": addImmunitySchema,
         "remove-immunity": removeImmunitySchema,
+        "add-temporary": addTemporarySchema,
+        "remove-temporary": removeTemporarySchema,
     },
     condition: {
         "has-item": hasItemSchema,

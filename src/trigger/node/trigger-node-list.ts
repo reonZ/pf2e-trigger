@@ -38,6 +38,8 @@ import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
 import { AddImmunityTriggerNode } from "./action/trigger-action-add-immunity";
 import { RemoveImmunityTriggerNode } from "./action/trigger-action-remove-immunity";
+import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
+import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
 
 const NODES = {
     action: {
@@ -50,6 +52,8 @@ const NODES = {
         "console-log": ConsoleLogTriggerNode,
         "add-immunity": AddImmunityTriggerNode,
         "remove-immunity": RemoveImmunityTriggerNode,
+        "add-temporary": AddTemporaryTriggerNode,
+        "remove-temporary": RemoveTemporaryTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerCondition,
