@@ -30,6 +30,7 @@ import { addImmunitySchema } from "./action/schema-action-add-immunity";
 import { removeImmunitySchema } from "./action/schema-action-remove-immunity";
 import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { addTemporarySchema } from "./action/schema-action-add-temporary";
+import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -51,6 +52,7 @@ const SCHEMAS = {
         "has-item": hasItemSchema,
         "has-option": hasOptionsSchema,
         "inside-aura": insideAuraSchema,
+        "has-temporary": hasTemporarySchema,
     },
     converter: {
         "item-converter": itemConverterSchema,

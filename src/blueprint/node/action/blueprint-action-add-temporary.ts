@@ -1,6 +1,6 @@
+import { getTriggerOption } from "helpers/helpers-effect";
 import { info } from "module-helpers";
 import { ActionBlueprintNode } from "./blueprint-action";
-import { getTriggerSlug } from "helpers/helpers-effect";
 
 class AddTemporartyBlueprintNode extends ActionBlueprintNode {
     get icon(): PreciseText {
@@ -18,7 +18,7 @@ class AddTemporartyBlueprintNode extends ActionBlueprintNode {
     protected async _onContext(context: string): Promise<void> {
         switch (context) {
             case "copy-option": {
-                const slug = `self:effect:${getTriggerSlug(this.trigger, this.slug)}`;
+                const slug = getTriggerOption(this.trigger, this.slug);
                 game.clipboard.copyPlainText(slug);
                 return info(`${this.localizePath}.copied`);
             }

@@ -112,7 +112,8 @@
                 },
                 "add-temporary": {
                     "title": "Add Trigger Effect",
-                    "effect": "Trigger"
+                    "effect": "Trigger",
+                    "copied": "The trigger effect roll option has been copied to the clipboard."
                 },
                 "remove-temporary": {
                     "title": "Remove Trigger Effect"
@@ -159,6 +160,9 @@
                 },
                 "has-option": {
                     "title": "Has RollOption"
+                },
+                "has-temporary": {
+                    "title": "Has Trigger Effect"
                 }
             },
             "value": {
@@ -295,7 +299,8 @@
             "add-input": "Add Input",
             "add-output": "Add Output",
             "copy-id": "Copy ID",
-            "add-exception": "Add Exception"
+            "add-exception": "Add Exception",
+            "copy-option": "Copy Roll Option"
         }
     }
 }

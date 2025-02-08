@@ -40,6 +40,7 @@ import { AddImmunityTriggerNode } from "./action/trigger-action-add-immunity";
 import { RemoveImmunityTriggerNode } from "./action/trigger-action-remove-immunity";
 import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
 import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
+import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
 
 const NODES = {
     action: {
@@ -59,6 +60,7 @@ const NODES = {
         "has-item": HasItemTriggerCondition,
         "has-option": HasOptionTriggerCondition,
         "inside-aura": InsideAuraTriggerCondition,
+        "has-temporary": HasTemporaryTriggerCondition,
     },
     converter: {
         "item-converter": ItemTriggerConverter,

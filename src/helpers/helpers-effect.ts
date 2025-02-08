@@ -56,8 +56,12 @@ function getTriggerSlug(trigger: Trigger | TriggerData, slug: string) {
     return game.pf2e.system.sluggify(`${trigger.id}-${slug}`);
 }
 
+function getTriggerOption(trigger: Trigger | TriggerData, slug: string) {
+    return `self:effect:${getTriggerSlug(trigger, slug)}`;
+}
+
 type DurationNode = TriggerNode<{
     inputs: [{ key: "duration"; type: "duration" }, { key: "unidentified"; type: "boolean" }];
 }>;
 
-export { executeWithDuration, getUnilimitedDuration, getTriggerSlug };
+export { executeWithDuration, getUnilimitedDuration, getTriggerOption, getTriggerSlug };
