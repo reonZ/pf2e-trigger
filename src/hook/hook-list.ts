@@ -1,4 +1,5 @@
 import { AuraHook } from "./aura/hook-aura";
+import { ExecuteHook } from "./execute/hook-execute";
 import { TestHook } from "./test/hook-test";
 import { CreateTokenHook } from "./token.ts/hook-token-create";
 import { DeleteTokenHook } from "./token.ts/hook-token.delete";
@@ -12,6 +13,7 @@ const HOOKS = [
     new CreateTokenHook(),
     new DeleteTokenHook(),
     new TestHook(),
+    new ExecuteHook(),
 ];
 
 function prepareHooks(triggers: TriggerData[]) {

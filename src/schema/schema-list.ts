@@ -53,6 +53,7 @@ const SCHEMAS = {
         "test-event": eventSchema,
         "aura-enter": auraEventSchema,
         "aura-leave": auraEventSchema,
+        "execute-event": eventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

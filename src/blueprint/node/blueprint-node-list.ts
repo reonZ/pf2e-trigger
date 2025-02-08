@@ -25,6 +25,7 @@ import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { MacroBlueprintNode } from "./macro/blueprint-macro";
 import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
 import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
+import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -51,6 +52,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "turn-start": StartTurnBlueprintNode,
         "aura-enter": EnterAuraBlueprintNode,
         "aura-leave": LeaveAuraBlueprintNode,
+        "execute-event": ExecuteEventBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

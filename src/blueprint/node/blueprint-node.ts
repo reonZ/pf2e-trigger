@@ -73,6 +73,10 @@ abstract class BlueprintNode extends PIXI.Container {
         return this.#blueprint;
     }
 
+    get trigger(): TriggerData {
+        return this.blueprint.trigger!;
+    }
+
     get stage(): PIXI.Container {
         return this.blueprint.stage;
     }

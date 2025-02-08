@@ -1,4 +1,4 @@
-import { NODE_ENTRY_VALUE_TYPE, isNonNullNodeEntryType } from "data/data-entry";
+import { isValidCustomEntry } from "data/data-entry";
 import { MODULE, MacroPF2e, R } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 
@@ -39,11 +39,7 @@ class TriggerMacro extends TriggerNode {
 
                 const output = outputs[i];
 
-                if (
-                    (isNonNullNodeEntryType(output.type) &&
-                        value.constructor === NODE_ENTRY_VALUE_TYPE[output.type]) ||
-                    R.isPlainObject(value)
-                ) {
+                if (isValidCustomEntry(output.type, value)) {
                     this.setVariable(output.key, value as any);
                 }
             }

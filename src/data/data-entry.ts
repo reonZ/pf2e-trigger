@@ -231,6 +231,13 @@ function isNonNullNodeEntryType(type: NodeEntryType): type is NonNullNodeEntryTy
     return NONNULL_NODE_ENTRY_TYPES.includes(type as any);
 }
 
+function isValidCustomEntry(type: NonNullable<NodeEntryType>, value: any) {
+    return (
+        (isNonNullNodeEntryType(type) && value.constructor === NODE_ENTRY_VALUE_TYPE[type]) ||
+        R.isPlainObject(value)
+    );
+}
+
 function isNonNullNodeEntry<T extends NodeSchemaInput | NodeSchemaBridge>(
     entry: T
 ): entry is NonNullNodeEntry<Exclude<T, NodeSchemaBridge>> {
@@ -272,6 +279,7 @@ export {
     isEntryId,
     isNonNullNodeEntry,
     isNonNullNodeEntryType,
+    isValidCustomEntry,
     processDataInputs,
     processDataOutputs,
     segmentEntryId,

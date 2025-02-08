@@ -126,6 +126,10 @@
                 "test-event": {
                     "title": "Test Event",
                     "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
+                },
+                "execute-event": {
+                    "title": "Execute Event",
+                    "copied": "The trigger ID has been copied to the clipboard."
                 }
             },
             "condition": {
@@ -272,7 +276,8 @@
             "duplicate": "Duplicate",
             "connection": "Add Connection",
             "add-input": "Add Input",
-            "add-output": "Add Output"
+            "add-output": "Add Output",
+            "copy-id": "Copy ID"
         }
     }
 }

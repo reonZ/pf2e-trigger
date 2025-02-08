@@ -15,6 +15,7 @@ declare global {
     type TriggerExecuteOptions = {
         this: TargetDocuments;
         aura?: ActorAura;
+        values?: any;
         variables: Record<NodeEntryId, TriggerEntryValue>;
     };
 

@@ -3,7 +3,9 @@ import { getNodeEntryValueList } from "data/data-entry";
 import { R, localize, render, templateLocalize, waitDialog } from "module-helpers";
 import { BlueprintNode } from "./blueprint-node";
 
-function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(BaseClass: TBase) {
+function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
+    BaseClass: TBase
+): TBase & AbstractConstructorOf<CustomBlueprintNode> {
     abstract class CustomBlueprintNode extends BaseClass {
         getConnectionContext(entry: BlueprintEntry): string[] {
             if (entry.isBridgeEntry()) {
@@ -74,7 +76,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(Base
             this.refresh(true);
         }
 
-        protected async _onContext(context: string): Promise<void> {
+        async _onContext(context: string): Promise<void> {
             switch (context) {
                 case "add-input": {
                     return this.addEntry("inputs");
@@ -90,7 +92,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(Base
             }
         }
 
-        protected async _onConnectionContext(entry: BlueprintEntry, context: string) {
+        async _onConnectionContext(entry: BlueprintEntry, context: string) {
             switch (context) {
                 case "remove": {
                     return this.removeEntry(entry);
@@ -104,6 +106,15 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(Base
     }
 
     return CustomBlueprintNode;
+}
+
+interface CustomBlueprintNode {
+    addEntry(category: NodeEntryCategory): Promise<void>;
+    getConnectionContext(entry: BlueprintEntry): string[];
+    removeEntry(entry: BlueprintEntry): void;
+
+    _onContext(context: string): Promise<void>;
+    _onConnectionContext(entry: BlueprintEntry, context: string): Promise<void>;
 }
 
 export { makeCustomNode };

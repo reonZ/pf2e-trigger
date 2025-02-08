@@ -7,6 +7,10 @@ abstract class TriggerHook {
     protected abstract _activate(): void;
     protected abstract _disable(): void;
 
+    getTrigger(id: string): TriggerData | undefined {
+        return this.#triggers.find((trigger) => trigger.id === id);
+    }
+
     initialize(triggers: TriggerData[]) {
         this.#triggers.length = 0;
 
@@ -59,20 +63,23 @@ abstract class TriggerHook {
 
         for (const data of this.#triggers) {
             if (event && data.event.key !== event) continue;
+            await this.executeTrigger(data, options);
+        }
+    }
 
-            const trigger = new Trigger(data);
-            const auras = await trigger.insideAura?.getActorAuras(options.this.actor);
+    protected async executeTrigger(data: TriggerData, options: PreTriggerExecuteOptions) {
+        const trigger = new Trigger(data);
+        const auras = await trigger.insideAura?.getActorAuras(options.this.actor);
 
-            if (auras?.length) {
-                for (const aura of auras) {
-                    await trigger.execute({
-                        ...options,
-                        aura,
-                    });
-                }
-            } else {
-                await trigger.execute(options);
+        if (auras?.length) {
+            for (const aura of auras) {
+                await trigger.execute({
+                    ...options,
+                    aura,
+                });
             }
+        } else {
+            await trigger.execute(options);
         }
     }
 }

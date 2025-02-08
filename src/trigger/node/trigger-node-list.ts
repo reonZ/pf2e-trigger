@@ -34,6 +34,7 @@ import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { SuccessTriggerSplitter } from "./splitter/trigger-splitter-success";
 import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
 import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
+import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 
 const NODES = {
     action: {
@@ -60,6 +61,7 @@ const NODES = {
         "token-delete": TriggerEvent,
         "turn-end": TriggerEvent,
         "turn-start": TriggerEvent,
+        "execute-event": ExecuteTriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,
