@@ -10,13 +10,13 @@ function getUnilimitedDuration(): TriggerDurationData {
 }
 
 async function executeWithDuration(
-    node: DurationNode,
+    node: TriggerNode,
     actor: ActorPF2e,
     getUnlimitedSource: (() => Promise<ItemSourcePF2e>) | null,
     getEffectData: () => Promise<{ name: string; img: ImageFilePath; rule: object }>
 ) {
-    const unided = !!(await node.get("unidentified"));
-    const duration = (await node.get("duration")) ?? getUnilimitedDuration();
+    const unided = !!(await (node as DurationNode).get("unidentified"));
+    const duration = (await (node as DurationNode).get("duration")) ?? getUnilimitedDuration();
     const context = duration.context;
     delete duration.context;
 
@@ -49,4 +49,3 @@ type DurationNode = TriggerNode<{
 }>;
 
 export { executeWithDuration, getUnilimitedDuration };
-export type { DurationNode };

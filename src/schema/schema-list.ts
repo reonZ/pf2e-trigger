@@ -27,6 +27,7 @@ import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
 import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { consoleLogSchema } from "./action/schema-action-console-log";
 import { addImmunitySchema } from "./action/schema-action-add-immunity";
+import { removeImmunitySchema } from "./action/schema-action-remove-immunity";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -40,6 +41,7 @@ const SCHEMAS = {
         "roll-damage": rollDamageSchema,
         "console-log": consoleLogSchema,
         "add-immunity": addImmunitySchema,
+        "remove-immunity": removeImmunitySchema,
     },
     condition: {
         "has-item": hasItemSchema,

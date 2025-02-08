@@ -1,4 +1,4 @@
-import { DurationNode, executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-duration";
 import { ConditionSlug, GrantItemSource } from "module-helpers";
 import { addConditionSchema } from "schema/action/schema-action-add-condition";
 import { TriggerNode } from "../trigger-node";
@@ -17,7 +17,7 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
         const counter = (await this.get("counter")) ?? 1;
 
         await executeWithDuration(
-            this as DurationNode,
+            this,
             actor,
             async () => {
                 const source = condition.toObject();

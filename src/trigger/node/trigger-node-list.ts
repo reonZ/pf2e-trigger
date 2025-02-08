@@ -37,6 +37,7 @@ import { AddPersistentTriggerAction } from "./action/trigger-action-add-persiste
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
 import { AddImmunityTriggerNode } from "./action/trigger-action-add-immunity";
+import { RemoveImmunityTriggerNode } from "./action/trigger-action-remove-immunity";
 
 const NODES = {
     action: {
@@ -48,6 +49,7 @@ const NODES = {
         "roll-save": RollSaveTriggerAction,
         "console-log": ConsoleLogTriggerNode,
         "add-immunity": AddImmunityTriggerNode,
+        "remove-immunity": RemoveImmunityTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

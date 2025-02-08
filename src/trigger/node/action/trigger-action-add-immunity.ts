@@ -1,4 +1,4 @@
-import { DurationNode, executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-duration";
 import { ImmunityType, imagePath, localize } from "module-helpers";
 import { addImmunitySchema } from "schema/action/schema-action-add-immunity";
 import { TriggerNode } from "../trigger-node";
@@ -8,8 +8,8 @@ class AddImmunityTriggerNode extends TriggerNode<typeof addImmunitySchema> {
         const type = (await this.get("type")) as ImmunityType;
         const target = (await this.get("target")) ?? this.target;
 
-        executeWithDuration(this as DurationNode, target.actor, null, async () => {
-            const immunity = localize(this.localizePath, "immunity");
+        executeWithDuration(this, target.actor, null, async () => {
+            const title = localize(this.localizePath, "title");
 
             const rule: { key: "Immunity"; type: ImmunityType; exceptions: ImmunityType[] } = {
                 key: "Immunity",
@@ -24,7 +24,7 @@ class AddImmunityTriggerNode extends TriggerNode<typeof addImmunitySchema> {
 
             return {
                 rule,
-                name: `${immunity} (${type})`,
+                name: `${title} (${type})`,
                 img: imagePath("ankh", "svg"),
             };
         });

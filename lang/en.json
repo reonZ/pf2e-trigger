@@ -105,8 +105,10 @@
                     "title": "Console Log"
                 },
                 "add-immunity": {
-                    "title": "Add Immunity",
-                    "immunity": "Immunity"
+                    "title": "Add Immunity"
+                },
+                "remove-immunity": {
+                    "title": "Remove Immunity"
                 }
             },
             "event": {

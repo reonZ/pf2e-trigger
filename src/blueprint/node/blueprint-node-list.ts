@@ -39,6 +39,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "roll-damage": RollDamageBlueprintNode,
         "console-log": ConsoleLogBlueprintNode,
         "add-immunity": AddImmunityBlueprintNode,
+        "remove-immunity": RemoveItemBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

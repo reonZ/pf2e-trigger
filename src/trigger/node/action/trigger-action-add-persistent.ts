@@ -1,4 +1,4 @@
-import { DurationNode, executeWithDuration } from "helpers/helpers-duration";
+import { executeWithDuration } from "helpers/helpers-duration";
 import {
     DamageType,
     GrantItemSource,
@@ -14,7 +14,7 @@ class AddPersistentTriggerAction extends TriggerNode<typeof addPersistentSchema>
         const condition = game.pf2e.ConditionManager.conditions.get("persistent-damage")!;
 
         await executeWithDuration(
-            this as DurationNode,
+            this,
             actor,
             async () => {
                 return condition.toObject();
