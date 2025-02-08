@@ -25,6 +25,7 @@ class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
             origin: dcData?.target?.actor,
             item: rollData?.item as ItemPF2e<ActorPF2e>,
             extraRollOptions: getExtraRollOptions(rollData),
+            skipDialog: true,
         });
 
         this.setVariable("result", roll?.degreeOfSuccess ?? 2);

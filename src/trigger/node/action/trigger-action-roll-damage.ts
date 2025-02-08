@@ -17,6 +17,7 @@ class RollDamageTriggerAction extends TriggerNode<typeof rollDamageSchema> {
             target: (await this.get("target")) ?? this.options.this,
             origin: rollData?.origin,
             extraRollOptions: getExtraRollOptions(rollData),
+            skipDialog: true,
         });
 
         return this.send("out");
