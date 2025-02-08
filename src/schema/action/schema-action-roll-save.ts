@@ -1,6 +1,6 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const rollSaveSchema = createAction(
+const rollSaveSchema = createActionSchema(
     [
         {
             key: "save",

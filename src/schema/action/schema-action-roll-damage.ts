@@ -1,6 +1,6 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const rollDamageSchema = createAction([
+const rollDamageSchema = createActionSchema([
     { key: "formula", type: "text", field: true },
     { key: "roll", type: "roll" },
 ] as const);

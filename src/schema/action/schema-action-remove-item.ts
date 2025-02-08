@@ -1,5 +1,5 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const removeItemSchema = createAction([{ key: "item", type: "item" }] as const);
+const removeItemSchema = createActionSchema([{ key: "item", type: "item" }] as const);
 
 export { removeItemSchema };

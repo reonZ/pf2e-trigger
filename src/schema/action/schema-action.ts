@@ -1,4 +1,4 @@
-function createAction<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable>(
+function createActionSchema<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable>(
     inputs: TInput[],
     variables?: TOutput[]
 ): ActionSchema<TInput, TOutput> {
@@ -10,4 +10,4 @@ function createAction<TInput extends NodeSchemaInput, TOutput extends NodeSchema
     } as const;
 }
 
-export { createAction };
+export { createActionSchema };

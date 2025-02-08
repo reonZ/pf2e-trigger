@@ -1,6 +1,6 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const addItemSchema = createAction(
+const addItemSchema = createActionSchema(
     [
         { key: "item", type: "item" },
         { key: "duplicate", type: "boolean", field: { default: true } },

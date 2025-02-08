@@ -1,6 +1,6 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const addConditionSchema = createAction([
+const addConditionSchema = createActionSchema([
     {
         key: "condition",
         type: "select",

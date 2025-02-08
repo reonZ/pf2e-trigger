@@ -1,6 +1,6 @@
-import { createAction } from "./schema-action";
+import { createActionSchema } from "./schema-action";
 
-const addPersistentSchema = createAction([
+const addPersistentSchema = createActionSchema([
     {
         key: "die",
         type: "text",
