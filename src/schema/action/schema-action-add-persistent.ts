@@ -22,7 +22,6 @@ const addPersistentSchema = createActionSchema([
         field: {
             default: 15,
             min: 0,
-            max: 30,
         },
     },
     {

@@ -3,7 +3,11 @@ const dcValueSchema = {
         {
             key: "dc",
             type: "number",
-            field: { min: 0, max: 30, step: 1, default: 15 },
+            field: {
+                min: 0,
+                step: 1,
+                default: 15,
+            },
         },
     ],
     variables: [{ key: "dc", type: "dc" }],
