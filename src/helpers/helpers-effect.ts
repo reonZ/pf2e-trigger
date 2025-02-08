@@ -52,7 +52,7 @@ async function executeWithDuration(
     }
 }
 
-function getTriggerSlug(trigger: Trigger, slug: string) {
+function getTriggerSlug(trigger: Trigger | TriggerData, slug: string) {
     return game.pf2e.system.sluggify(`${trigger.id}-${slug}`);
 }
 
