@@ -50,5 +50,6 @@
     &.input-select {
         transform: translateX(-0.5px);
         border-radius: 0;
+        overflow: hidden auto;
     }
 }
