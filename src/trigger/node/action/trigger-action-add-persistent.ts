@@ -20,7 +20,7 @@ class AddPersistentTriggerAction extends TriggerNode<typeof addPersistentSchema>
 
         const condition = game.pf2e.ConditionManager.conditions.get("persistent-damage")!;
 
-        if (duration.unit === "unlimited" && !unided && !origin) {
+        if (duration.unit === "unlimited" && !unided && !context) {
             const source = condition.toObject();
             await actor.createEmbeddedDocuments("Item", [source]);
         } else {

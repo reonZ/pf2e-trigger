@@ -21,7 +21,7 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
         const context = duration.context;
         delete duration.context;
 
-        if (duration.unit === "unlimited" && !unided && !origin) {
+        if (duration.unit === "unlimited" && !unided && !context) {
             const source = condition.toObject();
 
             if (isValued && counter > 1) {
