@@ -1,4 +1,4 @@
-import { getDefaultInputValue, isNonNullNodeEntry } from "data/data-entry";
+import { getDefaultInputValue, getSelectOptions, isNonNullNodeEntry } from "data/data-entry";
 import { ActorPF2e, ItemPF2e, R, getItemWithSourceId } from "module-helpers";
 import { Trigger } from "trigger/trigger";
 
@@ -95,7 +95,21 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
 
                 if (otherNode) {
                     if (["value", "variable", "converter"].includes(otherNode.type)) {
-                        this.#get[key] = () => otherNode.query(key);
+                        const schema = this.schema.inputs[key] as NodeSchemaInput;
+
+                        if (schema.type === "select") {
+                            const options = R.pipe(
+                                getSelectOptions(schema.field),
+                                R.map((option) => (R.isPlainObject(option) ? option.value : option))
+                            );
+
+                            this.#get[key] = async () => {
+                                const query = ((await otherNode.query(key)) ?? "") as string;
+                                return options.includes(query) ? query : options[0];
+                            };
+                        } else {
+                            this.#get[key] = () => otherNode.query(key);
+                        }
                     } else {
                         this.#get[key] = () => this.options.variables[entryId];
                     }
