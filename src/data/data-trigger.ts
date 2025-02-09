@@ -52,18 +52,31 @@ function createTriggerData(name: string, event?: NodeEventKey): TriggerData | nu
     return processTriggerData(data);
 }
 
-function serializeTrigger(trigger: WithPartial<TriggerData, "id">): TriggerRawData {
+function serializeTrigger(
+    trigger: WithPartial<TriggerData, "id">,
+    clean?: boolean
+): TriggerRawData {
     const nodes = R.pipe(
         R.values(trigger.nodes),
         R.sortBy((node) => NODE_TYPE_ORDER[node.type])
     );
 
-    return {
+    const serialized: TriggerRawData = {
         id: trigger.id,
         name: trigger.name,
         nodes: fu.deepClone(nodes),
         disabled: trigger.disabled,
     };
+
+    if (clean) {
+        if (!trigger.isSub) {
+            delete serialized.id;
+        }
+
+        delete serialized.disabled;
+    }
+
+    return serialized;
 }
 
 function processTriggerData(

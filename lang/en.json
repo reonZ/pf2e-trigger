@@ -62,6 +62,8 @@
             }
         },
         "export-trigger": {
+            "title": "Export Trigger",
+            "has-subs": "The trigger make use of the following sub-triggers<br>Do you want to export them as well?",
             "confirm": "The trigger <strong>{name}</strong> has been copied to the clipboard."
         },
         "export-all": {
@@ -306,7 +308,7 @@
             "add-output": "Add Output",
             "copy-id": "Copy ID",
             "add-exception": "Add Exception",
-            "add-double": "Add Double",
+            "add-double": "Add Double Vs.",
             "copy-option": "Copy Roll Option"
         }
     }

@@ -1,4 +1,5 @@
 import { Blueprint } from "blueprint/blueprint";
+import { serializeTrigger } from "data/data-trigger";
 import { processTriggers } from "data/data-trigger-list";
 import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
 import {
@@ -15,6 +16,7 @@ import {
     htmlClosest,
     htmlQuery,
     htmlQueryAll,
+    info,
     localize,
     render,
     templateLocalize,
@@ -226,6 +228,58 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         }
     }
 
+    async #exportTrigger(id: string) {
+        const trigger = this.blueprint.getTrigger(id);
+        if (!trigger) return;
+
+        const serialized = [serializeTrigger(trigger, true)];
+
+        const copyToCliboard = () => {
+            const stringified = JSON.stringify(serialized);
+
+            game.clipboard.copyPlainText(stringified);
+            info("export-trigger.confirm", { name: trigger.name });
+        };
+
+        if (trigger.isSub) {
+            return copyToCliboard();
+        }
+
+        const subtriggers = R.pipe(
+            R.values(trigger.nodes),
+            R.filter((node): node is NodeData & { subId: string } => !!node.subId),
+            R.map(({ subId }) => this.blueprint.getTrigger(subId)),
+            R.filter(R.isTruthy)
+        );
+
+        if (!subtriggers.length) {
+            return copyToCliboard();
+        }
+
+        let content = localize("export-trigger.has-subs");
+
+        content += "<ul>";
+
+        for (const subtrigger of subtriggers) {
+            content += `<li>${subtrigger.name}</li>`;
+        }
+
+        content += "</ul>";
+
+        const result = await confirmDialog({
+            title: localize("export-trigger.title"),
+            content,
+        });
+
+        if (result) {
+            for (const subtrigger of subtriggers) {
+                serialized.push(serializeTrigger(subtrigger));
+            }
+        }
+
+        return copyToCliboard();
+    }
+
     #activateListeners(html: HTMLElement) {
         addListener(html, ".sidebar", "pointerenter", (event, el) => {
             if (this.#timeout) {
@@ -304,7 +358,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 }
 
                 case "export-trigger": {
-                    return this.blueprint.exportTrigger(triggerId);
+                    return this.#exportTrigger(triggerId);
                 }
             }
         });

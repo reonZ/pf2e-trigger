@@ -185,7 +185,10 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     serializeTriggers(): TriggerRawData[] {
-        return R.pipe(R.values(this.#triggers), R.map(serializeTrigger));
+        return R.pipe(
+            R.values(this.#triggers),
+            R.map((trigger) => serializeTrigger(trigger))
+        );
     }
 
     createTrigger({ name, event }: { event?: NodeEventKey; name: string }) {
@@ -294,21 +297,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         }
 
         trigger.event = this.trigger.nodes[previsouId];
-    }
-
-    exportTrigger(id: string) {
-        const trigger = this.getTrigger(id);
-        if (!trigger) return;
-
-        const serialized = serializeTrigger(trigger);
-
-        delete serialized.id;
-        delete serialized.disabled;
-
-        const stringified = `[${JSON.stringify(serialized)}]`;
-
-        game.clipboard.copyPlainText(stringified);
-        info("export-trigger.confirm", { name: trigger.name });
     }
 
     getEntry(id: NodeEntryId): BlueprintEntry | undefined {
