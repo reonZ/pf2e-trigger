@@ -10,7 +10,7 @@ function getUnilimitedDuration(): TriggerDurationData {
     };
 }
 
-async function executeWithDuration(
+async function executeEffect(
     node: TriggerNode,
     actor: ActorPF2e,
     getUnlimitedSource: (() => Promise<ItemSourcePF2e>) | null,
@@ -64,4 +64,4 @@ type DurationNode = TriggerNode<{
     inputs: [{ key: "duration"; type: "duration" }, { key: "unidentified"; type: "boolean" }];
 }>;
 
-export { executeWithDuration, getUnilimitedDuration, getTriggerOption, getTriggerSlug };
+export { executeEffect, getUnilimitedDuration, getTriggerOption, getTriggerSlug };

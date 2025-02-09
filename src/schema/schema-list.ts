@@ -26,11 +26,13 @@ import { successValueSchema } from "./value/schema-value-success";
 import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
 import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { consoleLogSchema } from "./action/schema-action-console-log";
-import { addImmunitySchema } from "./action/schema-action-add-immunity";
-import { removeImmunitySchema } from "./action/schema-action-remove-immunity";
+import { addImmunitySchema } from "./action/iwr/schema-action-add-immunity";
+import { removeImmunitySchema } from "./action/iwr/schema-action-remove-immunity";
 import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { addTemporarySchema } from "./action/schema-action-add-temporary";
 import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
+import { addResistanceSchema } from "./action/iwr/schema-action-add-resistance";
+import { addWeaknessSchema } from "./action/iwr/schema-action-add-weakness";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -47,6 +49,8 @@ const SCHEMAS = {
         "remove-immunity": removeImmunitySchema,
         "add-temporary": addTemporarySchema,
         "remove-temporary": removeTemporarySchema,
+        "add-resistance": addResistanceSchema,
+        "add-weakness": addWeaknessSchema,
     },
     condition: {
         "has-item": hasItemSchema,

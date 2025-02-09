@@ -1,4 +1,4 @@
-import { createActionSchema } from "./schema-action";
+import { createActionSchema } from "../schema-action";
 
 const removeImmunitySchema = createActionSchema([
     {

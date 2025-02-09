@@ -36,11 +36,13 @@ import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
 import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
-import { AddImmunityTriggerNode } from "./action/trigger-action-add-immunity";
-import { RemoveImmunityTriggerNode } from "./action/trigger-action-remove-immunity";
+import { AddImmunityTriggerNode } from "./action/iwr/trigger-action-add-immunity";
+import { RemoveImmunityTriggerNode } from "./action/iwr/trigger-action-remove-immunity";
 import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
 import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
 import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
+import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
+import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
 
 const NODES = {
     action: {
@@ -55,6 +57,8 @@ const NODES = {
         "remove-immunity": RemoveImmunityTriggerNode,
         "add-temporary": AddTemporaryTriggerNode,
         "remove-temporary": RemoveTemporaryTriggerNode,
+        "add-resistance": AddResistanceTriggerNode,
+        "add-weakness": AddWeaknessTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

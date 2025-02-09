@@ -27,9 +27,11 @@ import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
 import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
 import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
-import { AddImmunityBlueprintNode } from "./action/blueprint-action-add-immunity";
+import { AddImmunityBlueprintNode } from "./action/iwr/blueprint-action-add-immunity";
 import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-temporary";
 import { RemoveTemporartyBlueprintNode } from "./action/blueprint-action-remove-temporary";
+import { AddResistanceBlueprintNode } from "./action/iwr/blueprint-action-add-resistance";
+import { AddWeaknessBlueprintNode } from "./action/iwr/blueprint-action-add-weakness";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -44,6 +46,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "remove-immunity": RemoveItemBlueprintNode,
         "add-temporary": AddTemporartyBlueprintNode,
         "remove-temporary": RemoveTemporartyBlueprintNode,
+        "add-resistance": AddResistanceBlueprintNode,
+        "add-weakness": AddWeaknessBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

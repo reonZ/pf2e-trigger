@@ -117,6 +117,12 @@
                 },
                 "remove-temporary": {
                     "title": "Remove Trigger Effect"
+                },
+                "add-resistance": {
+                    "title": "Add Resistance"
+                },
+                "add-weakness": {
+                    "title": "Add Weakness"
                 }
             },
             "event": {
@@ -300,6 +306,7 @@
             "add-output": "Add Output",
             "copy-id": "Copy ID",
             "add-exception": "Add Exception",
+            "add-double": "Add Double",
             "copy-option": "Copy Roll Option"
         }
     }
