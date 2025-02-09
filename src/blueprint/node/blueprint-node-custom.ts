@@ -1,5 +1,5 @@
 import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
-import { getNodeEntryValueList } from "data/data-entry";
+import { getNodeEntryValueList, isNonNullNodeEntry } from "data/data-entry";
 import { R, localize, render, templateLocalize, waitDialog } from "module-helpers";
 import { BlueprintNode } from "./blueprint-node";
 
@@ -58,12 +58,17 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
                 return (count ?? 0) >= 1 ? `${name} ${(count ?? 0) + 1}` : name;
             })();
 
-            entries.push({
+            const entry: NodeSchemaEntry = {
                 type: result.type,
                 key: fu.randomID(),
                 label,
-            });
+            };
 
+            if (category === "inputs" && isNonNullNodeEntry(entry)) {
+                (entry as NodeSchemaInput).field = true;
+            }
+
+            entries.push(entry);
             this.refresh(true);
         }
 
