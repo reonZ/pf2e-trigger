@@ -22,11 +22,15 @@ function prepareTriggersData(): TriggerData[] {
 }
 
 function processTriggers(allTriggers: TriggerRawData[]): TriggerData[] {
-    const [subtriggers, triggers] = R.partition(allTriggers, (trigger) => {
-        return !!trigger.nodes?.some((node) => {
-            return node?.type === "subtrigger" && !R.isString(node.subId);
-        });
-    });
+    const [subtriggers, triggers] = R.pipe(
+        allTriggers,
+        R.filter((entry): entry is TriggerRawData => R.isPlainObject(entry)),
+        R.partition((trigger) => {
+            return !!trigger.nodes?.some((node) => {
+                return node?.type === "subtrigger" && !R.isString(node.subId);
+            });
+        })
+    );
 
     const processedSubtriggers = R.pipe(
         subtriggers,

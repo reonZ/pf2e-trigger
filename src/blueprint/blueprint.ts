@@ -291,14 +291,17 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return this.#nodes.get(id);
     }
 
-    addNode(node: NodeData | BlueprintNode): BlueprintNode {
-        const blueprintNode =
-            node instanceof BlueprintNode ? node : createBlueprintNode(this, node);
+    addNode(data: NodeData): BlueprintNode | undefined {
+        if (data.subId && !this.getTrigger(data.subId)) {
+            return;
+        }
 
-        this.#nodes.set(node.id, blueprintNode);
-        this.#nodesLayer.addChild(blueprintNode);
+        const node = createBlueprintNode(this, data);
 
-        return blueprintNode;
+        this.#nodes.set(data.id, node);
+        this.#nodesLayer.addChild(node);
+
+        return node;
     }
 
     createNode(dataRaw: CreateNodeData): BlueprintNode | undefined {

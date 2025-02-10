@@ -46,7 +46,8 @@ class TriggersExportMenu extends foundry.applications.api.ApplicationV2 {
                     : R.pipe(
                           R.values(trigger.nodes),
                           R.map((node) => node.subId),
-                          R.filter(R.isTruthy)
+                          R.filter(R.isTruthy),
+                          R.unique()
                       );
 
                 return {
@@ -209,6 +210,8 @@ class TriggersExportMenu extends foundry.applications.api.ApplicationV2 {
 
             game.clipboard.copyPlainText(stringified);
             info("export-all.confirm");
+
+            this.close();
         });
     }
 }

@@ -94,7 +94,13 @@
             "title": "Import Triggers",
             "yes": "Import",
             "no": "Cancel",
-            "error": "The data provided is invalid, no trigger were imported."
+            "error": "The data provided is invalid, no trigger were imported.",
+            "subtriggers": {
+                "title": "Existing Sub-Triggers",
+                "content": "Some sub-triggers with identical ID already exist.<br>Would you like to override them?",
+                "yes": "Override",
+                "no": "Cancel"
+            }
         },
         "node": {
             "action": {

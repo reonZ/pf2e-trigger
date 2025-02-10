@@ -1,6 +1,5 @@
 import { Blueprint } from "blueprint/blueprint";
-import { serializeTrigger } from "data/data-trigger";
-import { processTriggers } from "data/data-trigger-list";
+import { processTriggerData, serializeTrigger } from "data/data-trigger";
 import { TriggersExportMenu } from "export-menu";
 import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
 import {
@@ -222,13 +221,86 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 throw new Error();
             }
 
-            const validated = processTriggers(data as any);
+            const [subtriggersData, triggersData] = R.pipe(
+                data as any[],
+                R.filter((entry): entry is TriggerRawData => R.isPlainObject(entry)),
+                R.partition((trigger) => {
+                    return !!trigger.nodes?.some((node) => {
+                        return node?.type === "subtrigger" && !R.isString(node.subId);
+                    });
+                })
+            );
 
-            this.blueprint.addTriggers(validated);
+            const processedSubtriggers = R.pipe(
+                subtriggersData,
+                R.map((data) => processTriggerData(data)),
+                R.filter(R.isTruthy)
+            );
+
+            const importedSubtriggers = await this.#importSubtriggers(processedSubtriggers);
+            const blueprintSubtriggers = this.blueprint.triggers.filter((trigger) => trigger.isSub);
+
+            const processedTriggers = R.pipe(
+                triggersData,
+                R.map((data) =>
+                    processTriggerData(data, [...importedSubtriggers, ...blueprintSubtriggers])
+                ),
+                R.filter(R.isTruthy)
+            );
+
+            this.blueprint.setTrigger(null);
+            this.blueprint.addTriggers([...importedSubtriggers, ...processedTriggers]);
             this.refresh();
         } catch {
             error("import.error");
         }
+    }
+
+    async #importSubtriggers(subtriggers: TriggerData[]): Promise<TriggerData[]> {
+        const [exist, others] = R.pipe(
+            subtriggers,
+            R.partition((subtrigger) => !!this.blueprint.getTrigger(subtrigger.id))
+        );
+
+        if (!exist.length) {
+            return others;
+        }
+
+        const content =
+            localize("import.subtriggers.content") +
+            R.pipe(
+                exist,
+                R.map((subtrigger) => {
+                    return `<div>
+                        <input type="checkbox" name="${subtrigger.id}" checked>
+                        ${subtrigger.name}
+                    </div>`;
+                }),
+                R.join("")
+            );
+
+        const result = await waitDialog<Record<string, boolean>>({
+            title: localize("import.subtriggers.title"),
+            content,
+            yes: {
+                label: localize("import.subtriggers.yes"),
+            },
+            no: {
+                label: localize("import.subtriggers.no"),
+            },
+        });
+
+        if (!result) {
+            return others;
+        }
+
+        return R.pipe(
+            R.entries(result),
+            R.filter(([_, selected]) => selected),
+            R.map(([id]) => exist.find((subtrigger) => subtrigger.id === id)),
+            R.filter(R.isTruthy),
+            R.concat(others)
+        );
     }
 
     async #exportTrigger(id: string) {
