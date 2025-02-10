@@ -67,7 +67,28 @@
             "confirm": "The trigger <strong>{name}</strong> has been copied to the clipboard."
         },
         "export-all": {
-            "confirm": "The triggers have been copied to the clipboard."
+            "title": "Export Triggers",
+            "confirm": "The triggers have been copied to the clipboard.",
+            "export": "Export Selected",
+            "toggle": "Toggle All",
+            "triggers": {
+                "title": "Triggers",
+                "unselected": {
+                    "title": "Unselected Sub-Triggers",
+                    "content": "Some sub-triggers used by <strong>{name}</strong> are not selected.<br>Would you like to select them?"
+                },
+                "selected": {
+                    "title": "Selected Sub-Triggers",
+                    "content": "Some sub-triggers are no longer used by any trigger to export.<br>Would you like to unselect them?"
+                }
+            },
+            "subtriggers": {
+                "title": "Sub-Triggers",
+                "selected": {
+                    "title": "Selected Triggers",
+                    "content": "Some Triggers that use <strong>{name}</strong> are still selected.<br>Would you like to unselect them?"
+                }
+            }
         },
         "import": {
             "title": "Import Triggers",

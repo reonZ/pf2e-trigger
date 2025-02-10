@@ -1,6 +1,7 @@
 import { Blueprint } from "blueprint/blueprint";
 import { serializeTrigger } from "data/data-trigger";
 import { processTriggers } from "data/data-trigger-list";
+import { TriggersExportMenu } from "export-menu";
 import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
 import {
     ApplicationClosingOptions,
@@ -69,8 +70,10 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     protected async _prepareContext(options?: ApplicationRenderOptions): Promise<TriggersMenuData> {
-        const allTriggers = this.blueprint.triggersList ?? [];
-        const [triggers, subtriggers] = R.partition(allTriggers, (trigger) => !trigger.sub);
+        const [subtriggers, triggers] = R.partition(
+            this.blueprint.triggersList,
+            (trigger) => trigger.sub
+        );
 
         return {
             triggers,
@@ -311,7 +314,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 }
 
                 case "export-all": {
-                    return this.blueprint.exportTriggers();
+                    return new TriggersExportMenu(this.blueprint).render(true);
                 }
 
                 case "import": {
@@ -369,8 +372,8 @@ type MenuEventAction = "close-window" | "add-trigger" | "export-all" | "import" 
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
 
 type TriggersMenuData = {
-    triggers: { name: string; id: string }[];
-    subtriggers: { name: string; id: string }[];
+    triggers: ListedTrigger[];
+    subtriggers: ListedTrigger[];
     selected: Maybe<string>;
     i18n: TemplateLocalize;
 };

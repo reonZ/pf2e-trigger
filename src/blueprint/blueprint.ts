@@ -1,15 +1,15 @@
+import { segmentEntryId } from "data/data-entry";
 import { processNodeData } from "data/data-node";
 import { createTriggerData, serializeTrigger } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
-import { MODULE, R, distanceBetweenPoints, info, setSetting, subtractPoints } from "module-helpers";
+import { MODULE, R, distanceBetweenPoints, setSetting, subtractPoints } from "module-helpers";
 import { getSchema } from "schema/schema-list";
 import { BlueprintNodeConnections } from "./blueprint-connections";
+import { BlueprintEntry } from "./entry/blueprint-entry";
 import { BlueprintNodesMenu } from "./menu/blueprint-menu-nodes";
 import { BlueprintNode } from "./node/blueprint-node";
 import { createBlueprintNode } from "./node/blueprint-node-list";
 import { VariableBlueprintNode } from "./node/variable/blueprint-variable";
-import { segmentEntryId } from "data/data-entry";
-import { BlueprintEntry } from "./entry/blueprint-entry";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized: boolean = false;
@@ -65,7 +65,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
-    get triggersList(): { name: string; id: string; enabled: boolean; sub: boolean }[] {
+    get triggersList(): ListedTrigger[] {
         return R.pipe(
             R.values(this.#triggers),
             R.flatMap(({ id, name, disabled, event }) => ({
@@ -157,27 +157,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         for (const trigger of triggers) {
             this.#triggers[trigger.id] = trigger;
         }
-    }
-
-    exportTriggers() {
-        const serialized = R.pipe(
-            R.values(this.#triggers),
-            R.map((trigger) => {
-                const serialized = serializeTrigger(trigger);
-
-                if (!trigger.isSub) {
-                    delete serialized.id;
-                }
-                delete serialized.disabled;
-
-                return serialized;
-            })
-        );
-
-        const stringified = JSON.stringify(serialized);
-
-        game.clipboard.copyPlainText(stringified);
-        info("export-all.confirm");
     }
 
     saveTriggers(): Promise<TriggerRawData[]> {
