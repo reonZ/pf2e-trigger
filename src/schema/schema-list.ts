@@ -1,18 +1,27 @@
 import { R } from "module-helpers";
+import { addImmunitySchema } from "./action/iwr/schema-action-add-immunity";
+import { addResistanceSchema } from "./action/iwr/schema-action-add-resistance";
+import { addWeaknessSchema } from "./action/iwr/schema-action-add-weakness";
+import { removeImmunitySchema } from "./action/iwr/schema-action-remove-immunity";
 import { addConditionSchema } from "./action/schema-action-add-condition";
 import { addItemSchema } from "./action/schema-action-add-item";
+import { addPersistentSchema } from "./action/schema-action-add-persistent";
+import { addTemporarySchema } from "./action/schema-action-add-temporary";
+import { consoleLogSchema } from "./action/schema-action-console-log";
 import { removeItemSchema } from "./action/schema-action-remove-item";
+import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { rollDamageSchema } from "./action/schema-action-roll-damage";
 import { rollSaveSchema } from "./action/schema-action-roll-save";
 import { hasItemSchema } from "./condition/schema-condition-has-item";
 import { hasOptionsSchema } from "./condition/schema-condition-has-option";
+import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
 import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
-import { itemConverterSchema } from "./converter/schema-converter-item";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
 import { createLogicSchema } from "./logic/schema-logic";
-import { successSplitterSchema } from "./splitter/schema-splitter-success";
 import { macroSchema } from "./macro/schema-macro";
+import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
+import { successSplitterSchema } from "./splitter/schema-splitter-success";
 import { subtriggerSchema } from "./subtrigger/schema-subtrigger";
 import { outputSubtriggerSchema } from "./subtrigger/schema-subtrigger-output";
 import { dcValueSchema } from "./value/schema-value-dc";
@@ -23,16 +32,6 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
-import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
-import { addPersistentSchema } from "./action/schema-action-add-persistent";
-import { consoleLogSchema } from "./action/schema-action-console-log";
-import { addImmunitySchema } from "./action/iwr/schema-action-add-immunity";
-import { removeImmunitySchema } from "./action/iwr/schema-action-remove-immunity";
-import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
-import { addTemporarySchema } from "./action/schema-action-add-temporary";
-import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
-import { addResistanceSchema } from "./action/iwr/schema-action-add-resistance";
-import { addWeaknessSchema } from "./action/iwr/schema-action-add-weakness";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -59,7 +58,7 @@ const SCHEMAS = {
         "has-temporary": hasTemporarySchema,
     },
     converter: {
-        "item-converter": itemConverterSchema,
+        // "item-converter": itemConverterSchema,
     },
     event: {
         "turn-start": eventSchema,
