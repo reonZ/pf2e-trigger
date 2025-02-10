@@ -1,3 +1,8 @@
+# 0.13.1 (beta)
+
+-   add more checks to data validation to avoid breaking errors
+-   make sure the `Execute Event` & `Test Event` can only be executed by the active GM
+
 # 0.13.0 (beta)
 
 -   rework of the `Export` feature
