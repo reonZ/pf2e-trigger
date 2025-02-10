@@ -1,3 +1,44 @@
+# 0.13.0 (beta)
+
+-   rework of the `Export` feature
+    -   the module will warn you if the exported trigger make use of any sub-trigger and offer you to export them as well
+-   rework of the `Export All` feature
+    -   you will now be presented with an export manager window
+    -   selecting/unselecting the different triggers/sub-triggers will prompt you with different messages allowing you to automatically select/unselect the related sub-triggers/triggers
+-   rework of the `Import` feature
+    -   you will be warned if your world already has sub-triggers with the same ID as the ones you are currently importing and asked if you want to override them or not
+-   add `Execute Event` custom event node
+    -   allows you to trigger a node on demand (i.e. via macro)
+    -   accessible from `game.trigger.execute(triggerId, target, values)`
+-   add `Console Log` custom action node
+    -   will log in the console any input fed to it (plus the `Trigger Target`)
+-   add `Add Immunity`, `Add Resistance` & `Add Weakness` action nodes
+    -   create an effect hosting the associate RE on the target
+    -   the node context menu has a `Add Exception` option
+    -   the `Add Resistance` node context menu has a `Add Double Vs` option
+-   add `Remove Immunity` action node
+    -   create an effect hosting an immunity removal RE on the target
+    -   this cancel an immunity already existing on the target
+-   add `Add Trigger Effect` action node
+    -   this creates a custom effect linked to the trigger which can then be used to predicate upon
+    -   useful if you want to prevent the trigger from being executed on the target for a time
+    -   use a simple `slug`, no need to over complicate things since the effect is isolated for that trigger alone
+    -   the node context menu contains a `Copy Roll Option` option in case you ever wanted to predicate upon the effect via another way than the `Has Trigger Effect`
+-   add `Remove Trigger Effect` action node
+    -   it removes an effect added with `Add Trigger Effect` with the same `slug`
+    -   in case the effect doesn't use duration
+-   add `Has Trigger Effect` condition node
+    -   this is the node you would use to predicate upon the trigger effect from inside trigger itself
+-   remove `Item Convertor` from the list of nodes
+-   remove `dying`, `persistent-damage` & `unconcious` from the `Add Condition` action node options
+-   nodes can now have labels between connections
+-   add scrolling to select menus
+-   custom nodes inputs will now contain a field instead of being a pure connection
+-   make sure connected selects only return a valid select option value
+-   fix DC values being maxed at `30` for complete arbitrary reason
+-   fix `Roll Save` action not skipping the modifier dialog
+-   fix system bug with certain conditions using `inMemoryOnly`
+
 # 0.12.1 (beta)
 
 -   fix conditions always being created behind a locking effect even when not using any options requiring it
