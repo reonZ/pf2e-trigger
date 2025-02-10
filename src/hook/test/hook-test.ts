@@ -1,5 +1,5 @@
 import { TriggerHook } from "hook/hook";
-import { R, warn } from "module-helpers";
+import { R, userIsActiveGM, warn } from "module-helpers";
 
 class TestHook extends TriggerHook {
     get events(): NodeEventKey[] {
@@ -17,6 +17,8 @@ class TestHook extends TriggerHook {
     }
 
     #runTest() {
+        if (!userIsActiveGM()) return;
+
         const token = R.first(canvas.tokens.controlled);
         const actor = token?.actor ?? game.user.character;
 
