@@ -1,6 +1,7 @@
 import { R } from "module-helpers";
 import { processCustomSchema } from "schema/schema";
 import { processDataInputs, processDataOutputs } from "./data-entry";
+import { isNodeKey } from "schema/schema-list";
 
 const CUSTOM_TYPES = ["macro", "subtrigger"] as const;
 
@@ -21,7 +22,7 @@ function processNodeData(data: NodeRawData): NodeData | null {
         !R.isPlainObject(data) ||
         !R.isString(data.id) ||
         !isNodeType(data.type) ||
-        !R.isString(data.key) ||
+        !isNodeKey(data.type, data.key) ||
         !R.isNumber(data.x) ||
         !R.isNumber(data.y)
     ) {
