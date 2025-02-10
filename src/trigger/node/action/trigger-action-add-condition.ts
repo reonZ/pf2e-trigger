@@ -35,10 +35,11 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
                     onDeleteActions: {
                         grantee: "restrict",
                     },
-                    inMemoryOnly: true,
                 };
 
                 if (isValued && counter > 1) {
+                    rule.inMemoryOnly = true;
+
                     rule.alterations = [
                         {
                             mode: "override",
