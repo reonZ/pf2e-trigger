@@ -6,10 +6,4 @@ class CreateTokenBlueprintNode extends EventBlueprintNode {
     }
 }
 
-class DeleteTokenBlueprintNode extends EventBlueprintNode {
-    get icon(): string {
-        return "\uf2bd";
-    }
-}
-
-export { CreateTokenBlueprintNode, DeleteTokenBlueprintNode };
+export { CreateTokenBlueprintNode };

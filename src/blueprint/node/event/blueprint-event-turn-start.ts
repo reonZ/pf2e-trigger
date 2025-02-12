@@ -6,10 +6,4 @@ class StartTurnBlueprintNode extends EventBlueprintNode {
     }
 }
 
-class EndTurnBlueprintNode extends EventBlueprintNode {
-    get icon(): string {
-        return "\uf253";
-    }
-}
-
-export { EndTurnBlueprintNode, StartTurnBlueprintNode };
+export { StartTurnBlueprintNode };

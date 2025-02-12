@@ -6,10 +6,4 @@ class EnterAuraBlueprintNode extends EventBlueprintNode {
     }
 }
 
-class LeaveAuraBlueprintNode extends EventBlueprintNode {
-    get icon(): string {
-        return "\uf192";
-    }
-}
-
-export { EnterAuraBlueprintNode, LeaveAuraBlueprintNode };
+export { EnterAuraBlueprintNode };
