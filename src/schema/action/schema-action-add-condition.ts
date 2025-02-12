@@ -5,7 +5,7 @@ const addConditionSchema = createActionSchema([
         key: "condition",
         type: "select",
         field: {
-            options: "CONFIG.Pf2eTrigger.conditionTypes",
+            options: "CONFIG.Pf2eTrigger.addConditionTypes",
         },
     },
     {

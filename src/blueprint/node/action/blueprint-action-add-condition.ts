@@ -1,8 +1,8 @@
 import { ActionBlueprintNode } from "./blueprint-action";
 
 class AddConditionBlueprintNode extends ActionBlueprintNode {
-    get icon(): string {
-        return "\uf0e7";
+    get icon(): PreciseText {
+        return this.fontAwesomeIcon("\ue54d", { fontWeight: "900" });
     }
 }
 

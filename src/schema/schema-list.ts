@@ -32,6 +32,7 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
+import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -39,6 +40,7 @@ const SCHEMAS = {
     action: {
         "add-item": addItemSchema,
         "add-condition": addConditionSchema,
+        "reduce-condition": reduceConditionSchema,
         "add-persistent": addPersistentSchema,
         "remove-item": removeItemSchema,
         "roll-save": rollSaveSchema,

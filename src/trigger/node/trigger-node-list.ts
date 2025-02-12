@@ -43,10 +43,12 @@ import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-tempo
 import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
 import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
 import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
+import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
 
 const NODES = {
     action: {
         "add-condition": AddConditionTriggerNode,
+        "reduce-condition": ReduceConditionTriggerNode,
         "add-persistent": AddPersistentTriggerAction,
         "add-item": AddItemTriggerAction,
         "remove-item": RemoveItemTriggerAction,

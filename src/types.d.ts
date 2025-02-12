@@ -9,7 +9,8 @@ declare global {
 
     interface ConfigPF2e {
         Pf2eTrigger: {
-            conditionTypes: Record<string, string>;
+            addConditionTypes: Record<string, string>;
+            reduceConditionTypes: Record<string, string>;
         };
     }
 }

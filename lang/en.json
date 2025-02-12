@@ -127,6 +127,9 @@
                 "add-condition": {
                     "title": "Add Condition"
                 },
+                "reduce-condition": {
+                    "title": "Reduce Condition"
+                },
                 "add-persistent": {
                     "title": "Add Persistent Damage"
                 },
@@ -307,6 +310,7 @@
                 "option": "roll:option",
                 "result": "Result",
                 "value": "Value",
+                "min": "Minimum",
                 "aura-slug": "aura-slug",
                 "input": "Input",
                 "roll": "Roll",

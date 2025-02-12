@@ -32,11 +32,13 @@ import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-tempor
 import { RemoveTemporartyBlueprintNode } from "./action/blueprint-action-remove-temporary";
 import { AddResistanceBlueprintNode } from "./action/iwr/blueprint-action-add-resistance";
 import { AddWeaknessBlueprintNode } from "./action/iwr/blueprint-action-add-weakness";
+import { ReduceConditionBlueprintNode } from "./action/blueprint-action-reduce-condition";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
         "add-item": AddItemBlueprintNode,
         "add-condition": AddConditionBlueprintNode,
+        "reduce-condition": ReduceConditionBlueprintNode,
         "add-persistent": AddPersistentBlueprintNode,
         "remove-item": RemoveItemBlueprintNode,
         "roll-save": RollSaveBlueprintNode,
