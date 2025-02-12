@@ -1,5 +1,15 @@
 {
+    "TYPES": {
+        "RegionBehavior": {
+            "pf2e-trigger": {
+                "trigger": "PF2e Trigger"
+            }
+        }
+    },
     "pf2e-trigger": {
+        "region": {
+            "id": "Trigger Id"
+        },
         "settings": {
             "menus": {
                 "triggers-menu": {
@@ -184,6 +194,10 @@
                 },
                 "execute-event": {
                     "title": "Execute Event",
+                    "copied": "The trigger ID has been copied to the clipboard."
+                },
+                "region-event": {
+                    "title": "Scene Region",
                     "copied": "The trigger ID has been copied to the clipboard."
                 }
             },

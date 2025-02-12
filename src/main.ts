@@ -1,3 +1,4 @@
+import { PF2eTriggerBehaviorType } from "hook/region/hook-region-behavior";
 import { MODULE, R, registerSetting, registerSettingMenu, userIsGM } from "module-helpers";
 import { prepareTriggers } from "trigger/trigger-list";
 import { TriggersMenu } from "triggers-menu";
@@ -42,6 +43,9 @@ Hooks.once("setup", () => {
     };
 
     if (userIsGM()) {
+        CONFIG.RegionBehavior.dataModels[MODULE.path("trigger")] = PF2eTriggerBehaviorType;
+        CONFIG.RegionBehavior.typeIcons[MODULE.path("trigger")] = "fa-solid fa-land-mine-on";
+
         prepareTriggers();
     }
 });

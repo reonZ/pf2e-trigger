@@ -36,6 +36,7 @@ import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { EndTurnBlueprintNode } from "./event/blueprint-event-turn-end";
 import { DeleteTokenBlueprintNode } from "./event/blueprint-event-token-delete";
+import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -72,6 +73,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "aura-enter": EnterAuraBlueprintNode,
         "aura-leave": LeaveAuraBlueprintNode,
         "execute-event": ExecuteEventBlueprintNode,
+        "region-event": RegionEventBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

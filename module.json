@@ -26,6 +26,11 @@
     "styles": [
         "styles/pf2e-trigger.css"
     ],
+    "documentTypes": {
+        "RegionBehavior": {
+            "trigger": {}
+        }
+    },
     "relationships": {
         "systems": [
             {

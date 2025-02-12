@@ -67,7 +67,7 @@ abstract class TriggerHook {
         }
     }
 
-    protected async executeTrigger(data: TriggerData, options: PreTriggerExecuteOptions) {
+    async executeTrigger(data: TriggerData, options: PreTriggerExecuteOptions) {
         const trigger = new Trigger(data);
         const auras = await trigger.insideAura?.getActorAuras(options.this.actor);
 

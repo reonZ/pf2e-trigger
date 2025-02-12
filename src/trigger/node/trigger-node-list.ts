@@ -80,6 +80,7 @@ const NODES = {
         "turn-end": TriggerEvent,
         "turn-start": TriggerEvent,
         "execute-event": ExecuteTriggerEvent,
+        "region-event": TriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,
