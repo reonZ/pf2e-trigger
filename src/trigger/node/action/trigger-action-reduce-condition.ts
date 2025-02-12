@@ -4,23 +4,34 @@ import { TriggerNode } from "../trigger-node";
 
 class ReduceConditionTriggerNode extends TriggerNode<typeof reduceConditionSchema> {
     async execute(): Promise<void> {
+        const min = (await this.get("min")) ?? 0;
+        const reduction = (await this.get("value")) ?? 1;
         const slug = (await this.get("condition")) as ConditionSlug;
         const actor = (await this.get("target"))?.actor ?? this.target.actor;
-        const condition = actor.conditions.bySlug(slug).find((condition) => !condition.isLocked);
-        const current = condition?.system.value.value;
-        const min = (await this.get("min")) ?? 0;
+        const conditions = actor.conditions.bySlug(slug).filter((condition) => !condition.isLocked);
 
-        if (!condition || !R.isNumber(current) || current <= min) {
-            return this.send("out");
+        const toDelete: string[] = [];
+        const toUpdate: { id: string; value: number }[] = [];
+
+        for (const condition of conditions) {
+            const current = condition?.system.value.value;
+            if (!R.isNumber(current) || current <= min) continue;
+
+            const newValue = Math.max(current - reduction, min);
+
+            if (newValue > 0) {
+                toUpdate.push({ id: condition.id, value: newValue });
+            } else {
+                toDelete.push(condition.id);
+            }
         }
 
-        const reduction = (await this.get("value")) ?? 1;
-        const newValue = Math.max(current - reduction, min);
+        for (const { id, value } of toUpdate) {
+            await game.pf2e.ConditionManager.updateConditionValue(id, actor, value);
+        }
 
-        if (newValue > 0) {
-            await game.pf2e.ConditionManager.updateConditionValue(condition.id, actor, newValue);
-        } else {
-            await actor.deleteEmbeddedDocuments("Item", [condition.id]);
+        if (toDelete.length) {
+            await actor.deleteEmbeddedDocuments("Item", toDelete);
         }
 
         return this.send("out");
