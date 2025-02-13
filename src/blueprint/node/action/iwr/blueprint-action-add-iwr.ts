@@ -41,7 +41,7 @@ abstract class AddIwrBlueprintNode extends makeCustomNode(ActionBlueprintNode) {
     getConnectionContext(entry: BlueprintEntry): string[] {
         const context = super.getConnectionContext(entry);
         return ["type", "target"].includes(entry.key)
-            ? context.filter((x) => x !== "remove")
+            ? context.filter((x) => x !== "remove-connection")
             : context;
     }
 

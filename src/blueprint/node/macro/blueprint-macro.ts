@@ -43,7 +43,7 @@ class MacroBlueprintNode extends makeCustomNode(BlueprintNode) {
 
     getConnectionContext(entry: BlueprintEntry): string[] {
         const context = super.getConnectionContext(entry);
-        return entry.key === "uuid" ? context.filter((x) => x !== "remove") : context;
+        return entry.key === "uuid" ? context.filter((x) => x !== "remove-connection") : context;
     }
 
     _onValueUpdate(key: string): boolean {

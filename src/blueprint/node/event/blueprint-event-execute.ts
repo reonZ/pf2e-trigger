@@ -18,7 +18,7 @@ class ExecuteEventBlueprintNode extends makeCustomNode(EventBlueprintNode) {
 
     getConnectionContext(entry: BlueprintEntry): string[] {
         const context = super.getConnectionContext(entry);
-        return entry.key === "this" ? context.filter((x) => x !== "remove") : context;
+        return entry.key === "this" ? context.filter((x) => x !== "remove-connection") : context;
     }
 
     async _onContext(context: string): Promise<void> {

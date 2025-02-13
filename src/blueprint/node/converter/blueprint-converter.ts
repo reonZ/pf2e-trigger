@@ -10,7 +10,7 @@ class ConverterBlueprintNode extends BlueprintNode {
     }
 
     get context(): string[] {
-        return ["delete"];
+        return ["delete-node"];
     }
 }
 

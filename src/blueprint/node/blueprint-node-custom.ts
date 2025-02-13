@@ -11,7 +11,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             if (entry.isBridgeEntry()) {
                 return super.getConnectionContext(entry);
             }
-            return [...super.getConnectionContext(entry), "remove"];
+            return [...super.getConnectionContext(entry), "remove-connection"];
         }
 
         async addEntry(category: NodeEntryCategory) {
@@ -99,7 +99,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
 
         async _onConnectionContext(entry: BlueprintEntry, context: string) {
             switch (context) {
-                case "remove": {
+                case "remove-connection": {
                     return this.removeEntry(entry);
                 }
 

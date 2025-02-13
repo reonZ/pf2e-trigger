@@ -34,7 +34,7 @@ class VariableBlueprintNode extends BlueprintNode {
     }
 
     get context() {
-        return ["delete"];
+        return ["delete-node"];
     }
 }
 
