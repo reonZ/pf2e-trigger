@@ -1,3 +1,16 @@
+# 1.0.0
+
+-   add custom variables
+    -   you can now create variables from any output value connection
+    -   once a variable is created, you can instantiate it in your trigger as many time as needed
+-   add `Scene Region` event node
+    -   this event will be directly available in the scene region behavior list
+    -   you can use any behavior event that involve tokens
+    -   the node context menu has a `Copy ID` option to copy the trigger ID needed in the region behavior
+-   add `Reduce Condition` action node
+    -   let you reduce a non-locked condition on a target by a certain amount with the possibility of capping it to a minimum
+    -   it will reduce all the conditions of that type on the target
+
 # 0.13.1 (beta)
 
 -   add more checks to data validation to avoid breaking errors
