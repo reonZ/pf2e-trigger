@@ -4,6 +4,7 @@
         <input type="text" name="name" value="{{name}}">
     </div>
 </div>
+{{#if types}}
 <div class="form-group">
     <label>{{@root.i18n 'label'}}</label>
     <div class="form-fields">
@@ -12,3 +13,4 @@
         </select>
     </div>
 </div>
+{{/if}}

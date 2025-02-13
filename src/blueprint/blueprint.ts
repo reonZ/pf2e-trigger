@@ -2,7 +2,18 @@ import { segmentEntryId } from "data/data-entry";
 import { processNodeData } from "data/data-node";
 import { createTriggerData, serializeTrigger } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
-import { MODULE, R, distanceBetweenPoints, setSetting, subtractPoints } from "module-helpers";
+import {
+    MODULE,
+    R,
+    distanceBetweenPoints,
+    info,
+    localize,
+    render,
+    setSetting,
+    subtractPoints,
+    templateLocalize,
+    waitDialog,
+} from "module-helpers";
 import { getSchema } from "schema/schema-list";
 import { BlueprintNodeConnections } from "./blueprint-connections";
 import { BlueprintEntry } from "./entry/blueprint-entry";
@@ -370,10 +381,58 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         delete this.trigger?.nodes[id];
     }
 
+    async addVariable(entry: BlueprintEntry) {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
+        const result = await waitDialog<{ name: string }>(
+            {
+                title: localize("add-variable.title"),
+                focus: "[name='name']",
+                content: await render("add-entry", {
+                    i18n: templateLocalize("add-variable"),
+                }),
+                yes: {
+                    label: localize("add-variable.yes"),
+                    icon: "fa-solid fa-check",
+                },
+                no: {
+                    label: localize("add-variable.no"),
+                    icon: "fa-solid fa-xmark",
+                },
+            },
+            { animation: false }
+        );
+
+        if (!result) return;
+
+        const name = result.name.trim() || entry.label;
+
+        trigger.variables[entry.id] = name;
+        info("add-variable.confirm", { name });
+    }
+
+    removeVariable(entry: BlueprintEntry) {
+        const trigger = this.trigger;
+        const entryId = entry.id;
+        if (!trigger || !(entryId in trigger.variables)) return;
+
+        delete trigger.variables[entryId];
+
+        for (const node of this.nodes) {
+            if (node instanceof VariableBlueprintNode && node.variableId === entryId) {
+                this.deleteNode(node.id);
+            }
+        }
+    }
+
     deleteVariables(
         nodeId: string,
         { skipThis, variableKey }: { skipThis?: boolean; variableKey?: string } = {}
     ) {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
         for (const otherNode of this.nodes) {
             if (
                 otherNode instanceof VariableBlueprintNode &&
@@ -382,6 +441,14 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 !(skipThis && otherNode.variableKey === "this")
             ) {
                 this.deleteNode(otherNode.id);
+            }
+        }
+
+        for (const entryId of R.keys(trigger.variables)) {
+            const seg = segmentEntryId(entryId);
+
+            if (seg.nodeId === nodeId) {
+                delete trigger.variables[entryId];
             }
         }
     }

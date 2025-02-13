@@ -11,6 +11,7 @@ type BaseTriggerData = {
     id: string;
     name: string;
     disabled: boolean;
+    variables: Record<NodeEntryId, string>;
 };
 
 declare global {

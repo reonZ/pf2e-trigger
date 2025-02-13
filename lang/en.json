@@ -50,6 +50,13 @@
             "yes": "Add",
             "no": "Cancel"
         },
+        "add-variable": {
+            "title": "Create Variable",
+            "name": "Variable Label",
+            "yes": "Create",
+            "no": "Cancel",
+            "confirm": "The variable <strong>{name}</strong> was created."
+        },
         "trigger-dialog": {
             "label": "Event Type",
             "name": "Trigger Name",
@@ -340,21 +347,22 @@
             }
         },
         "select": {
-            "delete": "Delete",
+            "delete-node": "Delete Node",
             "disconnect": "Disconnect",
-            "remove": "Remove",
+            "remove-connection": "Remove Entry",
             "all": "All",
             "allies": "Allies",
             "enemies": "Enemies",
-            "convert": "Convert",
-            "duplicate": "Duplicate",
-            "connection": "Add Connection",
+            "convert": "Convert Node",
+            "duplicate": "Duplicate Node",
             "add-input": "Add Input",
             "add-output": "Add Output",
             "copy-id": "Copy ID",
             "add-exception": "Add Exception",
             "add-double": "Add Double Vs.",
-            "copy-option": "Copy Roll Option"
+            "copy-option": "Copy Roll Option",
+            "add-variable": "Create Variable",
+            "remove-variable": "Delete Variable"
         }
     }
 }

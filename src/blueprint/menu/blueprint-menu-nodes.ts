@@ -101,30 +101,48 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             return [];
         }
 
-        return R.pipe(
+        const nodesVariables: DataNode[] = R.pipe(
             R.values(trigger.nodes),
             R.flatMap((node): DataNode[] => {
                 const schema = getSchema(node);
-                const variables: DataNode[] = [];
+                if (!schema.unique) return [];
 
-                if (schema.unique) {
-                    for (const { key, label, type } of schema.variables) {
-                        if (entry && !haveCompatibleEntryType(entry, { type })) continue;
+                return R.pipe(
+                    schema.variables,
+                    R.map(({ key, label, type }): DataNode | undefined => {
+                        if (entry && !haveCompatibleEntryType(entry, { type })) return;
 
                         const entryLabel = localize("node", label ? "variable" : "entry", key);
-                        variables.push({
+
+                        return {
                             type: "variable",
-                            key: `${node.id}.outputs.${key}.${type}.${entryLabel}` satisfies BlueprintMenuVariableKey,
                             label: entryLabel,
-                        });
-                    }
-                }
-
-                // TODO add custom variables too from node.custom
-
-                return variables;
+                            key: `${node.id}.outputs.${key}.${type}.${entryLabel}` satisfies BlueprintMenuVariableKey,
+                        };
+                    }),
+                    R.filter(R.isTruthy)
+                );
             })
         );
+
+        const triggerNodes: DataNode[] = R.pipe(
+            R.entries(trigger.variables),
+            R.map(([entryId, label]): DataNode | undefined => {
+                const entry = this.blueprint.getEntry(entryId);
+                if (!entry || !entry.type) return;
+
+                const entryLabel = label.trim() || entry.label;
+
+                return {
+                    type: "variable",
+                    label: entryLabel,
+                    key: `${entry.node.id}.outputs.${entry.key}.${entry.type}.${entryLabel}` satisfies BlueprintMenuVariableKey,
+                };
+            }),
+            R.filter(R.isTruthy)
+        );
+
+        return [...nodesVariables, ...triggerNodes];
     }
 
     #getSubtriggers(): DataNode[] {

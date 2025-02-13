@@ -200,6 +200,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         const result = await waitDialog({
             title: localize("import.title"),
             content: "<textarea></textarea>",
+            focus: "textarea",
             yes: {
                 label: localize("import.yes"),
                 icon: "fa-solid fa-file-import",

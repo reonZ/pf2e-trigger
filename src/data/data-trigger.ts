@@ -20,6 +20,7 @@ function createTriggerData(name: string, event?: NodeEventKey): TriggerData | nu
         name,
         disabled: false,
         nodes: [],
+        variables: {},
     };
 
     if (event) {
@@ -66,6 +67,7 @@ function serializeTrigger(
         name: trigger.name,
         nodes: fu.deepClone(nodes),
         disabled: trigger.disabled,
+        variables: trigger.variables,
     };
 
     if (clean) {
@@ -144,6 +146,7 @@ function processTriggerData(
         aura,
         disabled: !!triggerData.disabled,
         isSub: event.type === "subtrigger" && !event.subId,
+        variables: triggerData.variables ?? {},
     };
 }
 

@@ -20,6 +20,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             const result = await waitDialog<{ name: string; type: CustomNodeEntryType }>(
                 {
                     title: localize("add-entry", category),
+                    focus: "[name='name']",
                     content: await render("add-entry", {
                         types,
                         i18n: templateLocalize("add-entry"),

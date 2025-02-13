@@ -82,7 +82,7 @@ abstract class BlueprintNode extends PIXI.Container {
     }
 
     get context(): string[] {
-        return this.schema.unique ? ["delete"] : ["duplicate", "delete"];
+        return this.schema.unique ? ["delete-node"] : ["duplicate", "delete-node"];
     }
 
     get icon(): PIXI.Sprite | string | null {
@@ -264,11 +264,19 @@ abstract class BlueprintNode extends PIXI.Container {
     getConnectionContext(entry: BlueprintEntry): string[] {
         const context: string[] = [];
 
-        if (entry.category === "outputs" && !entry.isBridgeEntry()) {
-            const schema = this.schema;
+        if (
+            this.type !== "variable" &&
+            entry.category === "outputs" &&
+            !entry.isBridgeEntry() &&
+            (!this.schema.unique ||
+                !this.schema.variables.some((variable) => variable.key === entry.key))
+        ) {
+            const entryId = entry.id;
 
-            if (!schema.unique) {
-                // TODO create variable
+            if (entryId in this.trigger.variables) {
+                context.push("remove-variable");
+            } else {
+                context.push("add-variable");
             }
         }
 
@@ -285,7 +293,7 @@ abstract class BlueprintNode extends PIXI.Container {
 
     protected async _onContext(context: string) {
         switch (context) {
-            case "delete": {
+            case "delete-node": {
                 return this.blueprint.deleteNode(this.id);
             }
 
@@ -299,6 +307,14 @@ abstract class BlueprintNode extends PIXI.Container {
         switch (context) {
             case "disconnect": {
                 return entry.removeConnections();
+            }
+
+            case "add-variable": {
+                return this.blueprint.addVariable(entry);
+            }
+
+            case "remove-variable": {
+                return this.blueprint.removeVariable(entry);
             }
         }
     }
