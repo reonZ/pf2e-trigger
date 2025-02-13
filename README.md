@@ -4,11 +4,11 @@
 
 This module helps you generate triggers by pairing events with conditions and actions. You can find the menu to create the triggers in the settings.
 
-![](./images/blueprint.webp)
+![](./images/demo.webp)
 
-<!-- # WIKI
+# WIKI
 
-You can find all the details about this module in its [WIKI](https://github.com/reonZ/pf2e-trigger/wiki) -->
+You can find all the details about this module in its [WIKI](https://github.com/reonZ/pf2e-trigger/wiki)
 
 # CHANGELOG
 
