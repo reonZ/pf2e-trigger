@@ -13,3 +13,11 @@ You can find all the details about this module in its [WIKI](https://github.com/
 # CHANGELOG
 
 You can see the changelog [HERE](https://github.com/reonZ/pf2e-trigger/blob/master/CHANGELOG.md)
+
+# LICENSE
+
+The following icons are provided by [Lorc](https://lorcblog.blogspot.com/) under the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license
+
+-   https://game-icons.net/1x1/lorc/ankh.html
+-   https://game-icons.net/1x1/lorc/broken-heart.html
+-   https://game-icons.net/1x1/lorc/clockwork.html
