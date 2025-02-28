@@ -3,8 +3,8 @@ import { TriggerNode } from "../trigger-node";
 
 class BooleanTriggerSplitter extends TriggerNode<typeof booleanSplitterSchema> {
     async execute(): Promise<void> {
-        const input = !!(await this.get("input"));
-        return this.send(input ? "true" : "false");
+        const value = !!(await this.get("boolean"));
+        return this.send(value ? "true" : "false");
     }
 }
 

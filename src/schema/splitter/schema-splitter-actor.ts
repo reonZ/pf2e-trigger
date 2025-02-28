@@ -7,7 +7,7 @@ const actorSplitterSchema = {
     ],
     inputs: [
         {
-            key: "input",
+            key: "target",
             type: "target",
         },
     ],

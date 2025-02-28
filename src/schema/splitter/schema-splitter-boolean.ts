@@ -5,7 +5,7 @@ const booleanSplitterSchema = {
     outs: booleanSchemaOuts,
     inputs: [
         {
-            key: "input",
+            key: "boolean",
             type: "boolean",
             field: false,
         },

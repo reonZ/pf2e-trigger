@@ -20,7 +20,7 @@ const successSplitterSchema = {
     ],
     inputs: [
         {
-            key: "input",
+            key: "result",
             type: "number",
             field: {
                 default: 2,

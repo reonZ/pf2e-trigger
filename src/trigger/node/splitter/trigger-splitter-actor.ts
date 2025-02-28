@@ -3,7 +3,7 @@ import { TriggerNode } from "../trigger-node";
 
 class ActorTriggerSplitter extends TriggerNode<typeof actorSplitterSchema> {
     async execute(): Promise<void> {
-        const { actor } = (await this.get("input")) ?? this.target;
+        const { actor } = (await this.get("target")) ?? this.target;
 
         if (actor) {
             this.setVariable("name", actor.name);

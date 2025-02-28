@@ -4,8 +4,8 @@ import { ZeroToThree, isDegreeOfSuccessNumber } from "module-helpers";
 
 class SuccessTriggerSplitter extends TriggerNode<typeof successSplitterSchema> {
     async execute(): Promise<void> {
-        const input = await this.get("input");
-        const value = isDegreeOfSuccessNumber(input) ? input : 2;
+        const result = await this.get("result");
+        const value = isDegreeOfSuccessNumber(result) ? result : 2;
 
         return this.send(String(value) as `${ZeroToThree}`);
     }

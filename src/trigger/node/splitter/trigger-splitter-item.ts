@@ -4,15 +4,12 @@ import { R } from "module-helpers";
 
 class ItemTriggerSplitter extends TriggerNode<typeof itemSplitterSchema> {
     async execute(): Promise<void> {
-        const input = await this.get("input");
+        const item = await this.get("item");
 
-        if (input) {
-            this.setVariable("name", input.name);
-            this.setVariable("slug", input.slug ?? game.pf2e.system.sluggify(input.name));
-            this.setVariable(
-                "level",
-                "level" in input && R.isNumber(input.level) ? input.level : 0
-            );
+        if (item) {
+            this.setVariable("name", item.name);
+            this.setVariable("slug", item.slug ?? game.pf2e.system.sluggify(item.name));
+            this.setVariable("level", "level" in item && R.isNumber(item.level) ? item.level : 0);
         }
 
         this.send("out");

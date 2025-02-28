@@ -7,7 +7,7 @@ const itemSplitterSchema = {
     ],
     inputs: [
         {
-            key: "input",
+            key: "item",
             type: "item",
         },
     ],
