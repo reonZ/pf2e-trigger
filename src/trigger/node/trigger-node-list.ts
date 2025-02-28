@@ -45,6 +45,7 @@ import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resist
 import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
 import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
 import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
+import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
 
 const NODES = {
     action: {
@@ -97,6 +98,7 @@ const NODES = {
         "success-splitter": SuccessTriggerSplitter,
         "boolean-splitter": BooleanTriggerSplitter,
         "item-splitter": ItemTriggerSplitter,
+        "actor-splitter": ActorTriggerSplitter,
     },
     subtrigger: {
         "subtrigger-input": InputSubtrigger,

@@ -289,7 +289,10 @@
                     "title": "Boolean"
                 },
                 "item-splitter": {
-                    "title": "Item"
+                    "title": "Item Data"
+                },
+                "actor-splitter": {
+                    "title": "Actor Data"
                 }
             },
             "subtrigger": {
