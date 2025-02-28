@@ -44,6 +44,7 @@ import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-
 import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
 import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
 import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
+import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
 
 const NODES = {
     action: {
@@ -95,6 +96,7 @@ const NODES = {
     splitter: {
         "success-splitter": SuccessTriggerSplitter,
         "boolean-splitter": BooleanTriggerSplitter,
+        "item-splitter": ItemTriggerSplitter,
     },
     subtrigger: {
         "subtrigger-input": InputSubtrigger,

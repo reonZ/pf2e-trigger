@@ -287,6 +287,9 @@
                 },
                 "boolean-splitter": {
                     "title": "Boolean"
+                },
+                "item-splitter": {
+                    "title": "Item"
                 }
             },
             "subtrigger": {
@@ -343,7 +346,10 @@
                 "text": "Text",
                 "number": "Number",
                 "aura-source": "Aura Source",
-                "temporary-slug": "trigger-slug"
+                "temporary-slug": "trigger-slug",
+                "name": "Name",
+                "slug": "Slug",
+                "level": "Level"
             }
         },
         "select": {

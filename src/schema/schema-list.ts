@@ -33,6 +33,7 @@ import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
 import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
+import { itemSplitterSchema } from "./splitter/schema-splitter-item";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -86,6 +87,7 @@ const SCHEMAS = {
     splitter: {
         "success-splitter": successSplitterSchema,
         "boolean-splitter": booleanSplitterSchema,
+        "item-splitter": itemSplitterSchema,
     },
     subtrigger: {
         "subtrigger-input": eventSchema,

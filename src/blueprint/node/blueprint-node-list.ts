@@ -88,6 +88,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     splitter: {
         "success-splitter": SplitterBlueprintNode,
         "boolean-splitter": SplitterBlueprintNode,
+        "item-splitter": SplitterBlueprintNode,
     },
     subtrigger: {
         "subtrigger-input": InputSubtriggerBlueprintNode,
