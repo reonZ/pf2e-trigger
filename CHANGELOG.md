@@ -1,3 +1,13 @@
+# 1.1.0
+
+-   add `Collapse` button to the top right of the triggers menu window
+    -   the `Expand` button then shows in the top left corner of your browser
+-   add `Actor Data` splitter node
+    -   it extract some data from the target actor: `Name` and `Level`
+-   add `Item Data` splitter node
+    -   it extract some data from the item: `Name`, `Slug` and `Level`
+-   rename splitters input to match the type instead of "input"
+
 # 1.0.0
 
 -   add custom variables
