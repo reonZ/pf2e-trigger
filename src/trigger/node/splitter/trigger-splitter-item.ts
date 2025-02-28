@@ -6,11 +6,12 @@ class ItemTriggerSplitter extends TriggerNode<typeof itemSplitterSchema> {
     async execute(): Promise<void> {
         const item = await this.get("item");
 
-        if (item) {
-            this.setVariable("name", item.name);
-            this.setVariable("slug", item.slug ?? game.pf2e.system.sluggify(item.name));
-            this.setVariable("level", "level" in item && R.isNumber(item.level) ? item.level : 0);
-        }
+        this.setVariable("name", item?.name ?? "");
+        this.setVariable("slug", item ? item.slug ?? game.pf2e.system.sluggify(item.name) : "");
+        this.setVariable(
+            "level",
+            item && "level" in item && R.isNumber(item.level) ? item.level : 0
+        );
 
         this.send("out");
     }

@@ -5,10 +5,8 @@ class ActorTriggerSplitter extends TriggerNode<typeof actorSplitterSchema> {
     async execute(): Promise<void> {
         const { actor } = (await this.get("target")) ?? this.target;
 
-        if (actor) {
-            this.setVariable("name", actor.name);
-            this.setVariable("level", actor.level);
-        }
+        this.setVariable("name", actor.name);
+        this.setVariable("level", actor.level);
 
         this.send("out");
     }
