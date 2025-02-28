@@ -372,7 +372,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             }, 200);
         });
 
-        addListenerAll(html, ".header [data-action]", (event, el) => {
+        addListenerAll(html, "[data-action]", (event, el) => {
             switch (el.dataset.action as MenuEventAction) {
                 case "add-trigger": {
                     return this.#addTrigger();
@@ -392,6 +392,16 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
                 case "import": {
                     this.#import();
+                    return;
+                }
+
+                case "collapse-window": {
+                    html.classList.add("collapsed");
+                    return;
+                }
+
+                case "expand-window": {
+                    html.classList.remove("collapsed");
                     return;
                 }
             }
@@ -441,7 +451,15 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 }
 
-type MenuEventAction = "close-window" | "add-trigger" | "export-all" | "import" | "add-subtrigger";
+type MenuEventAction =
+    | "close-window"
+    | "add-trigger"
+    | "export-all"
+    | "import"
+    | "add-subtrigger"
+    | "collapse-window"
+    | "expand-window";
+
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
 
 type TriggersMenuData = {

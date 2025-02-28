@@ -1,6 +1,8 @@
 #pf2e-trigger-triggers-menu {
     --width: calc(100% - var(--sidebar-width) - 12px);
     --height: calc(100% - 10px);
+    --collapsed-width: 1.875em;
+    --collapsed-height: 1.813em;
 
     height: var(--height);
     max-height: var(--height);
@@ -176,6 +178,36 @@
         border: 1px solid var(--color-border-dark);
 
         &:empty {
+            display: none;
+        }
+    }
+
+    .collapse,
+    .expand {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.3em 0.5em;
+        background: #0000002e;
+        border-bottom-left-radius: 4px;
+        width: var(--collapsed-width);
+        height: var(--collapsed-height);
+    }
+
+    &.collapsed {
+        max-width: var(--collapsed-width);
+        max-height: var(--collapsed-height);
+
+        .collapse,
+        .sidebar,
+        .trigger-title,
+        canvas {
+            display: none;
+        }
+    }
+
+    &:not(.collapsed) {
+        .expand {
             display: none;
         }
     }
