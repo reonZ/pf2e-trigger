@@ -35,7 +35,7 @@
                             <i class="fa-solid fa-file-export"></i>
                         </a>
                         <a data-action="delete-trigger"
-                            data-tooltip="{{@root.i18n.path 'trigger.delete.title'}}">
+                            data-tooltip="{{@root.i18n.path 'trigger.delete'}}">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </div>
@@ -80,8 +80,17 @@
 </div>
 <div class="trigger-title"></div>
 <div class="collapse" data-tooltip="Collapse">
-    <a data-action="collapse-window"><i class="fa-solid fa-compress"></i></a>
 </div>
-<div class="expand" data-tooltip="Expand">
-    <a data-action="expand-window"><i class="fa-solid fa-expand"></i></a>
+<div class="window-controls">
+    <a data-action="save-triggers" data-tooltip="{{@root.i18n 'save'}}">
+        <i class="fa-solid fa-floppy-disk"></i>
+    </a>
+    <a data-action="collapse-window" data-tooltip="{{@root.i18n 'collapse'}}">
+        <i class="fa-solid fa-compress"></i>
+    </a>
+</div>
+<div class="window-collapsed">
+    <a data-action="expand-window" data-tooltip="{{@root.i18n 'expand'}}">
+        <i class="fa-solid fa-expand"></i>
+    </a>
 </div>

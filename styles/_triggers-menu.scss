@@ -1,8 +1,6 @@
 #pf2e-trigger-triggers-menu {
     --width: calc(100% - var(--sidebar-width) - 12px);
     --height: calc(100% - 10px);
-    --collapsed-width: 1.875em;
-    --collapsed-height: 1.813em;
 
     height: var(--height);
     max-height: var(--height);
@@ -182,32 +180,33 @@
         }
     }
 
-    .collapse,
-    .expand {
+    .window-controls,
+    .window-collapsed {
+        padding: 0.3em 0.5em;
+        font-size: 1.2em;
+    }
+
+    .window-controls {
         position: absolute;
         top: 0;
         right: 0;
-        padding: 0.3em 0.5em;
         background: #0000002e;
-        border-bottom-left-radius: 4px;
-        width: var(--collapsed-width);
-        height: var(--collapsed-height);
+        border-bottom-left-radius: 5px;
+        display: flex;
+        gap: 0.6em;
     }
 
     &.collapsed {
-        max-width: var(--collapsed-width);
-        max-height: var(--collapsed-height);
+        max-width: fit-content;
+        max-height: fit-content;
 
-        .collapse,
-        .sidebar,
-        .trigger-title,
-        canvas {
+        > *:not(.window-collapsed) {
             display: none;
         }
     }
 
     &:not(.collapsed) {
-        .expand {
+        .window-collapsed {
             display: none;
         }
     }

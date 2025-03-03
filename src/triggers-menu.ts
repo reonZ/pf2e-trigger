@@ -134,13 +134,23 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     async #closeAndSave() {
-        const result = await confirmDialog(
+        const result = await waitDialog(
             {
-                title: localize("triggers-menu.save.title"),
-                content: localize("triggers-menu.save.prompt"),
+                title: localize("close-window.title"),
+                content: localize("close-window.content"),
+                yes: {
+                    label: localize("close-window.save"),
+                    icon: "fa-solid fa-floppy-disk",
+                },
+                no: {
+                    label: localize("close-window.close"),
+                    icon: "fa-solid fa-floppy-disk-circle-xmark",
+                },
             },
             { animation: false }
         );
+
+        if (result === null) return;
 
         if (result) {
             this.blueprint.saveTriggers();
@@ -149,14 +159,30 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         this.close();
     }
 
+    async #saveTriggers() {
+        const result = await confirmDialog(
+            {
+                title: localize("save-triggers.title"),
+                content: localize("save-triggers.content"),
+            },
+            { animation: false }
+        );
+
+        if (!result) return;
+
+        await this.blueprint.saveTriggers();
+
+        this.render();
+    }
+
     async #deleteTrigger(id: string) {
         const trigger = this.blueprint.getTrigger(id);
         if (!trigger) return;
 
         const result = await confirmDialog(
             {
-                title: localize("triggers-menu.trigger.delete.title"),
-                content: localize("triggers-menu.trigger.delete.prompt", trigger),
+                title: localize("delete-trigger.title"),
+                content: localize("delete-trigger.content", trigger),
             },
             { animation: false }
         );
@@ -404,6 +430,11 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     html.classList.remove("collapsed");
                     return;
                 }
+
+                case "save-triggers": {
+                    this.#saveTriggers();
+                    return;
+                }
             }
         });
 
@@ -453,6 +484,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 
 type MenuEventAction =
     | "close-window"
+    | "save-triggers"
     | "add-trigger"
     | "export-all"
     | "import"
