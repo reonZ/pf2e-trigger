@@ -349,6 +349,7 @@
                 "false": "False",
                 "item": "Item",
                 "uuid": "Source UUID",
+                "uuid-simple": "UUID",
                 "option": "roll:option",
                 "result": "Result",
                 "value": "Value",

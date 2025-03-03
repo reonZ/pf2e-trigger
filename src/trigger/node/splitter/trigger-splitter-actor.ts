@@ -6,6 +6,7 @@ class ActorTriggerSplitter extends TriggerNode<typeof actorSplitterSchema> {
         const { actor } = (await this.get("target")) ?? this.target;
 
         this.setVariable("name", actor.name);
+        this.setVariable("uuid", actor.uuid);
         this.setVariable("level", actor.level);
 
         this.send("out");
