@@ -6,7 +6,6 @@ const addTemporarySchema = createActionSchema([
         type: "text",
         label: "identifier",
         field: true,
-        connection: false,
     },
     {
         key: "unidentified",

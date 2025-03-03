@@ -6,7 +6,6 @@ const removeTemporarySchema = createActionSchema([
         type: "text",
         label: "identifier",
         field: true,
-        connection: false,
     },
 ] as const);
 

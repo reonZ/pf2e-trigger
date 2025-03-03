@@ -6,7 +6,6 @@ const hasTemporarySchema = createConditionSchema([
         type: "text",
         label: "identifier",
         field: true,
-        connection: false,
     },
 ] as const);
 
