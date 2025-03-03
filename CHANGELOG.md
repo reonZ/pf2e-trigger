@@ -1,3 +1,21 @@
+# 1.2.0
+
+-   change some of the window tooltips
+-   modify the `Close Window` popup content and behavior
+    -   clicking the `x` will now cancel the closing of the triggers window
+-   rename the `trigger-slug` field to `identifier` for `Trigger Effect` related nodes
+    -   the field really never required a slug but any text to identify the effect
+    -   you can now also connect the field with another node
+-   add `Save Triggers` button to the top right corner of the window
+    -   allows saving the triggers without having to close the window
+    -   this should also (hopefully) make it clear to people that triggers need to be saved before they can be used
+-   add `Reset Triggers` button to the top right corner of the window
+    -   will reset your triggers to their last saved state
+-   add `UUID` output to the `Actor Data` & `Item Data` splitter nodes
+    -   this could be used as an identifier to narrow down the context of a `Trigger Effect`, allowing conditional logic against a specific actor/item instead of the whole trigger
+-   fix not being able to connect connections with the same value type to other connection types
+    -   the module internally distinguish `text`, `uuid` and `select` entries while all 3 are technically `string`, this fix not being able to connect them with each others even though it was always intended (they even have the same color)
+
 # 1.1.0
 
 -   add `Collapse` button to the top right of the triggers menu window
