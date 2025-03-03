@@ -21,6 +21,11 @@ const itemSplitterSchema = {
             type: "text",
         },
         {
+            key: "uuid",
+            type: "uuid",
+            label: "uuid-simple",
+        },
+        {
             key: "level",
             type: "number",
         },
