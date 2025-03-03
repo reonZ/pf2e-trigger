@@ -364,7 +364,7 @@
                 "text": "Text",
                 "number": "Number",
                 "aura-source": "Aura Source",
-                "temporary-slug": "trigger-slug",
+                "identifier": "identifier",
                 "name": "Name",
                 "slug": "Slug",
                 "level": "Level"

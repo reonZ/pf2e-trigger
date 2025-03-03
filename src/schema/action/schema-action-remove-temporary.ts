@@ -4,7 +4,7 @@ const removeTemporarySchema = createActionSchema([
     {
         key: "slug",
         type: "text",
-        label: "temporary-slug",
+        label: "identifier",
         field: true,
         connection: false,
     },
