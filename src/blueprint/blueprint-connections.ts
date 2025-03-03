@@ -182,7 +182,7 @@ class BlueprintNodeConnections extends PIXI.Container<PIXI.Graphics> {
     }
 
     #connectToEntry(origin: BlueprintEntry, target: BlueprintEntry) {
-        if (target.type === origin.type) {
+        if (haveSameEntryType(target, origin)) {
             return this.#onConnected(origin, target);
         }
 
