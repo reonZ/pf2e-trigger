@@ -29,6 +29,7 @@
             "collapse": "Collapse Window",
             "expand": "Expand Triggers Window",
             "save": "Save Triggers",
+            "reset": "Reset Triggers",
             "trigger": {
                 "add": "Create Trigger",
                 "export": "Export Trigger",
@@ -47,6 +48,10 @@
         "save-triggers": {
             "title": "Save Triggers",
             "content": "Are you sure you want to save your triggers?"
+        },
+        "reset-triggers": {
+            "title": "Reset Triggers",
+            "content": "Are you sure you want to reset your triggers to their last saved state?"
         },
         "delete-trigger": {
             "title": "Delete Trigger",

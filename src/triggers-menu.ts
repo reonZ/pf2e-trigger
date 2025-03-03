@@ -64,7 +64,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         return super.close({ animate: false });
     }
 
-    _onClose() {
+    protected _onClose() {
         this.blueprint?.destroy();
     }
 
@@ -95,7 +95,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         this.#activateListeners(content);
     }
 
-    _onFirstRender(context: TriggersMenuData, options: ApplicationRenderOptions) {
+    protected _onFirstRender(context: TriggersMenuData, options: ApplicationRenderOptions) {
         requestAnimationFrame(() => {
             this.blueprint.initialize();
             this.refresh();
@@ -173,6 +173,26 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         await this.blueprint.saveTriggers();
 
         this.render();
+    }
+
+    async #resetTriggers() {
+        const result = await confirmDialog(
+            {
+                title: localize("reset-triggers.title"),
+                content: localize("reset-triggers.content"),
+            },
+            { animation: false }
+        );
+
+        if (!result) return;
+
+        this.#blueprint?.destroy();
+
+        this.#blueprint = new Blueprint(this);
+        this.#blueprint.initialize();
+        this.#blueprint.setTrigger(null);
+
+        this.refresh();
     }
 
     async #deleteTrigger(id: string) {
@@ -435,6 +455,11 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     this.#saveTriggers();
                     return;
                 }
+
+                case "reset-triggers": {
+                    this.#resetTriggers();
+                    return;
+                }
             }
         });
 
@@ -485,6 +510,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
 type MenuEventAction =
     | "close-window"
     | "save-triggers"
+    | "reset-triggers"
     | "add-trigger"
     | "export-all"
     | "import"
