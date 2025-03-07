@@ -1,3 +1,9 @@
+# 1.3.0
+
+-   this is a system `6.10.0` release
+-   no longer disable the `Show token icon?` option from the effects added by the module
+    -   the latest system changes now also hides the effect from the `Effects Panel`
+
 # 1.2.0
 
 -   change some of the window tooltips
