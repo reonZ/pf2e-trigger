@@ -33,7 +33,7 @@ async function executeEffect(
             name: `${prefix}: ${name}`,
             img,
             system: {
-                tokenIcon: { show: false },
+                // tokenIcon: { show: false },
                 unidentified: unided,
                 duration,
                 context,
