@@ -19,6 +19,8 @@ class ConsoleLogTriggerNode extends TriggerNode {
         }
 
         console.groupEnd();
+
+        this.send("out");
     }
 }
 
