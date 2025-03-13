@@ -37,6 +37,7 @@ import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { EndTurnBlueprintNode } from "./event/blueprint-event-turn-end";
 import { DeleteTokenBlueprintNode } from "./event/blueprint-event-token-delete";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
+import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -54,6 +55,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "remove-temporary": RemoveTemporartyBlueprintNode,
         "add-resistance": AddResistanceBlueprintNode,
         "add-weakness": AddWeaknessBlueprintNode,
+        "get-choiceset": GetChoicesetBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

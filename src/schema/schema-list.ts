@@ -35,6 +35,7 @@ import { successValueSchema } from "./value/schema-value-success";
 import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
 import { itemSplitterSchema } from "./splitter/schema-splitter-item";
 import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
+import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -54,6 +55,7 @@ const SCHEMAS = {
         "remove-temporary": removeTemporarySchema,
         "add-resistance": addResistanceSchema,
         "add-weakness": addWeaknessSchema,
+        "get-choiceset": getChoicesetSchema,
     },
     condition: {
         "has-item": hasItemSchema,

@@ -46,6 +46,7 @@ import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness
 import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
 import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
 import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
+import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
 
 const NODES = {
     action: {
@@ -63,6 +64,7 @@ const NODES = {
         "remove-temporary": RemoveTemporaryTriggerNode,
         "add-resistance": AddResistanceTriggerNode,
         "add-weakness": AddWeaknessTriggerNode,
+        "get-choiceset": GetChoicesetTriggerAction,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

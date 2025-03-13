@@ -187,6 +187,15 @@
                 },
                 "add-weakness": {
                     "title": "Add Weakness"
+                },
+                "get-choiceset": {
+                    "title": "Get Item ChoiceSet",
+                    "flag": {
+                        "label": "Flag"
+                    },
+                    "option": {
+                        "label": "rollOption"
+                    }
                 }
             },
             "event": {
@@ -368,7 +377,8 @@
                 "identifier": "identifier",
                 "name": "Name",
                 "slug": "Slug",
-                "level": "Level"
+                "level": "Level",
+                "selection": "Selection"
             }
         },
         "select": {

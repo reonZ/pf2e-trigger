@@ -4,13 +4,13 @@ import { ActorPF2e, ItemPF2e, ItemType } from "module-helpers";
 
 class AddItemTriggerAction extends TriggerNode<typeof addItemSchema> {
     async execute(): Promise<void> {
-        const target = (await this.get("target")) ?? this.target;
         const item = await this.get("item");
 
         if (!item) {
             return this.send("out");
         }
 
+        const target = (await this.get("target")) ?? this.target;
         const duplicates = !!(await this.get("duplicate"));
         const maxTakable = !duplicates ? 1 : item.isOfType("feat") ? item.maxTakable : Infinity;
 
