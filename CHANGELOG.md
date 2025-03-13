@@ -5,7 +5,7 @@
 -   add `Equals (Text)` logic node
 -   add `Get Item ChoiceSet` action node:
     -   retrieve the `ChoiceSet` selection of the provided embedded item
-    -   you can use the `flag` & `rollOption` fields to find the right if more than one exist on the item
+    -   you can use the `flag` & `rollOption` fields to find the right RE if more than one exist on the item
 -   add `String List` custom splitter node
     -   allow you to define a list of bridge outputs branching out from a `text` input
 -   fix `Console Log` action node not executing the next node
