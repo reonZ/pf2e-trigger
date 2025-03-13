@@ -193,7 +193,7 @@
                 "get-choiceset": {
                     "title": "Get Item ChoiceSet",
                     "flag": {
-                        "label": "Flag"
+                        "label": "flag"
                     },
                     "option": {
                         "label": "rollOption"
@@ -291,7 +291,7 @@
                 "title": "Logic",
                 "subtitle": "Logic",
                 "eq-number": {
-                    "title": "Equals"
+                    "title": "Equals (Number)"
                 },
                 "gt-number": {
                     "title": "Greater Than"
@@ -304,6 +304,9 @@
                 },
                 "lte-number": {
                     "title": "Less Than or Equal"
+                },
+                "eq-text": {
+                    "title": "Equals (Text)"
                 }
             },
             "splitter": {

@@ -84,6 +84,7 @@ const SCHEMAS = {
         "lt-number": createLogicSchema("number"),
         "gte-number": createLogicSchema("number"),
         "lte-number": createLogicSchema("number"),
+        "eq-text": createLogicSchema("text"),
     },
     macro: {
         macro: macroSchema,

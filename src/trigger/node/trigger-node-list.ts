@@ -48,6 +48,7 @@ import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
 import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
 import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
 import { StringListTriggerSplitter } from "./splitter/trigger-splitter-string-list";
+import { EqTextTriggerLogic } from "./logic/trigger-logic-text-eq";
 
 const NODES = {
     action: {
@@ -93,6 +94,7 @@ const NODES = {
         "gte-number": GteNumberTriggerLogic,
         "lt-number": LtNumberTriggerLogic,
         "lte-number": LteNumberTriggerLogic,
+        "eq-text": EqTextTriggerLogic,
     },
     macro: {
         macro: TriggerMacro,
