@@ -5,8 +5,8 @@ function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T) {
         in: true,
         outs: booleanSchemaOuts,
         inputs: [
-            { key: "a", type },
-            { key: "b", type },
+            { key: "a", type, field: true },
+            { key: "b", type, field: true },
         ],
     } as const;
 }
