@@ -114,7 +114,7 @@ abstract class BlueprintEntry<
 
         return label
             ? localizeIfExist(path, label) ?? game.i18n.localize(label)
-            : localizeIfExist(path, key) ?? localize(this.node.localizePath, key, "label");
+            : localizeIfExist(this.node.localizePath, key, "label") ?? localize(path, key);
     }
 
     get rowHeight(): number {
