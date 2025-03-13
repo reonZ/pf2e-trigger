@@ -1,3 +1,11 @@
+{{#if useValue}}
+<div class="form-group">
+    <label>{{@root.i18n 'value'}}</label>
+    <div class="form-fields">
+        <input type="text" name="value">
+    </div>
+</div>
+{{/if}}
 <div class="form-group">
     <label>{{@root.i18n 'name'}}</label>
     <div class="form-fields">
@@ -5,7 +13,7 @@
     </div>
 </div>
 {{#if types}}
-<div class="form-group">
+<div class="form-group{{#if (eq types.length 1)}} hidden{{/if}}">
     <label>{{@root.i18n 'label'}}</label>
     <div class="form-fields">
         <select name="type">

@@ -47,6 +47,7 @@ import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condi
 import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
 import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
 import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
+import { StringListTriggerSplitter } from "./splitter/trigger-splitter-string-list";
 
 const NODES = {
     action: {
@@ -101,6 +102,7 @@ const NODES = {
         "boolean-splitter": BooleanTriggerSplitter,
         "item-splitter": ItemTriggerSplitter,
         "actor-splitter": ActorTriggerSplitter,
+        "string-list": StringListTriggerSplitter,
     },
     subtrigger: {
         "subtrigger-input": InputSubtrigger,

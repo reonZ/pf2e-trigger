@@ -36,6 +36,7 @@ import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
 import { itemSplitterSchema } from "./splitter/schema-splitter-item";
 import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
 import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
+import { stringListSchema } from "./splitter/schema-splitter-string-list";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -92,6 +93,7 @@ const SCHEMAS = {
         "boolean-splitter": booleanSplitterSchema,
         "item-splitter": itemSplitterSchema,
         "actor-splitter": actorSplitterSchema,
+        "string-list": stringListSchema,
     },
     subtrigger: {
         "subtrigger-input": eventSchema,
@@ -193,7 +195,7 @@ function getSchema(data: WithRequired<Partial<NodeData>, "type" | "key">): NodeS
     }
 
     if (data.custom) {
-        schema.inputs.push(...data.custom.inputs);
+        schema.inputs.push(...(data.custom.inputs as NodeSchemaInputs));
         schema.outputs.push(...data.custom.outputs);
     }
 

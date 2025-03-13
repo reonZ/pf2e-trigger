@@ -38,6 +38,7 @@ import { EndTurnBlueprintNode } from "./event/blueprint-event-turn-end";
 import { DeleteTokenBlueprintNode } from "./event/blueprint-event-token-delete";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
 import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
+import { StringListSplitterBlueprintNode } from "./splitter/blueprint-splitter-string-list";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -92,6 +93,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "boolean-splitter": SplitterBlueprintNode,
         "item-splitter": SplitterBlueprintNode,
         "actor-splitter": SplitterBlueprintNode,
+        "string-list": StringListSplitterBlueprintNode,
     },
     subtrigger: {
         "subtrigger-input": InputSubtriggerBlueprintNode,

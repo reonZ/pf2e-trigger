@@ -94,7 +94,7 @@ function processEntryIds(ids: unknown): NodeEntryId[] {
     return R.isArray(ids) ? R.filter(ids, (id): id is NodeEntryId => isEntryId(id)) : [];
 }
 
-function getNodeEntryValueList(): { value: CustomNodeEntryType; label: string }[] {
+function getNodeEntryValueList(): SelectOptions<CustomNodeEntryType> {
     return R.pipe(
         NODE_ENTRY_TYPES,
         R.filter(

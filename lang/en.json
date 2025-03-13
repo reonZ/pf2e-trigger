@@ -60,8 +60,10 @@
         "add-entry": {
             "inputs": "Add Input",
             "outputs": "Add Output",
+            "entry": "Add Entry",
             "label": "Entry Type",
             "name": "Entry Label",
+            "value": "Entry Value",
             "yes": "Add",
             "no": "Cancel"
         },
@@ -317,6 +319,9 @@
                 },
                 "actor-splitter": {
                     "title": "Actor Data"
+                },
+                "string-list": {
+                    "title": "String List"
                 }
             },
             "subtrigger": {
@@ -394,6 +399,7 @@
             "add-output": "Add Output",
             "copy-id": "Copy ID",
             "add-exception": "Add Exception",
+            "add-entry": "Add Entry",
             "add-double": "Add Double Vs.",
             "copy-option": "Copy Roll Option",
             "add-variable": "Create Variable",

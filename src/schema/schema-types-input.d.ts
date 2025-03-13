@@ -1,21 +1,21 @@
 export {};
 
-type BaseNodeSchemaInputEntry<
-    TType extends NonNullable<NodeEntryType>,
-    TField extends Record<string, any> | boolean | never = never
-> = {
-    key: string;
-    label?: string;
-    type: TType;
-    connection?: boolean;
-    field?: TField extends Record<string, any>
-        ? TField | boolean
-        : TField extends boolean
-        ? boolean
-        : never;
-};
-
 declare global {
+    type BaseNodeSchemaInputEntry<
+        TType extends NonNullable<NodeEntryType> = NonNullable<NodeEntryType>,
+        TField extends Record<string, any> | boolean | never = never
+    > = {
+        key: string;
+        label?: string;
+        type: TType;
+        connection?: boolean;
+        field?: TField extends Record<string, any>
+            ? TField | boolean
+            : TField extends boolean
+            ? boolean
+            : never;
+    };
+
     type NodeSchemaInput =
         | NodeSchemaText
         | NodeSchemaNumber

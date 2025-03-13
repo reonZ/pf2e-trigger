@@ -40,7 +40,7 @@ declare global {
     >;
 
     type NodeDataCustom = {
-        inputs: NodeSchemaInputs;
+        inputs: BaseNodeSchemaInputEntry[];
         outputs: NodeSchemaOutputs;
     };
 

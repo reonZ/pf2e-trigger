@@ -14,7 +14,44 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             return [...super.getConnectionContext(entry), "remove-connection"];
         }
 
-        async addEntry(category: NodeEntryCategory) {
+        removeEntry(entry: BlueprintEntry) {
+            entry.removeConnections(true);
+
+            this.blueprint.deleteVariables(this.id, { variableKey: entry.key });
+            this.data.custom[entry.category].findSplice((x) => x.key === entry.key);
+
+            this.refresh(true);
+        }
+
+        async _onContext(context: string): Promise<void> {
+            switch (context) {
+                case "add-input": {
+                    return this.#addEntry("inputs");
+                }
+
+                case "add-output": {
+                    return this.#addEntry("outputs");
+                }
+
+                default: {
+                    return super._onContext(context);
+                }
+            }
+        }
+
+        async _onConnectionContext(entry: BlueprintEntry, context: string) {
+            switch (context) {
+                case "remove-connection": {
+                    return this.removeEntry(entry);
+                }
+
+                default: {
+                    return super._onConnectionContext(entry, context);
+                }
+            }
+        }
+
+        async #addEntry(category: NodeEntryCategory) {
             const types = getNodeEntryValueList();
 
             const result = await waitDialog<{ name: string; type: CustomNodeEntryType }>(
@@ -72,50 +109,12 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             entries.push(entry);
             this.refresh(true);
         }
-
-        removeEntry(entry: BlueprintEntry) {
-            entry.removeConnections(true);
-
-            this.blueprint.deleteVariables(this.id, { variableKey: entry.key });
-            this.data.custom[entry.category].findSplice((x) => x.key === entry.key);
-
-            this.refresh(true);
-        }
-
-        async _onContext(context: string): Promise<void> {
-            switch (context) {
-                case "add-input": {
-                    return this.addEntry("inputs");
-                }
-
-                case "add-output": {
-                    return this.addEntry("outputs");
-                }
-
-                default: {
-                    return super._onContext(context);
-                }
-            }
-        }
-
-        async _onConnectionContext(entry: BlueprintEntry, context: string) {
-            switch (context) {
-                case "remove-connection": {
-                    return this.removeEntry(entry);
-                }
-
-                default: {
-                    return super._onConnectionContext(entry, context);
-                }
-            }
-        }
     }
 
     return CustomBlueprintNode;
 }
 
 interface CustomBlueprintNode {
-    addEntry(category: NodeEntryCategory): Promise<void>;
     getConnectionContext(entry: BlueprintEntry): string[];
     removeEntry(entry: BlueprintEntry): void;
 
