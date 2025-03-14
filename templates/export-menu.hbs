@@ -22,7 +22,7 @@
     {{#each (lookup this type) as |trigger|}}
     <li>
         <input type="checkbox" name="selected" {{checked trigger.selected}} data-id="{{trigger.id}}"
-            data-type="{{../type}}">
+            data-type="{{../type}}" autocorrect="off">
         {{trigger.name}}
     </li>
     {{/each}}
