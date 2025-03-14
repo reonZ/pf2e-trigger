@@ -2,7 +2,7 @@ import { TriggerHook } from "hook/hook";
 import { MODULE, R, isInstanceOf, userIsActiveGM } from "module-helpers";
 
 class ExecuteHook extends TriggerHook {
-    get events(): NodeEventKey[] {
+    get events(): ["execute-event"] {
         return ["execute-event"];
     }
 

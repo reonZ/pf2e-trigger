@@ -4,6 +4,7 @@ import { Trigger } from "trigger/trigger";
 abstract class TriggerHook {
     #triggers: TriggerData[] = [];
 
+    abstract get events(): NodeEventKey[];
     protected abstract _activate(): void;
     protected abstract _disable(): void;
 
@@ -48,21 +49,15 @@ abstract class TriggerHook {
         }
     }
 
-    protected async executeTriggers(
-        event: NodeEventKey,
-        options: PreTriggerExecuteOptions
-    ): Promise<void>;
-    protected async executeTriggers(options: PreTriggerExecuteOptions): Promise<void>;
-    protected async executeTriggers(
-        arg0: NodeEventKey | PreTriggerExecuteOptions,
-        arg1?: PreTriggerExecuteOptions
-    ) {
-        const [event, options] = R.isString(arg0)
-            ? [arg0, arg1 as PreTriggerExecuteOptions]
-            : [undefined, arg0];
-
+    async executeTriggers(options: PreTriggerExecuteOptions) {
         for (const data of this.#triggers) {
-            if (event && data.event.key !== event) continue;
+            await this.executeTrigger(data, options);
+        }
+    }
+
+    async executeEventTriggers(event: NodeEventKey, options: PreTriggerExecuteOptions) {
+        for (const data of this.#triggers) {
+            if (data.event.key !== event) continue;
             await this.executeTrigger(data, options);
         }
     }
@@ -85,7 +80,6 @@ abstract class TriggerHook {
 }
 
 interface TriggerHook {
-    get events(): NodeEventKey[] | undefined;
     get conditions(): NodeConditionKey[] | undefined;
 }
 

@@ -6,21 +6,21 @@ class DamageActorHook extends ActorHook {
         super("updateActor");
     }
 
-    get events(): NodeEventKey[] {
-        return ["damage-received"];
+    get events(): ["damage-received", "heal-received"] {
+        return ["damage-received", "heal-received"];
     }
 
     async _onHook(
         options: PreTriggerExecuteOptions,
         data: object,
         operation: ActorUpdateOperation<TokenDocumentPF2e>
-    ) {
-        if (!operation.damageTaken || operation.damageTaken < 0) return false;
+    ): Promise<"damage-received" | "heal-received" | false> {
+        if (!operation.damageTaken) return false;
 
         options.variables ??= {};
-        options.variables.damage = operation.damageTaken;
+        options.variables.value = Math.abs(operation.damageTaken);
 
-        return true;
+        return operation.damageTaken < 0 ? "heal-received" : "damage-received";
     }
 }
 

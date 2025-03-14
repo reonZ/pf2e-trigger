@@ -1,10 +1,10 @@
-const damageReceivedSchema = {
+const damageTakenSchema = {
     unique: true,
     outs: [{ key: "out" }],
     variables: [
         { key: "this", type: "target" },
-        { key: "damage", type: "number" },
+        { key: "value", type: "number" },
     ],
 } as const satisfies EventSchema;
 
-export { damageReceivedSchema };
+export { damageTakenSchema };

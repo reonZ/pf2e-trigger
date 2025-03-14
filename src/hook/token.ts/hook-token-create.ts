@@ -5,7 +5,7 @@ class CreateTokenHook extends TokenHook {
         super("createToken");
     }
 
-    get events(): NodeEventKey[] {
+    get events(): ["token-create"] {
         return ["token-create"];
     }
 }

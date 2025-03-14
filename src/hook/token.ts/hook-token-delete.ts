@@ -5,7 +5,7 @@ class DeleteTokenHook extends TokenHook {
         super("deleteToken");
     }
 
-    get events(): NodeEventKey[] {
+    get events(): ["token-delete"] {
         return ["token-delete"];
     }
 }

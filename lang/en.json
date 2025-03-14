@@ -235,10 +235,10 @@
                     "copied": "The trigger ID has been copied to the clipboard."
                 },
                 "damage-received": {
-                    "title": "Damage Received",
-                    "damage": {
-                        "label": "Damage"
-                    }
+                    "title": "Damage Received"
+                },
+                "heal-received": {
+                    "title": "Heal Received"
                 }
             },
             "condition": {

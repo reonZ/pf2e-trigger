@@ -2,7 +2,7 @@ import { TriggerHook } from "hook/hook";
 import { R, userIsActiveGM, warn } from "module-helpers";
 
 class TestHook extends TriggerHook {
-    get events(): NodeEventKey[] {
+    get events(): ["test-event"] {
         return ["test-event"];
     }
 

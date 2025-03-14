@@ -37,7 +37,7 @@ class AuraHook extends TriggerHook {
         ),
     ];
 
-    get events(): NodeEventKey[] {
+    get events(): ["aura-enter", "aura-leave"] {
         return ["aura-enter", "aura-leave"];
     }
 
@@ -113,7 +113,7 @@ class AuraHook extends TriggerHook {
 
                     if (isCurrentCombatant(actor)) {
                         const target = { actor, token: actorTokens.at(0) };
-                        this.executeTriggers("aura-leave", { this: target, aura });
+                        this.executeEventTriggers("aura-leave", { this: target, aura });
                     }
                 }
             }
@@ -148,7 +148,7 @@ class AuraHook extends TriggerHook {
 
                 if (!already && isCurrentCombatant(actor)) {
                     const target = { actor, token };
-                    this.executeTriggers("aura-enter", {
+                    this.executeEventTriggers("aura-enter", {
                         this: target,
                         aura: { data: auraData, origin: source },
                     });

@@ -88,6 +88,7 @@ const NODES = {
         "execute-event": ExecuteTriggerEvent,
         "region-event": TriggerEvent,
         "damage-received": TriggerEvent,
+        "heal-received": TriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,

@@ -37,7 +37,7 @@ import { itemSplitterSchema } from "./splitter/schema-splitter-item";
 import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
 import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
 import { stringListSchema } from "./splitter/schema-splitter-string-list";
-import { damageReceivedSchema } from "./event/schema-event-damage";
+import { damageTakenSchema } from "./event/schema-event-damage";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -78,7 +78,8 @@ const SCHEMAS = {
         "aura-leave": auraEventSchema,
         "execute-event": eventSchema,
         "region-event": eventSchema,
-        "damage-received": damageReceivedSchema,
+        "damage-received": damageTakenSchema,
+        "heal-received": damageTakenSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

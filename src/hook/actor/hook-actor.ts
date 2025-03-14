@@ -4,6 +4,7 @@ import {
     ActorSourcePF2e,
     ActorUpdateOperation,
     Hook,
+    R,
     TokenDocumentPF2e,
     createHook,
     userIsActiveGM,
@@ -21,7 +22,7 @@ abstract class ActorHook extends TriggerHook {
         options: PreTriggerExecuteOptions,
         data: DeepPartial<ActorSourcePF2e>,
         operation: ActorUpdateOperation<TokenDocumentPF2e>
-    ): Promise<boolean>;
+    ): Promise<boolean | NodeEventKey>;
 
     protected _activate(): void {
         this.#hook.activate();
@@ -44,9 +45,12 @@ abstract class ActorHook extends TriggerHook {
         };
 
         const proceed = await this._onHook(options, data, operation);
-        if (!proceed) return;
 
-        this.executeTriggers(options);
+        if (R.isString(proceed)) {
+            this.executeEventTriggers(proceed, options);
+        } else if (proceed) {
+            this.executeTriggers(options);
+        }
     }
 }
 

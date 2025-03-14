@@ -5,7 +5,7 @@ class StartTurnHook extends TurnHook {
         super("pf2e.startTurn");
     }
 
-    get events(): NodeEventKey[] {
+    get events(): ["turn-start"] {
         return ["turn-start"];
     }
 }

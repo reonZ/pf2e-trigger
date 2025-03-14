@@ -41,6 +41,7 @@ import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
+import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -80,6 +81,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "execute-event": ExecuteEventBlueprintNode,
         "region-event": RegionEventBlueprintNode,
         "damage-received": DamageReceivedBlueprintNode,
+        "heal-received": HealReceivedBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,
