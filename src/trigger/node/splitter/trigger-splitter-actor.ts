@@ -1,15 +1,9 @@
 import { actorSplitterSchema } from "schema/splitter/schema-splitter-actor";
-import { TriggerNode } from "../trigger-node";
+import { DocumentExtractorTriggerSplitter } from "./trigger-splitter-extract-document";
 
-class ActorTriggerSplitter extends TriggerNode<typeof actorSplitterSchema> {
-    async execute(): Promise<void> {
-        const { actor } = (await this.get("target")) ?? this.target;
-
-        this.setVariable("name", actor.name);
-        this.setVariable("uuid", actor.uuid);
-        this.setVariable("level", actor.level);
-
-        this.send("out");
+class ActorTriggerSplitter extends DocumentExtractorTriggerSplitter<typeof actorSplitterSchema> {
+    async getDocument(): Promise<ClientDocument> {
+        return ((await this.get("target")) ?? this.target).actor;
     }
 }
 

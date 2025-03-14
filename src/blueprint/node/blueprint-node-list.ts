@@ -4,6 +4,7 @@ import { AddItemBlueprintNode } from "./action/blueprint-action-add-item";
 import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
 import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-temporary";
 import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
+import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
 import { ReduceConditionBlueprintNode } from "./action/blueprint-action-reduce-condition";
 import { RemoveItemBlueprintNode } from "./action/blueprint-action-remove-item";
 import { RemoveTemporartyBlueprintNode } from "./action/blueprint-action-remove-temporary";
@@ -18,8 +19,11 @@ import { ConverterBlueprintNode } from "./converter/blueprint-converter";
 import { EnterAuraBlueprintNode } from "./event/blueprint-event-aura-enter";
 import { LeaveAuraBlueprintNode } from "./event/blueprint-event-aura-leave";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
+import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
 import { TestEventBlueprintNode } from "./event/blueprint-event-test";
 import { CreateTokenBlueprintNode } from "./event/blueprint-event-token-create";
+import { DeleteTokenBlueprintNode } from "./event/blueprint-event-token-delete";
+import { EndTurnBlueprintNode } from "./event/blueprint-event-turn-end";
 import { StartTurnBlueprintNode } from "./event/blueprint-event-turn-start";
 import { EqValueBlueprintNode } from "./logic/blueprint-logic-eq";
 import { GtValueBlueprintNode } from "./logic/blueprint-logic.gt";
@@ -28,17 +32,14 @@ import { LtValueBlueprintNode } from "./logic/blueprint-logic.lt";
 import { LteValueBlueprintNode } from "./logic/blueprint-logic.lte";
 import { MacroBlueprintNode } from "./macro/blueprint-macro";
 import { SplitterBlueprintNode } from "./splitter/blueprint-splitter";
+import { DocumentExtractorBlueprintNode } from "./splitter/blueprint-splitter-extractor";
+import { StringListSplitterBlueprintNode } from "./splitter/blueprint-splitter-string-list";
 import { InputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-input";
 import { SubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-node";
 import { OutputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-output";
 import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
-import { EndTurnBlueprintNode } from "./event/blueprint-event-turn-end";
-import { DeleteTokenBlueprintNode } from "./event/blueprint-event-token-delete";
-import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
-import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
-import { StringListSplitterBlueprintNode } from "./splitter/blueprint-splitter-string-list";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -92,8 +93,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     splitter: {
         "success-splitter": SplitterBlueprintNode,
         "boolean-splitter": SplitterBlueprintNode,
-        "item-splitter": SplitterBlueprintNode,
-        "actor-splitter": SplitterBlueprintNode,
+        "item-splitter": DocumentExtractorBlueprintNode,
+        "actor-splitter": DocumentExtractorBlueprintNode,
         "string-list": StringListSplitterBlueprintNode,
     },
     subtrigger: {

@@ -64,6 +64,7 @@
             "label": "Entry Type",
             "name": "Entry Label",
             "value": "Entry Value",
+            "path": "Entry Path",
             "yes": "Add",
             "no": "Cancel"
         },

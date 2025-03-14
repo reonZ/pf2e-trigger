@@ -106,5 +106,5 @@ declare global {
         type: NonNullNodeEntryType;
     };
 
-    type CustomNodeEntryType = Exclude<NodeEntryType, "select" | "uuid" | undefined>;
+    type CustomNodeEntryType = Exclude<NodeEntryType, "select" | "uuid" | "label" | undefined>;
 }

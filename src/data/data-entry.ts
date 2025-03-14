@@ -94,12 +94,13 @@ function processEntryIds(ids: unknown): NodeEntryId[] {
     return R.isArray(ids) ? R.filter(ids, (id): id is NodeEntryId => isEntryId(id)) : [];
 }
 
+function getCustomNodeEntryList(): CustomNodeEntryType[] {
+    return R.difference(NODE_ENTRY_TYPES, ["select", "uuid", "label"]) as CustomNodeEntryType[];
+}
+
 function getNodeEntryValueList(): SelectOptions<CustomNodeEntryType> {
     return R.pipe(
-        NODE_ENTRY_TYPES,
-        R.filter(
-            (value): value is CustomNodeEntryType => !["select", "uuid", "label"].includes(value)
-        ),
+        getCustomNodeEntryList(),
         R.map((value) => {
             return {
                 value,

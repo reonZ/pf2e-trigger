@@ -17,8 +17,18 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             return super.getConnectionContext(entry);
         }
 
-        async addEntry(category: NodeEntryCategory, { valueLabel, noType }: AddEntryOptions = {}) {
-            const types = noType ? undefined : getNodeEntryValueList();
+        async addEntry(
+            category: NodeEntryCategory,
+            { valueLabel, noType, types }: AddEntryOptions = {}
+        ) {
+            const usedTypes = noType
+                ? undefined
+                : types?.map((type) => {
+                      return {
+                          value: type,
+                          label: localize("node.entry", type),
+                      };
+                  }) ?? getNodeEntryValueList();
 
             const result = await waitDialog<{
                 name: string;
@@ -29,7 +39,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
                     title: localize("add-entry", category),
                     focus: `[name="${valueLabel ? "value" : "name"}"]`,
                     content: await render("add-entry", {
-                        types,
+                        types: usedTypes,
                         valueLabel,
                         i18n: templateLocalize("add-entry"),
                     }),
@@ -72,7 +82,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
             })();
 
             const entry: NodeSchemaEntry = {
-                key: result.value?.trim() ?? fu.randomID(),
+                key: result.value?.trim().replace(/\./g, "|") ?? fu.randomID(),
                 label,
             };
 
@@ -141,6 +151,7 @@ interface CustomBlueprintNode {
 type AddEntryOptions = {
     valueLabel?: string | undefined;
     noType?: boolean | undefined;
+    types?: CustomNodeEntryType[];
 };
 
 export { makeCustomNode };
