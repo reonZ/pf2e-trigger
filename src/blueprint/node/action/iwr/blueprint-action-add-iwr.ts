@@ -1,7 +1,6 @@
-import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
 import { makeCustomNode } from "blueprint/node/blueprint-node-custom";
-import { ActionBlueprintNode } from "../blueprint-action";
 import { R } from "module-helpers";
+import { ActionBlueprintNode } from "../blueprint-action";
 
 abstract class AddIwrBlueprintNode extends makeCustomNode(ActionBlueprintNode) {
     abstract get iwrConfig(): IwrConfig;
@@ -38,13 +37,6 @@ abstract class AddIwrBlueprintNode extends makeCustomNode(ActionBlueprintNode) {
         };
     }
 
-    getConnectionContext(entry: BlueprintEntry): string[] {
-        const context = super.getConnectionContext(entry);
-        return ["type", "target"].includes(entry.key)
-            ? context.filter((x) => x !== "remove-connection")
-            : context;
-    }
-
     async _onContext(context: string): Promise<void> {
         switch (context) {
             case "add-exception": {
@@ -59,7 +51,7 @@ abstract class AddIwrBlueprintNode extends makeCustomNode(ActionBlueprintNode) {
     }
 
     #addException() {
-        const entries = this.data.custom.inputs;
+        const entries = this.data.custom.inputs as NodeSchemaInputs;
 
         entries.push({
             key: `${fu.randomID()}-exception`,

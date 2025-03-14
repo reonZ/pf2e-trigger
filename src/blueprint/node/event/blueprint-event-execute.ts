@@ -1,7 +1,6 @@
-import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
+import { info } from "module-helpers";
 import { makeCustomNode } from "../blueprint-node-custom";
 import { EventBlueprintNode } from "./blueprint-event";
-import { info } from "module-helpers";
 
 class ExecuteEventBlueprintNode extends makeCustomNode(EventBlueprintNode) {
     get icon(): string {
@@ -14,11 +13,6 @@ class ExecuteEventBlueprintNode extends makeCustomNode(EventBlueprintNode) {
 
     get context(): string[] {
         return ["copy-id", "add-output", ...super.context];
-    }
-
-    getConnectionContext(entry: BlueprintEntry): string[] {
-        const context = super.getConnectionContext(entry);
-        return entry.key === "this" ? context.filter((x) => x !== "remove-connection") : context;
     }
 
     async _onContext(context: string): Promise<void> {

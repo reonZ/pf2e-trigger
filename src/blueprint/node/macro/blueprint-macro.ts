@@ -1,4 +1,3 @@
-import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
 import { MacroPF2e, R, localize } from "module-helpers";
 import { BlueprintNode } from "../blueprint-node";
 import { makeCustomNode } from "../blueprint-node-custom";
@@ -39,11 +38,6 @@ class MacroBlueprintNode extends makeCustomNode(BlueprintNode) {
             : R.isPlainObject(macro) && !macro.type
             ? macro
             : null;
-    }
-
-    getConnectionContext(entry: BlueprintEntry): string[] {
-        const context = super.getConnectionContext(entry);
-        return entry.key === "uuid" ? context.filter((x) => x !== "remove-connection") : context;
     }
 
     _onValueUpdate(key: string): boolean {

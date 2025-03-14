@@ -1,19 +1,10 @@
-import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
+import { localize, render, templateLocalize, waitDialog } from "module-helpers";
 import { makeCustomNode } from "../blueprint-node-custom";
 import { SplitterBlueprintNode } from "./blueprint-splitter";
-import { localize, render, templateLocalize, waitDialog } from "module-helpers";
 
 class StringListSplitterBlueprintNode extends makeCustomNode(SplitterBlueprintNode) {
     get context() {
         return ["add-entry", ...super.context];
-    }
-
-    getConnectionContext(entry: BlueprintEntry): string[] {
-        const context = super.getConnectionContext(entry);
-
-        return entry.category === "outputs"
-            ? [...context, "remove-connection"]
-            : context.filter((x) => x !== "remove-connection");
     }
 
     async _onContext(context: string): Promise<void> {
