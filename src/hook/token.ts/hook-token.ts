@@ -17,7 +17,7 @@ abstract class TokenHook extends TriggerHook {
         this.#hook.disable();
     }
 
-    #onHook(token: TokenDocumentPF2e, context: object, userId: string) {
+    #onHook(token: TokenDocumentPF2e, data: object, userId: string) {
         if (!userIsActiveGM()) return;
 
         const actor = token.actor;

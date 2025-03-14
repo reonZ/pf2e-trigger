@@ -233,6 +233,12 @@
                 "region-event": {
                     "title": "Scene Region",
                     "copied": "The trigger ID has been copied to the clipboard."
+                },
+                "damage-received": {
+                    "title": "Damage Received",
+                    "damage": {
+                        "label": "Damage"
+                    }
                 }
             },
             "condition": {

@@ -1,54 +1,54 @@
 import { MODULE } from "module-helpers";
 import { Trigger } from "trigger/trigger";
+import { AddImmunityTriggerNode } from "./action/iwr/trigger-action-add-immunity";
+import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
+import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
+import { RemoveImmunityTriggerNode } from "./action/iwr/trigger-action-remove-immunity";
+import { AddConditionTriggerNode } from "./action/trigger-action-add-condition";
+import { AddItemTriggerAction } from "./action/trigger-action-add-item";
+import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
+import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
+import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
+import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
+import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
 import { RemoveItemTriggerAction } from "./action/trigger-action-remove-item";
+import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
 import { RollDamageTriggerAction } from "./action/trigger-action-roll-damage";
+import { RollSaveTriggerAction } from "./action/trigger-action-roll-save";
 import { HasItemTriggerCondition } from "./condition/trigger-condition-has-item";
 import { HasOptionTriggerCondition } from "./condition/trigger-condition-has-option";
+import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
 import { InsideAuraTriggerCondition } from "./condition/trigger-condition-inside-aura";
 import { ItemTriggerConverter } from "./converter/trigger-converter-item";
 import { TriggerEvent } from "./event/trigger-event";
 import { AuraTriggerEvent } from "./event/trigger-event-aura";
-import { InputSubtrigger } from "./subtrigger/trigger-subtrigger-input";
-import { NodeSubtrigger } from "./subtrigger/trigger-subtrigger-node";
-import { OutputSubtrigger } from "./subtrigger/trigger-subtrigger-output";
-import { TriggerNode } from "./trigger-node";
-import { ItemSourceTriggerValue } from "./value/trigger-value-item-source";
-import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
-import { AddItemTriggerAction } from "./action/trigger-action-add-item";
-import { RollSaveTriggerAction } from "./action/trigger-action-roll-save";
-import { AddConditionTriggerNode } from "./action/trigger-action-add-condition";
-import { NumberTriggerValue } from "./value/trigger-value-number";
-import { TextTriggerValue } from "./value/trigger-value-text";
+import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
 import { GtNumberTriggerLogic } from "./logic/trigger-logic-number-gt";
 import { GteNumberTriggerLogic } from "./logic/trigger-logic-number-gte";
 import { LtNumberTriggerLogic } from "./logic/trigger-logic-number-lt";
 import { LteNumberTriggerLogic } from "./logic/trigger-logic-number-lte";
-import { TriggerVariable } from "./variable/trigger-variable";
+import { EqTextTriggerLogic } from "./logic/trigger-logic-text-eq";
 import { TriggerMacro } from "./macro/trigger-macro";
+import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
+import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
+import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
+import { StringListTriggerSplitter } from "./splitter/trigger-splitter-string-list";
+import { SuccessTriggerSplitter } from "./splitter/trigger-splitter-success";
+import { InputSubtrigger } from "./subtrigger/trigger-subtrigger-input";
+import { NodeSubtrigger } from "./subtrigger/trigger-subtrigger-node";
+import { OutputSubtrigger } from "./subtrigger/trigger-subtrigger-output";
+import { TriggerNode } from "./trigger-node";
 import { DcTriggerValue } from "./value/trigger-value-dc";
 import { TargetDcTriggerValue } from "./value/trigger-value-dc-target";
 import { SimpleDurationTriggerValue } from "./value/trigger-value-duration-simple";
 import { UnitDurationTriggerValue } from "./value/trigger-value-duration-unit";
+import { ItemSourceTriggerValue } from "./value/trigger-value-item-source";
+import { NumberTriggerValue } from "./value/trigger-value-number";
+import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
 import { SuccessTriggerValue } from "./value/trigger-value-success";
-import { SuccessTriggerSplitter } from "./splitter/trigger-splitter-success";
-import { BooleanTriggerSplitter } from "./splitter/trigger-splitter-boolean";
-import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
-import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
-import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
-import { AddImmunityTriggerNode } from "./action/iwr/trigger-action-add-immunity";
-import { RemoveImmunityTriggerNode } from "./action/iwr/trigger-action-remove-immunity";
-import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
-import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
-import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
-import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
-import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
-import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
-import { ItemTriggerSplitter } from "./splitter/trigger-splitter-item";
-import { ActorTriggerSplitter } from "./splitter/trigger-splitter-actor";
-import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
-import { StringListTriggerSplitter } from "./splitter/trigger-splitter-string-list";
-import { EqTextTriggerLogic } from "./logic/trigger-logic-text-eq";
+import { TextTriggerValue } from "./value/trigger-value-text";
+import { TriggerVariable } from "./variable/trigger-variable";
 
 const NODES = {
     action: {
@@ -87,6 +87,7 @@ const NODES = {
         "turn-start": TriggerEvent,
         "execute-event": ExecuteTriggerEvent,
         "region-event": TriggerEvent,
+        "damage-received": TriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,

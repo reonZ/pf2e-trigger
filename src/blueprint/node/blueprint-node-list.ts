@@ -40,6 +40,7 @@ import { OutputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger
 import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
+import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -78,6 +79,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "aura-leave": LeaveAuraBlueprintNode,
         "execute-event": ExecuteEventBlueprintNode,
         "region-event": RegionEventBlueprintNode,
+        "damage-received": DamageReceivedBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,
