@@ -49,6 +49,7 @@ import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
 import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { TextTriggerValue } from "./value/trigger-value-text";
 import { TriggerVariable } from "./variable/trigger-variable";
+import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
 
 const NODES = {
     action: {
@@ -73,6 +74,7 @@ const NODES = {
         "has-option": HasOptionTriggerCondition,
         "inside-aura": InsideAuraTriggerCondition,
         "has-temporary": HasTemporaryTriggerCondition,
+        "has-condition": HasConditionTriggerCondition,
     },
     converter: {
         "item-converter": ItemTriggerConverter,

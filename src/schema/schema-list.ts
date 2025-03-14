@@ -38,6 +38,7 @@ import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
 import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
 import { stringListSchema } from "./splitter/schema-splitter-string-list";
 import { damageTakenSchema } from "./event/schema-event-damage";
+import { hasConditionSchema } from "./condition/schema-condition-has-condition";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -64,6 +65,7 @@ const SCHEMAS = {
         "has-option": hasOptionsSchema,
         "inside-aura": insideAuraSchema,
         "has-temporary": hasTemporarySchema,
+        "has-condition": hasConditionSchema,
     },
     converter: {
         // "item-converter": itemConverterSchema,

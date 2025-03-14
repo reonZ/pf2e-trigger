@@ -66,6 +66,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "has-option": ConditionBlueprintNode,
         "inside-aura": ConditionBlueprintNode,
         "has-temporary": ConditionBlueprintNode,
+        "has-condition": ConditionBlueprintNode,
     },
     converter: {
         "item-converter": ConverterBlueprintNode,

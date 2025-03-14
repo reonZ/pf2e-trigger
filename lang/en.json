@@ -255,6 +255,9 @@
                 },
                 "has-temporary": {
                     "title": "Has Trigger Effect"
+                },
+                "has-condition": {
+                    "title": "Has Condition"
                 }
             },
             "value": {
