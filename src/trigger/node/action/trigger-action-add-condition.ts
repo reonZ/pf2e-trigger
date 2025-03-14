@@ -28,33 +28,35 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
 
                 return source;
             },
-            async () => {
-                const rule: GrantItemSource = {
-                    key: "GrantItem",
-                    uuid: condition.uuid,
-                    onDeleteActions: {
-                        grantee: "restrict",
-                    },
-                };
+            ["dying", "unconscious"].includes(slug)
+                ? null
+                : async () => {
+                      const rule: GrantItemSource = {
+                          key: "GrantItem",
+                          uuid: condition.uuid,
+                          onDeleteActions: {
+                              grantee: "restrict",
+                          },
+                      };
 
-                if (isValued && counter > 1) {
-                    rule.inMemoryOnly = true;
+                      if (isValued && counter > 1) {
+                          rule.inMemoryOnly = true;
 
-                    rule.alterations = [
-                        {
-                            mode: "override",
-                            property: "badge-value",
-                            value: counter,
-                        },
-                    ];
-                }
+                          rule.alterations = [
+                              {
+                                  mode: "override",
+                                  property: "badge-value",
+                                  value: counter,
+                              },
+                          ];
+                      }
 
-                return {
-                    rule,
-                    img: condition.img,
-                    name: condition.name,
-                };
-            }
+                      return {
+                          rule,
+                          img: condition.img,
+                          name: condition.name,
+                      };
+                  }
         );
 
         return this.send("out");

@@ -14,17 +14,20 @@ async function executeEffect(
     node: TriggerNode,
     actor: ActorPF2e,
     getUnlimitedSource: (() => Promise<ItemSourcePF2e>) | null,
-    getEffectData: () => Promise<{ name: string; img: ImageFilePath; rule?: object; slug?: string }>
+    getEffectData: (() => Promise<GetEffectDataOptions>) | null
 ) {
     const unided = !!(await (node as DurationNode).get("unidentified"));
     const duration = (await (node as DurationNode).get("duration")) ?? getUnilimitedDuration();
     const context = duration.context;
     delete duration.context;
 
-    if (getUnlimitedSource && duration.unit === "unlimited" && !unided && !context) {
+    if (
+        getUnlimitedSource &&
+        (!getEffectData || (duration.unit === "unlimited" && !unided && !context))
+    ) {
         const source = await getUnlimitedSource();
         await actor.createEmbeddedDocuments("Item", [source]);
-    } else {
+    } else if (getEffectData) {
         const { name, img, rule, slug } = await getEffectData();
 
         const prefix = game.i18n.localize("TYPES.Item.effect");
@@ -63,5 +66,12 @@ function getTriggerOption(trigger: Trigger | TriggerData, slug: string) {
 type DurationNode = TriggerNode<{
     inputs: [{ key: "duration"; type: "duration" }, { key: "unidentified"; type: "boolean" }];
 }>;
+
+type GetEffectDataOptions = {
+    name: string;
+    img: ImageFilePath;
+    rule?: object;
+    slug?: string;
+};
 
 export { executeEffect, getUnilimitedDuration, getTriggerOption, getTriggerSlug };

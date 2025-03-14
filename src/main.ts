@@ -27,11 +27,7 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
     CONFIG.Pf2eTrigger = {
-        addConditionTypes: R.omit(CONFIG.PF2E.conditionTypes, [
-            "dying",
-            "unconscious",
-            "persistent-damage",
-        ]),
+        addConditionTypes: R.omit(CONFIG.PF2E.conditionTypes, ["persistent-damage"]),
         reduceConditionTypes: R.pipe(
             R.entries(CONFIG.PF2E.conditionTypes),
             R.filter(([key]) => {
