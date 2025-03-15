@@ -42,6 +42,7 @@ import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
 import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
 import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
+import { GetCombatantBlueprintNode } from "./action/blueprint-action-get-combatant";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -60,6 +61,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "add-resistance": AddResistanceBlueprintNode,
         "add-weakness": AddWeaknessBlueprintNode,
         "get-choiceset": GetChoicesetBlueprintNode,
+        "get-combatant": GetCombatantBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,

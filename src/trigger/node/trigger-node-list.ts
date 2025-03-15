@@ -52,6 +52,7 @@ import { TriggerVariable } from "./variable/trigger-variable";
 import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
 import { InCombatTriggerCondition } from "./condition/trigger-condition-in-combat";
 import { IsCombatantTriggerCondition } from "./condition/trigger-condition-is-combatant";
+import { GetCombatantTriggerAction } from "./action/trigger-action-get-combatant";
 
 const NODES = {
     action: {
@@ -70,6 +71,7 @@ const NODES = {
         "add-resistance": AddResistanceTriggerNode,
         "add-weakness": AddWeaknessTriggerNode,
         "get-choiceset": GetChoicesetTriggerAction,
+        "get-combatant": GetCombatantTriggerAction,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

@@ -199,6 +199,12 @@
                     "option": {
                         "label": "rollOption"
                     }
+                },
+                "get-combatant": {
+                    "title": "Get Current Combatant",
+                    "combatant": {
+                        "label": "Combatant"
+                    }
                 }
             },
             "event": {
