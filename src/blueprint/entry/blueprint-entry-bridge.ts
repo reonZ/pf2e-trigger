@@ -6,7 +6,7 @@ const FREE_BRIDGES: NodeType[] = ["logic", "splitter"];
 const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
     inputs: {
         action: ["event", "condition", "action", "logic"],
-        condition: ["event", "condition"],
+        condition: ["event", "condition", "action"],
         converter: [],
         event: [],
         logic: [],
@@ -17,7 +17,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         variable: [],
     },
     outputs: {
-        action: ["action"],
+        action: ["condition", "action"],
         condition: ["condition", "action"],
         converter: [],
         event: ["condition", "action"],
