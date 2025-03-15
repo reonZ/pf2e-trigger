@@ -258,6 +258,12 @@
                 },
                 "has-condition": {
                     "title": "Has Condition"
+                },
+                "is-combatant": {
+                    "title": "Is Current Combatant"
+                },
+                "in-combat": {
+                    "title": "Is In Combat"
                 }
             },
             "value": {

@@ -50,6 +50,8 @@ import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { TextTriggerValue } from "./value/trigger-value-text";
 import { TriggerVariable } from "./variable/trigger-variable";
 import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
+import { InCombatTriggerCondition } from "./condition/trigger-condition-in-combat";
+import { IsCombatantTriggerCondition } from "./condition/trigger-condition-is-combatant";
 
 const NODES = {
     action: {
@@ -75,6 +77,8 @@ const NODES = {
         "inside-aura": InsideAuraTriggerCondition,
         "has-temporary": HasTemporaryTriggerCondition,
         "has-condition": HasConditionTriggerCondition,
+        "in-combat": InCombatTriggerCondition,
+        "is-combatant": IsCombatantTriggerCondition,
     },
     converter: {
         "item-converter": ItemTriggerConverter,

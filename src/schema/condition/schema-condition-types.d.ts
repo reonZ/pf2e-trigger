@@ -1,7 +1,10 @@
 export {};
 
 declare global {
-    type ConditionSchema<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable> = {
+    type ConditionSchema<
+        TInput extends NodeSchemaInput = NodeSchemaInput,
+        TOutput extends NodeSchemaVariable = NodeSchemaVariable
+    > = {
         in: true;
         outs: BooleanSchemaOuts;
         inputs: [...TInput[], { key: "target"; type: "target" }];

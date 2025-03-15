@@ -1,7 +1,7 @@
 import { booleanSchemaOuts } from "schema/schema";
 
 function createConditionSchema<TInput extends NodeSchemaInput, TOutput extends NodeSchemaVariable>(
-    inputs: TInput[],
+    inputs: TInput[] = [],
     variables?: TOutput[]
 ): ConditionSchema<TInput, TOutput> {
     return {

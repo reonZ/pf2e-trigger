@@ -8,19 +8,27 @@ import { addItemSchema } from "./action/schema-action-add-item";
 import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { addTemporarySchema } from "./action/schema-action-add-temporary";
 import { consoleLogSchema } from "./action/schema-action-console-log";
+import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
+import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
 import { removeItemSchema } from "./action/schema-action-remove-item";
 import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { rollDamageSchema } from "./action/schema-action-roll-damage";
 import { rollSaveSchema } from "./action/schema-action-roll-save";
+import { createConditionSchema } from "./condition/schema-condition";
+import { hasConditionSchema } from "./condition/schema-condition-has-condition";
 import { hasItemSchema } from "./condition/schema-condition-has-item";
 import { hasOptionsSchema } from "./condition/schema-condition-has-option";
 import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
 import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
+import { damageTakenSchema } from "./event/schema-event-damage";
 import { createLogicSchema } from "./logic/schema-logic";
 import { macroSchema } from "./macro/schema-macro";
+import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
 import { booleanSplitterSchema } from "./splitter/schema-splitter-boolean";
+import { itemSplitterSchema } from "./splitter/schema-splitter-item";
+import { stringListSchema } from "./splitter/schema-splitter-string-list";
 import { successSplitterSchema } from "./splitter/schema-splitter-success";
 import { subtriggerSchema } from "./subtrigger/schema-subtrigger";
 import { outputSubtriggerSchema } from "./subtrigger/schema-subtrigger-output";
@@ -32,13 +40,6 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
-import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
-import { itemSplitterSchema } from "./splitter/schema-splitter-item";
-import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
-import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
-import { stringListSchema } from "./splitter/schema-splitter-string-list";
-import { damageTakenSchema } from "./event/schema-event-damage";
-import { hasConditionSchema } from "./condition/schema-condition-has-condition";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -66,6 +67,8 @@ const SCHEMAS = {
         "inside-aura": insideAuraSchema,
         "has-temporary": hasTemporarySchema,
         "has-condition": hasConditionSchema,
+        "is-combatant": createConditionSchema(),
+        "in-combat": createConditionSchema(),
     },
     converter: {
         // "item-converter": itemConverterSchema,
