@@ -10,18 +10,23 @@ import { AddPersistentTriggerAction } from "./action/trigger-action-add-persiste
 import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
 import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
+import { GetCombatantTriggerAction } from "./action/trigger-action-get-combatant";
 import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
 import { RemoveItemTriggerAction } from "./action/trigger-action-remove-item";
 import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
 import { RollDamageTriggerAction } from "./action/trigger-action-roll-damage";
 import { RollSaveTriggerAction } from "./action/trigger-action-roll-save";
+import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
 import { HasItemTriggerCondition } from "./condition/trigger-condition-has-item";
 import { HasOptionTriggerCondition } from "./condition/trigger-condition-has-option";
 import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-temporary";
+import { InCombatTriggerCondition } from "./condition/trigger-condition-in-combat";
 import { InsideAuraTriggerCondition } from "./condition/trigger-condition-inside-aura";
+import { IsCombatantTriggerCondition } from "./condition/trigger-condition-is-combatant";
 import { ItemTriggerConverter } from "./converter/trigger-converter-item";
 import { TriggerEvent } from "./event/trigger-event";
 import { AuraTriggerEvent } from "./event/trigger-event-aura";
+import { ConditionTriggerEvent } from "./event/trigger-event-condition";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
 import { GtNumberTriggerLogic } from "./logic/trigger-logic-number-gt";
@@ -49,10 +54,6 @@ import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
 import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { TextTriggerValue } from "./value/trigger-value-text";
 import { TriggerVariable } from "./variable/trigger-variable";
-import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
-import { InCombatTriggerCondition } from "./condition/trigger-condition-in-combat";
-import { IsCombatantTriggerCondition } from "./condition/trigger-condition-is-combatant";
-import { GetCombatantTriggerAction } from "./action/trigger-action-get-combatant";
 
 const NODES = {
     action: {
@@ -97,6 +98,8 @@ const NODES = {
         "region-event": TriggerEvent,
         "damage-received": TriggerEvent,
         "heal-received": TriggerEvent,
+        "condition-gain": ConditionTriggerEvent,
+        "condition-lose": ConditionTriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,

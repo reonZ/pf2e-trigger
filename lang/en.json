@@ -245,6 +245,18 @@
                 },
                 "heal-received": {
                     "title": "Heal Received"
+                },
+                "condition-gain": {
+                    "title": "Gain Condition",
+                    "update": {
+                        "label": "With Update?"
+                    }
+                },
+                "condition-lose": {
+                    "title": "Lose Condition",
+                    "update": {
+                        "label": "With Update?"
+                    }
                 }
             },
             "condition": {

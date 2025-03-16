@@ -1,13 +1,14 @@
 import { MODULE } from "module-helpers";
+import { DamageActorHook } from "./actor/hook-actor-damage";
 import { AuraHook } from "./aura/hook-aura";
 import { ExecuteHook } from "./execute/hook-execute";
+import { ItemHook } from "./item/hook-item";
 import { RegionHook } from "./region/hook-region";
 import { TestHook } from "./test/hook-test";
 import { CreateTokenHook } from "./token.ts/hook-token-create";
 import { DeleteTokenHook } from "./token.ts/hook-token-delete";
 import { EndTurnHook } from "./turn/hook-turn-end";
 import { StartTurnHook } from "./turn/hook-turn-start";
-import { DamageActorHook } from "./actor/hook-actor-damage";
 
 const regionHook = new RegionHook();
 
@@ -20,6 +21,7 @@ const HOOKS = [
     new TestHook(),
     new ExecuteHook(),
     new DamageActorHook(),
+    new ItemHook(),
     regionHook,
 ];
 

@@ -41,6 +41,7 @@ import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
 import { getCombatantSchema } from "./action/schema-action-get-combatant";
+import { conditionEventSchema } from "./event/schema-event-condition";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -87,6 +88,8 @@ const SCHEMAS = {
         "region-event": eventSchema,
         "damage-received": damageTakenSchema,
         "heal-received": damageTakenSchema,
+        "condition-gain": conditionEventSchema,
+        "condition-lose": conditionEventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

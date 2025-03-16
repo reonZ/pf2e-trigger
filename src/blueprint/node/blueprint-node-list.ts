@@ -5,6 +5,7 @@ import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persis
 import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-temporary";
 import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
 import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
+import { GetCombatantBlueprintNode } from "./action/blueprint-action-get-combatant";
 import { ReduceConditionBlueprintNode } from "./action/blueprint-action-reduce-condition";
 import { RemoveItemBlueprintNode } from "./action/blueprint-action-remove-item";
 import { RemoveTemporartyBlueprintNode } from "./action/blueprint-action-remove-temporary";
@@ -18,7 +19,11 @@ import { ConditionBlueprintNode } from "./condition/blueprint-condition";
 import { ConverterBlueprintNode } from "./converter/blueprint-converter";
 import { EnterAuraBlueprintNode } from "./event/blueprint-event-aura-enter";
 import { LeaveAuraBlueprintNode } from "./event/blueprint-event-aura-leave";
+import { GainConditionBlueprintNode } from "./event/blueprint-event-condition-gain";
+import { LoseConditionBlueprintNode } from "./event/blueprint-event-condition-lose";
+import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
+import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
 import { TestEventBlueprintNode } from "./event/blueprint-event-test";
 import { CreateTokenBlueprintNode } from "./event/blueprint-event-token-create";
@@ -40,9 +45,6 @@ import { OutputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger
 import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
 import { VariableBlueprintNode } from "./variable/blueprint-variable";
-import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
-import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
-import { GetCombatantBlueprintNode } from "./action/blueprint-action-get-combatant";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -87,6 +89,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "region-event": RegionEventBlueprintNode,
         "damage-received": DamageReceivedBlueprintNode,
         "heal-received": HealReceivedBlueprintNode,
+        "condition-gain": GainConditionBlueprintNode,
+        "condition-lose": LoseConditionBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

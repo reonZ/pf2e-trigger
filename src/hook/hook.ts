@@ -2,11 +2,16 @@ import { MODULE, R } from "module-helpers";
 import { Trigger } from "trigger/trigger";
 
 abstract class TriggerHook {
+    #active: Set<NodeEventKey> = new Set();
     #triggers: TriggerData[] = [];
 
     abstract get events(): NodeEventKey[];
     protected abstract _activate(): void;
     protected abstract _disable(): void;
+
+    get activeEvents(): Set<NodeEventKey> {
+        return this.#active;
+    }
 
     getTrigger(id: string): TriggerData | undefined {
         return this.#triggers.find((trigger) => trigger.id === id);
@@ -14,38 +19,49 @@ abstract class TriggerHook {
 
     initialize(triggers: TriggerData[]) {
         this.#triggers.length = 0;
+        this.#active.clear();
 
         const events = this.events;
         const conditions = this.conditions;
 
-        let active = false;
-
         triggerLoop: for (const trigger of triggers) {
-            if (events?.includes(trigger.event.key as NodeEventKey)) {
+            const triggerEventKey = trigger.event.key as NodeEventKey;
+
+            if (events?.includes(triggerEventKey)) {
                 this.#triggers.push(trigger);
-                active = true;
+                this.#active.add(triggerEventKey);
                 continue;
             }
 
-            if (active || !conditions) continue;
+            if (!conditions) continue;
 
             for (const node of R.values(trigger.nodes)) {
                 if (
                     node.type === "condition" &&
                     conditions.includes(node.key as NodeConditionKey)
                 ) {
-                    active = true;
+                    this.#active.add(triggerEventKey);
                     continue triggerLoop;
                 }
             }
         }
 
-        if (active) {
+        if (this.#active.size) {
             MODULE.debug("activate", this.constructor.name);
-            this._activate();
+
+            if (game.user.isGM) {
+                this._activate();
+            }
+
+            this._activateAll?.();
         } else {
             MODULE.debug("disable", this.constructor.name);
-            this._disable();
+
+            if (game.user.isGM) {
+                this._disable();
+            }
+
+            this._disableAll?.();
         }
     }
 
@@ -81,6 +97,8 @@ abstract class TriggerHook {
 
 interface TriggerHook {
     get conditions(): NodeConditionKey[] | undefined;
+    _activateAll(): void;
+    _disableAll(): void;
 }
 
 export { TriggerHook };
