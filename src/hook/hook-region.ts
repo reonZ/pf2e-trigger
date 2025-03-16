@@ -1,6 +1,6 @@
 import { TriggerHook } from "hook/hook";
 
-class RegionHook extends TriggerHook {
+class RegionHook extends TriggerHook<"region-event"> {
     get events(): ["region-event"] {
         return ["region-event"];
     }

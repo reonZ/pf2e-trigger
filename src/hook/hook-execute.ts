@@ -1,7 +1,7 @@
 import { TriggerHook } from "hook/hook";
 import { MODULE, R, isInstanceOf, userIsActiveGM } from "module-helpers";
 
-class ExecuteHook extends TriggerHook {
+class ExecuteHook extends TriggerHook<"execute-event"> {
     get events(): ["execute-event"] {
         return ["execute-event"];
     }

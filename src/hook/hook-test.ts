@@ -1,7 +1,7 @@
 import { TriggerHook } from "hook/hook";
 import { R, userIsActiveGM, warn } from "module-helpers";
 
-class TestHook extends TriggerHook {
+class TestHook extends TriggerHook<"test-event"> {
     get events(): ["test-event"] {
         return ["test-event"];
     }

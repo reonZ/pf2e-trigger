@@ -18,7 +18,7 @@ import {
     userIsActiveGM,
 } from "module-helpers";
 
-class AuraHook extends TriggerHook {
+class AuraHook extends TriggerHook<"aura-enter" | "aura-leave"> {
     #wrappers = [
         createWrapper(
             "CONFIG.Token.documentClass.prototype.prepareBaseData",

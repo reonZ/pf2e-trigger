@@ -1,15 +1,22 @@
-import { MODULE, R } from "module-helpers";
+import {
+    ActorPF2e,
+    MODULE,
+    R,
+    TokenDocumentPF2e,
+    createHook,
+    userIsActiveGM,
+} from "module-helpers";
 import { Trigger } from "trigger/trigger";
 
-abstract class TriggerHook {
-    #active: Set<NodeEventKey> = new Set();
+abstract class TriggerHook<TEventKey extends NodeEventKey> {
+    #active: Set<TEventKey> = new Set();
     #triggers: TriggerData[] = [];
 
-    abstract get events(): NodeEventKey[];
+    abstract get events(): TEventKey[];
     protected abstract _activate(): void;
     protected abstract _disable(): void;
 
-    get activeEvents(): Set<NodeEventKey> {
+    get activeEvents(): Set<TEventKey> {
         return this.#active;
     }
 
@@ -25,7 +32,7 @@ abstract class TriggerHook {
         const conditions = this.conditions;
 
         triggerLoop: for (const trigger of triggers) {
-            const triggerEventKey = trigger.event.key as NodeEventKey;
+            const triggerEventKey = trigger.event.key as TEventKey;
 
             if (events?.includes(triggerEventKey)) {
                 this.#triggers.push(trigger);
@@ -71,7 +78,7 @@ abstract class TriggerHook {
         }
     }
 
-    async executeEventTriggers(event: NodeEventKey, options: PreTriggerExecuteOptions) {
+    async executeEventTriggers(event: TEventKey, options: PreTriggerExecuteOptions) {
         for (const data of this.#triggers) {
             if (data.event.key !== event) continue;
             await this.executeTrigger(data, options);
@@ -93,9 +100,45 @@ abstract class TriggerHook {
             await trigger.execute(options);
         }
     }
+
+    createEventHook(event: string, listener: (...args: any[]) => any) {
+        const hook = createHook(event, listener);
+        const self = this;
+
+        return {
+            activate() {
+                hook.activate();
+            },
+            disable() {
+                hook.disable();
+            },
+            toggle(enabled?: TEventKey | boolean) {
+                const toggle = R.isString(enabled)
+                    ? self.activeEvents.has(enabled)
+                    : (enabled as boolean);
+                hook.toggle(toggle);
+            },
+        };
+    }
+
+    isValidHookActor(actor: Maybe<ActorPF2e>): actor is ActorPF2e {
+        return !!actor && !actor.pack;
+    }
+
+    createHookOptions(
+        actor: Maybe<ActorPF2e>,
+        token?: TokenDocumentPF2e | null
+    ): PreTriggerExecuteOptionsWithVariables | undefined {
+        if (!this.isValidHookActor(actor) || !userIsActiveGM()) return;
+
+        return {
+            this: { actor, token },
+            variables: {},
+        };
+    }
 }
 
-interface TriggerHook {
+interface TriggerHook<TEventKey extends NodeEventKey> {
     get conditions(): NodeConditionKey[] | undefined;
     _activateAll(): void;
     _disableAll(): void;

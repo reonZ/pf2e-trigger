@@ -1,4 +1,4 @@
-import { PF2eTriggerBehaviorType } from "hook/region/hook-region-behavior";
+import { PF2eTriggerBehaviorType } from "hook/hook-region-behavior";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
 import { prepareTriggers } from "trigger/trigger-list";
 import { TriggersMenu } from "triggers-menu";

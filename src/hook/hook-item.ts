@@ -6,23 +6,22 @@ import {
     ItemSourcePF2e,
     R,
     createHook,
-    userIsActiveGM,
 } from "module-helpers";
 
-class ItemHook extends TriggerHook {
+class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
     #preUpdateItemHook = createHook("preUpdateItem", this.#onPreUpdateItem.bind(this));
 
-    #createItemHook = createHook("createItem", this.#onCreateItem.bind(this));
-    #updateItemHook = createHook("updateItem", this.#onUpdateItem.bind(this));
-    #deleteItemHook = createHook("deleteItem", this.#onDeleteItem.bind(this));
+    #createItemHook = this.createEventHook("createItem", this.#onCreateItem.bind(this));
+    #updateItemHook = this.createEventHook("updateItem", this.#onUpdateItem.bind(this));
+    #deleteItemHook = this.createEventHook("deleteItem", this.#onDeleteItem.bind(this));
 
     get events(): ["condition-gain", "condition-lose"] {
         return ["condition-gain", "condition-lose"];
     }
 
     protected _activate(): void {
-        this.#createItemHook.toggle(this.activeEvents.has("condition-gain"));
-        this.#deleteItemHook.toggle(this.activeEvents.has("condition-lose"));
+        this.#createItemHook.toggle("condition-gain");
+        this.#deleteItemHook.toggle("condition-lose");
         this.#updateItemHook.activate();
     }
 
@@ -43,9 +42,9 @@ class ItemHook extends TriggerHook {
     #onPreUpdateItem(
         item: ItemPF2e,
         data: DeepPartial<ItemSourcePF2e>,
-        operation: DatabaseUpdateOperation<ItemPF2e>
+        operation: DatabaseUpdateOperation<ActorPF2e>
     ) {
-        if (!isValidPreHook(item)) return;
+        if (!this.isValidHookActor(item.actor)) return;
 
         condition: if (item.isOfType("condition")) {
             const newValue = (data as DeepPartial<ConditionSource>).system?.value?.value;
@@ -61,7 +60,7 @@ class ItemHook extends TriggerHook {
     }
 
     #onCreateItem(item: ItemPF2e) {
-        const options = getHookOptions(item);
+        const options = this.createHookOptions(item.actor);
         if (!options) return;
 
         if (item.isOfType("condition")) {
@@ -73,9 +72,9 @@ class ItemHook extends TriggerHook {
     #onUpdateItem(
         item: ItemPF2e,
         data: DeepPartial<ItemSourcePF2e>,
-        operation: DatabaseUpdateOperation<ItemPF2e>
+        operation: DatabaseUpdateOperation<ActorPF2e>
     ) {
-        const options = getHookOptions(item);
+        const options = this.createHookOptions(item.actor);
         if (!options) return;
 
         condition: if (item.isOfType("condition")) {
@@ -93,7 +92,7 @@ class ItemHook extends TriggerHook {
     }
 
     #onDeleteItem(item: ItemPF2e) {
-        const options = getHookOptions(item);
+        const options = this.createHookOptions(item.actor);
         if (!options) return;
 
         if (item.isOfType("condition")) {
@@ -101,22 +100,6 @@ class ItemHook extends TriggerHook {
             this.executeEventTriggers("condition-lose", options);
         }
     }
-}
-
-function isValidPreHook(item: ItemPF2e): item is ItemPF2e<ActorPF2e> {
-    const actor = item.actor;
-    return !!actor && !actor.pack;
-}
-
-function getHookOptions(item: ItemPF2e): PreTriggerExecuteOptions | undefined {
-    if (!userIsActiveGM()) return;
-
-    const actor = item.actor;
-    if (!actor || actor.pack) return;
-
-    return {
-        this: { actor },
-    };
 }
 
 export { ItemHook };
