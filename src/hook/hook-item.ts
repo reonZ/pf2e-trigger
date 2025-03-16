@@ -43,7 +43,7 @@ class ItemHook extends TriggerHook<
     }
 
     protected _activateAll(): void {
-        this.#preUpdateItemHook.activate();
+        this.#preUpdateItemHook.toggle(this.hasUpdate);
     }
 
     protected _disableAll(): void {
