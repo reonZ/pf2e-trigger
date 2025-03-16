@@ -20,17 +20,21 @@ class TurnHook extends TriggerHook<"turn-start" | "turn-end"> {
     }
 
     #onTurnStart(combatant: CombatantPF2e) {
-        const options = this.createHookOptions(combatant.actor, combatant.token);
-        if (!options) return;
+        const actor = combatant.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        this.executeEventTriggers("turn-start", options);
+        this.executeEventTriggers("turn-start", {
+            this: { actor, token: combatant.token },
+        });
     }
 
     #onTurnEnd(combatant: CombatantPF2e) {
-        const options = this.createHookOptions(combatant.actor, combatant.token);
-        if (!options) return;
+        const actor = combatant.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        this.executeEventTriggers("turn-end", options);
+        this.executeEventTriggers("turn-end", {
+            this: { actor, token: combatant.token },
+        });
     }
 }
 

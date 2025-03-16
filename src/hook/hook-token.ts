@@ -20,17 +20,21 @@ class TokenHook extends TriggerHook<"token-create" | "token-delete"> {
     }
 
     #onCreateToken(token: TokenDocumentPF2e) {
-        const options = this.createHookOptions(token.actor, token);
-        if (!options) return;
+        const actor = token.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        this.executeEventTriggers("token-create", options);
+        this.executeEventTriggers("token-create", {
+            this: { actor, token },
+        });
     }
 
     #onDeleteToken(token: TokenDocumentPF2e) {
-        const options = this.createHookOptions(token.actor, token);
-        if (!options) return;
+        const actor = token.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        this.executeEventTriggers("token-delete", options);
+        this.executeEventTriggers("token-delete", {
+            this: { actor, token },
+        });
     }
 }
 

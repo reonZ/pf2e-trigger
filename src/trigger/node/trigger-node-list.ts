@@ -28,6 +28,7 @@ import { TriggerEvent } from "./event/trigger-event";
 import { AuraTriggerEvent } from "./event/trigger-event-aura";
 import { ConditionTriggerEvent } from "./event/trigger-event-condition";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
+import { ItemTriggerEvent } from "./event/trigger-event-item";
 import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
 import { GtNumberTriggerLogic } from "./logic/trigger-logic-number-gt";
 import { GteNumberTriggerLogic } from "./logic/trigger-logic-number-gte";
@@ -100,6 +101,8 @@ const NODES = {
         "heal-received": TriggerEvent,
         "condition-gain": ConditionTriggerEvent,
         "condition-lose": ConditionTriggerEvent,
+        "item-gain": ItemTriggerEvent,
+        "item-lose": ItemTriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,

@@ -257,6 +257,12 @@
                     "update": {
                         "label": "With Update?"
                     }
+                },
+                "item-gain": {
+                    "title": "Gain Item"
+                },
+                "item-lose": {
+                    "title": "Lose Item"
                 }
             },
             "condition": {

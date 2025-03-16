@@ -1,4 +1,4 @@
-import { AuraData, ConditionSlug } from "module-helpers";
+import { AuraData, ConditionSlug, ItemPF2e } from "module-helpers";
 
 declare global {
     type ActorAura = {
@@ -19,6 +19,7 @@ declare global {
     type TriggerExecuteOptions = {
         this: TargetDocuments;
         aura?: ActorAura;
+        item?: ItemPF2e;
         condition?: { slug: ConditionSlug; update: boolean };
         values?: any;
         variables: Record<NodeEntryId, TriggerEntryValue>;

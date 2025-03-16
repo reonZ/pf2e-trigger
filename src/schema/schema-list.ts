@@ -9,6 +9,7 @@ import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { addTemporarySchema } from "./action/schema-action-add-temporary";
 import { consoleLogSchema } from "./action/schema-action-console-log";
 import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
+import { getCombatantSchema } from "./action/schema-action-get-combatant";
 import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
 import { removeItemSchema } from "./action/schema-action-remove-item";
 import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
@@ -22,7 +23,9 @@ import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
 import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
+import { conditionEventSchema } from "./event/schema-event-condition";
 import { damageTakenSchema } from "./event/schema-event-damage";
+import { itemEventSchema } from "./event/schema-event-item";
 import { createLogicSchema } from "./logic/schema-logic";
 import { macroSchema } from "./macro/schema-macro";
 import { actorSplitterSchema } from "./splitter/schema-splitter-actor";
@@ -40,8 +43,6 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
-import { getCombatantSchema } from "./action/schema-action-get-combatant";
-import { conditionEventSchema } from "./event/schema-event-condition";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -90,6 +91,8 @@ const SCHEMAS = {
         "heal-received": damageTakenSchema,
         "condition-gain": conditionEventSchema,
         "condition-lose": conditionEventSchema,
+        "item-gain": itemEventSchema,
+        "item-lose": itemEventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

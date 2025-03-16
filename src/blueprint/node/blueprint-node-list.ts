@@ -24,6 +24,8 @@ import { LoseConditionBlueprintNode } from "./event/blueprint-event-condition-lo
 import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
 import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
+import { GainItemBlueprintNode } from "./event/blueprint-event-item-gain";
+import { LoseItemBlueprintNode } from "./event/blueprint-event-item-lose";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
 import { TestEventBlueprintNode } from "./event/blueprint-event-test";
 import { CreateTokenBlueprintNode } from "./event/blueprint-event-token-create";
@@ -91,6 +93,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "heal-received": HealReceivedBlueprintNode,
         "condition-gain": GainConditionBlueprintNode,
         "condition-lose": LoseConditionBlueprintNode,
+        "item-gain": GainItemBlueprintNode,
+        "item-lose": LoseItemBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

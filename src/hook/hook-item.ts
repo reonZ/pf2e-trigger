@@ -6,26 +6,33 @@ import {
     ItemSourcePF2e,
     R,
     createHook,
+    setHasAny,
 } from "module-helpers";
 
-class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
+class ItemHook extends TriggerHook<
+    "condition-gain" | "condition-lose" | "item-gain" | "item-lose"
+> {
     #preUpdateItemHook = createHook("preUpdateItem", this.#onPreUpdateItem.bind(this));
 
     #createItemHook = this.createEventHook("createItem", this.#onCreateItem.bind(this));
     #updateItemHook = this.createEventHook("updateItem", this.#onUpdateItem.bind(this));
     #deleteItemHook = this.createEventHook("deleteItem", this.#onDeleteItem.bind(this));
 
-    get events(): ["condition-gain", "condition-lose"] {
-        return ["condition-gain", "condition-lose"];
+    get events(): ["condition-gain", "condition-lose", "item-gain", "item-lose"] {
+        return ["condition-gain", "condition-lose", "item-gain", "item-lose"];
     }
 
     get hasUpdate() {
-        return this.triggers.some((trigger) => trigger.event.inputs.update?.value !== false);
+        return this.triggers.some(
+            (trigger) =>
+                ["condition-gain", "condition-lose"].includes(trigger.event.key) &&
+                trigger.event.inputs.update?.value !== false
+        );
     }
 
     protected _activate(): void {
-        this.#createItemHook.toggle("condition-gain");
-        this.#deleteItemHook.toggle("condition-lose");
+        this.#createItemHook.toggle("condition-gain", "item-gain");
+        this.#deleteItemHook.toggle("condition-lose", "item-lose");
         this.#updateItemHook.toggle(this.hasUpdate);
     }
 
@@ -64,12 +71,21 @@ class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
     }
 
     #onCreateItem(item: ItemPF2e) {
-        const options = this.createHookOptions(item.actor);
-        if (!options) return;
+        const actor = item.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        if (item.isOfType("condition")) {
-            options.condition = { slug: item.slug, update: false };
-            this.executeEventTriggers("condition-gain", options);
+        if (this.activeEvents.has("item-gain")) {
+            this.executeEventTriggers("item-gain", {
+                this: { actor },
+                item,
+            });
+        }
+
+        if (this.activeEvents.has("condition-gain") && item.isOfType("condition")) {
+            this.executeEventTriggers("condition-gain", {
+                this: { actor },
+                condition: { slug: item.slug, update: false },
+            });
         }
     }
 
@@ -78,14 +94,20 @@ class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
         data: DeepPartial<ItemSourcePF2e>,
         operation: DatabaseUpdateOperation<ActorPF2e>
     ) {
-        const options = this.createHookOptions(item.actor);
-        if (!options) return;
+        const actor = item.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        condition: if (item.isOfType("condition")) {
+        condition: if (
+            setHasAny(this.activeEvents, "condition-gain", "condition-lose") &&
+            item.isOfType("condition")
+        ) {
             const difference = fu.getProperty(operation, "trigger.condition.difference");
             if (!R.isNumber(difference)) break condition;
 
-            options.condition = { slug: item.slug, update: true };
+            const options: PreTriggerExecuteOptions = {
+                this: { actor },
+                condition: { slug: item.slug, update: true },
+            };
 
             if (difference > 0) {
                 this.executeEventTriggers("condition-gain", options);
@@ -96,12 +118,21 @@ class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
     }
 
     #onDeleteItem(item: ItemPF2e) {
-        const options = this.createHookOptions(item.actor);
-        if (!options) return;
+        const actor = item.actor;
+        if (!this.isValidHookEvent(actor)) return;
 
-        if (item.isOfType("condition")) {
-            options.condition = { slug: item.slug, update: false };
-            this.executeEventTriggers("condition-lose", options);
+        if (this.activeEvents.has("item-lose")) {
+            this.executeEventTriggers("item-lose", {
+                this: { actor },
+                item,
+            });
+        }
+
+        if (this.activeEvents.has("condition-lose") && item.isOfType("condition")) {
+            this.executeEventTriggers("condition-lose", {
+                this: { actor },
+                condition: { slug: item.slug, update: false },
+            });
         }
     }
 }

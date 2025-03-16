@@ -26,13 +26,16 @@ class ActorHook extends TriggerHook<"damage-received" | "heal-received"> {
         data: DeepPartial<ActorSourcePF2e>,
         operation: ActorUpdateOperation<TokenDocumentPF2e>
     ) {
-        const options = this.createHookOptions(actor);
-        if (!options) return;
+        if (!this.isValidHookEvent(actor)) return;
 
         if (operation.damageTaken) {
-            options.variables.value = Math.abs(operation.damageTaken);
             const event = operation.damageTaken < 0 ? "heal-received" : "damage-received";
-            this.executeEventTriggers(event, options);
+            this.executeEventTriggers(event, {
+                this: { actor },
+                variables: {
+                    value: Math.abs(operation.damageTaken),
+                },
+            });
         }
     }
 }

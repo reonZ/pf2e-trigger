@@ -1,11 +1,4 @@
-import {
-    ActorPF2e,
-    MODULE,
-    R,
-    TokenDocumentPF2e,
-    createHook,
-    userIsActiveGM,
-} from "module-helpers";
+import { ActorPF2e, MODULE, R, createHook, userIsActiveGM } from "module-helpers";
 import { Trigger } from "trigger/trigger";
 
 abstract class TriggerHook<TEventKey extends NodeEventKey> {
@@ -116,11 +109,16 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
             disable() {
                 hook.disable();
             },
-            toggle(enabled?: TEventKey | boolean) {
-                const toggle = R.isString(enabled)
-                    ? self.activeEvents.has(enabled)
-                    : (enabled as boolean);
-                hook.toggle(toggle);
+            toggle(...args: (TEventKey | boolean)[]) {
+                const [booleans, events] = R.partition(args, R.isBoolean) as [
+                    boolean[],
+                    TEventKey[]
+                ];
+
+                hook.toggle(
+                    (!booleans.length || booleans.every(R.isTruthy)) &&
+                        (!events.length || events.some((event) => self.activeEvents.has(event)))
+                );
             },
         };
     }
@@ -129,16 +127,8 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
         return !!actor && !actor.pack;
     }
 
-    createHookOptions(
-        actor: Maybe<ActorPF2e>,
-        token?: TokenDocumentPF2e | null
-    ): PreTriggerExecuteOptionsWithVariables | undefined {
-        if (!this.isValidHookActor(actor) || !userIsActiveGM()) return;
-
-        return {
-            this: { actor, token },
-            variables: {},
-        };
+    isValidHookEvent(actor: Maybe<ActorPF2e>): actor is ActorPF2e {
+        return this.isValidHookActor(actor) && userIsActiveGM();
     }
 
     protected _activateAll(): void {}

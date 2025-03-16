@@ -33,7 +33,7 @@ function createBlueprintEntry(
                 : category === "inputs" &&
                   isNonNullNodeEntryType(schema.type) &&
                   node.type !== "splitter" &&
-                  (node.type === "value" || !!(schema as NodeSchemaInput).field)
+                  (["value", "event"].includes(node.type) || !!(schema as NodeSchemaInput).field)
                 ? new INPUTS_ENTRIES[schema.type](category, node, schema as NodeSchemaInput)
                 : new BlueprintValueEntry(category, node, schema)
             : new BlueprintBridgeEntry(category, node, schema);

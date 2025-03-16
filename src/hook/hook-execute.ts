@@ -35,12 +35,10 @@ class ExecuteHook extends TriggerHook<"execute-event"> {
             return;
         }
 
-        const options: PreTriggerExecuteOptions = {
+        this.executeTrigger(trigger, {
             this: target,
             values: R.isArray(values) ? values : [],
-        };
-
-        this.executeTrigger(trigger, options);
+        });
     }
 }
 
