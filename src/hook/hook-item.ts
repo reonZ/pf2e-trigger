@@ -19,10 +19,14 @@ class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
         return ["condition-gain", "condition-lose"];
     }
 
+    get hasUpdate() {
+        return this.triggers.some((trigger) => trigger.event.inputs.update?.value !== false);
+    }
+
     protected _activate(): void {
         this.#createItemHook.toggle("condition-gain");
         this.#deleteItemHook.toggle("condition-lose");
-        this.#updateItemHook.activate();
+        this.#updateItemHook.toggle(this.hasUpdate);
     }
 
     protected _disable(): void {
@@ -31,11 +35,11 @@ class ItemHook extends TriggerHook<"condition-gain" | "condition-lose"> {
         this.#updateItemHook.disable();
     }
 
-    _activateAll(): void {
+    protected _activateAll(): void {
         this.#preUpdateItemHook.activate();
     }
 
-    _disableAll(): void {
+    protected _disableAll(): void {
         this.#preUpdateItemHook.disable();
     }
 

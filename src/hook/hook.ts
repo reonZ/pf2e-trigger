@@ -20,6 +20,10 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
         return this.#active;
     }
 
+    get triggers() {
+        return this.#triggers;
+    }
+
     getTrigger(id: string): TriggerData | undefined {
         return this.#triggers.find((trigger) => trigger.id === id);
     }
@@ -34,7 +38,7 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
         triggerLoop: for (const trigger of triggers) {
             const triggerEventKey = trigger.event.key as TEventKey;
 
-            if (events?.includes(triggerEventKey)) {
+            if (events.includes(triggerEventKey)) {
                 this.#triggers.push(trigger);
                 this.#active.add(triggerEventKey);
                 continue;
@@ -60,7 +64,7 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
                 this._activate();
             }
 
-            this._activateAll?.();
+            this._activateAll();
         } else {
             MODULE.debug("disable", this.constructor.name);
 
@@ -68,7 +72,7 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
                 this._disable();
             }
 
-            this._disableAll?.();
+            this._disableAll();
         }
     }
 
@@ -136,12 +140,14 @@ abstract class TriggerHook<TEventKey extends NodeEventKey> {
             variables: {},
         };
     }
+
+    protected _activateAll(): void {}
+
+    protected _disableAll(): void {}
 }
 
 interface TriggerHook<TEventKey extends NodeEventKey> {
     get conditions(): NodeConditionKey[] | undefined;
-    _activateAll(): void;
-    _disableAll(): void;
 }
 
 export { TriggerHook };
