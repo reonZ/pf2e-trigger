@@ -1,3 +1,33 @@
+# 1.5.0
+
+-   you can now have condition nodes following action nodes
+-   add `Damage Received` event node
+    -   triggers when an actor loses HP (0 included), be it from manual update in the sheet/HUD or via a message damage button
+    -   it only works for stamina if this was initiated via a message damage button (i opened an issue to the system)
+-   add `Heal Received` event node
+    -   works just as `Damage Received` but triggers when an actor gains HP
+-   add `Gain Item` & `Lose Item` event nodes
+    -   if no uuid is provided, it will trigger for any item added or removed from an actor
+-   add `Gain Condition` & `Lose Condition` event nodes
+    -   will trigger when the specified condition is gained or lost on an actor
+    -   the `With Update?` toggle indicate if the trigger should also check for condition counter updates and not just for its existence on the actor
+-   add `Is In Combat` condition node
+    -   this is implied for the `Trigger Target` when using the `Enter Aura`, `Leave Aura`, `Turn Start` & `Turn End` event nodes
+-   add `Is Current Combatant` condition node
+    -   this is implied for the `Trigger Target` when using the `Enter Aura`, `Leave Aura` & `Turn Start` event nodes
+-   add `Has Condition` condition node
+    -   you can set a minimum counter value to test
+-   add `Get Current Combatant` action node
+    -   returns a `target` type value of the current combat, current combatant if any
+-   the `Add Condition` action node can now add the `dying` and `unconscious` conditions
+    -   the `Unidentified?` & `Duration` fields won't work with them because of how they are handled by the system
+-   turn `Actor Data` & `Item Data` splitter nodes into custom nodes
+    -   you can now decide which data is extracted from those documents
+    -   this means that any such node you have used so far will have to be modified (i really don't want to do migration for them)
+    -   `Entry Path` is the path to a `boolean`, `string` or `number` directly from the root of the document e.g.:
+        -   `level` would access the level getter of the document
+        -   `system.details.ancestry.name` would retrieve the name of the ancestry of the actor in `Actor Data`
+
 # 1.4.0
 
 -   logic nodes now all have input fields instead of just plain connections
