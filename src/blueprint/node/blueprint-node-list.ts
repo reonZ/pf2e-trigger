@@ -21,9 +21,9 @@ import { EnterAuraBlueprintNode } from "./event/blueprint-event-aura-enter";
 import { LeaveAuraBlueprintNode } from "./event/blueprint-event-aura-leave";
 import { GainConditionBlueprintNode } from "./event/blueprint-event-condition-gain";
 import { LoseConditionBlueprintNode } from "./event/blueprint-event-condition-lose";
-import { DamageReceivedBlueprintNode } from "./event/blueprint-event-damage";
+import { HealthLoseBlueprintNode } from "./event/blueprint-event-health-lose";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
-import { HealReceivedBlueprintNode } from "./event/blueprint-event-heal";
+import { HealGainBlueprintNode } from "./event/blueprint-event-health-gain";
 import { GainItemBlueprintNode } from "./event/blueprint-event-item-gain";
 import { LoseItemBlueprintNode } from "./event/blueprint-event-item-lose";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
@@ -89,8 +89,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "aura-leave": LeaveAuraBlueprintNode,
         "execute-event": ExecuteEventBlueprintNode,
         "region-event": RegionEventBlueprintNode,
-        "damage-received": DamageReceivedBlueprintNode,
-        "heal-received": HealReceivedBlueprintNode,
+        "damage-received": HealthLoseBlueprintNode,
+        "heal-received": HealGainBlueprintNode,
         "condition-gain": GainConditionBlueprintNode,
         "condition-lose": LoseConditionBlueprintNode,
         "item-gain": GainItemBlueprintNode,

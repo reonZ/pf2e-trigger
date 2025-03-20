@@ -24,7 +24,7 @@ import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
 import { conditionEventSchema } from "./event/schema-event-condition";
-import { damageTakenSchema } from "./event/schema-event-damage";
+import { healthChangeSchema } from "./event/schema-event-health";
 import { itemEventSchema } from "./event/schema-event-item";
 import { createLogicSchema } from "./logic/schema-logic";
 import { macroSchema } from "./macro/schema-macro";
@@ -87,8 +87,8 @@ const SCHEMAS = {
         "aura-leave": auraEventSchema,
         "execute-event": eventSchema,
         "region-event": eventSchema,
-        "damage-received": damageTakenSchema,
-        "heal-received": damageTakenSchema,
+        "damage-received": healthChangeSchema,
+        "heal-received": healthChangeSchema,
         "condition-gain": conditionEventSchema,
         "condition-lose": conditionEventSchema,
         "item-gain": itemEventSchema,

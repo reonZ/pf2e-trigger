@@ -241,10 +241,10 @@
                     "copied": "The trigger ID has been copied to the clipboard."
                 },
                 "damage-received": {
-                    "title": "Damage Received"
+                    "title": "Lose Health"
                 },
                 "heal-received": {
-                    "title": "Heal Received"
+                    "title": "Gain Health"
                 },
                 "condition-gain": {
                     "title": "Gain Condition",
