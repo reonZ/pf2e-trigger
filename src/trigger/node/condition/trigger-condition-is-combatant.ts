@@ -3,8 +3,8 @@ import { TriggerNode } from "../trigger-node";
 
 class IsCombatantTriggerCondition extends TriggerNode<ConditionSchema> {
     async execute(): Promise<void> {
-        const actor = ((await this.get("target")) ?? this.target).actor;
-        return this.send(isCurrentCombatant(actor) ? "true" : "false");
+        const actor = await this.getTargetActor("target");
+        return this.send(actor && isCurrentCombatant(actor) ? "true" : "false");
     }
 }
 

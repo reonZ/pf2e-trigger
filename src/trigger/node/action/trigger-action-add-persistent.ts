@@ -10,7 +10,12 @@ import { TriggerNode } from "../trigger-node";
 
 class AddPersistentTriggerAction extends TriggerNode<typeof addPersistentSchema> {
     async execute(): Promise<void> {
-        const actor = (await this.get("target"))?.actor ?? this.target.actor;
+        const actor = await this.getTargetActor("target");
+
+        if (!actor) {
+            return this.send("out");
+        }
+
         const condition = game.pf2e.ConditionManager.conditions.get("persistent-damage")!;
 
         await executeEffect(

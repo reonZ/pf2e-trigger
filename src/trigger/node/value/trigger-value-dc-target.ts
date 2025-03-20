@@ -7,8 +7,13 @@ class TargetDcTriggerValue extends TriggerNode<typeof dcTargetSchema> {
     #adjustment: number | undefined;
 
     async query(key: "dc"): Promise<NodeDCEntry> {
+        const target = await this.getTarget("target");
+
+        if (!target) {
+            return { value: 0 };
+        }
+
         const ModifierPF2e = game.pf2e.Modifier;
-        const target = (await this.get("target")) ?? this.target;
         const against = (this.#against ??= ((await this.get("against")) ?? "")?.trim());
         const adjustment = (this.#adjustment ??= (await this.get("adjustment")) ?? 0);
         const item = await this.get("item");

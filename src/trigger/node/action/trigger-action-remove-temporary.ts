@@ -5,14 +5,14 @@ import { getTriggerSlug } from "helpers/helpers-effect";
 class RemoveTemporaryTriggerNode extends TriggerNode<typeof removeTemporarySchema> {
     async execute(): Promise<void> {
         const slug = await this.get("slug");
+        const actor = await this.getTargetActor("target");
 
-        if (!slug?.trim()) {
+        if (!actor || !slug?.trim()) {
             return this.send("out");
         }
 
         const triggerSlug = getTriggerSlug(this.trigger, slug);
-        const target = (await this.get("target")) ?? this.target;
-        const exist = target.actor.itemTypes.effect.find((item) => item.slug === triggerSlug);
+        const exist = actor.itemTypes.effect.find((item) => item.slug === triggerSlug);
 
         await exist?.delete();
 

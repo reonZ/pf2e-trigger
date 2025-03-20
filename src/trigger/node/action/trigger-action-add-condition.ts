@@ -5,15 +5,15 @@ import { TriggerNode } from "../trigger-node";
 
 class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
     async execute(): Promise<void> {
+        const actor = await this.getTargetActor("target");
         const slug = (await this.get("condition")) as ConditionSlug;
         const condition = game.pf2e.ConditionManager.conditions.get(slug);
 
-        if (!condition) {
+        if (!condition || !actor) {
             return this.send("out");
         }
 
         const isValued = condition.system.value.isValued;
-        const actor = (await this.get("target"))?.actor ?? this.target.actor;
         const counter = (await this.get("counter")) ?? 1;
 
         await executeEffect(

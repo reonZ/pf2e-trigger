@@ -3,7 +3,12 @@ import { TriggerNode } from "../trigger-node";
 
 class HasItemTriggerCondition extends TriggerNode<typeof hasItemSchema> {
     async execute(): Promise<void> {
-        const target = (await this.get("target")) ?? this.target;
+        const target = await this.getTarget("target");
+
+        if (!target) {
+            return this.send("false");
+        }
+
         const item = this.getExistingItem(target, await this.get("item"));
 
         if (item) {

@@ -10,10 +10,15 @@ abstract class AddIwrTriggerNode<TType extends IwrType> extends TriggerNode<IwrS
     abstract get iwrImg(): ImageFilePath;
 
     async execute(): Promise<void> {
-        const type = await this.get("type");
-        const target = (await this.get("target")) ?? this.target;
+        const actor = await this.getTargetActor("target");
 
-        executeEffect(this, target.actor, null, async () => {
+        if (!actor) {
+            return this.send("out");
+        }
+
+        const type = await this.get("type");
+
+        executeEffect(this, actor, null, async () => {
             const title = localize(this.localizePath, "title");
 
             const rule: IwrRule<TType> = {

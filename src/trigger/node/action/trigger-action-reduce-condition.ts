@@ -4,10 +4,15 @@ import { TriggerNode } from "../trigger-node";
 
 class ReduceConditionTriggerNode extends TriggerNode<typeof reduceConditionSchema> {
     async execute(): Promise<void> {
+        const actor = await this.getTargetActor("target");
+
+        if (!actor) {
+            return this.send("out");
+        }
+
         const min = (await this.get("min")) ?? 0;
         const reduction = (await this.get("value")) ?? 1;
         const slug = (await this.get("condition")) as ConditionSlug;
-        const actor = (await this.get("target"))?.actor ?? this.target.actor;
         const conditions = actor.conditions.bySlug(slug).filter((condition) => !condition.isLocked);
 
         const toDelete: string[] = [];

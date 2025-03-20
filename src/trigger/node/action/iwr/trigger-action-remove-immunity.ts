@@ -5,10 +5,15 @@ import { executeEffect } from "helpers/helpers-effect";
 
 class RemoveImmunityTriggerNode extends TriggerNode<typeof removeImmunitySchema> {
     async execute(): Promise<void> {
-        const type = (await this.get("type")) as ImmunityType;
-        const target = (await this.get("target")) ?? this.target;
+        const actor = await this.getTargetActor("target");
 
-        executeEffect(this, target.actor, null, async () => {
+        if (!actor) {
+            return this.send("out");
+        }
+
+        const type = (await this.get("type")) as ImmunityType;
+
+        executeEffect(this, actor, null, async () => {
             const title = localize(this.localizePath, "title");
 
             const rule: { key: "Immunity"; type: ImmunityType; mode: "remove" } = {

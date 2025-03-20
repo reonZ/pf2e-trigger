@@ -4,7 +4,12 @@ import { ConditionSlug } from "module-helpers";
 
 class HasConditionTriggerCondition extends TriggerNode<typeof hasConditionSchema> {
     async execute(): Promise<void> {
-        const actor = ((await this.get("target")) ?? this.target).actor;
+        const actor = await this.getTargetActor("target");
+
+        if (!actor) {
+            return this.send("false");
+        }
+
         const slug = (await this.get("condition")) as ConditionSlug | undefined;
 
         const condition = slug ? actor.conditions.bySlug(slug)[0] : undefined;

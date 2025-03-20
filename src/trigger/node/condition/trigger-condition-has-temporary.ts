@@ -6,14 +6,14 @@ import { hasRollOption } from "module-helpers";
 class HasTemporaryTriggerCondition extends TriggerNode<typeof hasTemporarySchema> {
     async execute(): Promise<void> {
         const slug = await this.get("slug");
+        const actor = await this.getTargetActor("target");
 
-        if (!slug?.trim()) {
+        if (!actor || !slug?.trim()) {
             return this.send("false");
         }
 
         const triggerOption = getTriggerOption(this.trigger, slug);
-        const target = (await this.get("target")) ?? this.target;
-        const sendKey = hasRollOption(target.actor, triggerOption) ? "true" : "false";
+        const sendKey = hasRollOption(actor, triggerOption) ? "true" : "false";
 
         return this.send(sendKey);
     }

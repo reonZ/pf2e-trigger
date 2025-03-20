@@ -5,12 +5,12 @@ import { TriggerNode } from "../trigger-node";
 class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
     async execute(): Promise<void> {
         const save = await this.get("save");
+        const rollData = await this.get("roll");
 
-        if (!R.isString(save)) {
+        if (!R.isString(save) || rollData?.origin === null) {
             return this.send("out");
         }
 
-        const rollData = await this.get("roll");
         const roller = rollData?.origin?.actor ?? this.target.actor;
         const statistic = roller.getStatistic(save);
 

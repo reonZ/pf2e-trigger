@@ -38,7 +38,6 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     get schema(): NodeSchemaMap {
         return this.#schema;
     }
-
     get target(): TargetDocuments {
         return this.options.this;
     }
@@ -76,6 +75,20 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         const otherNode = outputId ? this.#trigger.getNodeFromEntryId(outputId) : undefined;
 
         return otherNode?.execute();
+    }
+
+    async getTarget<K extends ExtractSchemaInputsTargets<TSchema>>(
+        key: K
+    ): Promise<TargetDocuments | undefined> {
+        const target = await this.get(key as any);
+        return target === null ? undefined : (target as TargetDocuments | undefined) ?? this.target;
+    }
+
+    async getTargetActor<K extends ExtractSchemaInputsTargets<TSchema>>(
+        key: K
+    ): Promise<ActorPF2e | undefined> {
+        const target = await this.getTarget(key);
+        return target?.actor;
     }
 
     async get<K extends ExtractSchemaInputs<TSchema>>(

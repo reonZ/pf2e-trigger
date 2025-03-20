@@ -6,14 +6,13 @@ import { TriggerNode } from "../trigger-node";
 class AddTemporaryTriggerNode extends TriggerNode<typeof addTemporarySchema> {
     async execute(): Promise<void> {
         const slug = await this.get("slug");
+        const actor = await this.getTargetActor("target");
 
-        if (!slug?.trim()) {
+        if (!actor || !slug?.trim()) {
             return this.send("out");
         }
 
-        const target = (await this.get("target")) ?? this.target;
-
-        executeEffect(this, target.actor, null, async () => {
+        executeEffect(this, actor, null, async () => {
             const title = localize(this.localizePath, "effect");
 
             return {
