@@ -211,22 +211,22 @@
                 "title": "Events",
                 "subtitle": "Event",
                 "aura-enter": {
-                    "title": "Enter Aura"
+                    "title": "Aura Entered"
                 },
                 "aura-leave": {
-                    "title": "Leave Aura"
+                    "title": "Aura Left"
                 },
                 "turn-start": {
-                    "title": "Turn Start"
+                    "title": "Turn Started"
                 },
                 "turn-end": {
-                    "title": "Turn End"
+                    "title": "Turn Ended"
                 },
                 "token-create": {
-                    "title": "Create Token"
+                    "title": "Token Created"
                 },
                 "token-delete": {
-                    "title": "Delete Token"
+                    "title": "Token Deleted"
                 },
                 "test-event": {
                     "title": "Test Event",
@@ -241,28 +241,40 @@
                     "copied": "The trigger ID has been copied to the clipboard."
                 },
                 "damage-received": {
-                    "title": "Lose Health"
+                    "title": "Health Lost"
                 },
                 "heal-received": {
-                    "title": "Gain Health"
+                    "title": "Health Gained"
                 },
                 "condition-gain": {
-                    "title": "Gain Condition",
+                    "title": "Condition Added",
                     "update": {
                         "label": "With Update?"
                     }
                 },
                 "condition-lose": {
-                    "title": "Lose Condition",
+                    "title": "Condition Removed",
                     "update": {
                         "label": "With Update?"
                     }
                 },
                 "item-gain": {
-                    "title": "Gain Item"
+                    "title": "Item Added"
                 },
                 "item-lose": {
-                    "title": "Lose Item"
+                    "title": "Item Lost"
+                },
+                "damage-taken": {
+                    "title": "Damage Taken",
+                    "origin": {
+                        "label": "Damage Source"
+                    }
+                },
+                "damage-dealt": {
+                    "title": "Damage Dealt",
+                    "origin": {
+                        "label": "Damage Target"
+                    }
                 }
             },
             "condition": {
