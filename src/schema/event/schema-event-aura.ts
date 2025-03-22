@@ -3,7 +3,6 @@ const auraEventSchema = {
     inputs: [
         {
             key: "slug",
-            label: "aura-slug",
             type: "text",
             field: true,
         },
@@ -13,6 +12,13 @@ const auraEventSchema = {
             field: {
                 default: "enemies",
                 options: ["all", "allies", "enemies"],
+            },
+        },
+        {
+            key: "turn",
+            type: "boolean",
+            field: {
+                default: true,
             },
         },
     ],
