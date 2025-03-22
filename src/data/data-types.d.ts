@@ -56,7 +56,7 @@ declare global {
         custom: NodeDataCustom;
     };
 
-    type NodeRawData<T extends NodeType = NodeType> = MaybePartial<NodeData<T>>;
+    type NodeRawData<T extends NodeType = NodeType> = Maybe<Partial<NodeData<T>>>;
 
     type NodeDataEntry = {
         ids?: NodeEntryId[];
