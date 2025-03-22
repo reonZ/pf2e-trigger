@@ -77,13 +77,19 @@ declare global {
         ? K
         : string;
 
+    type ExtractSchemaInputsTargets<S extends NodeRawSchema> = S extends {
+        inputs: ReadonlyArray<NodeSchemaInput>;
+    }
+        ? Extract<S["inputs"][number], { type: "target" }>["key"]
+        : never;
+
     type ExtractSchemaInputValueType<
         S extends NodeRawSchema,
         K extends ExtractSchemaInputs<S>
     > = S extends {
         inputs: ReadonlyArray<NodeSchemaInput>;
     }
-        ? ExtractEntryType<Extract<S["inputs"][number], { key: K }>["type"]> | undefined
+        ? ExtractEntryType<Extract<S["inputs"][number], { key: K }>["type"]>
         : TriggerEntryValue;
 
     type ExtractSchemaVariableValueType<

@@ -39,9 +39,9 @@ class AddPersistentTriggerAction extends TriggerNode<typeof addPersistentSchema>
                             mode: "override",
                             property: "persistent-damage",
                             value: {
-                                formula: (await this.get("die"))?.trim() || "1d6",
+                                formula: await this.get("die"),
                                 damageType,
-                                dc: (await this.get("dc")) ?? 15,
+                                dc: await this.get("dc"),
                             } satisfies PersistentSourceData,
                         },
                     ],

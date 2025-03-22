@@ -6,7 +6,7 @@ class ItemTriggerEvent extends TriggerNode<typeof itemEventSchema> {
         const item = this.options.item;
         if (!item) return;
 
-        const uuid = (await this.get("uuid"))?.trim();
+        const uuid = (await this.get("uuid")).trim();
         if (uuid && item.sourceId !== uuid) return;
 
         this.setVariable("item", item);

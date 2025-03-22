@@ -9,7 +9,7 @@ class UnitDurationTriggerValue extends TriggerNode<typeof unitDurationSchema> {
         this.#cached ??= {
             expiry: (await this.get("expiry")) as EffectExpiryType,
             unit: (await this.get("unit")) as TimeUnit,
-            value: (await this.get("value")) ?? 0,
+            value: await this.get("value"),
         };
 
         const origin = await this.get("origin");

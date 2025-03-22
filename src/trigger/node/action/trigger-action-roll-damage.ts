@@ -1,13 +1,13 @@
-import { R, getExtraRollOptions, rollDamageFromFormula } from "module-helpers";
-import { TriggerNode } from "../trigger-node";
+import { getExtraRollOptions, rollDamageFromFormula } from "module-helpers";
 import { rollDamageSchema } from "schema/action/schema-action-roll-damage";
+import { TriggerNode } from "../trigger-node";
 
 class RollDamageTriggerAction extends TriggerNode<typeof rollDamageSchema> {
     async execute(): Promise<void> {
         const formula = await this.get("formula");
         const target = await this.getTarget("target");
 
-        if (!target || !R.isString(formula) || !formula.trim()) {
+        if (!target || !formula.trim()) {
             return this.send("out");
         }
 

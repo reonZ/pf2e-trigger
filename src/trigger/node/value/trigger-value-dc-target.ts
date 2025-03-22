@@ -14,8 +14,8 @@ class TargetDcTriggerValue extends TriggerNode<typeof dcTargetSchema> {
         }
 
         const ModifierPF2e = game.pf2e.Modifier;
-        const against = (this.#against ??= ((await this.get("against")) ?? "")?.trim());
-        const adjustment = (this.#adjustment ??= (await this.get("adjustment")) ?? 0);
+        const against = (this.#against ??= (await this.get("against")).trim());
+        const adjustment = (this.#adjustment ??= await this.get("adjustment"));
         const item = await this.get("item");
 
         const defenseStat = target.actor.getStatistic(against)?.clone({

@@ -10,7 +10,7 @@ class HasConditionTriggerCondition extends TriggerNode<typeof hasConditionSchema
             return this.send("false");
         }
 
-        const slug = (await this.get("condition")) as ConditionSlug | undefined;
+        const slug = (await this.get("condition")) as ConditionSlug;
 
         const condition = slug ? actor.conditions.bySlug(slug)[0] : undefined;
         if (!condition) {

@@ -10,8 +10,8 @@ class GetChoicesetTriggerAction extends TriggerNode<typeof getChoicesetSchema> {
             return this.send("out");
         }
 
-        const flag = (await this.get("flag"))?.trim();
-        const option = (await this.get("option"))?.trim();
+        const flag = (await this.get("flag")).trim();
+        const option = (await this.get("option")).trim();
         const selection = getChoiceSetSelection(item, { flag, option });
 
         if (selection) {

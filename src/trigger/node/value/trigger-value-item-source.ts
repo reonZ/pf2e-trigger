@@ -1,4 +1,4 @@
-import { ItemPF2e, R } from "module-helpers";
+import { ItemPF2e } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
 
 class ItemSourceTriggerValue extends TriggerNode {
@@ -6,8 +6,8 @@ class ItemSourceTriggerValue extends TriggerNode {
 
     async query(key: string): Promise<ItemPF2e | undefined> {
         if (!this.#cached) {
-            const uuid = await this.get("uuid");
-            const item = R.isString(uuid) && uuid.trim() ? await fromUuid<ItemPF2e>(uuid) : null;
+            const uuid = (await this.get("uuid")) as string;
+            const item = uuid.trim() ? await fromUuid<ItemPF2e>(uuid) : null;
 
             if (item instanceof Item && item.pack) {
                 this.#cached = item;

@@ -10,8 +10,8 @@ class ReduceConditionTriggerNode extends TriggerNode<typeof reduceConditionSchem
             return this.send("out");
         }
 
-        const min = (await this.get("min")) ?? 0;
-        const reduction = (await this.get("value")) ?? 1;
+        const min = await this.get("min");
+        const reduction = await this.get("value");
         const slug = (await this.get("condition")) as ConditionSlug;
         const conditions = actor.conditions.bySlug(slug).filter((condition) => !condition.isLocked);
 

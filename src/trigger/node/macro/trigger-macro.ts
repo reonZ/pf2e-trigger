@@ -4,9 +4,9 @@ import { TriggerNode } from "../trigger-node";
 
 class TriggerMacro extends TriggerNode {
     async execute(): Promise<void> {
-        const uuid = await this.get("uuid");
+        const uuid = (await this.get("uuid")) as string;
 
-        if (!R.isString(uuid) || !uuid.trim()) {
+        if (!uuid.trim()) {
             return this.send("out");
         }
 

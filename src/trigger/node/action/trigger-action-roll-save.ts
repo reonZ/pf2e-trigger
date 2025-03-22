@@ -1,4 +1,4 @@
-import { ActorPF2e, ItemPF2e, R, getExtraRollOptions } from "module-helpers";
+import { ActorPF2e, ItemPF2e, getExtraRollOptions } from "module-helpers";
 import { rollSaveSchema } from "schema/action/schema-action-roll-save";
 import { TriggerNode } from "../trigger-node";
 
@@ -7,7 +7,7 @@ class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
         const save = await this.get("save");
         const rollData = await this.get("roll");
 
-        if (!R.isString(save) || rollData?.origin === null) {
+        if (rollData?.origin === null) {
             return this.send("out");
         }
 

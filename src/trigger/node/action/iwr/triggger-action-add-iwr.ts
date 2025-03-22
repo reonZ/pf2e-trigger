@@ -27,7 +27,7 @@ abstract class AddIwrTriggerNode<TType extends IwrType> extends TriggerNode<IwrS
             };
 
             if (this.iwrKey !== "Immunity") {
-                const value = (await this.get("value")) ?? 5;
+                const value = await this.get("value");
                 rule.value = Math.max(value, 1);
             }
 

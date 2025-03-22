@@ -8,14 +8,14 @@ class RollDataTriggerValue extends TriggerNode<typeof rollDataSchema> {
 
     async query(key: string): Promise<RollNodeEntry> {
         this.#options ??= R.pipe(
-            (await this.get("options")) ?? "",
+            await this.get("options"),
             R.split(","),
             R.map((x) => x.trim()),
             R.filter(R.isTruthy)
         );
 
         this.#traits ??= R.pipe(
-            (await this.get("traits")) ?? "",
+            await this.get("traits"),
             R.split(","),
             R.map((x) => x.trim()),
             R.filter(R.isTruthy)

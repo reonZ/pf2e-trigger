@@ -14,7 +14,7 @@ class AddConditionTriggerNode extends TriggerNode<typeof addConditionSchema> {
         }
 
         const isValued = condition.system.value.isValued;
-        const counter = (await this.get("counter")) ?? 1;
+        const counter = await this.get("counter");
 
         await executeEffect(
             this,

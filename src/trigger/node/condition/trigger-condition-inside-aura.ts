@@ -7,7 +7,7 @@ class InsideAuraTriggerCondition extends TriggerNode<typeof insideAuraSchema> {
     async getActorAuras(actor: ActorPF2e): Promise<ActorAura[]> {
         const slug = await this.get("slug");
 
-        if (!slug?.trim()) {
+        if (!slug.trim()) {
             return [];
         }
 

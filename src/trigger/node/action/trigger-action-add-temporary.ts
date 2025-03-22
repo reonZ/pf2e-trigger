@@ -8,7 +8,7 @@ class AddTemporaryTriggerNode extends TriggerNode<typeof addTemporarySchema> {
         const slug = await this.get("slug");
         const actor = await this.getTargetActor("target");
 
-        if (!actor || !slug?.trim()) {
+        if (!actor || !slug.trim()) {
             return this.send("out");
         }
 

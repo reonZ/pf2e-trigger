@@ -11,7 +11,7 @@ class HasOptionTriggerCondition extends TriggerNode<typeof hasOptionsSchema> {
         }
 
         const option = await this.get("option");
-        const sendKey = !!option?.trim() && hasRollOption(actor, option) ? "true" : "false";
+        const sendKey = !!option.trim() && hasRollOption(actor, option) ? "true" : "false";
 
         return this.send(sendKey);
     }

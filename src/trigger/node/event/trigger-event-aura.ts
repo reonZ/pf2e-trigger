@@ -9,7 +9,7 @@ class AuraTriggerEvent extends TriggerNode<typeof auraEventSchema> {
         if (!aura || !actor.inCombat) return;
 
         const slug = await this.get("slug");
-        if (!slug?.trim()) return;
+        if (!slug.trim()) return;
 
         const currentTurn = await this.get("turn");
         if (currentTurn && !isCurrentCombatant(actor)) return;
