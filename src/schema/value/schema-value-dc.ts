@@ -3,6 +3,7 @@ const dcValueSchema = {
         {
             key: "dc",
             type: "number",
+            label: "value",
             field: {
                 min: 0,
                 step: 1,

@@ -267,12 +267,12 @@
                 "damage-taken": {
                     "title": "Damage Taken",
                     "origin": {
-                        "label": "Damage Source"
+                        "label": "Damage Origin"
                     }
                 },
                 "damage-dealt": {
                     "title": "Damage Dealt",
-                    "origin": {
+                    "target": {
                         "label": "Damage Target"
                     }
                 }
@@ -318,7 +318,7 @@
                     "title": "Roll Data"
                 },
                 "dc-value": {
-                    "title": "Difficulty Class (DC)"
+                    "title": "Difficulty Class"
                 },
                 "dc-target": {
                     "title": "Difficulty Class (Target)",
