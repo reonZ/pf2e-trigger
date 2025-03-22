@@ -168,7 +168,10 @@ const FILTERS: NodeSchemaFilter[] = R.pipe(
 );
 
 function inputHasConnector(input: NodeSchemaInput, type: NodeType) {
-    return input.connection !== false && !NO_CONNECTOR_TYPES.includes(type);
+    return (
+        input.connection === true ||
+        (input.connection !== false && !NO_CONNECTOR_TYPES.includes(type))
+    );
 }
 
 function getFilters(trigger?: TriggerData | null): NodeSchemaFilter[] {

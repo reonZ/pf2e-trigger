@@ -9,6 +9,7 @@ const dcValueSchema = {
                 step: 1,
                 default: 15,
             },
+            connection: true,
         },
     ],
     variables: [{ key: "dc", type: "dc" }],

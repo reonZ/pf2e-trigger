@@ -13,6 +13,7 @@ const dcTargetSchema = {
                 max: 10,
                 default: 0,
             },
+            connection: true,
         },
     ],
     variables: dcValueSchema.variables,
