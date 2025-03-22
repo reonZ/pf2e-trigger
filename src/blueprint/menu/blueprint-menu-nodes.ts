@@ -95,13 +95,13 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
 
     #getVariables(): DataNode[] {
         const trigger = this.trigger;
-        const entry = this.source;
+        const sourceEntry = this.source;
 
-        if (!trigger || entry?.category === "outputs") {
+        if (!trigger || sourceEntry?.category === "outputs") {
             return [];
         }
 
-        const nodesVariables: DataNode[] = R.pipe(
+        const uniqueVariables: DataNode[] = R.pipe(
             R.values(trigger.nodes),
             R.flatMap((node): DataNode[] => {
                 const schema = getSchema(node);
@@ -109,10 +109,14 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
 
                 return R.pipe(
                     schema.variables,
-                    R.map(({ key, label, type }): DataNode | undefined => {
-                        if (entry && !haveCompatibleEntryType(entry, { type })) return;
+                    R.map(({ key, type }): DataNode | undefined => {
+                        if (sourceEntry && !haveCompatibleEntryType(sourceEntry, { type })) return;
 
-                        const entryLabel = localize("node", label ? "variable" : "entry", key);
+                        const entryId: NodeEntryId = `${node.id}.outputs.${key}`;
+                        const entry = this.blueprint.getEntry(entryId);
+                        if (!entry) return;
+
+                        const entryLabel = entry?.label;
 
                         return {
                             type: "variable",
@@ -125,7 +129,7 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             })
         );
 
-        const triggerNodes: DataNode[] = R.pipe(
+        const triggerVariables: DataNode[] = R.pipe(
             R.entries(trigger.variables),
             R.map(([entryId, label]): DataNode | undefined => {
                 const entry = this.blueprint.getEntry(entryId);
@@ -142,7 +146,7 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             R.filter(R.isTruthy)
         );
 
-        return [...nodesVariables, ...triggerNodes];
+        return [...uniqueVariables, ...triggerVariables];
     }
 
     #getSubtriggers(): DataNode[] {
