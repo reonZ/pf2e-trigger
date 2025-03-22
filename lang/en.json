@@ -266,13 +266,13 @@
                 },
                 "damage-taken": {
                     "title": "Damage Taken",
-                    "origin": {
+                    "other": {
                         "label": "Damage Origin"
                     }
                 },
                 "damage-dealt": {
                     "title": "Damage Dealt",
-                    "target": {
+                    "other": {
                         "label": "Damage Target"
                     }
                 }
@@ -438,7 +438,8 @@
                 "name": "Name",
                 "slug": "Slug",
                 "level": "Level",
-                "selection": "Selection"
+                "selection": "Selection",
+                "turn": "Current Turn?"
             }
         },
         "select": {

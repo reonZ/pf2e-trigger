@@ -13,7 +13,6 @@ import {
     TokenDocumentPF2e,
     createWrapper,
     deleteInMemory,
-    isCurrentCombatant,
     runWhenReady,
     userIsActiveGM,
 } from "module-helpers";
@@ -111,7 +110,7 @@ class AuraHook extends TriggerHook<"aura-enter" | "aura-leave"> {
                 if (!token) {
                     removeAuraFromMemory(actor, aura.data, aura.origin);
 
-                    if (isCurrentCombatant(actor)) {
+                    if (actor.inCombat) {
                         const target = { actor, token: actorTokens.at(0) };
                         this.executeEventTriggers("aura-leave", { this: target, aura });
                     }
@@ -146,7 +145,7 @@ class AuraHook extends TriggerHook<"aura-enter" | "aura-leave"> {
 
                 setAuraInMemory(actor, auraData, source);
 
-                if (!already && isCurrentCombatant(actor)) {
+                if (!already && actor.inCombat) {
                     const target = { actor, token };
                     this.executeEventTriggers("aura-enter", {
                         this: target,

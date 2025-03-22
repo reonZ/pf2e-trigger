@@ -4,19 +4,22 @@ import { ActorTargetAlliance, actorsRespectAlliance, isCurrentCombatant } from "
 
 class AuraTriggerEvent extends TriggerNode<typeof auraEventSchema> {
     async execute() {
-        const target = this.target;
+        const actor = this.target.actor;
         const aura = this.options.aura;
-        if (!aura || !isCurrentCombatant(target.actor)) return;
+        if (!aura || !actor.inCombat) return;
 
         const slug = await this.get("slug");
         if (!slug?.trim()) return;
 
+        const currentTurn = await this.get("turn");
+        if (currentTurn && !isCurrentCombatant(actor)) return;
+
         if (
             aura.data.slug !== slug ||
-            aura.origin.actor.uuid === target.actor.uuid ||
+            aura.origin.actor.uuid === actor.uuid ||
             !actorsRespectAlliance(
                 aura.origin.actor,
-                target.actor,
+                actor,
                 (await this.get("targets")) as ActorTargetAlliance
             )
         )
