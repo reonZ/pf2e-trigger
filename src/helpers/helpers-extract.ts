@@ -12,7 +12,7 @@ function extractValueFromDocument(
 
     if (type === "list") {
         return R.pipe(
-            cursor instanceof Set ? [...cursor] : cursor instanceof Array ? cursor : [],
+            cursor instanceof Set ? [...cursor] : R.isArray(cursor) ? cursor : [],
             R.filter(R.isString)
         );
     } else if (cursor.constructor === NODE_ENTRY_VALUE_TYPE[type]) {
