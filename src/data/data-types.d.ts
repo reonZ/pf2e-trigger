@@ -75,6 +75,8 @@ declare global {
 
     type ExtractEntryType<T extends NodeEntryType> = T extends NonNullNodeEntryType
         ? PrimitiveOf<(typeof NODE_ENTRY_VALUE_TYPE)[T]>
+        : T extends "list"
+        ? string[]
         : T extends NullNodeEntryType
         ? ExtractNullEntryType<T> | undefined
         : never;

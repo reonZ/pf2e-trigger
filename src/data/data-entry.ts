@@ -249,6 +249,10 @@ function isNonNullNodeEntry<T extends NodeSchemaInput | NodeSchemaBridge>(
     return "type" in entry && isNonNullNodeEntryType(entry.type);
 }
 
+function isListNodeEntry(entry: NodeSchemaInput | NodeSchemaBridge): boolean {
+    return "type" in entry && entry.type === "list";
+}
+
 function haveSameEntryType(a: { type: NodeEntryType }, b: { type: NodeEntryType }): boolean {
     if (a.type === b.type) {
         return true;
@@ -282,6 +286,7 @@ export {
     haveConvertableEntryType,
     haveSameEntryType,
     isEntryId,
+    isListNodeEntry,
     isNonNullNodeEntry,
     isNonNullNodeEntryType,
     isValidCustomEntry,
