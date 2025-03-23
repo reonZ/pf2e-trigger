@@ -100,13 +100,9 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
 
         const input = this.#data.inputs[key] as NodeDataEntry | undefined;
 
-        const setToDefault = () => {
+        const getDefault = () => {
             const schemaInput = this.#schema.inputs[key];
-            if (isNonNullNodeEntry(schemaInput)) {
-                this.#get[key] = () => getDefaultInputValue(schemaInput);
-            } else {
-                this.#get[key] = () => undefined;
-            }
+            return isNonNullNodeEntry(schemaInput) ? getDefaultInputValue(schemaInput) : undefined;
         };
 
         if (input) {
@@ -129,21 +125,21 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                                 return options.includes(query) ? query : options[0];
                             };
                         } else {
-                            this.#get[key] = () => otherNode.query(key);
+                            this.#get[key] = () => otherNode.query(key) ?? getDefault();
                         }
                     } else {
-                        this.#get[key] = () => this.options.variables[entryId];
+                        this.#get[key] = () => this.options.variables[entryId] ?? getDefault();
                     }
                 } else {
-                    setToDefault();
+                    this.#get[key] = () => getDefault();
                 }
             } else if ("value" in input) {
                 this.#get[key] = () => input.value;
             } else {
-                setToDefault();
+                this.#get[key] = () => getDefault();
             }
         } else {
-            setToDefault();
+            this.#get[key] = () => getDefault();
         }
 
         return this.#get[key]();
