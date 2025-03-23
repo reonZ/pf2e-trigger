@@ -3,8 +3,9 @@ import { PF2eTriggerBehaviorType } from "hook/hook-region-behavior";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
 import { prepareTriggers } from "trigger/trigger-list";
 import { TriggersMenu } from "triggers-menu";
+import * as migrations from "./migrations";
 
-MODULE.register("pf2e-trigger");
+MODULE.register("pf2e-trigger", migrations);
 
 Hooks.once("init", () => {
     registerSetting({
