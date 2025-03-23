@@ -13,6 +13,7 @@ const NODE_ENTRY_TYPES = [
     "dc",
     "duration",
     "label",
+    "list",
 ] as const;
 
 const NODE_ENTRY_VALUE_TYPE = {

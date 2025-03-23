@@ -81,6 +81,8 @@ declare global {
 
     type ExtractNullEntryType<T extends NullNodeEntryType> = T extends "item"
         ? ItemPF2e
+        : T extends "list"
+        ? string[]
         : T extends "target"
         ? TargetDocuments
         : T extends "roll"

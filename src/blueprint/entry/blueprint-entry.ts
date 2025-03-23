@@ -6,17 +6,18 @@ import { localize, localizeIfExist } from "module-helpers";
 import { BlueprintBridgeEntry } from "./blueprint-entry-bridge";
 
 const ENTRY_COLORS: Record<NonNullable<NodeEntryType>, number> = {
-    boolean: 0x940404,
+    boolean: 0xad0303,
     dc: 0x1682c9,
     duration: 0x75db32,
     item: 0x696fe0,
     number: 0x07b88f,
     roll: 0x86910d,
-    select: 0xf79442,
-    target: 0xf5115d,
-    text: 0xf79442,
-    uuid: 0xf79442,
+    select: 0xe0a06c,
+    target: 0xff3075,
+    text: 0xe0a06c,
+    uuid: 0xe0a06c,
     label: 0x000000,
+    list: 0x874501,
 };
 
 abstract class BlueprintEntry<
