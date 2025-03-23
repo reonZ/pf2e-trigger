@@ -37,7 +37,7 @@ class VariableBlueprintNode extends BlueprintNode {
     }
 
     get context(): string[] {
-        return ["delete-node", "remove-variable"];
+        return ["delete-node"];
     }
 
     get variableId(): NodeEntryId {
@@ -46,21 +46,10 @@ class VariableBlueprintNode extends BlueprintNode {
 
     protected async _onContext(context: string): Promise<void> {
         switch (context) {
-            case "remove-variable": {
-                return this.#deleteVariable();
-            }
-
             default: {
                 return super._onContext(context);
             }
         }
-    }
-
-    #deleteVariable() {
-        const entry = this.blueprint.getEntry(this.variableId);
-        if (!entry) return;
-
-        this.blueprint.removeVariable(entry);
     }
 }
 
