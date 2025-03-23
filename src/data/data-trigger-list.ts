@@ -3,10 +3,13 @@ import { processTriggerData } from "./data-trigger";
 
 let TRIGGERS: TriggerData[];
 
+function getTriggersList(): TriggerData[] {
+    return TRIGGERS.map((trigger) => fu.deepClone(trigger));
+}
+
 function getTriggersDataMap(): Record<string, TriggerData> {
     return R.pipe(
         TRIGGERS,
-        R.flatMap(R.identity()),
         R.mapToObj((trigger) => [trigger.id, fu.deepClone(trigger)])
     );
 }
@@ -47,4 +50,4 @@ function processTriggers(allTriggers: TriggerRawData[]): TriggerData[] {
     return [...processedSubtriggers, ...processedTriggers];
 }
 
-export { getTriggersDataMap, prepareTriggersData, processTriggers };
+export { getTriggersDataMap, getTriggersList, prepareTriggersData, processTriggers };

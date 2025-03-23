@@ -1,3 +1,4 @@
+import { getTriggersList } from "data/data-trigger-list";
 import { PF2eTriggerBehaviorType } from "hook/hook-region-behavior";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
 import { prepareTriggers } from "trigger/trigger-list";
@@ -38,6 +39,9 @@ Hooks.once("setup", () => {
 
     CONFIG.RegionBehavior.dataModels[MODULE.path("trigger")] = PF2eTriggerBehaviorType;
     CONFIG.RegionBehavior.typeIcons[MODULE.path("trigger")] = "fa-solid fa-land-mine-on";
+
+    game.trigger ??= {};
+    game.trigger.getTriggersList = getTriggersList;
 
     prepareTriggers();
 });
