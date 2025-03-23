@@ -101,7 +101,7 @@ abstract class BlueprintEntry<
 
     get connectorColor(): number {
         const type = this.type;
-        return type ? ENTRY_COLORS[type] : 0xffffff;
+        return type ? getConnectorColor(type) : 0xffffff;
     }
 
     get isActive(): boolean {
@@ -285,4 +285,11 @@ abstract class BlueprintEntry<
     }
 }
 
-export { BlueprintEntry };
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex: true): string;
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: false): number;
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: boolean): number | string {
+    const decimal = ENTRY_COLORS[type];
+    return hex ? decimal.toString(16).padStart(6, "0") : decimal;
+}
+
+export { BlueprintEntry, getConnectorColor };

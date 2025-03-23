@@ -314,7 +314,7 @@ abstract class BlueprintNode extends PIXI.Container {
             }
 
             case "remove-variable": {
-                return this.blueprint.removeVariable(entry);
+                return this.blueprint.removeVariable(entry.id);
             }
         }
     }

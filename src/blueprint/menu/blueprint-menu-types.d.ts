@@ -6,7 +6,4 @@ declare global {
     };
 
     type BlueprintMenuResolve<T> = (value: T | null | PromiseLike<T | null>) => void;
-
-    type BlueprintMenuVariableKey =
-        `${string}.outputs.${string}.${NonNullable<NodeEntryType>}.${string}`;
 }

@@ -1,4 +1,5 @@
 import { Blueprint } from "blueprint/blueprint";
+import { getConnectorColor } from "blueprint/entry/blueprint-entry";
 import { processTriggerData, serializeTrigger } from "data/data-trigger";
 import { TriggersExportMenu } from "export-menu";
 import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
@@ -74,8 +75,22 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             (trigger) => trigger.sub
         );
 
+        const variables = R.pipe(
+            this.blueprint.getVariables(),
+            R.filter((variable) => variable.custom),
+            R.map((variable): MenuVariableData => {
+                return {
+                    ...variable,
+                    color: getConnectorColor(variable.entryType, true),
+                };
+            })
+        );
+
+        this.blueprint.getVariables().filter((variable) => variable.custom);
+
         return {
             triggers,
+            variables,
             subtriggers,
             selected: this.blueprint.trigger?.id,
             i18n: templateLocalize("triggers-menu"),
@@ -106,20 +121,30 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         const data = await this._prepareContext();
         const template = await render("triggers-menu", data);
         const wrapper = createHTMLElement("div", { innerHTML: template });
+        const sidebar = this.sidebar;
+        const trigger = this.blueprint.trigger;
 
         const oldTitle = htmlQuery(this.element, ".trigger-title");
         if (oldTitle) {
-            oldTitle.innerText = this.blueprint.trigger?.name ?? "";
+            oldTitle.innerText = trigger?.name ?? "";
         }
 
-        const newTriggers = htmlQueryAll(wrapper, "ul.triggers");
-        const oldTriggers = htmlQueryAll(this.sidebar, "ul.triggers");
+        const newLists = htmlQueryAll(wrapper, "ul");
+        const oldLists = htmlQueryAll(sidebar, "ul");
 
-        if (newTriggers.length && newTriggers.length === oldTriggers.length) {
-            oldTriggers[0].replaceWith(newTriggers[0]);
-            oldTriggers[1].replaceWith(newTriggers[1]);
+        if (newLists.length && newLists.length === oldLists.length) {
+            for (let i = 0; i < newLists.length; i++) {
+                oldLists[i].replaceWith(newLists[i]);
+            }
 
-            this.#activateTriggersListeners(this.element);
+            this.#activateListsListeners(this.element);
+        }
+
+        const addVariableBtn = htmlQuery(sidebar, "[data-action='add-variable']");
+        if (trigger?.id) {
+            addVariableBtn?.removeAttribute("disabled");
+        } else {
+            addVariableBtn?.setAttribute("disabled", "");
         }
 
         if (close) {
@@ -460,13 +485,17 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     this.#resetTriggers();
                     return;
                 }
+
+                case "create-variable": {
+                    return;
+                }
             }
         });
 
-        this.#activateTriggersListeners(html);
+        this.#activateListsListeners(html);
     }
 
-    #activateTriggersListeners(html: HTMLElement) {
+    #activateListsListeners(html: HTMLElement) {
         addListenerAll(html, ".trigger .name", "contextmenu", (event, el) => {
             const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
             this.#editTrigger(triggerId);
@@ -504,6 +533,27 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                 }
             }
         });
+
+        addListenerAll(html, ".variable [data-action]", (event, el) => {
+            const entryId = (htmlClosest(el, "[data-id]")?.dataset.id ?? "") as NodeEntryId;
+
+            switch (el.dataset.action as VariablesEventAction) {
+                case "remove-variable": {
+                    return this.#removeVariable(entryId);
+                }
+            }
+        });
+    }
+
+    async #removeVariable(entryId: NodeEntryId) {
+        const remove = await confirmDialog({
+            title: localize("remove-variable.title"),
+            content: localize("remove-variable.content"),
+        });
+
+        if (remove) {
+            this.blueprint.removeVariable(entryId);
+        }
     }
 }
 
@@ -516,15 +566,21 @@ type MenuEventAction =
     | "import"
     | "add-subtrigger"
     | "collapse-window"
-    | "expand-window";
+    | "expand-window"
+    | "create-variable";
 
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
+
+type VariablesEventAction = "remove-variable";
 
 type TriggersMenuData = {
     triggers: ListedTrigger[];
     subtriggers: ListedTrigger[];
+    variables: MenuVariableData[];
     selected: Maybe<string>;
     i18n: TemplateLocalize;
 };
+
+type MenuVariableData = VariableData & { color: string };
 
 export { TriggersMenu };

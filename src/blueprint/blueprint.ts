@@ -1,4 +1,4 @@
-import { segmentEntryId } from "data/data-entry";
+import { haveCompatibleEntryType, segmentEntryId } from "data/data-entry";
 import { processNodeData } from "data/data-node";
 import { createTriggerData, serializeTrigger } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
@@ -21,6 +21,7 @@ import { BlueprintNodesMenu } from "./menu/blueprint-menu-nodes";
 import { BlueprintNode } from "./node/blueprint-node";
 import { createBlueprintNode } from "./node/blueprint-node-list";
 import { VariableBlueprintNode } from "./node/variable/blueprint-variable";
+import { TriggersMenu } from "triggers-menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized: boolean = false;
@@ -28,13 +29,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #nodesLayer: PIXI.Container;
     #connectionsLayer: BlueprintNodeConnections;
     #hitArea: PIXI.Rectangle = new PIXI.Rectangle();
-    #parent: foundry.applications.api.ApplicationV2;
+    #parent: TriggersMenu;
     #nodes: Collection<BlueprintNode> = new Collection();
     #triggers: Record<string, TriggerData>;
     #trigger: string | null = null;
     #drag: { origin: Point; dragging?: boolean } | null = null;
 
-    constructor(parent: foundry.applications.api.ApplicationV2) {
+    constructor(parent: TriggersMenu) {
         super({
             backgroundAlpha: 0,
             antialias: true,
@@ -61,7 +62,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return 16;
     }
 
-    get parent(): HTMLElement {
+    get parentElement(): HTMLElement {
         return this.#parent.element;
     }
 
@@ -127,13 +128,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         this.#initialized = true;
 
-        this.parent.prepend(this.view);
+        this.parentElement.prepend(this.view);
 
         this.resizeAll();
     }
 
     resizeAll() {
-        const parent = this.parent;
+        const parent = this.parentElement;
 
         this.renderer.resize(parent.clientWidth, parent.clientHeight);
 
@@ -289,6 +290,67 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         trigger.event = this.trigger.nodes[previsouId];
     }
 
+    getVariables(sourceEntry?: {
+        type: NodeEntryType;
+        category: NodeEntryCategory;
+    }): VariableData[] {
+        const trigger = this.trigger;
+
+        if (!trigger || sourceEntry?.category === "outputs") {
+            return [];
+        }
+
+        const uniqueVariables: VariableData[] = R.pipe(
+            R.values(trigger.nodes),
+            R.flatMap((node): VariableData[] => {
+                const schema = getSchema(node);
+                if (!schema.unique) return [];
+
+                return R.pipe(
+                    schema.variables,
+                    R.map(({ key, type }): VariableData | undefined => {
+                        if (sourceEntry && !haveCompatibleEntryType(sourceEntry, { type })) return;
+
+                        const entryId: NodeEntryId = `${node.id}.outputs.${key}`;
+                        const entry = this.getEntry(entryId);
+                        if (!entry) return;
+
+                        const entryLabel = entry?.label;
+
+                        return {
+                            entryId,
+                            custom: false,
+                            type: "variable",
+                            label: entryLabel,
+                            entryType: type,
+                            key: `${entryId}.${type}.${entryLabel}` satisfies BlueprintVariableKey,
+                        };
+                    }),
+                    R.filter(R.isTruthy)
+                );
+            })
+        );
+
+        const customVariables: VariableData[] = R.pipe(
+            R.entries(trigger.variables),
+            R.map(([entryId, { label, type }]): VariableData | undefined => {
+                const entryLabel = label.trim();
+
+                return {
+                    entryId,
+                    custom: true,
+                    type: "variable",
+                    label: entryLabel,
+                    entryType: type,
+                    key: `${entryId}.${type}.${entryLabel}`,
+                };
+            }),
+            R.filter(R.isTruthy)
+        );
+
+        return [...uniqueVariables, ...customVariables];
+    }
+
     getEntry(id: NodeEntryId): BlueprintEntry | undefined {
         return this.getNodeFromEntryId(id)?.getEntry(id);
     }
@@ -324,7 +386,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         dataRaw.y ??= 200;
 
         if (dataRaw.type === "variable") {
-            const variableKey = dataRaw.key as BlueprintMenuVariableKey;
+            const variableKey = dataRaw.key as BlueprintVariableKey;
             const [nodeId, category, entryKey, entryType, entryLabel] = R.split(variableKey, ".");
 
             dataRaw.key = "variable";
@@ -383,7 +445,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
     async addVariable(entry: BlueprintEntry) {
         const trigger = this.trigger;
-        if (!trigger) return;
+        if (!trigger || !entry.type) return;
 
         const result = await waitDialog<{ name: string }>(
             {
@@ -406,15 +468,14 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         if (!result) return;
 
-        const name = result.name.trim() || entry.label;
+        const label = result.name.trim() || entry.label;
 
-        trigger.variables[entry.id] = name;
-        info("add-variable.confirm", { name });
+        trigger.variables[entry.id] = { label, type: entry.type };
+        info("add-variable.confirm", { name: label });
     }
 
-    removeVariable(entry: BlueprintEntry) {
+    removeVariable(entryId: NodeEntryId) {
         const trigger = this.trigger;
-        const entryId = entry.id;
         if (!trigger || !(entryId in trigger.variables)) return;
 
         delete trigger.variables[entryId];
@@ -424,6 +485,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 this.deleteNode(node.id);
             }
         }
+
+        this.#parent.refresh();
     }
 
     deleteVariables(

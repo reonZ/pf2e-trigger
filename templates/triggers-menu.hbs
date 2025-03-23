@@ -1,12 +1,12 @@
-<div class="sidebar show">
+<div class="sidebar show" data-tooltip-direction="UP">
     <div class="menu">
-        <div class="header">
+        <div class="header" data-tooltip-direction="DOWN">
             <div class="controls left">
                 <a data-action="close-window" data-tooltip="{{@root.i18n.path 'close'}}">
                     <i class="fa-solid fa-xmark"></i>
                 </a>
             </div>
-            <div class="title">{{@root.i18n 'triggers'}}</div>
+            <div class="title">{{@root.i18n 'trigger.title'}}</div>
             <div class="controls right">
                 <a data-action="import" data-tooltip="{{@root.i18n.path 'import'}}">
                     <i class="fa-solid fa-file-import"></i>
@@ -44,14 +44,41 @@
             </ul>
         </div>
         <div class="header">
-            <div class="title">{{@root.i18n 'subtriggers'}}</div>
+            <div class="title">{{@root.i18n 'variable.title'}}</div>
+            <div class="controls right">
+                <a data-action="add-variable" data-tooltip="{{@root.i18n.path 'variable.add'}}"
+                    {{disabled (not selected)}}>
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+            </div>
+        </div>
+        <div class="scroll">
+            <ul class="variables">
+                {{#each variables as |variable|}}
+                <li class="variable" data-id="{{variable.entryId}}">
+                    <div class="name">
+                        <i class="fa-solid fa-circle" style="color: #{{variable.color}};"></i>
+                        {{variable.label}}
+                    </div>
+                    <div class="controls">
+                        <a data-action="remove-variable"
+                            data-tooltip="{{@root.i18n.path 'variable.delete'}}">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="header">
+            <div class="title">{{@root.i18n 'subtrigger.title'}}</div>
             <div class="controls right">
                 <a data-action="add-subtrigger" data-tooltip="{{@root.i18n.path 'subtrigger.add'}}">
                     <i class="fa-solid fa-plus"></i>
                 </a>
             </div>
         </div>
-        <div class="scroll">
+        <div class="scroll scroll-subtriggers">
             <ul class="triggers sub">
                 {{#each subtriggers as |trigger|}}
                 <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
@@ -61,11 +88,11 @@
                     </div>
                     <div class="controls">
                         <a data-action="export-trigger"
-                            data-tooltip="{{@root.i18n.path 'trigger.export'}}">
+                            data-tooltip="{{@root.i18n.path 'subtrigger.export'}}">
                             <i class="fa-solid fa-file-export"></i>
                         </a>
                         <a data-action="delete-trigger"
-                            data-tooltip="{{@root.i18n.path 'trigger.delete.title'}}">
+                            data-tooltip="{{@root.i18n.path 'subtrigger.delete'}}">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </div>

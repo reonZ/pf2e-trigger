@@ -78,6 +78,10 @@
                             margin-right: 0.2em;
                         }
                     }
+
+                    a[disabled] {
+                        color: var(--color-disabled);
+                    }
                 }
             }
 
@@ -96,7 +100,6 @@
                 margin: 0;
 
                 li {
-                    cursor: pointer;
                     white-space: nowrap;
                     display: flex;
                     align-items: center;
@@ -115,10 +118,6 @@
                         overflow: hidden;
                         text-overflow: ellipsis;
                         padding: 0.6em 1em;
-
-                        &:hover {
-                            text-shadow: 0 0 8px var(--color-shadow-primary);
-                        }
                     }
 
                     .controls {
@@ -129,12 +128,30 @@
                         padding-right: 1em;
                     }
 
+                    &.trigger {
+                        cursor: pointer;
+
+                        .name {
+                            &:hover {
+                                text-shadow: 0 0 8px var(--color-shadow-primary);
+                            }
+                        }
+                    }
+
                     &:hover {
                         background: #ffffff0d;
                     }
 
                     &.active {
                         background: #00d0fc1a;
+                    }
+
+                    &.variable {
+                        .name {
+                            i {
+                                margin-right: 0.2em;
+                            }
+                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ import {
     localize,
     templateLocalize,
 } from "module-helpers";
-import { getFilters, getSchema, getSubtriggerSchema } from "schema/schema-list";
+import { getFilters, getSubtriggerSchema } from "schema/schema-list";
 import { BlueprintMenu } from "./blueprint-menu";
 
 class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
@@ -71,7 +71,7 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             })
         );
 
-        const variables = this.#getVariables();
+        const variables = this.blueprint.getVariables(this.source);
         if (variables.length) {
             groups.variable = {
                 title: localize("node.variable.title"),
@@ -91,62 +91,6 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             groups,
             i18n: templateLocalize("node"),
         };
-    }
-
-    #getVariables(): DataNode[] {
-        const trigger = this.trigger;
-        const sourceEntry = this.source;
-
-        if (!trigger || sourceEntry?.category === "outputs") {
-            return [];
-        }
-
-        const uniqueVariables: DataNode[] = R.pipe(
-            R.values(trigger.nodes),
-            R.flatMap((node): DataNode[] => {
-                const schema = getSchema(node);
-                if (!schema.unique) return [];
-
-                return R.pipe(
-                    schema.variables,
-                    R.map(({ key, type }): DataNode | undefined => {
-                        if (sourceEntry && !haveCompatibleEntryType(sourceEntry, { type })) return;
-
-                        const entryId: NodeEntryId = `${node.id}.outputs.${key}`;
-                        const entry = this.blueprint.getEntry(entryId);
-                        if (!entry) return;
-
-                        const entryLabel = entry?.label;
-
-                        return {
-                            type: "variable",
-                            label: entryLabel,
-                            key: `${node.id}.outputs.${key}.${type}.${entryLabel}` satisfies BlueprintMenuVariableKey,
-                        };
-                    }),
-                    R.filter(R.isTruthy)
-                );
-            })
-        );
-
-        const triggerVariables: DataNode[] = R.pipe(
-            R.entries(trigger.variables),
-            R.map(([entryId, label]): DataNode | undefined => {
-                const entry = this.blueprint.getEntry(entryId);
-                if (!entry || !entry.type) return;
-
-                const entryLabel = label.trim() || entry.label;
-
-                return {
-                    type: "variable",
-                    label: entryLabel,
-                    key: `${entry.node.id}.outputs.${entry.key}.${entry.type}.${entryLabel}` satisfies BlueprintMenuVariableKey,
-                };
-            }),
-            R.filter(R.isTruthy)
-        );
-
-        return [...uniqueVariables, ...triggerVariables];
     }
 
     #getSubtriggers(): DataNode[] {

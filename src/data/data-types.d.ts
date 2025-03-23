@@ -11,7 +11,7 @@ type BaseTriggerData = {
     id: string;
     name: string;
     disabled: boolean;
-    variables: Record<NodeEntryId, string>;
+    variables: TriggerDataVariables;
 };
 
 declare global {
@@ -25,6 +25,9 @@ declare global {
     type NonNullNodeEntryType = (typeof NONNULL_NODE_ENTRY_TYPES)[number];
     type NullNodeEntryType = Exclude<NodeEntryType, NonNullNodeEntryType>;
     type PrimitiveEntryType = Exclude<NonNullNodeEntryType, "select">;
+
+    type TriggerDataVariable = { label: string; type: NonNullable<NodeEntryType> };
+    type TriggerDataVariables = Record<NodeEntryId, TriggerDataVariable>;
 
     type TriggerData = BaseTriggerData & {
         nodes: Record<string, NodeData>;
