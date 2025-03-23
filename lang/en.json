@@ -211,10 +211,28 @@
                 "title": "Events",
                 "subtitle": "Event",
                 "aura-enter": {
-                    "title": "Aura Entered"
+                    "title": "Aura Entered",
+                    "slug": {
+                        "label": "aura-slug"
+                    },
+                    "aura-source": {
+                        "label": "Aura Source"
+                    },
+                    "turn": {
+                        "label": "Current Turn?"
+                    }
                 },
                 "aura-leave": {
-                    "title": "Aura Left"
+                    "title": "Aura Left",
+                    "slug": {
+                        "label": "aura-slug"
+                    },
+                    "aura-source": {
+                        "label": "Aura Source"
+                    },
+                    "turn": {
+                        "label": "Current Turn?"
+                    }
                 },
                 "turn-start": {
                     "title": "Turn Started"
@@ -268,12 +286,30 @@
                     "title": "Damage Taken",
                     "other": {
                         "label": "Damage Origin"
+                    },
+                    "item": {
+                        "label": "Damage Item"
+                    },
+                    "heal": {
+                        "label": "Is Healing"
+                    },
+                    "options": {
+                        "label": "Roll Options"
                     }
                 },
                 "damage-dealt": {
                     "title": "Damage Dealt",
                     "other": {
                         "label": "Damage Target"
+                    },
+                    "item": {
+                        "label": "Damage Item"
+                    },
+                    "heal": {
+                        "label": "Is Healing"
+                    },
+                    "options": {
+                        "label": "Roll Options"
                     }
                 }
             },
@@ -315,7 +351,13 @@
                     "title": "Item Source"
                 },
                 "roll-data": {
-                    "title": "Roll Data"
+                    "title": "Roll Data",
+                    "options": {
+                        "label": "Extra Options"
+                    },
+                    "traits": {
+                        "label": "Extra Traits"
+                    }
                 },
                 "dc-value": {
                     "title": "Difficulty Class"
@@ -418,28 +460,23 @@
                 "false": "False",
                 "item": "Item",
                 "uuid": "Source UUID",
-                "uuid-simple": "UUID",
                 "option": "roll:option",
                 "result": "Result",
                 "value": "Value",
                 "min": "Minimum",
-                "aura-slug": "aura-slug",
                 "input": "Input",
                 "roll": "Roll",
                 "dc": "DC",
-                "options": "Extra Options",
-                "traits": "Extra Traits",
                 "duration": "Duration",
                 "boolean": "Boolean",
                 "text": "Text",
                 "number": "Number",
-                "aura-source": "Aura Source",
                 "identifier": "identifier",
                 "name": "Name",
                 "slug": "Slug",
                 "level": "Level",
                 "selection": "Selection",
-                "turn": "Current Turn?"
+                "list": "List"
             }
         },
         "select": {
