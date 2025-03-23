@@ -1,6 +1,6 @@
+import { extractValueFromDocument } from "helpers/helpers-extract";
 import { isInstanceOf } from "module-helpers";
 import { TriggerNode } from "../trigger-node";
-import { NODE_ENTRY_VALUE_TYPE } from "data/data-entry";
 
 abstract class DocumentExtractorTriggerSplitter<
     TSchema extends ExtractDocumentSchema
@@ -18,13 +18,13 @@ abstract class DocumentExtractorTriggerSplitter<
         const outputs = this.custom.outputs as NodeSchemaVariable[];
 
         for (const output of outputs) {
-            const type = output.type as "boolean" | "number" | "text";
+            const type = output.type as DocumentExtractType;
             const path = output.key.replace(/\|/g, ".");
-            const cursor = fu.getProperty(document, path);
+            const value = extractValueFromDocument(document, type, path);
 
-            if (cursor.constructor === NODE_ENTRY_VALUE_TYPE[type]) {
+            if (value != null) {
                 // @ts-ignore
-                this.setVariable(output.key, cursor);
+                this.setVariable(output.key, value);
             }
         }
 

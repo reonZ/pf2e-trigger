@@ -1,3 +1,4 @@
+import { EXTRACT_TYPES } from "helpers/helpers-extract";
 import { makeCustomNode } from "../blueprint-node-custom";
 import { SplitterBlueprintNode } from "./blueprint-splitter";
 
@@ -11,7 +12,7 @@ class DocumentExtractorBlueprintNode extends makeCustomNode(SplitterBlueprintNod
             case "add-entry": {
                 this.addEntry("outputs", {
                     valueLabel: "path",
-                    types: ["boolean", "number", "text"],
+                    types: EXTRACT_TYPES,
                 });
                 return;
             }

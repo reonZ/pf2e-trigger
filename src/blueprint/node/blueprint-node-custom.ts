@@ -151,7 +151,7 @@ interface CustomBlueprintNode {
 type AddEntryOptions = {
     valueLabel?: string | undefined;
     noType?: boolean | undefined;
-    types?: CustomNodeEntryType[];
+    types?: CustomNodeEntryType[] | ReadonlyArray<CustomNodeEntryType>;
 };
 
 export { makeCustomNode };
