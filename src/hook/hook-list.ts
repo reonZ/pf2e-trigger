@@ -1,6 +1,7 @@
 import { MODULE } from "module-helpers";
 import { ActorHook } from "./hook-actor";
 import { AuraHook } from "./hook-aura";
+import { MessageHook } from "./hook-message";
 import { ExecuteHook } from "./hook-execute";
 import { ItemHook } from "./hook-item";
 import { RegionHook } from "./hook-region";
@@ -18,6 +19,7 @@ const HOOKS = [
     new ExecuteHook(),
     new ActorHook(),
     new ItemHook(),
+    new MessageHook(),
     regionHook,
 ];
 

@@ -20,9 +20,12 @@ declare global {
         this: TargetDocuments;
         aura?: ActorAura;
         item?: ItemPF2e;
+        other?: TargetDocuments;
+        isHealing?: boolean;
+        list?: string[];
         condition?: { slug: ConditionSlug; update: boolean };
-        values?: any;
         variables: Record<NodeEntryId, TriggerEntryValue>;
+        values?: any;
     };
 
     type SubtriggerExecuteOptions = TriggerExecuteOptions & {

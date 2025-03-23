@@ -24,6 +24,7 @@ import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
 import { conditionEventSchema } from "./event/schema-event-condition";
+import { damageEventSchema } from "./event/schema-event-damage";
 import { healthChangeSchema } from "./event/schema-event-health";
 import { itemEventSchema } from "./event/schema-event-item";
 import { createLogicSchema } from "./logic/schema-logic";
@@ -93,6 +94,8 @@ const SCHEMAS = {
         "condition-lose": conditionEventSchema,
         "item-gain": itemEventSchema,
         "item-lose": itemEventSchema,
+        "damage-taken": damageEventSchema,
+        "damage-dealt": damageEventSchema,
     },
     logic: {
         "eq-number": createLogicSchema("number"),

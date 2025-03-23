@@ -21,9 +21,11 @@ import { EnterAuraBlueprintNode } from "./event/blueprint-event-aura-enter";
 import { LeaveAuraBlueprintNode } from "./event/blueprint-event-aura-leave";
 import { GainConditionBlueprintNode } from "./event/blueprint-event-condition-gain";
 import { LoseConditionBlueprintNode } from "./event/blueprint-event-condition-lose";
-import { HealthLoseBlueprintNode } from "./event/blueprint-event-health-lose";
+import { DamageDealtBlueprintNode } from "./event/blueprint-event-damage-dealt";
+import { DamageTakenBlueprintNode } from "./event/blueprint-event-damage-taken";
 import { ExecuteEventBlueprintNode } from "./event/blueprint-event-execute";
 import { HealGainBlueprintNode } from "./event/blueprint-event-health-gain";
+import { HealthLoseBlueprintNode } from "./event/blueprint-event-health-lose";
 import { GainItemBlueprintNode } from "./event/blueprint-event-item-gain";
 import { LoseItemBlueprintNode } from "./event/blueprint-event-item-lose";
 import { RegionEventBlueprintNode } from "./event/blueprint-event-region";
@@ -95,6 +97,8 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "condition-lose": LoseConditionBlueprintNode,
         "item-gain": GainItemBlueprintNode,
         "item-lose": LoseItemBlueprintNode,
+        "damage-taken": DamageTakenBlueprintNode,
+        "damage-dealt": DamageDealtBlueprintNode,
     },
     logic: {
         "eq-number": EqValueBlueprintNode,

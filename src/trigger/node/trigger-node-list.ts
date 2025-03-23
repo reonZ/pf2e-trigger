@@ -27,6 +27,7 @@ import { ItemTriggerConverter } from "./converter/trigger-converter-item";
 import { TriggerEvent } from "./event/trigger-event";
 import { AuraTriggerEvent } from "./event/trigger-event-aura";
 import { ConditionTriggerEvent } from "./event/trigger-event-condition";
+import { DamageTriggerEvent } from "./event/trigger-event-damage";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ItemTriggerEvent } from "./event/trigger-event-item";
 import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
@@ -103,6 +104,8 @@ const NODES = {
         "condition-lose": ConditionTriggerEvent,
         "item-gain": ItemTriggerEvent,
         "item-lose": ItemTriggerEvent,
+        "damage-taken": DamageTriggerEvent,
+        "damage-dealt": DamageTriggerEvent,
     },
     logic: {
         "eq-number": EqNumberTriggerLogic,
