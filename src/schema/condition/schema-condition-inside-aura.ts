@@ -7,6 +7,6 @@ const insideAuraSchema = {
     outs: booleanSchemaOuts,
     inputs: auraEventSchema.inputs,
     variables: [{ key: "aura-source", type: "target" }],
-} as const;
+} as const satisfies NodeRawSchema;
 
 export { insideAuraSchema };

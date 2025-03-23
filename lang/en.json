@@ -336,6 +336,9 @@
                 },
                 "in-combat": {
                     "title": "Is In Combat"
+                },
+                "contains-value": {
+                    "title": "List Contains Value"
                 }
             },
             "value": {

@@ -16,6 +16,7 @@ import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { rollDamageSchema } from "./action/schema-action-roll-damage";
 import { rollSaveSchema } from "./action/schema-action-roll-save";
 import { createConditionSchema } from "./condition/schema-condition";
+import { containsValueSchema } from "./condition/schema-condition-contains-value";
 import { hasConditionSchema } from "./condition/schema-condition-has-condition";
 import { hasItemSchema } from "./condition/schema-condition-has-item";
 import { hasOptionsSchema } from "./condition/schema-condition-has-option";
@@ -74,6 +75,7 @@ const SCHEMAS = {
         "has-condition": hasConditionSchema,
         "is-combatant": createConditionSchema(),
         "in-combat": createConditionSchema(),
+        "contains-value": containsValueSchema,
     },
     converter: {
         // "item-converter": itemConverterSchema,

@@ -16,6 +16,7 @@ import { RemoveItemTriggerAction } from "./action/trigger-action-remove-item";
 import { RemoveTemporaryTriggerNode } from "./action/trigger-action-remove-temporary";
 import { RollDamageTriggerAction } from "./action/trigger-action-roll-damage";
 import { RollSaveTriggerAction } from "./action/trigger-action-roll-save";
+import { ContainsValueTriggerCondition } from "./condition/trigger-condition-contains-value";
 import { HasConditionTriggerCondition } from "./condition/trigger-condition-has-condition";
 import { HasItemTriggerCondition } from "./condition/trigger-condition-has-item";
 import { HasOptionTriggerCondition } from "./condition/trigger-condition-has-option";
@@ -84,6 +85,7 @@ const NODES = {
         "has-condition": HasConditionTriggerCondition,
         "in-combat": InCombatTriggerCondition,
         "is-combatant": IsCombatantTriggerCondition,
+        "contains-value": ContainsValueTriggerCondition,
     },
     converter: {
         "item-converter": ItemTriggerConverter,

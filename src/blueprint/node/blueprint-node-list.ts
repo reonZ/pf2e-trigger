@@ -77,6 +77,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "has-condition": ConditionBlueprintNode,
         "in-combat": ConditionBlueprintNode,
         "is-combatant": ConditionBlueprintNode,
+        "contains-value": ConditionBlueprintNode,
     },
     converter: {
         "item-converter": ConverterBlueprintNode,
