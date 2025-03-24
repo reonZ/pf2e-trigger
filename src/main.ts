@@ -4,6 +4,7 @@ import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers"
 import { prepareTriggers } from "trigger/trigger-list";
 import { TriggersMenu } from "triggers-menu";
 import * as migrations from "./migrations";
+import { getSchema } from "./schema/schema-list";
 
 MODULE.register("pf2e-trigger", migrations);
 
@@ -43,6 +44,7 @@ Hooks.once("setup", () => {
 
     game.trigger ??= {};
     game.trigger.getTriggersList = getTriggersList;
+    game.trigger.getSchema = getSchema;
 
     prepareTriggers();
 });
