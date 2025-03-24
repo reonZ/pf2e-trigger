@@ -31,6 +31,7 @@ import { ConditionTriggerEvent } from "./event/trigger-event-condition";
 import { DamageTriggerEvent } from "./event/trigger-event-damage";
 import { ExecuteTriggerEvent } from "./event/trigger-event-execute";
 import { ItemTriggerEvent } from "./event/trigger-event-item";
+import { EqActorTriggerLogic } from "./logic/trigger-logic-actor-eq";
 import { EqNumberTriggerLogic } from "./logic/trigger-logic-number-eq";
 import { GtNumberTriggerLogic } from "./logic/trigger-logic-number-gt";
 import { GteNumberTriggerLogic } from "./logic/trigger-logic-number-gte";
@@ -117,6 +118,7 @@ const NODES = {
         "lt-number": LtNumberTriggerLogic,
         "lte-number": LteNumberTriggerLogic,
         "eq-text": EqTextTriggerLogic,
+        "eq-actor": EqActorTriggerLogic,
     },
     macro: {
         macro: TriggerMacro,

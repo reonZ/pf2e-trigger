@@ -1,7 +1,9 @@
-import { createLogicSchema } from "./schema-logic";
+export {};
 
 declare global {
-    type LogicSchema<T extends NonNullable<NodeEntryType>> = ReturnType<
-        typeof createLogicSchema<T>
-    >;
+    type LogicSchema<T extends NodeEntryType> = {
+        in: true;
+        outs: BooleanSchemaOuts;
+        inputs: [{ key: "a"; type: T }, { key: "b"; type: T }];
+    };
 }

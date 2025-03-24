@@ -106,6 +106,7 @@ const SCHEMAS = {
         "gte-number": createLogicSchema("number"),
         "lte-number": createLogicSchema("number"),
         "eq-text": createLogicSchema("text"),
+        "eq-actor": createLogicSchema("target", false),
     },
     macro: {
         macro: macroSchema,

@@ -435,6 +435,9 @@
                 },
                 "eq-text": {
                     "title": "Equals (Text)"
+                },
+                "eq-actor": {
+                    "title": "Equals (Actor)"
                 }
             },
             "splitter": {

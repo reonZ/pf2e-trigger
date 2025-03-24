@@ -1,14 +1,14 @@
 import { booleanSchemaOuts } from "schema/schema";
 
-function createLogicSchema<T extends NonNullable<NodeEntryType>>(type: T) {
+function createLogicSchema<T extends NodeEntryType>(type: T, field: boolean = true): NodeRawSchema {
     return {
         in: true,
         outs: booleanSchemaOuts,
         inputs: [
-            { key: "a", type, field: true },
-            { key: "b", type, field: true },
+            { key: "a", type, field },
+            { key: "b", type, field },
         ],
-    } as const;
+    } as NodeRawSchema;
 }
 
 export { createLogicSchema };

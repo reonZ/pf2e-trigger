@@ -109,6 +109,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "lt-number": LtValueBlueprintNode,
         "lte-number": LteValueBlueprintNode,
         "eq-text": EqValueBlueprintNode,
+        "eq-actor": EqValueBlueprintNode,
     },
     macro: {
         macro: MacroBlueprintNode,

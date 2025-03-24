@@ -1,3 +1,4 @@
+import { isNonNullNodeEntryType } from "data/data-entry";
 import { VariableBlueprintNode } from "./blueprint-variable";
 
 class SetterBlueprintNode extends VariableBlueprintNode {
@@ -23,7 +24,10 @@ class SetterBlueprintNode extends VariableBlueprintNode {
 
         return {
             ...schema,
-            inputs: [{ key: "in" }, { key, type, field: true } as NodeSchemaInput],
+            inputs: [
+                { key: "in" },
+                { key, type, field: isNonNullNodeEntryType(type) } as NodeSchemaInput,
+            ],
         };
     }
 }
