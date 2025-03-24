@@ -136,11 +136,17 @@ const SCHEMAS = {
     variable: {
         variable: {},
     },
+    setter: {
+        setter: {
+            in: true,
+            outs: [{ key: "out" }],
+        },
+    },
 } satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
 const FILTERS: NodeSchemaFilter[] = R.pipe(
     R.entries(SCHEMAS),
-    R.filter(([type]) => !["event", "subtrigger", "variable"].includes(type)),
+    R.filter(([type]) => !["event", "subtrigger", "variable", "setter"].includes(type)),
     R.flatMap(([type, schemas]) => {
         return R.pipe(
             R.entries(schemas),

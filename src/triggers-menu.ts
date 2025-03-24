@@ -83,7 +83,8 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     ...variable,
                     color: getConnectorColor(variable.entryType, true),
                 };
-            })
+            }),
+            R.sortBy(R.prop("label"))
         );
 
         this.blueprint.getVariables().filter((variable) => variable.custom);
@@ -427,6 +428,17 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         return copyToCliboard();
     }
 
+    async #removeVariable(entryId: NodeEntryId) {
+        const remove = await confirmDialog({
+            title: localize("remove-variable.title"),
+            content: localize("remove-variable.content"),
+        });
+
+        if (remove) {
+            this.blueprint.removeVariable(entryId);
+        }
+    }
+
     #activateListeners(html: HTMLElement) {
         addListener(html, ".sidebar", "pointerenter", (event, el) => {
             if (this.#timeout) {
@@ -486,7 +498,8 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     return;
                 }
 
-                case "create-variable": {
+                case "add-variable": {
+                    this.blueprint.addVariable();
                     return;
                 }
             }
@@ -544,17 +557,6 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             }
         });
     }
-
-    async #removeVariable(entryId: NodeEntryId) {
-        const remove = await confirmDialog({
-            title: localize("remove-variable.title"),
-            content: localize("remove-variable.content"),
-        });
-
-        if (remove) {
-            this.blueprint.removeVariable(entryId);
-        }
-    }
 }
 
 type MenuEventAction =
@@ -567,7 +569,7 @@ type MenuEventAction =
     | "add-subtrigger"
     | "collapse-window"
     | "expand-window"
-    | "create-variable";
+    | "add-variable";
 
 type TriggersEventAction = "select-trigger" | "export-trigger" | "delete-trigger";
 

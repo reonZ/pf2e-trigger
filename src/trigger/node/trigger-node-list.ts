@@ -56,6 +56,7 @@ import { NumberTriggerValue } from "./value/trigger-value-number";
 import { RollDataTriggerValue } from "./value/trigger-value-roll-data";
 import { SuccessTriggerValue } from "./value/trigger-value-success";
 import { TextTriggerValue } from "./value/trigger-value-text";
+import { TriggerSetter } from "./variable/trigger-setter";
 import { TriggerVariable } from "./variable/trigger-variable";
 
 const NODES = {
@@ -145,6 +146,9 @@ const NODES = {
     },
     variable: {
         variable: TriggerVariable,
+    },
+    setter: {
+        setter: TriggerSetter,
     },
 } satisfies ExtractNodeMap<typeof TriggerNode<NodeRawSchema>>;
 

@@ -15,6 +15,7 @@ const NODE_TYPES = [
     "variable",
     "converter",
     "splitter",
+    "setter",
 ] as const;
 
 function processNodeData(data: NodeRawData): NodeData | null {

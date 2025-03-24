@@ -56,8 +56,14 @@
             <ul class="variables">
                 {{#each variables as |variable|}}
                 <li class="variable" data-id="{{variable.entryId}}">
-                    <div class="name">
-                        <i class="fa-solid fa-circle" style="color: #{{variable.color}};"></i>
+                    <div class="name" style="--entry-color: #{{variable.color}};">
+                        {{#if variable.global}}
+                        <i class="fa-regular fa-circle"
+                            data-tooltip="{{@root.i18n.path 'variable.global'}}"></i>
+                        {{else}}
+                        <i class="fa-solid fa-circle"
+                            data-tooltip="{{@root.i18n.path 'variable.linked'}}"></i>
+                        {{/if}}
                         {{variable.label}}
                     </div>
                     <div class="controls">

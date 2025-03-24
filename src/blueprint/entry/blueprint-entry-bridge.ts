@@ -1,7 +1,7 @@
 import { isCustomNodeType } from "data/data-node";
 import { BlueprintEntry } from "./blueprint-entry";
 
-const FREE_BRIDGES: NodeType[] = ["logic", "splitter"];
+const FREE_BRIDGES: NodeType[] = ["logic", "splitter", "setter"];
 
 const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
     inputs: {
@@ -15,6 +15,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         subtrigger: [],
         value: [],
         variable: [],
+        setter: [],
     },
     outputs: {
         action: ["condition", "action"],
@@ -27,6 +28,7 @@ const BRIDGE_CONNECTIONS: Record<NodeEntryCategory, NodeConnectionsList> = {
         subtrigger: [],
         value: [],
         variable: [],
+        setter: [],
     },
 };
 

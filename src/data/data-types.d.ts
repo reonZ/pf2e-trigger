@@ -26,7 +26,12 @@ declare global {
     type NullNodeEntryType = Exclude<NodeEntryType, NonNullNodeEntryType>;
     type PrimitiveEntryType = Exclude<NonNullNodeEntryType, "select">;
 
-    type TriggerDataVariable = { label: string; type: NonNullable<NodeEntryType> };
+    type TriggerDataVariable = {
+        label: string;
+        type: NonNullable<NodeEntryType>;
+        global?: boolean;
+    };
+
     type TriggerDataVariables = Record<NodeEntryId, TriggerDataVariable>;
 
     type TriggerData = BaseTriggerData & {

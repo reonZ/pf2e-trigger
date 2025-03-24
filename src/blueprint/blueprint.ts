@@ -1,4 +1,4 @@
-import { haveCompatibleEntryType, segmentEntryId } from "data/data-entry";
+import { getNodeEntryValueList, segmentEntryId } from "data/data-entry";
 import { processNodeData } from "data/data-node";
 import { createTriggerData, serializeTrigger } from "data/data-trigger";
 import { getTriggersDataMap } from "data/data-trigger-list";
@@ -15,13 +15,13 @@ import {
     waitDialog,
 } from "module-helpers";
 import { getSchema } from "schema/schema-list";
+import { TriggersMenu } from "triggers-menu";
 import { BlueprintNodeConnections } from "./blueprint-connections";
 import { BlueprintEntry } from "./entry/blueprint-entry";
 import { BlueprintNodesMenu } from "./menu/blueprint-menu-nodes";
 import { BlueprintNode } from "./node/blueprint-node";
 import { createBlueprintNode } from "./node/blueprint-node-list";
 import { VariableBlueprintNode } from "./node/variable/blueprint-variable";
-import { TriggersMenu } from "triggers-menu";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized: boolean = false;
@@ -62,8 +62,12 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return 16;
     }
 
+    get parent(): TriggersMenu {
+        return this.#parent;
+    }
+
     get parentElement(): HTMLElement {
-        return this.#parent.element;
+        return this.parent.element;
     }
 
     get trigger(): TriggerData | null {
@@ -290,15 +294,9 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         trigger.event = this.trigger.nodes[previsouId];
     }
 
-    getVariables(sourceEntry?: {
-        type: NodeEntryType;
-        category: NodeEntryCategory;
-    }): VariableData[] {
+    getVariables(): VariableData[] {
         const trigger = this.trigger;
-
-        if (!trigger || sourceEntry?.category === "outputs") {
-            return [];
-        }
+        if (!trigger) return [];
 
         const uniqueVariables: VariableData[] = R.pipe(
             R.values(trigger.nodes),
@@ -309,8 +307,6 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 return R.pipe(
                     schema.variables,
                     R.map(({ key, type }): VariableData | undefined => {
-                        if (sourceEntry && !haveCompatibleEntryType(sourceEntry, { type })) return;
-
                         const entryId: NodeEntryId = `${node.id}.outputs.${key}`;
                         const entry = this.getEntry(entryId);
                         if (!entry) return;
@@ -320,10 +316,9 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                         return {
                             entryId,
                             custom: false,
-                            type: "variable",
+                            nodeType: "variable",
                             label: entryLabel,
                             entryType: type,
-                            key: `${entryId}.${type}.${entryLabel}` satisfies BlueprintVariableKey,
                         };
                     }),
                     R.filter(R.isTruthy)
@@ -333,16 +328,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         const customVariables: VariableData[] = R.pipe(
             R.entries(trigger.variables),
-            R.map(([entryId, { label, type }]): VariableData | undefined => {
+            R.map(([entryId, { label, type, global }]): VariableData | undefined => {
                 const entryLabel = label.trim();
 
                 return {
+                    global,
                     entryId,
                     custom: true,
-                    type: "variable",
+                    nodeType: "variable",
                     label: entryLabel,
                     entryType: type,
-                    key: `${entryId}.${type}.${entryLabel}`,
                 };
             }),
             R.filter(R.isTruthy)
@@ -385,30 +380,19 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         dataRaw.x ??= 100;
         dataRaw.y ??= 200;
 
-        if (dataRaw.type === "variable") {
-            const variableKey = dataRaw.key as BlueprintVariableKey;
-            const [nodeId, category, entryKey, entryType, entryLabel] = R.split(variableKey, ".");
+        if (["variable", "setter"].includes(dataRaw.type)) {
+            const { id, type, label } = variableDataFromKey(dataRaw.key as BlueprintVariableKey);
+            const isGetter = dataRaw.type === "variable";
 
-            dataRaw.key = "variable";
+            dataRaw.key = dataRaw.type;
 
             dataRaw.inputs = {
-                input: { ids: [`${nodeId}.${category}.${entryKey}`] },
+                input: { ids: [id] },
             };
 
             dataRaw.custom = {
-                inputs: [
-                    {
-                        type: entryType,
-                        key: "input",
-                    },
-                ],
-                outputs: [
-                    {
-                        type: entryType,
-                        key: "output",
-                        label: entryLabel,
-                    },
-                ],
+                inputs: isGetter ? [{ type, key: "input" }] : [{ type, key: type, label }],
+                outputs: isGetter ? [{ type, key: "output", label }] : [],
             };
         } else if (dataRaw.type === "subtrigger") {
             dataRaw.subId = dataRaw.key;
@@ -443,15 +427,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         delete this.trigger?.nodes[id];
     }
 
-    async addVariable(entry: BlueprintEntry) {
+    async addVariable(entry?: BlueprintEntry) {
         const trigger = this.trigger;
-        if (!trigger || !entry.type) return;
+        if (!trigger || (entry && !entry.type)) return;
 
-        const result = await waitDialog<{ name: string }>(
+        const result = await waitDialog<{ name: string; type?: CustomNodeEntryType }>(
             {
                 title: localize("add-variable.title"),
                 focus: "[name='name']",
                 content: await render("add-entry", {
+                    types: entry ? undefined : getNodeEntryValueList(),
                     i18n: templateLocalize("add-variable"),
                 }),
                 yes: {
@@ -466,11 +451,21 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             { animation: false }
         );
 
-        if (!result) return;
+        if (!result || (!entry && !result.type)) return;
 
-        const label = result.name.trim() || entry.label;
+        const type = entry?.type ?? result.type!;
+        const id = entry?.id ?? `${trigger.event.id}.outputs.${fu.randomID()}`;
+        const label = result.name.trim() || (entry?.label ?? type);
 
-        trigger.variables[entry.id] = { label, type: entry.type };
+        const variable: TriggerDataVariable = { label, type };
+
+        if (!entry) {
+            variable.global = true;
+        }
+
+        trigger.variables[id] = variable;
+
+        this.parent.refresh();
         info("add-variable.confirm", { name: label });
     }
 
@@ -486,7 +481,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             }
         }
 
-        this.#parent.refresh();
+        this.parent.refresh();
     }
 
     deleteVariables(
@@ -514,6 +509,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 delete trigger.variables[entryId];
             }
         }
+
+        this.parent.refresh();
     }
 
     cloneNode(id: string) {
@@ -696,5 +693,21 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         node.setPosition(point);
     }
 }
+
+function variableDataFromKey(key: BlueprintVariableKey): ExtractedVariableData {
+    const [nodeId, category, entryKey, entryType, entryLabel] = R.split(key, ".");
+
+    return {
+        type: entryType,
+        label: entryLabel,
+        id: `${nodeId}.${category}.${entryKey}`,
+    };
+}
+
+type ExtractedVariableData = {
+    type: NonNullable<NodeEntryType>;
+    label: string;
+    id: NodeEntryId;
+};
 
 export { Blueprint };

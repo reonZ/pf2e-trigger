@@ -71,7 +71,7 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
             })
         );
 
-        const variables = this.blueprint.getVariables(this.source);
+        const variables = this.#getVariables();
         if (variables.length) {
             groups.variable = {
                 title: localize("node.variable.title"),
@@ -93,21 +93,62 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
         };
     }
 
+    #getVariables(): DataNode[] {
+        const sourceEntry = this.source;
+        const sourceIsInput = sourceEntry?.category === "inputs";
+        const setterLabel = localize("node.variable.setter");
+
+        return this.blueprint
+            .getVariables()
+            .flatMap(({ entryId, label, entryType, custom, global }) => {
+                const key = `${entryId}.${entryType}.${label}` satisfies BlueprintVariableKey;
+                const entries: DataNode[] = [];
+
+                if (
+                    !sourceEntry ||
+                    (sourceIsInput && haveCompatibleEntryType(sourceEntry, { type: entryType }))
+                ) {
+                    entries.push({
+                        type: "variable",
+                        label,
+                        key,
+                    });
+                }
+
+                if (
+                    custom &&
+                    global &&
+                    (!sourceEntry ||
+                        sourceEntry.isBridgeEntry() ||
+                        (!sourceIsInput &&
+                            haveCompatibleEntryType(sourceEntry, { type: entryType })))
+                ) {
+                    entries.push({
+                        type: "setter",
+                        label: `${label} (${setterLabel})`,
+                        key,
+                    });
+                }
+
+                return entries;
+            });
+    }
+
     #getSubtriggers(): DataNode[] {
         if (this.trigger?.event.type === "subtrigger") {
             return [];
         }
 
-        const entry = this.source;
-        const targetCategory = entry?.oppositeCategory;
+        const sourceEntry = this.source;
+        const targetCategory = sourceEntry?.oppositeCategory;
 
         return R.pipe(
             this.blueprint.subtriggers,
             R.map((data): DataNode | undefined => {
-                if (entry) {
+                if (sourceEntry) {
                     const schema = getSubtriggerSchema(data);
                     const hasTarget = schema[targetCategory!].some((targetEntry) =>
-                        haveCompatibleEntryType(entry, targetEntry as any)
+                        haveCompatibleEntryType(sourceEntry, targetEntry as any)
                     );
                     if (!hasTarget) return;
                 }
@@ -124,14 +165,14 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
 
     #getFilters(): NodeSchemaFilter[] {
         const filters = getFilters(this.trigger);
-        const entry = this.source;
+        const sourceEntry = this.source;
 
-        if (!entry) {
+        if (!sourceEntry) {
             return filters;
         }
 
-        const isBridge = entry.isBridgeEntry();
-        const targetCategory = entry.oppositeCategory;
+        const isBridge = sourceEntry.isBridgeEntry();
+        const targetCategory = sourceEntry.oppositeCategory;
 
         return R.pipe(
             filters,
@@ -139,8 +180,8 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
                 const entries = filter[targetCategory];
 
                 return (
-                    entries.some((type) => haveCompatibleEntryType(entry, { type })) &&
-                    (!isBridge || entry.canConnectoToBridge(filter.type))
+                    entries.some((type) => haveCompatibleEntryType(sourceEntry, { type })) &&
+                    (!isBridge || sourceEntry.canConnectoToBridge(filter.type))
                 );
             })
         );

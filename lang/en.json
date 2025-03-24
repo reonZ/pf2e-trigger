@@ -6,6 +6,29 @@
             }
         }
     },
+    "SHARED": {
+        "migration": {
+            "warning": {
+                "title": "Module Migration",
+                "start": "Start Migration",
+                "cancel": "Cancel",
+                "content": {
+                    "modules": "The following module(s) may need to migrate data:",
+                    "wait": "If the system is migrating its own data, please wait before starting"
+                }
+            },
+            "summary": {
+                "title": "Migration Summary",
+                "content": "The following documents were migrated",
+                "nothing": "No document needed to be migrated."
+            },
+            "error": {
+                "actors": "An error occured while migrating data for world actors.",
+                "token": "An error occured while migrating data for the token actor {uuid}.",
+                "users": "An error occured while migrating data for users."
+            }
+        }
+    },
     "pf2e-trigger": {
         "region": {
             "id": "Trigger Id"
@@ -43,7 +66,9 @@
             "variable": {
                 "title": "Trigger Variables",
                 "add": "Create Variable",
-                "delete": "Delete Variable"
+                "delete": "Delete Variable",
+                "linked": "This variable is linked to an output",
+                "global": "This variable is global to the trigger"
             }
         },
         "close-window": {
@@ -82,6 +107,7 @@
         "add-variable": {
             "title": "Create Variable",
             "name": "Variable Label",
+            "label": "Variable Type",
             "yes": "Create",
             "no": "Cancel",
             "confirm": "The variable <strong>{name}</strong> was created."
@@ -440,7 +466,8 @@
                 }
             },
             "variable": {
-                "title": "Variables"
+                "title": "Variables",
+                "setter": "Setter"
             },
             "macro": {
                 "title": "Macros",
@@ -456,35 +483,38 @@
                 }
             },
             "entry": {
+                "text": "Text",
+                "number": "Number",
+                "select": "Select",
+                "boolean": "Boolean",
+                "uuid": "Source UUID",
+                "target": "Target",
+                "item": "Item",
+                "roll": "Roll",
+                "dc": "DC",
+                "duration": "Duration",
+                "label": "Label",
+                "list": "List",
+
                 "a": "A",
                 "b": "B",
                 "in": "In",
                 "out": "Out",
                 "this": "Trigger Target",
                 "origin": "Origin",
-                "target": "Target",
                 "source": "Source",
                 "true": "True",
                 "false": "False",
-                "item": "Item",
-                "uuid": "Source UUID",
                 "option": "roll:option",
                 "result": "Result",
                 "value": "Value",
                 "min": "Minimum",
                 "input": "Input",
-                "roll": "Roll",
-                "dc": "DC",
-                "duration": "Duration",
-                "boolean": "Boolean",
-                "text": "Text",
-                "number": "Number",
                 "identifier": "identifier",
                 "name": "Name",
                 "slug": "Slug",
                 "level": "Level",
                 "selection": "Selection",
-                "list": "List",
                 "aura-source": "Aura Source"
             }
         },

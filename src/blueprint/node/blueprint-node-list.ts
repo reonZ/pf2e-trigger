@@ -48,7 +48,8 @@ import { SubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-node"
 import { OutputSubtriggerBlueprintNode } from "./subtrigger/blueprint-subtrigger-output";
 import { ItemSourceBlueprintNode } from "./value/blueprint-value-item-source";
 import { ValueBlueprintNode } from "./value/blueprint-value-node";
-import { VariableBlueprintNode } from "./variable/blueprint-variable";
+import { GetterBlueprintNode } from "./variable/blueprint-getter";
+import { SetterBlueprintNode } from "./variable/blueprint-setter";
 
 const NODES: ExtractNodeMap<typeof BlueprintNode> = {
     action: {
@@ -136,7 +137,10 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "success-value": ValueBlueprintNode,
     },
     variable: {
-        variable: VariableBlueprintNode,
+        variable: GetterBlueprintNode,
+    },
+    setter: {
+        setter: SetterBlueprintNode,
     },
 };
 

@@ -2,7 +2,7 @@ import { Blueprint } from "blueprint/blueprint";
 import { BlueprintNode } from "../blueprint-node";
 import { segmentEntryId } from "data/data-entry";
 
-class VariableBlueprintNode extends BlueprintNode {
+abstract class VariableBlueprintNode extends BlueprintNode {
     #nodeId: string;
     #variableId: NodeEntryId;
     #variableKey: string;
@@ -17,17 +17,6 @@ class VariableBlueprintNode extends BlueprintNode {
         this.#variableKey = key;
     }
 
-    get title(): null {
-        return null;
-    }
-
-    get schema(): NodeSchema {
-        return {
-            ...super.schema,
-            inputs: [],
-        };
-    }
-
     get nodeId(): string {
         return this.#nodeId;
     }
@@ -36,20 +25,8 @@ class VariableBlueprintNode extends BlueprintNode {
         return this.#variableKey;
     }
 
-    get context(): string[] {
-        return ["delete-node"];
-    }
-
     get variableId(): NodeEntryId {
         return this.#variableId;
-    }
-
-    protected async _onContext(context: string): Promise<void> {
-        switch (context) {
-            default: {
-                return super._onContext(context);
-            }
-        }
     }
 }
 

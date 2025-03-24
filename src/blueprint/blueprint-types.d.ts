@@ -6,12 +6,14 @@ declare global {
     type ListedTrigger = { name: string; id: string; enabled: boolean; sub: boolean };
 
     type VariableData = {
-        type: NodeType;
-        key: BlueprintVariableKey;
+        nodeType: NodeType;
         label: string;
-        custom: boolean;
         entryId: NodeEntryId;
         entryType: NonNullable<NodeEntryType>;
+        /** variable isn't unique */
+        custom: boolean;
+        /** variable isn't linked to any node output */
+        global?: boolean;
     };
 
     type BlueprintVariableKey =

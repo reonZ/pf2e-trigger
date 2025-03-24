@@ -47,6 +47,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.options.this;
     }
 
+    get data(): NodeData {
+        return this.#data;
+    }
+
     get custom(): NodeDataCustom {
         return this.#data.custom;
     }
