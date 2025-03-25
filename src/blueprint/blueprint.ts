@@ -21,6 +21,8 @@ import { BlueprintEntry } from "./entry/blueprint-entry";
 import { BlueprintNodesMenu } from "./menu/blueprint-menu-nodes";
 import { BlueprintNode } from "./node/blueprint-node";
 import { createBlueprintNode } from "./node/blueprint-node-list";
+import { GetterBlueprintNode } from "./node/variable/blueprint-getter";
+import { SetterBlueprintNode } from "./node/variable/blueprint-setter";
 import { VariableBlueprintNode } from "./node/variable/blueprint-variable";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
@@ -431,26 +433,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const trigger = this.trigger;
         if (!trigger || (entry && !entry.type)) return;
 
-        const result = await waitDialog<{ name: string; type?: CustomNodeEntryType }>(
-            {
-                title: localize("add-variable.title"),
-                focus: "[name='name']",
-                content: await render("add-entry", {
-                    types: entry ? undefined : getNodeEntryValueList(),
-                    i18n: templateLocalize("add-variable"),
-                }),
-                yes: {
-                    label: localize("add-variable.yes"),
-                    icon: "fa-solid fa-check",
-                },
-                no: {
-                    label: localize("add-variable.no"),
-                    icon: "fa-solid fa-xmark",
-                },
-            },
-            { animation: false }
-        );
-
+        const result = await variableDialog(entry);
         if (!result || (!entry && !result.type)) return;
 
         const type = entry?.type ?? result.type!;
@@ -508,6 +491,33 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             if (seg.nodeId === nodeId) {
                 delete trigger.variables[entryId];
             }
+        }
+
+        this.parent.refresh();
+    }
+
+    async editVariable(entryId: NodeEntryId) {
+        const trigger = this.trigger;
+        const variable = trigger?.variables[entryId];
+        if (!variable) return;
+
+        const result = await variableDialog(variable.label);
+        if (!result) return;
+
+        const label = result.name.trim() || variable.type;
+
+        variable.label = label;
+
+        for (const node of this.nodes) {
+            if (!(node instanceof VariableBlueprintNode) || node.variableId !== entryId) continue;
+
+            if (node instanceof GetterBlueprintNode) {
+                node.data.custom.outputs[0].label = label;
+            } else if (node instanceof SetterBlueprintNode) {
+                node.data.custom.inputs[0].label = label;
+            }
+
+            node.refresh();
         }
 
         this.parent.refresh();
@@ -692,6 +702,29 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const point = subtractPoints(center, this.stage.position);
         node.setPosition(point);
     }
+}
+
+async function variableDialog(entry?: BlueprintEntry | string) {
+    return waitDialog<{ name: string; type?: CustomNodeEntryType }>(
+        {
+            title: localize("add-variable.title"),
+            focus: "[name='name']",
+            content: await render("add-entry", {
+                name: R.isString(entry) ? entry.trim() : "",
+                types: entry ? undefined : getNodeEntryValueList(),
+                i18n: templateLocalize("add-variable"),
+            }),
+            yes: {
+                label: localize("add-variable.yes"),
+                icon: "fa-solid fa-check",
+            },
+            no: {
+                label: localize("add-variable.no"),
+                icon: "fa-solid fa-xmark",
+            },
+        },
+        { animation: false }
+    );
 }
 
 function variableDataFromKey(key: BlueprintVariableKey): ExtractedVariableData {

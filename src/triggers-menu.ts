@@ -509,8 +509,12 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     #activateListsListeners(html: HTMLElement) {
+        const getEntryId = (el: HTMLElement) => {
+            return htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+        };
+
         addListenerAll(html, ".trigger .name", "contextmenu", (event, el) => {
-            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+            const triggerId = getEntryId(el);
             this.#editTrigger(triggerId);
         });
 
@@ -519,7 +523,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             ".trigger [name='enabled']",
             "change",
             (event, el: HTMLInputElement) => {
-                const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+                const triggerId = getEntryId(el);
                 const trigger = this.blueprint.getTrigger(triggerId);
 
                 if (trigger) {
@@ -529,7 +533,7 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
         );
 
         addListenerAll(html, ".trigger [data-action]", (event, el) => {
-            const triggerId = htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+            const triggerId = getEntryId(el);
 
             switch (el.dataset.action as TriggersEventAction) {
                 case "select-trigger": {
@@ -547,8 +551,13 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             }
         });
 
+        addListenerAll(html, ".variable .name", "contextmenu", (event, el) => {
+            const entryId = getEntryId(el) as NodeEntryId;
+            this.blueprint.editVariable(entryId);
+        });
+
         addListenerAll(html, ".variable [data-action]", (event, el) => {
-            const entryId = (htmlClosest(el, "[data-id]")?.dataset.id ?? "") as NodeEntryId;
+            const entryId = getEntryId(el) as NodeEntryId;
 
             switch (el.dataset.action as VariablesEventAction) {
                 case "remove-variable": {
