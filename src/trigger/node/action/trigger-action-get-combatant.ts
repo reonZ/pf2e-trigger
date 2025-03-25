@@ -10,7 +10,7 @@ class GetCombatantTriggerAction extends TriggerNode<typeof getCombatantSchema> {
             this.setVariable("combatant", { actor, token });
         }
 
-        this.send("out");
+        return this.send("out");
     }
 }
 

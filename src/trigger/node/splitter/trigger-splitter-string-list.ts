@@ -6,7 +6,7 @@ class StringListTriggerSplitter extends TriggerNode<typeof stringListSchema> {
         const input = (await this.get("input")).trim();
 
         if (input) {
-            this.send(input);
+            return this.send(input);
         }
     }
 }

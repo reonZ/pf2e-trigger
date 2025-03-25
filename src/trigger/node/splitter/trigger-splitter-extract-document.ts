@@ -29,7 +29,7 @@ abstract class DocumentExtractorTriggerSplitter<
         }
 
         // @ts-ignore
-        this.send("out");
+        return this.send("out");
     }
 }
 

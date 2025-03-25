@@ -18,7 +18,7 @@ class GetChoicesetTriggerAction extends TriggerNode<typeof getChoicesetSchema> {
             this.setVariable("selection", selection);
         }
 
-        this.send("out");
+        return this.send("out");
     }
 }
 
