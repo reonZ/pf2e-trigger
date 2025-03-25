@@ -2,7 +2,6 @@ import { booleanSchemaOuts } from "schema/schema";
 
 const containsValueSchema = {
     in: true,
-    unique: true,
     outs: booleanSchemaOuts,
     inputs: [
         { key: "list", type: "list" },
