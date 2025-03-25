@@ -1,8 +1,51 @@
+# 1.6.0
+
+-   due to changes in data structure, the module will need to run a migration
+    -   the module will also migrate triggers when they are imported
+-   accentuate some of the connections' color to to make them easier to differentiate
+-   rename event nodes to use past tense instead (except `Test Event` & `Execute Event`)
+-   rename the `Damage Received` & `Heal Received` event nodes to `Health Gained` & `Health Lost`
+    -   this should make it more obvious what the events actually do
+    -   also changed their icons
+-   rename the `Difficulty Class (DC)` value node to `Difficulty Class`
+    -   rename its input to `Value` instead of `DC`
+    -   add connection to the input
+-   add a way to create global trigger variables
+    -   those variables are not linked to any node output
+    -   they can be set at any point in the trigger using the `<variable> (Setter)` nodes
+-   add `Trigger Variables` section to the menu sidebar
+    -   you can rename and delete any custom variable
+    -   it doesn't include `unique` variables
+    -   remove `Delete Variable` from the variable nodes context menu
+-   add new `list` type/connection
+    -   it holds an array of strings (e.g. roll options)
+-   add `List Contains Value` condition node
+    -   look up if an an exact match of value is found in the list (value is trimmed)
+-   add new types to the list of extractables in the `Actor Data` & `Item Data` splitter nodes
+    -   `list`: if the path leads to a set, it will be converted to an array
+    -   `target`: the path can lead to an actor OR a token/token document that has a valid actor
+-   add connection to the `Adjustment` input of the `Difficulty Class (Target)`
+-   add new `Current Turn?` option to `Aura Entered` & `Aura Left` event nodes
+    -   the option is enabled by default so nothing has to be changed to keep the previous behaviour
+    -   disabling it will stop enforcing the "it must be the target's turn to be triggered", allowing more versatility
+    -   the events still require the target to be in combat
+-   add `Damage Taken` & `Damage Dealt` event nodes
+    -   those events only trigger from damage messages
+    -   they will only trigger if actual damage was dealt/received
+    -   they do the exact same thing but reverse the `Trigger Target` and the "other" target in case you need to use `Is Inside Aura` which can only be done on the `Trigger Target`
+-   add `Update Effect Duration` action node
+    -   update any effect that uses duration to be offset by `x` of the used unit
+-   add `Equals (Actor)` logic node
+    -   it compares the uuid of two target actors
+-   no longer collapse the sidebar automatically
+-   prevent a `preUpdateItem` hook from being registered when not needed
+-   fix `Add Item` action node always adding the item to the `Trigger Target` instead of the `Target`
+
 # 1.5.0
 
 -   you can now have condition nodes following action nodes
 -   add `Damage Received` event node
-    -   triggers when an actor loses HP (0 included), be it from manual update in the sheet/HUD or via a message damage button
+    -   triggers when an actor loses HP (`0` included), be it from manual update in the sheet/HUD or via a message damage button
     -   it only works for stamina if this was initiated via a message damage button (i opened an issue to the system)
 -   add `Heal Received` event node
     -   works just as `Damage Received` but triggers when an actor gains HP
