@@ -148,9 +148,9 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
             addVariableBtn?.setAttribute("disabled", "");
         }
 
-        if (close) {
-            this.closeSidebar();
-        }
+        // if (close) {
+        //     this.closeSidebar();
+        // }
     }
 
     closeSidebar() {
