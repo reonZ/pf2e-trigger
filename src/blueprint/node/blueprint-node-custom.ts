@@ -39,7 +39,7 @@ function makeCustomNode<TBase extends AbstractConstructorOf<BlueprintNode>>(
                     title: localize("add-entry", category),
                     focus: `[name="${valueLabel ? "value" : "name"}"]`,
                     content: await render("add-entry", {
-                        types: usedTypes,
+                        types: usedTypes ? R.sortBy(usedTypes, R.prop("label")) : undefined,
                         valueLabel,
                         i18n: templateLocalize("add-entry"),
                     }),
