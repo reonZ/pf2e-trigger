@@ -3,6 +3,7 @@ import { getConnectorColor } from "blueprint/entry/blueprint-entry";
 import { processTriggerData, serializeTrigger } from "data/data-trigger";
 import { TriggersExportMenu } from "export-menu";
 import { openTriggerDialog } from "helpers/helpers-trigger-dialog";
+import { migrateVariables } from "migrations/106-variables";
 import {
     ApplicationClosingOptions,
     ApplicationConfiguration,
@@ -303,6 +304,10 @@ class TriggersMenu extends foundry.applications.api.ApplicationV2 {
                     });
                 })
             );
+
+            // migration 106
+            migrateVariables(triggersData);
+            migrateVariables(subtriggersData);
 
             const processedSubtriggers = R.pipe(
                 subtriggersData,

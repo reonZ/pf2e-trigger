@@ -6,10 +6,10 @@ import { getSchema } from "schema/schema-list";
 
 export default {
     version: 1.06,
-    migrateSettings: migrateVariables,
+    migrateSettings: migrateSettings,
 } satisfies ModuleMigration;
 
-async function migrateVariables(): Promise<string[] | undefined> {
+async function migrateSettings(): Promise<string[] | undefined> {
     if (!userIsActiveGM()) return;
 
     const current = getSetting<TriggerRawData[]>("triggers");
@@ -17,6 +17,14 @@ async function migrateVariables(): Promise<string[] | undefined> {
 
     const triggers = fu.deepClone(current);
 
+    migrateVariables(triggers);
+
+    await setSetting("triggers", triggers);
+
+    return ["pf2e-trigger.triggers"];
+}
+
+function migrateVariables(triggers: TriggerRawData[]) {
     for (const trigger of triggers) {
         const nodes = trigger.nodes;
         if (!trigger.variables || !nodes?.length) continue;
@@ -43,8 +51,6 @@ async function migrateVariables(): Promise<string[] | undefined> {
 
         trigger.variables = variables;
     }
-
-    await setSetting("triggers", triggers);
-
-    return ["pf2e-trigger.triggers"];
 }
+
+export { migrateVariables };
