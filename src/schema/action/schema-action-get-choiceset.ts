@@ -7,6 +7,6 @@ const getChoicesetSchema = {
         { key: "option", type: "text", field: true },
     ],
     variables: [{ key: "selection", type: "text" }],
-} as const;
+} as const satisfies NodeRawSchema;
 
 export { getChoicesetSchema };

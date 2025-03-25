@@ -8,6 +8,7 @@ import { addItemSchema } from "./action/schema-action-add-item";
 import { addPersistentSchema } from "./action/schema-action-add-persistent";
 import { addTemporarySchema } from "./action/schema-action-add-temporary";
 import { consoleLogSchema } from "./action/schema-action-console-log";
+import { effectDurationSchema } from "./action/schema-action-effect-duration";
 import { getChoicesetSchema } from "./action/schema-action-get-choiceset";
 import { getCombatantSchema } from "./action/schema-action-get-combatant";
 import { reduceConditionSchema } from "./action/schema-action-reduce-condition";
@@ -66,6 +67,7 @@ const SCHEMAS = {
         "add-weakness": addWeaknessSchema,
         "get-choiceset": getChoicesetSchema,
         "get-combatant": getCombatantSchema,
+        "effect-duration": effectDurationSchema,
     },
     condition: {
         "has-item": hasItemSchema,

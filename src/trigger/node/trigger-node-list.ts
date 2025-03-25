@@ -9,6 +9,7 @@ import { AddItemTriggerAction } from "./action/trigger-action-add-item";
 import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
 import { AddTemporaryTriggerNode } from "./action/trigger-action-add-temporary";
 import { ConsoleLogTriggerNode } from "./action/trigger-action-console-log";
+import { EffectDurationTriggerNode } from "./action/trigger-action-effect-duration";
 import { GetChoicesetTriggerAction } from "./action/trigger-action-get-choiceset";
 import { GetCombatantTriggerAction } from "./action/trigger-action-get-combatant";
 import { ReduceConditionTriggerNode } from "./action/trigger-action-reduce-condition";
@@ -78,6 +79,7 @@ const NODES = {
         "add-weakness": AddWeaknessTriggerNode,
         "get-choiceset": GetChoicesetTriggerAction,
         "get-combatant": GetCombatantTriggerAction,
+        "effect-duration": EffectDurationTriggerNode,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

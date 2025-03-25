@@ -242,6 +242,12 @@
                     "combatant": {
                         "label": "Combatant"
                     }
+                },
+                "effect-duration": {
+                    "title": "Update Effect Duration",
+                    "removed": {
+                        "label": "Was Removed"
+                    }
                 }
             },
             "event": {
@@ -518,7 +524,8 @@
                 "slug": "Slug",
                 "level": "Level",
                 "selection": "Selection",
-                "aura-source": "Aura Source"
+                "aura-source": "Aura Source",
+                "effect": "Effect"
             }
         },
         "select": {

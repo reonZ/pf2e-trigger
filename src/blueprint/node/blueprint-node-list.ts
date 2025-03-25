@@ -4,6 +4,7 @@ import { AddItemBlueprintNode } from "./action/blueprint-action-add-item";
 import { AddPersistentBlueprintNode } from "./action/blueprint-action-add-persistent";
 import { AddTemporartyBlueprintNode } from "./action/blueprint-action-add-temporary";
 import { ConsoleLogBlueprintNode } from "./action/blueprint-action-console-log";
+import { EffectDurationBlueprintNode } from "./action/blueprint-action-effect-duration";
 import { GetChoicesetBlueprintNode } from "./action/blueprint-action-get-choiceset";
 import { GetCombatantBlueprintNode } from "./action/blueprint-action-get-combatant";
 import { ReduceConditionBlueprintNode } from "./action/blueprint-action-reduce-condition";
@@ -69,6 +70,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "add-weakness": AddWeaknessBlueprintNode,
         "get-choiceset": GetChoicesetBlueprintNode,
         "get-combatant": GetCombatantBlueprintNode,
+        "effect-duration": EffectDurationBlueprintNode,
     },
     condition: {
         "has-item": ConditionBlueprintNode,
