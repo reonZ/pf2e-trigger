@@ -1,6 +1,6 @@
 import { addItemSchema } from "schema/action/schema-action-add-item";
 import { TriggerNode } from "../trigger-node";
-import { ActorPF2e, ItemPF2e, ItemType } from "module-helpers";
+import { ActorPF2e, ItemPF2e, ItemType, getSource } from "module-helpers";
 
 class AddItemTriggerAction extends TriggerNode<typeof addItemSchema> {
     async execute(): Promise<void> {
@@ -29,7 +29,7 @@ class AddItemTriggerAction extends TriggerNode<typeof addItemSchema> {
             }
         }
 
-        const source = item.toObject();
+        const source = getSource(item);
         const [created] = await actor.createEmbeddedDocuments("Item", [source]);
 
         this.setVariable("item", created);
