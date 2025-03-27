@@ -1,3 +1,8 @@
+# 1.6.2
+
+-   `Add Item`:
+    -   make sure the added item is provided a `_stats.compendiumSource` to avoid world items without source id be a problem
+
 # 1.6.1
 
 -   make sure the blueprint background is always the one expected even when using styling modules
