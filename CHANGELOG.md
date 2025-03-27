@@ -1,3 +1,8 @@
+# 1.6.1
+
+-   make sure the blueprint background is always the one expected even when using styling modules
+-   fix blueprint grid scaling improperly with device resolution aspect ratio other than `1`
+
 # 1.6.0
 
 -   due to changes in data structure, the module will need to run a migration
