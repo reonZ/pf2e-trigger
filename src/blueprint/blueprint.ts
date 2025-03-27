@@ -587,9 +587,9 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const textureSize = gridSize * 10;
 
         const renderTexture = PIXI.RenderTexture.create({
-            width: textureSize * devicePixelRatio,
-            height: textureSize * devicePixelRatio,
-            resolution: devicePixelRatio,
+            width: textureSize,
+            height: textureSize,
+            resolution: window.devicePixelRatio,
         });
 
         const gridLayer = new PIXI.TilingSprite(renderTexture);
