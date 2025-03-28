@@ -11,6 +11,7 @@ class DamageTriggerEvent extends TriggerNode<typeof damageEventSchema> {
         this.setVariable("item", item);
         this.setVariable("heal", !!this.options.isHealing);
         this.setVariable("options", this.options.list ?? []);
+        this.setVariable("negated", !!this.options.negated);
 
         return this.send("out");
     }

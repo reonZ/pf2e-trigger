@@ -6,6 +6,7 @@ const damageEventSchema = {
         { key: "other", type: "target" },
         { key: "item", type: "item" },
         { key: "heal", type: "boolean" },
+        { key: "negated", type: "boolean" },
         { key: "options", type: "list" },
     ],
 } as const satisfies EventSchema;

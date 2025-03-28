@@ -22,6 +22,7 @@ declare global {
         item?: ItemPF2e;
         other?: TargetDocuments;
         isHealing?: boolean;
+        negated?: boolean;
         list?: string[];
         condition?: { slug: ConditionSlug; update: boolean };
         variables: Record<NodeEntryId, TriggerEntryValue>;

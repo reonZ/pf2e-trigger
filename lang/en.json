@@ -332,6 +332,9 @@
                     },
                     "options": {
                         "label": "Roll Options"
+                    },
+                    "negated": {
+                        "label": "No Damage?"
                     }
                 },
                 "damage-dealt": {
@@ -347,6 +350,9 @@
                     },
                     "options": {
                         "label": "Roll Options"
+                    },
+                    "negated": {
+                        "label": "No Damage?"
                     }
                 }
             },

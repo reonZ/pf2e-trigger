@@ -43,6 +43,7 @@ class MessageHook extends TriggerHook<"damage-taken" | "damage-dealt"> {
         const item = await fromUuid<ItemPF2e>(origin.uuid);
         if (!(item instanceof Item)) return;
 
+        const negated = appliedDamage == null;
         const isHealing = !!appliedDamage?.isHealing;
         const list = context?.options ?? [];
 
@@ -52,6 +53,7 @@ class MessageHook extends TriggerHook<"damage-taken" | "damage-dealt"> {
                 other: source,
                 item,
                 isHealing,
+                negated,
                 list,
             });
         }
@@ -62,6 +64,7 @@ class MessageHook extends TriggerHook<"damage-taken" | "damage-dealt"> {
                 other: target,
                 item,
                 isHealing,
+                negated,
                 list,
             });
         }
