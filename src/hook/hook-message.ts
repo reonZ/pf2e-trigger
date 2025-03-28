@@ -28,7 +28,13 @@ class MessageHook extends TriggerHook<"damage-taken" | "damage-dealt"> {
         if (!userIsActiveGM()) return;
 
         const { appliedDamage, origin, context } = message.flags.pf2e;
-        if (!R.isPlainObject(appliedDamage) || !R.isPlainObject(origin) || !origin.actor) return;
+        if (
+            !R.isPlainObject(context) ||
+            context.type !== "damage-taken" ||
+            !R.isPlainObject(origin) ||
+            !origin.actor
+        )
+            return;
 
         const target = { actor: message.actor, token: message.token };
         const source = { actor: await fromUuid<ActorPF2e>(origin.actor) };
@@ -37,7 +43,7 @@ class MessageHook extends TriggerHook<"damage-taken" | "damage-dealt"> {
         const item = await fromUuid<ItemPF2e>(origin.uuid);
         if (!(item instanceof Item)) return;
 
-        const isHealing = appliedDamage.isHealing;
+        const isHealing = !!appliedDamage?.isHealing;
         const list = context?.options ?? [];
 
         if (this.activeEvents.has("damage-taken")) {
