@@ -6,8 +6,6 @@ class EffectDurationTriggerNode extends TriggerNode<typeof effectDurationSchema>
         const value = await this.get("value");
         const item = await this.get("effect");
 
-        console.log({ value, item });
-
         if (
             value === 0 ||
             !item?.isOfType("effect") ||
