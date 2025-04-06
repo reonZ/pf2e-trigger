@@ -18,13 +18,21 @@ class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
             return this.send("out");
         }
 
+        const isBasic = await this.get("basic");
         const dcData = (await this.get("dc")) ?? { value: 0 };
+
+        const traits = rollData?.traits;
+        const options = rollData?.options ?? [];
+
+        if (isBasic) {
+            options.push("damaging-effect");
+        }
 
         const roll = await statistic.roll({
             dc: dcData,
             origin: dcData?.target?.actor,
             item: rollData?.item as ItemPF2e<ActorPF2e>,
-            extraRollOptions: getExtraRollOptions(rollData),
+            extraRollOptions: getExtraRollOptions({ traits, options }),
             skipDialog: true,
         });
 

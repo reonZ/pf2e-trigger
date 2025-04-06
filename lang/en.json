@@ -182,10 +182,7 @@
                     "title": "Roll Save"
                 },
                 "roll-damage": {
-                    "title": "Roll Damage",
-                    "formula": {
-                        "label": "Formula"
-                    }
+                    "title": "Roll Damage"
                 },
                 "add-item": {
                     "title": "Add Item",
@@ -531,7 +528,9 @@
                 "level": "Level",
                 "selection": "Selection",
                 "aura-source": "Aura Source",
-                "effect": "Effect"
+                "effect": "Effect",
+                "formula": "Formula",
+                "basic": "Is Basic?"
             }
         },
         "select": {
