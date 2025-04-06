@@ -4,6 +4,7 @@ import { AddImmunityTriggerNode } from "./action/iwr/trigger-action-add-immunity
 import { AddResistanceTriggerNode } from "./action/iwr/trigger-action-add-resistance";
 import { AddWeaknessTriggerNode } from "./action/iwr/trigger-action-add-weakness";
 import { RemoveImmunityTriggerNode } from "./action/iwr/trigger-action-remove-immunity";
+import { ToolbeltRollDamageTriggerAction } from "./action/toolbelt/trigger-action-toolbelt-roll-damage";
 import { AddConditionTriggerNode } from "./action/trigger-action-add-condition";
 import { AddItemTriggerAction } from "./action/trigger-action-add-item";
 import { AddPersistentTriggerAction } from "./action/trigger-action-add-persistent";
@@ -80,6 +81,7 @@ const NODES = {
         "get-choiceset": GetChoicesetTriggerAction,
         "get-combatant": GetCombatantTriggerAction,
         "effect-duration": EffectDurationTriggerNode,
+        "toolbelt-roll-damage": ToolbeltRollDamageTriggerAction,
     },
     condition: {
         "has-item": HasItemTriggerCondition,

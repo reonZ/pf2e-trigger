@@ -16,6 +16,7 @@ import { AddImmunityBlueprintNode } from "./action/iwr/blueprint-action-add-immu
 import { AddResistanceBlueprintNode } from "./action/iwr/blueprint-action-add-resistance";
 import { AddWeaknessBlueprintNode } from "./action/iwr/blueprint-action-add-weakness";
 import { BlueprintNode } from "./blueprint-node";
+import { makeModuleNode } from "./blueprint-node-module";
 import { ConditionBlueprintNode } from "./condition/blueprint-condition";
 import { ConverterBlueprintNode } from "./converter/blueprint-converter";
 import { EnterAuraBlueprintNode } from "./event/blueprint-event-aura-enter";
@@ -71,6 +72,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "get-choiceset": GetChoicesetBlueprintNode,
         "get-combatant": GetCombatantBlueprintNode,
         "effect-duration": EffectDurationBlueprintNode,
+        "toolbelt-roll-damage": makeModuleNode(RollDamageBlueprintNode),
     },
     condition: {
         "has-item": ConditionBlueprintNode,

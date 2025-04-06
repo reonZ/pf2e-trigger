@@ -245,6 +245,15 @@
                     "removed": {
                         "label": "Was Removed"
                     }
+                },
+                "toolbelt-roll-damage": {
+                    "title": "Roll Damage With Save",
+                    "save-label": {
+                        "label": "Save"
+                    },
+                    "damage-label": {
+                        "label": "Damage"
+                    }
                 }
             },
             "event": {

@@ -46,6 +46,7 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
+import { toolbeltRollDamageSchema } from "./action/toolbelt/schema-action-toolbelt-roll-damage";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -68,6 +69,7 @@ const SCHEMAS = {
         "get-choiceset": getChoicesetSchema,
         "get-combatant": getCombatantSchema,
         "effect-duration": effectDurationSchema,
+        "toolbelt-roll-damage": toolbeltRollDamageSchema,
     },
     condition: {
         "has-item": hasItemSchema,

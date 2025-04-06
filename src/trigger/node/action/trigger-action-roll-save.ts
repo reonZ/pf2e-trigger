@@ -1,10 +1,9 @@
-import { ActorPF2e, ItemPF2e, getExtraRollOptions } from "module-helpers";
+import { ActorPF2e, ItemPF2e, SaveType, Statistic, getExtraRollOptions } from "module-helpers";
 import { rollSaveSchema } from "schema/action/schema-action-roll-save";
 import { TriggerNode } from "../trigger-node";
 
 class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
     async execute(): Promise<void> {
-        const save = await this.get("save");
         const rollData = await this.get("roll");
 
         if (rollData?.origin === null) {
@@ -12,14 +11,11 @@ class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
         }
 
         const roller = rollData?.origin?.actor ?? this.target.actor;
-        const statistic = roller.getStatistic(save);
+        const { dcData, isBasic, statistic } = (await getSaveData(this, roller)) ?? {};
 
         if (!statistic) {
             return this.send("out");
         }
-
-        const isBasic = await this.get("basic");
-        const dcData = (await this.get("dc")) ?? { value: 0 };
 
         const traits = rollData?.traits;
         const options = rollData?.options ?? [];
@@ -41,4 +37,27 @@ class RollSaveTriggerAction extends TriggerNode<typeof rollSaveSchema> {
     }
 }
 
-export { RollSaveTriggerAction };
+async function getSaveData(
+    trigger: TriggerNode<typeof rollSaveSchema>,
+    roller: ActorPF2e
+): Promise<SaveData | null> {
+    const save = await trigger.get("save");
+    const statistic = roller.getStatistic(save);
+    if (!statistic) return null;
+
+    return {
+        slug: save as SaveType,
+        statistic,
+        isBasic: await trigger.get("basic"),
+        dcData: (await trigger.get("dc")) ?? { value: 0 },
+    };
+}
+
+type SaveData = {
+    slug: SaveType;
+    statistic: Statistic;
+    isBasic: boolean;
+    dcData: NodeDCEntry;
+};
+
+export { RollSaveTriggerAction, getSaveData };
