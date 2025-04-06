@@ -10,10 +10,8 @@ function processCustomSchema(data: Maybe<Partial<NodeDataCustom>>): NodeData["cu
     };
 }
 
-function processCustomsInputs(
-    data: Maybe<Partial<BaseNodeSchemaInputEntry[]>>
-): BaseNodeSchemaInputEntry[] {
-    return R.isArray(data) ? (data as BaseNodeSchemaInputEntry[]) : [];
+function processCustomsInputs(data: Maybe<Partial<NodeSchemaInput[]>>): NodeSchemaInput[] {
+    return R.isArray(data) ? (data as NodeSchemaInput[]) : [];
 }
 
 function processCustomsOutputs(data: Maybe<Partial<NodeSchemaOutputs>>): NodeSchemaOutputs {
