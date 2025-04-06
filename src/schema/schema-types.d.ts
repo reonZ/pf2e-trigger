@@ -20,6 +20,7 @@ declare global {
 
     type NodeRawSchema = {
         unique?: boolean | string[];
+        module?: string;
         in?: boolean;
         inputs?: ReadonlyArray<NodeSchemaInput>;
         outs?: ReadonlyArray<NodeSchemaBridge>;
@@ -31,6 +32,7 @@ declare global {
         inputs: NodeSchemaInputs;
         outputs: NodeSchemaOutputs;
         variables: ReadonlyArray<NodeSchemaVariable>;
+        module: string | null;
     };
 
     type NodeSchemaInputs = (NodeSchemaInput | { key: "in" })[];
@@ -38,12 +40,15 @@ declare global {
     type NodeSchemaEntry = NodeSchemaInput | NodeSchemaBridge | NodeSchemaVariable;
 
     type NodeSchemaFilter = {
-        type: NodeType;
+        type: NodeSchemaFilterType;
         key: string;
         inputs: NodeEntryType[];
         outputs: NodeEntryType[];
         unique: boolean;
+        module: string;
     };
+
+    type NodeSchemaFilterType = Exclude<NodeType, "event" | "subtrigger" | "variable" | "setter">;
 
     type BooleanSchemaOuts = typeof booleanSchemaOuts;
 

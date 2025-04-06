@@ -14,15 +14,34 @@
         outline: 0;
     }
 
-    .title {
+    .title,
+    .sub-title {
         text-align: center;
-        background: rgb(0 0 0 / 33%);
-        padding-block: 0.2em;
         font-size: 1.1em;
+        border-top: 1px solid var(--title-border-color);
+        border-bottom: 1px solid var(--title-border-color);
+    }
+
+    .title {
+        --title-border-color: rgba(0, 0, 0, 0.514);
+
+        padding-block: 0.2em;
+        background: rgb(0 0 0 / 33%);
+
+        &:first-child {
+            border-top: 0;
+        }
 
         &:not(:first-child) {
             margin-top: 1em;
         }
+    }
+
+    .sub-title {
+        --title-border-color: rgba(255, 255, 255, 0.082);
+
+        padding-block: 0.1em;
+        background: rgb(0 0 0 / 20%);
     }
 
     ul {

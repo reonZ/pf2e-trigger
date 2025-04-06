@@ -6,5 +6,6 @@ declare global {
         outs: [{ key: "out" }];
         inputs: [...TInput[], { key: "target"; type: "target" }];
         variables?: TOutput[];
+        module?: string;
     };
 }

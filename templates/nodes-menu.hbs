@@ -1,10 +1,20 @@
 {{#each groups as |group|}}
 <div class="title">{{group.title}}</div>
+{{> 'nodes' nodes=group.nodes}}
+{{#if group.modules.length}}
+{{#each group.modules as |module|}}
+<div class="sub-title">{{module.title}}</div>
+{{> 'nodes' nodes=module.nodes}}
+{{/each}}
+{{/if}}
+{{/each}}
+
+{{#*inline 'nodes'}}
 <ul class="list">
-    {{#each group.nodes as |node|}}
+    {{#each nodes as |node|}}
     <li data-type="{{node.type}}" data-key="{{node.key}}">
         {{node.label}}
     </li>
     {{/each}}
 </ul>
-{{/each}}
+{{/inline}}

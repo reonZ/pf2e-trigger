@@ -1,6 +1,7 @@
 import { Blueprint } from "blueprint/blueprint";
 import { BlueprintEntry } from "blueprint/entry/blueprint-entry";
 import { haveCompatibleEntryType } from "data/data-entry";
+import { NODE_TYPES_INDEX } from "data/data-node";
 import {
     ApplicationConfiguration,
     ApplicationRenderOptions,
@@ -53,20 +54,35 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
     }
 
     async _prepareContext(options: ApplicationRenderOptions): Promise<MenuData> {
-        const groups = R.pipe(
+        const groups: PartialRecord<NodeType, DataNodesGroup> = R.pipe(
             this.#getFilters(),
-            R.map(({ key, type }): DataNode => {
+            R.map(({ key, type, module }): DataNode & { module: string } => {
                 return {
                     key,
                     type,
                     label: localize("node", type, key, "title"),
+                    module,
                 };
             }),
             R.groupBy(R.prop("type")),
             R.mapValues((nodes, type): DataNodesGroup => {
+                const [modules, regular] = R.partition(nodes, ({ module }) => !!module);
+
                 return {
+                    type,
                     title: localize(`node.${type}.title`),
-                    nodes: R.sortBy(nodes, R.prop("label")),
+                    nodes: R.sortBy(regular, R.prop("label")),
+                    modules: R.pipe(
+                        modules,
+                        R.groupBy(R.prop("module")),
+                        R.mapValues((nodes, module): DataModuleGroup => {
+                            return {
+                                title: module,
+                                nodes,
+                            };
+                        }),
+                        R.values()
+                    ),
                 };
             })
         );
@@ -74,21 +90,29 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
         const variables = this.#getVariables();
         if (variables.length) {
             groups.variable = {
+                type: "variable",
                 title: localize("node.variable.title"),
                 nodes: variables,
+                modules: [],
             };
         }
 
         const subtriggers = this.#getSubtriggers();
         if (subtriggers.length) {
             groups.subtrigger = {
+                type: "subtrigger",
                 title: localize("node.subtrigger.title"),
                 nodes: subtriggers,
+                modules: [],
             };
         }
 
         return {
-            groups,
+            groups: R.pipe(
+                groups,
+                R.values(),
+                R.sortBy(({ type }) => NODE_TYPES_INDEX[type])
+            ),
             i18n: templateLocalize("node"),
         };
     }
@@ -199,11 +223,23 @@ class BlueprintNodesMenu extends BlueprintMenu<NodesMenuReturnValue> {
     }
 }
 
-type DataNode = { type: NodeType; key: string; label: string };
-type DataNodesGroup = { title: string; nodes: DataNode[] };
+type DataNode = {
+    type: NodeType;
+    key: string;
+    label: string;
+};
+
+type DataNodesGroup = {
+    title: string;
+    type: NodeType;
+    nodes: DataNode[];
+    modules: DataModuleGroup[];
+};
+
+type DataModuleGroup = Omit<DataNodesGroup, "modules" | "type">;
 
 type MenuData = {
-    groups: Partial<Record<NodeType, DataNodesGroup>>;
+    groups: DataNodesGroup[];
     i18n: TemplateLocalize;
 };
 

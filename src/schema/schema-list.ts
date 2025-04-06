@@ -170,11 +170,12 @@ const FILTERS: NodeSchemaFilter[] = R.pipe(
                 );
 
                 return {
-                    type,
+                    type: type as NodeSchemaFilterType,
                     key,
                     inputs,
                     outputs,
                     unique: !!schema.unique,
+                    module: schema.module ?? "",
                 };
             })
         );
@@ -222,6 +223,7 @@ function getSchema(data: WithRequired<Partial<NodeData>, "type" | "key">): NodeS
         inputs: (rawSchema.inputs ?? []) as NodeSchemaInputs,
         outputs: [...outs, ...variables],
         variables,
+        module: R.isString(rawSchema.module) ? rawSchema.module : null,
     };
 
     if (rawSchema.in) {

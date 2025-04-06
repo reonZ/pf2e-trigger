@@ -1,22 +1,24 @@
 import { R } from "module-helpers";
 import { processCustomSchema } from "schema/schema";
-import { processDataInputs, processDataOutputs } from "./data-entry";
 import { isNodeKey } from "schema/schema-list";
+import { processDataInputs, processDataOutputs } from "./data-entry";
 
 const CUSTOM_TYPES = ["macro", "subtrigger"] as const;
 
 const NODE_TYPES = [
-    ...CUSTOM_TYPES,
     "event",
-    "condition",
-    "value",
     "action",
+    "condition",
     "logic",
-    "variable",
-    "converter",
     "splitter",
+    "value",
+    "converter",
+    "variable",
     "setter",
+    ...CUSTOM_TYPES,
 ] as const;
+
+const NODE_TYPES_INDEX = R.mapToObj(NODE_TYPES, (type, index) => [type, index]);
 
 function processNodeData(data: NodeRawData): NodeData | null {
     if (
@@ -59,4 +61,12 @@ function isCustomNodeType(type: NodeType): type is CustomNodeType {
     return CUSTOM_TYPES.includes(type as CustomNodeType);
 }
 
-export { CUSTOM_TYPES, NODE_TYPES, isCustomNodeType, isEventNode, isNodeType, processNodeData };
+export {
+    CUSTOM_TYPES,
+    NODE_TYPES,
+    NODE_TYPES_INDEX,
+    isCustomNodeType,
+    isEventNode,
+    isNodeType,
+    processNodeData,
+};
