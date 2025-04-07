@@ -6,23 +6,28 @@ import { getSaveData } from "../trigger-action-roll-save";
 
 class ToolbeltRollDamageTriggerAction extends TriggerNode<typeof toolbeltRollDamageSchema> {
     async execute(): Promise<void> {
-        const [formula, damageData] = (await getDamageData(this as TriggerNode)) ?? [];
+        const damage = await getDamageData(this as TriggerNode);
 
-        if (!formula || !damageData) {
+        if (!damage) {
             return this.send("out");
         }
 
-        const { dcData, isBasic, slug } = (await getSaveData(this, damageData.target.actor)) ?? {};
+        const [formula, damageData] = damage;
+        const saveData = await getSaveData(this, damageData.target.actor);
 
-        if (!slug || !dcData) {
+        if (!saveData) {
             return this.send("out");
         }
 
-        damageData.save = {
-            basic: !!isBasic,
-            dc: dcData.value,
-            statistic: slug,
-            author: damageData.origin?.actor.uuid,
+        const { dcData, isBasic, slug } = saveData;
+
+        damageData.toolbelt = {
+            save: {
+                basic: !!isBasic,
+                dc: dcData.value,
+                statistic: slug,
+                author: damageData.origin?.actor.uuid,
+            },
         };
 
         await rollDamageFromFormula(formula, damageData);
