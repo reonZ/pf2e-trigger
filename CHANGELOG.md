@@ -1,3 +1,15 @@
+# 1.7.0
+
+-   add support for module specific node
+-   add `Roll Damage With Save` toolbelt action node
+    -   rolls a damage while adding the necessary data to have an inline save added to it
+    -   useful if you don't want to roll the save and damage in succession and instead use the toolbelt target-helper workflow
+-   `Damage Taken` & `Damage Dealt`:
+    -   are no longer restricted to trigger when the target actually receive damage
+    -   add a new `No Damage?` variable that indicate when damage has been completely negated
+-   `Roll Save`:
+    -   add `Is Basic?` input to flag the roll as basic save
+
 # 1.6.2
 
 -   `Add Item`:
