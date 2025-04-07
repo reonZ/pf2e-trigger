@@ -12,7 +12,7 @@ class ToolbeltRollDamageTriggerAction extends TriggerNode<typeof toolbeltRollDam
             return this.send("out");
         }
 
-        const [formula, damageData] = damage;
+        const [formula, damageData, rollData] = damage;
         const saveData = await getSaveData(this, damageData.target.actor);
 
         if (!saveData) {
@@ -29,6 +29,14 @@ class ToolbeltRollDamageTriggerAction extends TriggerNode<typeof toolbeltRollDam
                 author: damageData.origin?.actor.uuid,
             },
         };
+
+        if (rollData?.options) {
+            damageData.toolbelt.options = rollData.options;
+        }
+
+        if (rollData?.traits) {
+            damageData.toolbelt.traits = rollData.traits;
+        }
 
         await rollDamageFromFormula(formula, damageData);
 

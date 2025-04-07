@@ -16,7 +16,7 @@ class RollDamageTriggerAction extends TriggerNode<typeof rollDamageSchema> {
 
 async function getDamageData(
     trigger: TriggerNode<typeof rollDamageSchema>
-): Promise<[string, DamageData] | null> {
+): Promise<[formula: string, damageData: DamageData, rollData: RollNodeEntry | undefined] | null> {
     const formula = await trigger.get("formula");
     const target = await trigger.getTarget("target");
     if (!target || !formula.trim()) return null;
@@ -32,6 +32,7 @@ async function getDamageData(
             extraRollOptions: getExtraRollOptions(rollData),
             skipDialog: true,
         },
+        rollData,
     ];
 }
 
