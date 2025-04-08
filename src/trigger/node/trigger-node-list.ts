@@ -26,6 +26,7 @@ import { HasTemporaryTriggerCondition } from "./condition/trigger-condition-has-
 import { InCombatTriggerCondition } from "./condition/trigger-condition-in-combat";
 import { InsideAuraTriggerCondition } from "./condition/trigger-condition-inside-aura";
 import { IsCombatantTriggerCondition } from "./condition/trigger-condition-is-combatant";
+import { MatchPredicateTriggerCondition } from "./condition/trigger-condition-match-predicate";
 import { ItemTriggerConverter } from "./converter/trigger-converter-item";
 import { TriggerEvent } from "./event/trigger-event";
 import { AuraTriggerEvent } from "./event/trigger-event-aura";
@@ -92,6 +93,7 @@ const NODES = {
         "in-combat": InCombatTriggerCondition,
         "is-combatant": IsCombatantTriggerCondition,
         "contains-value": ContainsValueTriggerCondition,
+        "match-predicate": MatchPredicateTriggerCondition,
     },
     converter: {
         "item-converter": ItemTriggerConverter,

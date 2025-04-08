@@ -16,6 +16,7 @@ import { removeItemSchema } from "./action/schema-action-remove-item";
 import { removeTemporarySchema } from "./action/schema-action-remove-temporary";
 import { rollDamageSchema } from "./action/schema-action-roll-damage";
 import { rollSaveSchema } from "./action/schema-action-roll-save";
+import { toolbeltRollDamageSchema } from "./action/toolbelt/schema-action-toolbelt-roll-damage";
 import { createConditionSchema } from "./condition/schema-condition";
 import { containsValueSchema } from "./condition/schema-condition-contains-value";
 import { hasConditionSchema } from "./condition/schema-condition-has-condition";
@@ -23,6 +24,7 @@ import { hasItemSchema } from "./condition/schema-condition-has-item";
 import { hasOptionsSchema } from "./condition/schema-condition-has-option";
 import { hasTemporarySchema } from "./condition/schema-condition-has-temporary";
 import { insideAuraSchema } from "./condition/schema-condition-inside-aura";
+import { matchPredicateSchema } from "./condition/schema-condition-match-predicate";
 import { eventSchema } from "./event/schema-event";
 import { auraEventSchema } from "./event/schema-event-aura";
 import { conditionEventSchema } from "./event/schema-event-condition";
@@ -46,7 +48,6 @@ import { itemSourceSchema } from "./value/schema-value-item-source";
 import { createValueSchema } from "./value/schema-value-primitive";
 import { rollDataSchema } from "./value/schema-value-roll-data";
 import { successValueSchema } from "./value/schema-value-success";
-import { toolbeltRollDamageSchema } from "./action/toolbelt/schema-action-toolbelt-roll-damage";
 
 const NO_CONNECTOR_TYPES = ["event", "value"] as NodeType[];
 
@@ -80,6 +81,7 @@ const SCHEMAS = {
         "is-combatant": createConditionSchema(),
         "in-combat": createConditionSchema(),
         "contains-value": containsValueSchema,
+        "match-predicate": matchPredicateSchema,
     },
     converter: {
         // "item-converter": itemConverterSchema,

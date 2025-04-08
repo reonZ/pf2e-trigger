@@ -83,6 +83,7 @@ const NODES: ExtractNodeMap<typeof BlueprintNode> = {
         "in-combat": ConditionBlueprintNode,
         "is-combatant": ConditionBlueprintNode,
         "contains-value": ConditionBlueprintNode,
+        "match-predicate": ConditionBlueprintNode,
     },
     converter: {
         "item-converter": ConverterBlueprintNode,

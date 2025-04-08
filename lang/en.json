@@ -388,6 +388,9 @@
                 },
                 "contains-value": {
                     "title": "List Contains Value"
+                },
+                "match-predicate": {
+                    "title": "List Matches Predicate"
                 }
             },
             "value": {
@@ -539,7 +542,8 @@
                 "aura-source": "Aura Source",
                 "effect": "Effect",
                 "formula": "Formula",
-                "basic": "Is Basic?"
+                "basic": "Is Basic?",
+                "predicate": "Predicate"
             }
         },
         "select": {
