@@ -1,3 +1,9 @@
+#
+
+-   add `List Matches Predicate` condition node
+    -   it will run a predicate test on the provided list
+    -   the predicate format must be the same as the one you would provide to a system `Rule Element`
+
 # 1.7.0
 
 -   add support for module specific node
