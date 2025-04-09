@@ -10,8 +10,9 @@ const NODE_TYPE_ORDER: Record<NodeType, number> = {
     macro: 5,
     subtrigger: 6,
     variable: 7,
-    converter: 8,
-    splitter: 9,
+    setter: 8,
+    converter: 9,
+    splitter: 10,
 };
 
 function createTriggerData(name: string, event?: NodeEventKey): TriggerData | null {
