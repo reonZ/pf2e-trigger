@@ -1,0 +1,39 @@
+#pf2e-trigger-triggers-menu {
+    --width: calc(100% - ((var(--sidebar-width) + 16px + 48px) * var(--ui-scale)));
+    --height: calc(100% - 10px);
+
+    height: var(--height);
+    max-height: var(--height);
+    width: var(--width);
+    max-width: var(--width);
+    margin: 0;
+
+    background: url("../../../ui/denim075.png") repeat;
+    background-color: #808080;
+    border: 1px solid var(--color-border-dark-1);
+    border-left: 0;
+    border-radius: 0 5px 5px 0;
+
+    position: absolute;
+    top: 5px;
+
+    @import "./sidebar";
+    @import "./title";
+    @import "./controls";
+    @import "./collapsed";
+
+    &.collapsed {
+        max-width: fit-content;
+        max-height: fit-content;
+
+        > *:not(.window-collapsed) {
+            display: none;
+        }
+    }
+
+    &:not(.collapsed) {
+        .window-collapsed {
+            display: none;
+        }
+    }
+}

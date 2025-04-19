@@ -1,5 +1,14 @@
 #
 
+-   the module has been completely remade
+    -   very little has been kept from the v1 and therefore no migration has been done
+    -   your v1 triggers while not usable still exist in your world if you somhow want to get the json
+        -   `game.settings.storage.get("world").find(x => x.key === "pf2e-trigger.triggers")`
+
+# 1.8.0
+
+-   this is gonna be the last v1 release
+    -   note that v2 will sadly not be compatible with v1 so be prepared to re-do everything when it comes out
 -   add `List Matches Predicate` condition node
     -   it will run a predicate test on the provided list
     -   the predicate format must be the same as the one you would provide to a system `Rule Element`

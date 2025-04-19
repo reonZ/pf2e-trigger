@@ -6,256 +6,61 @@
             }
         }
     },
-    "SHARED": {
-        "migration": {
-            "warning": {
-                "title": "Module Migration",
-                "start": "Start Migration",
-                "cancel": "Cancel",
-                "content": {
-                    "modules": "The following module(s) may need to migrate data:",
-                    "wait": "If the system is migrating its own data, please wait before starting"
-                }
-            },
-            "summary": {
-                "title": "Migration Summary",
-                "content": "The following documents were migrated",
-                "nothing": "No document needed to be migrated."
-            },
-            "error": {
-                "actors": "An error occured while migrating data for world actors.",
-                "token": "An error occured while migrating data for the token actor {uuid}.",
-                "users": "An error occured while migrating data for users."
-            }
-        }
-    },
     "pf2e-trigger": {
-        "region": {
-            "id": "Trigger Id"
-        },
-        "settings": {
-            "menus": {
-                "triggers-menu": {
-                    "name": "Triggers Menu",
-                    "hint": "Register you own triggers with the module.",
-                    "label": "Register"
+        "blueprint-menu": {
+            "sidebar": {
+                "title": "Triggers Menu",
+                "close": "Close Window",
+                "import": "Import",
+                "export-all": "Export All",
+                "trigger": {
+                    "title": "Triggers",
+                    "add": "Create Trigger",
+                    "export": "Export Trigger",
+                    "delete": "Delete Trigger"
+                },
+                "subtrigger": {
+                    "title": "Sub-Triggers",
+                    "add": "Create Sub-Trigger",
+                    "export": "Export Sub-Trigger",
+                    "delete": "Delete Sub-Trigger"
+                },
+                "variable": {
+                    "title": "Trigger Variables",
+                    "add": "Create Variable",
+                    "delete": "Delete Variable",
+                    "linked": "This variable is linked to an output",
+                    "global": "This variable is global to the trigger"
                 }
+            },
+            "controls": {
+                "save": "Save Triggers",
+                "reset": "Reset Triggers",
+                "collapse": "Collapse Window"
+            },
+            "collapsed": {
+                "expand": "Expand Triggers Window"
             }
         },
-        "triggers-menu": {
-            "title": "Triggers Menu",
-            "close": "Close Window",
-            "import": "Import",
-            "export-all": "Export All",
-            "collapse": "Collapse Window",
-            "expand": "Expand Triggers Window",
-            "save": "Save Triggers",
-            "reset": "Reset Triggers",
-            "trigger": {
-                "title": "Triggers",
-                "add": "Create Trigger",
-                "export": "Export Trigger",
-                "delete": "Delete Trigger"
+        "create-trigger": {
+            "title": "Create Trigger",
+            "yes": "Create",
+            "name": {
+                "label": "Trigger Name"
             },
-            "subtrigger": {
-                "title": "Sub-Triggers",
-                "add": "Create Sub-Trigger",
-                "export": "Export Sub-Trigger",
-                "delete": "Delete Sub-Trigger"
-            },
-            "variable": {
-                "title": "Trigger Variables",
-                "add": "Create Variable",
-                "delete": "Delete Variable",
-                "linked": "This variable is linked to an output",
-                "global": "This variable is global to the trigger"
+            "event": {
+                "label": "Event Type"
             }
-        },
-        "close-window": {
-            "title": "Close Triggers Menu",
-            "content": "Do you want to save your triggers before closing?",
-            "save": "Save & Close",
-            "close": "Close w/o Saving"
-        },
-        "save-triggers": {
-            "title": "Save Triggers",
-            "content": "Are you sure you want to save your triggers?"
-        },
-        "reset-triggers": {
-            "title": "Reset Triggers",
-            "content": "Are you sure you want to reset your triggers to their last saved state?"
         },
         "delete-trigger": {
             "title": "Delete Trigger",
             "content": "Are you sure you want to delete the <strong>{name}</strong> trigger?"
         },
-        "remove-variable": {
-            "title": "Delete Variable",
-            "content": "Are you sure you want to delete this variable?"
-        },
-        "add-entry": {
-            "inputs": "Add Input",
-            "outputs": "Add Output",
-            "entry": "Add Entry",
-            "label": "Entry Type",
-            "name": "Entry Label",
-            "value": "Entry Value",
-            "path": "Entry Path",
-            "yes": "Add",
-            "no": "Cancel"
-        },
-        "add-variable": {
-            "title": "Create Variable",
-            "name": "Variable Label",
-            "label": "Variable Type",
-            "yes": "Create",
-            "no": "Cancel",
-            "confirm": "The variable <strong>{name}</strong> was created."
-        },
-        "trigger-dialog": {
-            "label": "Event Type",
-            "name": "Trigger Name",
-            "no": "Cancel",
-            "add": {
-                "title": "Create Trigger",
-                "yes": "Create"
-            },
-            "add-sub": {
-                "title": "Create Sub-Trigger",
-                "yes": "Create"
-            },
-            "edit": {
-                "title": "Edit Trigger",
-                "yes": "Edit"
-            },
-            "convert": {
-                "title": "Convert Trigger",
-                "yes": "Convert"
-            }
-        },
-        "export-trigger": {
-            "title": "Export Trigger",
-            "has-subs": "The trigger make use of the following sub-triggers<br>Do you want to export them as well?",
-            "confirm": "The trigger <strong>{name}</strong> has been copied to the clipboard."
-        },
-        "export-all": {
-            "title": "Export Triggers",
-            "confirm": "The triggers have been copied to the clipboard.",
-            "export": "Export Selected",
-            "toggle": "Toggle All",
-            "triggers": {
-                "title": "Triggers",
-                "unselected": {
-                    "title": "Unselected Sub-Triggers",
-                    "content": "Some sub-triggers used by <strong>{name}</strong> are not selected.<br>Would you like to select them?"
-                },
-                "selected": {
-                    "title": "Selected Sub-Triggers",
-                    "content": "Some sub-triggers are no longer used by any trigger to export.<br>Would you like to unselect them?"
-                }
-            },
-            "subtriggers": {
-                "title": "Sub-Triggers",
-                "selected": {
-                    "title": "Selected Triggers",
-                    "content": "Some Triggers that use <strong>{name}</strong> are still selected.<br>Would you like to unselect them?"
-                }
-            }
-        },
-        "import": {
-            "title": "Import Triggers",
-            "yes": "Import",
-            "no": "Cancel",
-            "error": "The data provided is invalid, no trigger were imported.",
-            "subtriggers": {
-                "title": "Existing Sub-Triggers",
-                "content": "Some sub-triggers with identical ID already exist.<br>Would you like to override them?",
-                "yes": "Override",
-                "no": "Cancel"
-            }
+        "edit-trigger": {
+            "title": "Edit Trigger",
+            "yes": "Edit"
         },
         "node": {
-            "action": {
-                "title": "Actions",
-                "subtitle": "Action",
-                "roll-save": {
-                    "title": "Roll Save"
-                },
-                "roll-damage": {
-                    "title": "Roll Damage"
-                },
-                "add-item": {
-                    "title": "Add Item",
-                    "duplicate": {
-                        "label": "Duplicates?"
-                    }
-                },
-                "remove-item": {
-                    "title": "Remove Item"
-                },
-                "add-condition": {
-                    "title": "Add Condition"
-                },
-                "reduce-condition": {
-                    "title": "Reduce Condition"
-                },
-                "add-persistent": {
-                    "title": "Add Persistent Damage"
-                },
-                "console-log": {
-                    "title": "Console Log"
-                },
-                "add-immunity": {
-                    "title": "Add Immunity"
-                },
-                "remove-immunity": {
-                    "title": "Remove Immunity"
-                },
-                "add-temporary": {
-                    "title": "Add Trigger Effect",
-                    "effect": "Trigger",
-                    "copied": "The trigger effect roll option has been copied to the clipboard."
-                },
-                "remove-temporary": {
-                    "title": "Remove Trigger Effect"
-                },
-                "add-resistance": {
-                    "title": "Add Resistance"
-                },
-                "add-weakness": {
-                    "title": "Add Weakness"
-                },
-                "get-choiceset": {
-                    "title": "Get Item ChoiceSet",
-                    "flag": {
-                        "label": "flag"
-                    },
-                    "option": {
-                        "label": "rollOption"
-                    }
-                },
-                "get-combatant": {
-                    "title": "Get Current Combatant",
-                    "combatant": {
-                        "label": "Combatant"
-                    }
-                },
-                "effect-duration": {
-                    "title": "Update Effect Duration",
-                    "removed": {
-                        "label": "Was Removed"
-                    }
-                },
-                "toolbelt-roll-damage": {
-                    "title": "Roll Damage With Save",
-                    "save-label": {
-                        "label": "Save"
-                    },
-                    "damage-label": {
-                        "label": "Damage"
-                    }
-                }
-            },
             "event": {
                 "title": "Events",
                 "subtitle": "Event",
@@ -269,13 +74,7 @@
                     }
                 },
                 "aura-leave": {
-                    "title": "Aura Left",
-                    "slug": {
-                        "label": "aura-slug"
-                    },
-                    "turn": {
-                        "label": "Current Turn?"
-                    }
+                    "title": "Aura Left"
                 },
                 "turn-start": {
                     "title": "Turn Started"
@@ -291,6 +90,7 @@
                 },
                 "test-event": {
                     "title": "Test Event",
+                    "subtitle": "game.trigger.test()",
                     "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
                 },
                 "execute-event": {
@@ -314,10 +114,7 @@
                     }
                 },
                 "condition-lose": {
-                    "title": "Condition Removed",
-                    "update": {
-                        "label": "With Update?"
-                    }
+                    "title": "Condition Removed"
                 },
                 "item-gain": {
                     "title": "Item Added"
@@ -347,136 +144,7 @@
                     "title": "Damage Dealt",
                     "other": {
                         "label": "Damage Target"
-                    },
-                    "item": {
-                        "label": "Damage Item"
-                    },
-                    "heal": {
-                        "label": "Is Healing"
-                    },
-                    "options": {
-                        "label": "Roll Options"
-                    },
-                    "negated": {
-                        "label": "No Damage?"
                     }
-                }
-            },
-            "condition": {
-                "title": "Conditions",
-                "subtitle": "Condition",
-                "has-item": {
-                    "title": "Has Item"
-                },
-                "inside-aura": {
-                    "title": "Is Inside Aura"
-                },
-                "has-option": {
-                    "title": "Has RollOption"
-                },
-                "has-temporary": {
-                    "title": "Has Trigger Effect"
-                },
-                "has-condition": {
-                    "title": "Has Condition"
-                },
-                "is-combatant": {
-                    "title": "Is Current Combatant"
-                },
-                "in-combat": {
-                    "title": "Is In Combat"
-                },
-                "contains-value": {
-                    "title": "List Contains Value"
-                },
-                "match-predicate": {
-                    "title": "List Matches Predicate"
-                }
-            },
-            "value": {
-                "title": "Values",
-                "subtitle": "value",
-                "number-value": {
-                    "title": "Number"
-                },
-                "text-value": {
-                    "title": "Text"
-                },
-                "item-source": {
-                    "title": "Item Source"
-                },
-                "roll-data": {
-                    "title": "Roll Data",
-                    "options": {
-                        "label": "Extra Options"
-                    },
-                    "traits": {
-                        "label": "Extra Traits"
-                    }
-                },
-                "dc-value": {
-                    "title": "Difficulty Class"
-                },
-                "dc-target": {
-                    "title": "Difficulty Class (Target)",
-                    "against": {
-                        "label": "Against"
-                    },
-                    "adjustment": {
-                        "label": "Adjustment"
-                    }
-                },
-                "duration-simple": {
-                    "title": "Effect Duration"
-                },
-                "duration-unit": {
-                    "title": "Effect Duration (Unit)"
-                },
-                "success-value": {
-                    "title": "Degree of Success"
-                }
-            },
-            "logic": {
-                "title": "Logic",
-                "subtitle": "Logic",
-                "eq-number": {
-                    "title": "Equals (Number)"
-                },
-                "gt-number": {
-                    "title": "Greater Than"
-                },
-                "lt-number": {
-                    "title": "Less Than"
-                },
-                "gte-number": {
-                    "title": "Greater Than or Equal"
-                },
-                "lte-number": {
-                    "title": "Less Than or Equal"
-                },
-                "eq-text": {
-                    "title": "Equals (Text)"
-                },
-                "eq-actor": {
-                    "title": "Equals (Actor)"
-                }
-            },
-            "splitter": {
-                "title": "Splitters",
-                "success-splitter": {
-                    "title": "Degree of Success"
-                },
-                "boolean-splitter": {
-                    "title": "Boolean"
-                },
-                "item-splitter": {
-                    "title": "Item Data"
-                },
-                "actor-splitter": {
-                    "title": "Actor Data"
-                },
-                "string-list": {
-                    "title": "String List"
                 }
             },
             "subtrigger": {
@@ -488,82 +156,7 @@
                 "subtrigger-output": {
                     "title": "Output"
                 }
-            },
-            "variable": {
-                "title": "Variables",
-                "setter": "Setter"
-            },
-            "macro": {
-                "title": "Macros",
-                "header": "Run Macro",
-                "macro": {
-                    "title": "Run Macro"
-                }
-            },
-            "converter": {
-                "title": "Converters",
-                "item-converter": {
-                    "title": "Item <-> Source UUID"
-                }
-            },
-            "entry": {
-                "text": "Text",
-                "number": "Number",
-                "select": "Select",
-                "boolean": "Boolean",
-                "uuid": "Source UUID",
-                "target": "Target",
-                "item": "Item",
-                "roll": "Roll",
-                "dc": "DC",
-                "duration": "Duration",
-                "label": "Label",
-                "list": "List",
-
-                "a": "A",
-                "b": "B",
-                "in": "In",
-                "out": "Out",
-                "this": "Trigger Target",
-                "origin": "Origin",
-                "source": "Source",
-                "true": "True",
-                "false": "False",
-                "option": "roll:option",
-                "result": "Result",
-                "value": "Value",
-                "min": "Minimum",
-                "input": "Input",
-                "identifier": "identifier",
-                "name": "Name",
-                "slug": "Slug",
-                "level": "Level",
-                "selection": "Selection",
-                "aura-source": "Aura Source",
-                "effect": "Effect",
-                "formula": "Formula",
-                "basic": "Is Basic?",
-                "predicate": "Predicate"
             }
-        },
-        "select": {
-            "delete-node": "Delete Node",
-            "disconnect": "Disconnect",
-            "remove-connection": "Remove Entry",
-            "all": "All",
-            "allies": "Allies",
-            "enemies": "Enemies",
-            "convert": "Convert Node",
-            "duplicate": "Duplicate Node",
-            "add-input": "Add Input",
-            "add-output": "Add Output",
-            "copy-id": "Copy ID",
-            "add-exception": "Add Exception",
-            "add-entry": "Add Entry",
-            "add-double": "Add Double Vs.",
-            "copy-option": "Copy Roll Option",
-            "add-variable": "Create Variable",
-            "remove-variable": "Delete Variable"
         }
     }
 }

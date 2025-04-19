@@ -1,0 +1,20 @@
+.trigger-title {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 1.7em;
+    color: var(--text-light);
+    padding: 0.2em 0.5em;
+    background: #00000066;
+    opacity: 0.4;
+    border-radius: 0 0 10px 10px;
+    pointer-events: none;
+    letter-spacing: 1px;
+    border: 1px solid var(--color-border-dark);
+
+    &:empty {
+        display: none;
+    }
+}

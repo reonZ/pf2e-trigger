@@ -1,3 +1,9 @@
-@import "blueprint-menu";
-@import "export-menu";
-@import "triggers-menu";
+@import "blueprint-menu/blueprint";
+
+.application.dialog.pf2e-trigger {
+    .window-content {
+        .form-group {
+            white-space: nowrap;
+        }
+    }
+}
