@@ -1,7 +1,8 @@
 .sidebar {
     --background-accent: #0000003b;
     --sidebar-width: 300px;
-    --indicator-width: 25px;
+    --indicator-width: 18px;
+    --active-color: #086c819c;
     --inner-width: calc(var(--sidebar-width) - var(--indicator-width));
 
     position: absolute;
@@ -12,18 +13,12 @@
     border-radius: 0 5px 5px 0;
     border: 1px solid var(--color-border-dark-1);
     background: url(/ui/denim075.png) repeat;
-    background-color: gray;
+    background-color: #00000030;
     transition: all 0.1s;
     color: var(--text-light);
     transform: translateX(calc(100% * -1));
     display: flex;
     flex-direction: column;
-
-    &.show {
-        --indicator-width: 0px;
-
-        transform: translateX(0);
-    }
 
     .menu {
         flex: 1;
@@ -85,10 +80,7 @@
                 white-space: nowrap;
                 display: flex;
                 align-items: center;
-
-                > * {
-                    padding-block: 0.6em;
-                }
+                padding-right: 0.7em;
 
                 .enabled {
                     height: 16px;
@@ -99,7 +91,8 @@
                     flex: 1;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    padding: 0.6em 1em;
+                    padding-block: 0.6em;
+                    padding-inline: 0.2em 1em;
                 }
 
                 .controls {
@@ -107,7 +100,6 @@
                     align-items: center;
                     justify-content: center;
                     gap: 0.6em;
-                    padding-right: 1em;
                 }
 
                 &.trigger {
@@ -125,7 +117,7 @@
                 }
 
                 &.active {
-                    background: #00d0fc1a;
+                    background: var(--active-color);
                 }
 
                 &.variable {
@@ -151,10 +143,20 @@
         justify-content: center;
         align-items: center;
         transition: all 0.1s;
+        cursor: pointer;
+    }
 
-        i {
-            margin-left: 1px;
-            pointer-events: none;
+    &.show {
+        transform: translateX(0);
+
+        .indicator .expand {
+            display: none;
+        }
+    }
+
+    &:not(.show) {
+        .indicator .collapse {
+            display: none;
         }
     }
 }

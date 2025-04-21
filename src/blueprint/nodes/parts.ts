@@ -1,37 +1,34 @@
 import { R } from "module-helpers";
 
-type LayoutRawPadding = {
-    x: number | [number, number];
-    y: number | [number, number];
-};
-
-type LayouPadding = {
-    x: [number, number];
-    y: [number, number];
-};
-
-class PixiLayoutGraphics extends PIXI.Graphics<PIXI.Container> {
+abstract class PixiLayoutGraphics<
+    TOptions extends LayoutGraphicsOptions = LayoutGraphicsOptions
+> extends PIXI.Graphics<ExtendedContainer> {
     #type: "horizontal" | "vertical";
     #spacing: number;
-    #padding: LayouPadding;
+    #padding: LayoutPadding;
+    #align: LayoutAlign;
 
-    constructor(
-        type: "horizontal" | "vertical",
-        spacing: number,
-        padding: LayoutRawPadding | number | [x: number, y: number] = 0
-    ) {
+    declare offsetBlock: number | undefined;
+
+    constructor(type: "horizontal" | "vertical", { padding, spacing, align }: TOptions) {
         super();
 
-        padding = R.isNumber(padding) ? { x: [padding, padding], y: [padding, padding] } : padding;
+        padding ??= { x: 0, y: 0 };
+        padding = R.isNumber(padding) ? { x: padding, y: padding } : padding;
         padding = R.isArray(padding) ? { x: padding[0], y: padding[1] } : padding;
 
         this.#type = type;
-        this.#spacing = spacing;
+        this.#align = align ?? "start";
+        this.#spacing = spacing ?? 0;
         this.#padding = {
             x: R.isNumber(padding.x) ? [padding.x, padding.x] : padding.x,
             y: R.isNumber(padding.y) ? [padding.y, padding.y] : padding.y,
         };
     }
+
+    abstract get totalWidth(): number;
+    abstract get totalHeight(): number;
+    abstract computeLayout(): void;
 
     get type(): "horizontal" | "vertical" {
         return this.#type;
@@ -41,122 +38,165 @@ class PixiLayoutGraphics extends PIXI.Graphics<PIXI.Container> {
         return this.#spacing;
     }
 
-    get padding(): LayouPadding {
+    get padding(): LayoutPadding {
         return this.#padding;
     }
 
-    get lastChild(): Rectangle {
-        return this.children.at(-1) ?? { x: 0, y: 0, width: 0, height: 0 };
+    get align(): LayoutAlign {
+        return this.#align;
     }
 
-    get currentOffset(): number {
-        const lastChild = this.lastChild;
-        return this.type === "horizontal"
-            ? lastChild.x + lastChild.width
-            : lastChild.y + lastChild.height;
+    addChild<T extends (PIXI.Container | PixiLayoutGraphics)[]>(...children: T): T[0] {
+        const child = super.addChild(...(children as any));
+        this.computeLayout();
+        return child;
     }
 
-    get nextOffset(): number {
-        return this.children.length
-            ? this.currentOffset + this.spacing
-            : this.padding[this.type === "horizontal" ? "x" : "y"][0];
-    }
-
-    get totalWidth(): number {
-        if (this.type === "horizontal") {
-            return this.currentOffset + this.padding.x[1];
-        }
-
-        const maxWidth = R.pipe(
-            this.children,
-            R.map((child) => {
-                return (
-                    child.x + (child instanceof PixiLayoutGraphics ? child.totalWidth : child.width)
-                );
-            }),
-            R.firstBy([R.identity(), "desc"])
-        );
-
-        return (maxWidth ?? 0) + this.padding.x[1];
-    }
-
-    get totalHeight(): number {
-        if (this.type === "vertical") {
-            return this.currentOffset + this.padding.y[1];
-        }
-
-        const maxHeight = R.pipe(
-            this.children,
-            R.map((child) => {
-                return (
-                    child.y +
-                    (child instanceof PixiLayoutGraphics ? child.totalHeight : child.height)
-                );
-            }),
-            R.firstBy([R.identity(), "desc"])
-        );
-
-        return (maxHeight ?? 0) + this.padding.y[1];
-    }
-
-    /**
-     * @param offset number only offsets the layout direction
-     */
-    addToLayout<T extends PIXI.Container | PixiLayoutGraphics>(
+    addChildWithOffset<T extends ExtendedContainer | PixiLayoutGraphics>(
         child: T,
-        offset: number | [x: number, y: number] | Partial<Point> = {}
+        offsetBlock: number
     ): T {
-        offset = R.isArray(offset) ? { x: offset[0], y: offset[1] } : offset;
-
-        if (this.type === "horizontal") {
-            offset = R.isNumber(offset) ? { x: offset } : offset;
-            child.x = this.nextOffset + (offset.x ?? 0);
-            child.y = this.padding.y[0] + (offset.y ?? 0);
-        } else {
-            offset = R.isNumber(offset) ? { y: offset } : offset;
-            child.x = this.padding.x[0] + (offset.x ?? 0);
-            child.y = this.nextOffset + (offset.y ?? 0);
-        }
-
+        child.offsetBlock = offsetBlock;
         return this.addChild(child);
     }
 }
 
-// class BlueprintNodeBody extends PIXI.Graphics {
-//     #spacing: number;
-//     #inputs: PixiLayoutGraphics;
-//     #outputs: PixiLayoutGraphics;
+class HorizontalLayoutGraphics extends PixiLayoutGraphics<HorizontalLayoutOptions> {
+    #maxHeight: number | undefined;
 
-//     constructor(spacing: number, rowSpacing: number) {
-//         super();
+    constructor({ maxHeight, ...options }: HorizontalLayoutOptions = {}) {
+        options.align ??= "center";
+        super("horizontal", options);
+        this.#maxHeight = maxHeight;
+    }
 
-//         this.#spacing = spacing;
-//         this.#inputs = new PixiLayoutGraphics("vertical", rowSpacing);
-//         this.#outputs = new PixiLayoutGraphics("vertical", rowSpacing);
+    get totalWidth(): number {
+        return (
+            R.sumBy(this.children, getElementWidth) +
+            Math.max(this.children.length - 1, 0) * this.spacing +
+            R.sum(this.padding.x)
+        );
+    }
 
-//         this.addChild(this.#inputs);
-//         this.addChild(this.#outputs);
-//     }
+    get totalHeight(): number {
+        const innerHeight =
+            this.#maxHeight ??
+            R.pipe(this.children, R.map(getElementHeight), R.firstBy([R.identity(), "desc"]));
 
-//     get spacing(): number {
-//         return this.#spacing;
-//     }
+        return (innerHeight ?? 0) + R.sum(this.padding.y);
+    }
 
-//     get inputs(): PixiLayoutGraphics {
-//         return this.#inputs;
-//     }
+    computeLayout() {
+        const padding = this.padding;
+        const maxHeight = this.totalHeight;
 
-//     get outputs(): PixiLayoutGraphics {
-//         return this.#outputs;
-//     }
+        let offset = padding.x[0];
 
-//     get minWidth(): number {
-//         return this.inputs.totalWidth + this.spacing + this.outputs.totalWidth;
-//     }
+        const verticalAlign: (child: ExtendedContainer) => number =
+            this.align === "start"
+                ? () => padding.y[0]
+                : this.align === "end"
+                ? (child) => maxHeight - padding.y[1] - getElementHeight(child)
+                : (child) => (maxHeight - getElementHeight(child)) / 2;
 
-//     get totalHeight(): number {
-//         return Math.max(this.inputs.totalHeight, this.outputs.totalHeight);
-//     }
-// }
+        for (const child of this.children) {
+            child.x = offset;
+            child.y = verticalAlign(child);
+            offset += getElementWidth(child) + this.spacing;
+        }
+    }
+}
 
-export { PixiLayoutGraphics };
+class VerticalLayoutGraphics extends PixiLayoutGraphics<VerticalLayoutOptions> {
+    constructor(options: VerticalLayoutOptions = {}) {
+        super("vertical", options);
+    }
+
+    get totalWidth(): number {
+        const innerWidth = R.pipe(
+            this.children,
+            R.map(getElementWidth),
+            R.firstBy([R.identity(), "desc"])
+        );
+
+        return (innerWidth ?? 0) + R.sum(this.padding.x);
+    }
+
+    get totalHeight(): number {
+        return (
+            R.sumBy(this.children, getElementHeight) +
+            Math.max(this.children.length - 1, 0) * this.spacing +
+            R.sum(this.padding.y)
+        );
+    }
+
+    computeLayout() {
+        const padding = this.padding;
+        const maxWidth = this.totalWidth;
+
+        let offset = padding.y[0];
+
+        const horizontalAlign: (child: ExtendedContainer) => number =
+            this.align === "start"
+                ? (child) => padding.x[0] + elementOffset(child)
+                : this.align === "end"
+                ? (child) => maxWidth - padding.x[1] - elementOffset(child) - getElementWidth(child)
+                : (child) => (maxWidth - getElementWidth(child)) / 2;
+
+        for (const child of this.children) {
+            child.x = horizontalAlign(child);
+            child.y = offset;
+            offset += getElementHeight(child) + this.spacing;
+        }
+    }
+}
+
+function elementOffset(el: ExtendedContainer) {
+    return el.offsetBlock ?? 0;
+}
+
+function getElementWidth(el: ExtendedContainer | PixiLayoutGraphics): number {
+    return getElementSize(el, "x") + (el.offsetBlock ?? 0);
+}
+
+function getElementHeight(el: PIXI.Container | PixiLayoutGraphics): number {
+    return getElementSize(el, "y");
+}
+
+function getElementSize(el: PIXI.Container | PixiLayoutGraphics, size: "x" | "y"): number {
+    return el instanceof PixiLayoutGraphics
+        ? el[size === "x" ? "totalWidth" : "totalHeight"]
+        : el[size === "x" ? "width" : "height"];
+}
+
+type LayoutAlign = "center" | "start" | "end";
+
+type LayoutGraphicsOptions = {
+    spacing?: number;
+    padding?: LayoutGraphicsPadding;
+    align?: LayoutAlign;
+};
+
+type HorizontalLayoutOptions = LayoutGraphicsOptions & {
+    maxHeight?: number;
+};
+
+type VerticalLayoutOptions = LayoutGraphicsOptions;
+
+type ExtendedContainer = PIXI.Container & { offsetBlock?: number };
+
+type LayoutPadding = {
+    x: [number, number];
+    y: [number, number];
+};
+
+type LayoutGraphicsPadding =
+    | number
+    | [x: number, y: number]
+    | {
+          x: number | [number, number];
+          y: number | [number, number];
+      };
+
+export { getElementSize, HorizontalLayoutGraphics, VerticalLayoutGraphics };
+export type { PixiLayoutGraphics };

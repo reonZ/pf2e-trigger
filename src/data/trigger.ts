@@ -1,4 +1,11 @@
 import {
+    isEventNode,
+    TriggerNodeCollection,
+    TriggerNodeData,
+    TriggerNodeDataSchema,
+    TriggerVariableField,
+} from "data";
+import {
     ArrayField,
     BooleanField,
     ExtendedCollectionDocument,
@@ -9,13 +16,6 @@ import {
     RecordField,
     StringField,
 } from "module-helpers";
-import {
-    isEventNode,
-    TriggerNodeCollection,
-    TriggerNodeData,
-    TriggerNodeDataSchema,
-    TriggerVariableField,
-} from "data";
 import fields = foundry.data.fields;
 
 class TriggerData
@@ -39,7 +39,7 @@ class TriggerData
                 nullable: false,
                 initial: true,
             }),
-            outputs: new fields.TypedObjectField(new TriggerVariableField(), {
+            variables: new fields.TypedObjectField(new TriggerVariableField(), {
                 required: false,
                 nullable: false,
             }),
@@ -117,7 +117,7 @@ type TriggerDataSchema = {
     _id: IdField;
     name: StringField;
     enabled: BooleanField<false>;
-    outputs: RecordField<TriggerVariableField, false>;
+    variables: RecordField<TriggerVariableField, false>;
     _nodes: ArrayField<fields.SchemaField<TriggerNodeDataSchema>, true>;
 };
 

@@ -59,10 +59,10 @@
                         <i class="fa-regular fa-circle" {{{@root.i18n.tooltip 'variable.global' }}}>
                         </i>
                         {{else}}
-                        <i class="fa-solid fa-circle" {{{@root.i18n.tooltip 'variable.linked' }}}
-                            </i>
-                            {{/if}}
-                            {{variable.label}}
+                        <i class="fa-solid fa-circle" {{{@root.i18n.tooltip 'variable.linked' }}}>
+                        </i>
+                        {{/if}}
+                        {{variable.label}}
                     </div>
                     <div class="controls">
                         <a data-action="remove-variable" {{{@root.i18n.tooltip 'variable.delete'
@@ -105,7 +105,9 @@
             </ul>
         </div>
     </div>
-    <div class="indicator">
-        <i class="fa-solid fa-chevrons-right"></i>
+    <div data-action="toggle-sidebar" class="indicator">
+        <i class="expand fa-solid fa-chevrons-right"></i>
+        <i class=" collapse fa-solid fa-chevrons-left">
+        </i>
     </div>
 </div>

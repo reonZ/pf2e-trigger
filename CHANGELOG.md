@@ -1,8 +1,8 @@
 #
 
 -   the module has been completely remade
-    -   very little has been kept from the v1 and therefore no migration has been done
-    -   your v1 triggers while not usable still exist in your world if you somhow want to get the json
+    -   due to the drastic changes from the v1, i opted to forgo migration entirely
+    -   your v1 triggers while not usable still exist in your world if you somehow want to get the json
         -   `game.settings.storage.get("world").find(x => x.key === "pf2e-trigger.triggers")`
 
 # 1.8.0

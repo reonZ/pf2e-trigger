@@ -69,7 +69,7 @@ class TriggerNodeData
         return isEventNode(this);
     }
 
-    async update(data: TriggerNodeDataSource): Promise<this | undefined> {
+    async update(data: Partial<TriggerNodeDataSource>): Promise<this | undefined> {
         data._id = this._id;
         this.__collection?.updateDocuments([data as EmbeddedDocumentUpdateData]);
         return this;
@@ -87,7 +87,7 @@ class TriggerNodeData
         const source = super._initializeSource(data, options);
 
         if (isEventNode(source)) {
-            source.position = { x: 100, y: 200 };
+            source.position = { x: 350, y: 200 };
         }
 
         return source;

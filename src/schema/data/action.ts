@@ -43,9 +43,20 @@ const rollSaveSchema = {
     ],
 } as const satisfies NodeRawSchema;
 
+const rollDamageWithSave = {
+    inputs: [
+        {
+            key: "formula",
+            type: "text",
+        },
+    ],
+    module: "pf2e-toolbelt",
+} as const satisfies NodeRawSchema;
+
 const action = {
     "roll-damage": rollDamageSchema,
     "roll-save": rollSaveSchema,
+    "roll-damage-with-save": rollDamageWithSave,
 };
 
 export { action };

@@ -2,43 +2,53 @@ import { NodeEntryType, NodeType, NonBridgeEntry } from "data";
 import { R } from "module-helpers";
 import { action, condition, event, eventSchema, NodeSchemaModel, NodeSchemaSource } from "schema";
 
-const RAW_SCHEMAS = {
+const fakeSchema = {} satisfies NodeRawSchema;
+
+const SCHEMAS = {
     event,
     action,
     condition,
-    logic: {},
-    splitter: {},
-    value: {},
-    variable: {
-        getter: {},
-        setter: {},
+    logic: {
+        "eq-number": fakeSchema,
     },
-    macro: {},
+    splitter: {
+        "boolean-splitter": fakeSchema,
+    },
+    value: {
+        "number-value": fakeSchema,
+    },
+    variable: {
+        getter: fakeSchema,
+        setter: fakeSchema,
+    },
+    macro: {
+        "use-macro": fakeSchema,
+    },
     subtrigger: {
         "subtrigger-input": eventSchema,
     },
 } satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
 const NODE_KEYS = R.pipe(
-    RAW_SCHEMAS,
+    SCHEMAS,
     R.values(),
     R.flatMap((x) => R.keys(x))
 );
 
-const EVENT_KEYS = R.keys(RAW_SCHEMAS.event);
+const EVENT_KEYS = R.keys(SCHEMAS.event);
 
-function getRawSchema(type: NodeType, key: NodeKey): NodeRawSchema | undefined {
+function getRawSchema(type: NodeType, key: string): NodeRawSchema | undefined {
     // @ts-expect-error
-    return foundry.utils.deepClone(RAW_SCHEMAS[type]?.[key]);
+    return foundry.utils.deepClone(SCHEMAS[type]?.[key]);
 }
 
-function getSchema({ type, key }: { type: NodeType; key: NodeKey }): NodeSchemaModel | undefined {
+function getSchema({ type, key }: { type: NodeType; key: string }): NodeSchemaModel | undefined {
     const raw = getRawSchema(type, key) as DeepPartial<NodeSchemaSource>;
-    return new NodeSchemaModel(raw);
+    return raw ? new NodeSchemaModel(raw) : undefined;
 }
 
 function isValidNodeKey(type: NodeType, key: NodeKey): boolean {
-    return key in (RAW_SCHEMAS[type] ?? {});
+    return key in (SCHEMAS[type] ?? {});
 }
 
 type NodeKey = (typeof NODE_KEYS)[number];
@@ -126,5 +136,5 @@ type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
 
-export { EVENT_KEYS, getSchema, isValidNodeKey, NODE_KEYS };
+export { EVENT_KEYS, getSchema, isValidNodeKey, NODE_KEYS, SCHEMAS };
 export type { EventKey, NodeKey, NodeRawSchema, NodeRawSchemaEntry };

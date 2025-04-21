@@ -31,7 +31,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
             frame: false,
             positioned: false,
         },
-        id: "pf2e-trigger-triggers-menu",
+        id: "pf2e-trigger-blueprint-menu",
         classes: ["app", "window-app"],
     };
 
@@ -63,11 +63,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
         return super.close(options);
     }
 
-    refresh(closeSidebar?: boolean) {
-        if (closeSidebar) {
-            this.#showSidebar = false;
-        }
-
+    refresh() {
         this.render({ parts: ["sidebar", "title"] });
     }
 
@@ -178,6 +174,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
 
                 if (trigger) {
                     trigger.update({ enabled: el.checked });
+                    this.refresh();
                 }
             }
         );
@@ -237,6 +234,10 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
                 }
             }
         });
+
+        addListener(html, `[data-action="toggle-sidebar"]`, () => {
+            this.toggleSidebar();
+        });
     }
 
     #attachCollapsedListeners(html: HTMLElement) {
@@ -274,7 +275,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
                     inputConfig: {
                         name: "event",
                         options: EVENT_KEYS,
-                        i18n: { prefix: "node.event", suffix: "title" },
+                        i18n: { prefix: "node.event", suffix: "label" },
                         sort: true,
                     },
                 },
@@ -298,7 +299,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
         });
 
         if (result) {
-            trigger.delete();
+            this.blueprint.deleteTrigger(id);
         }
     }
 
@@ -326,6 +327,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
 
         if (result && result.name !== trigger.name) {
             trigger.update(result);
+            this.refresh();
         }
     }
 

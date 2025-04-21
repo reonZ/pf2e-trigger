@@ -60,101 +60,142 @@
             "title": "Edit Trigger",
             "yes": "Edit"
         },
+        "entry": {
+            "out": "Out",
+            "this": "Trigger Target"
+        },
         "node": {
+            "action": {
+                "title": "Actions",
+                "subtitle": "Action",
+                "roll-save": {
+                    "label": "Roll Save"
+                },
+                "roll-damage": {
+                    "label": "Roll Damage"
+                },
+                "roll-damage-with-save": {
+                    "label": "Roll Damage With Save"
+                }
+            },
+            "condition": {
+                "title": "Conditions",
+                "subtitle": "Condition",
+                "inside-aura": {
+                    "label": "Is Inside Aura"
+                }
+            },
             "event": {
                 "title": "Events",
                 "subtitle": "Event",
                 "aura-enter": {
-                    "title": "Aura Entered",
-                    "slug": {
-                        "label": "aura-slug"
-                    },
-                    "turn": {
-                        "label": "Current Turn?"
+                    "label": "Aura Entered",
+                    "entry": {
+                        "slug": "aura-slug",
+                        "turn": "Current Turn?"
                     }
                 },
                 "aura-leave": {
-                    "title": "Aura Left"
+                    "label": "Aura Left"
                 },
                 "turn-start": {
-                    "title": "Turn Started"
+                    "label": "Turn Started"
                 },
                 "turn-end": {
-                    "title": "Turn Ended"
+                    "label": "Turn Ended"
                 },
                 "token-create": {
-                    "title": "Token Created"
+                    "label": "Token Created"
                 },
                 "token-delete": {
-                    "title": "Token Deleted"
+                    "label": "Token Deleted"
                 },
                 "test-event": {
-                    "title": "Test Event",
+                    "label": "Test Event",
                     "subtitle": "game.trigger.test()",
                     "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
                 },
                 "execute-event": {
-                    "title": "Execute Event",
+                    "label": "Execute Event",
                     "copied": "The trigger ID has been copied to the clipboard."
                 },
                 "region-event": {
-                    "title": "Scene Region",
+                    "label": "Scene Region",
                     "copied": "The trigger ID has been copied to the clipboard."
                 },
                 "damage-received": {
-                    "title": "Health Lost"
+                    "label": "Health Lost"
                 },
                 "heal-received": {
-                    "title": "Health Gained"
+                    "label": "Health Gained"
                 },
                 "condition-gain": {
-                    "title": "Condition Added",
-                    "update": {
-                        "label": "With Update?"
+                    "label": "Condition Added",
+                    "entry": {
+                        "update": "With Update?"
                     }
                 },
                 "condition-lose": {
-                    "title": "Condition Removed"
+                    "label": "Condition Removed"
                 },
                 "item-gain": {
-                    "title": "Item Added"
+                    "label": "Item Added"
                 },
                 "item-lose": {
-                    "title": "Item Lost"
+                    "label": "Item Lost"
                 },
                 "damage-taken": {
-                    "title": "Damage Taken",
-                    "other": {
-                        "label": "Damage Origin"
-                    },
-                    "item": {
-                        "label": "Damage Item"
-                    },
-                    "heal": {
-                        "label": "Is Healing"
-                    },
-                    "options": {
-                        "label": "Roll Options"
-                    },
-                    "negated": {
-                        "label": "No Damage?"
+                    "label": "Damage Taken",
+                    "entry": {
+                        "other": "Damage Origin",
+                        "item": "Damage Item",
+                        "heal": "Is Healing",
+                        "options": "Roll Options",
+                        "negated": "No Damage?"
                     }
                 },
                 "damage-dealt": {
-                    "title": "Damage Dealt",
-                    "other": {
-                        "label": "Damage Target"
+                    "label": "Damage Dealt",
+                    "entry": {
+                        "other": "Damage Target"
                     }
+                }
+            },
+            "logic": {
+                "title": "Logic",
+                "subtitle": "Logic",
+                "eq-number": {
+                    "label": "Equals (Number)"
+                }
+            },
+            "macro": {
+                "title": "Macros",
+                "header": "Run Macro",
+                "use-macro": {
+                    "label": "Run Macro"
+                }
+            },
+            "splitter": {
+                "title": "Splitters",
+                "boolean-splitter": {
+                    "label": "Boolean"
                 }
             },
             "subtrigger": {
                 "title": "Sub-Triggers",
                 "subtitle": "Sub-Trigger",
                 "subtrigger-input": {
-                    "title": "Input"
+                    "label": "Input"
                 },
                 "subtrigger-output": {
-                    "title": "Output"
+                    "label": "Output"
+                }
+            },
+            "value": {
+                "title": "Values",
+                "subtitle": "value",
+                "number-value": {
+                    "label": "Number"
                 }
             }
         }

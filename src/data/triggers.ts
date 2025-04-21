@@ -1,5 +1,5 @@
+import { TriggerData, TriggerDataSource } from "data";
 import { ExtendedDocumentCollection, getSetting, MODULE } from "module-helpers";
-import { PartialTriggerDataSource, TriggerData } from "data";
 
 class TriggerDataCollection extends ExtendedDocumentCollection<TriggerData> {
     static documentName = "Trigger";
@@ -7,13 +7,13 @@ class TriggerDataCollection extends ExtendedDocumentCollection<TriggerData> {
 
     static refresh() {
         const instance = this.#instance;
-        const sources = game.ready ? getSetting<PartialTriggerDataSource[]>("world-triggers") : [];
+        const sources = game.ready ? getSetting<TriggerDataSource[]>("world-triggers") : [];
 
         instance.fullClear();
-        instance._source.push(...(sources as any));
+        instance._source.push(...sources);
         instance._initialize();
 
-        MODULE.debug(instance);
+        MODULE.debug("Triggers\n", instance);
     }
 
     get documentClass() {

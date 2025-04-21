@@ -1,0 +1,12 @@
+{{#each groups as |group|}}
+<div class="{{ifThen group.isModule 'sub-title' 'title'}}">
+    {{group.title}}
+</div>
+<ul class="list">
+    {{#each group.entries as |entry|}}
+    <li {{{entry.dataset}}}>
+        {{entry.label}}
+    </li>
+    {{/each}}
+</ul>
+{{/each}}

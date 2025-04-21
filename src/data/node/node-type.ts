@@ -33,5 +33,5 @@ class TriggerNodeTypeField<
 
 type NodeType = (typeof NODE_TYPES)[number];
 
-export { TriggerNodeTypeField };
+export { NODE_TYPES, TriggerNodeTypeField };
 export type { NodeType };

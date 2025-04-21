@@ -1,5 +1,5 @@
 import { NODE_NONBRIDGE_TYPES } from "data";
-import { ArrayField, MODULE, R } from "module-helpers";
+import { ArrayField, MODULE, R, StringField } from "module-helpers";
 import { NodeBridgeSchema, NodeInputField, NodeSchemaIconField, NodeVariableSchema } from "schema";
 import fields = foundry.data.fields;
 
@@ -7,6 +7,11 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
     static defineSchema(): NodeSchemaModelSchema {
         return {
             icon: new NodeSchemaIconField(),
+            module: new fields.StringField({
+                required: false,
+                nullable: false,
+                blank: false,
+            }),
             ...nodeSchemaEntries(),
         };
     }
@@ -99,6 +104,7 @@ interface NodeSchemaModel
 
 type NodeSchemaModelSchema = NodeSchemaEntries & {
     icon: NodeSchemaIconField;
+    module: StringField<NodeSchemaModuleId, false, false, false>;
 };
 
 type NodeSchemaEntries = {
@@ -107,9 +113,11 @@ type NodeSchemaEntries = {
     outputs: ArrayField<fields.SchemaField<NodeVariableSchema>>;
 };
 
+type NodeSchemaModuleId = "pf2e-toolbelt";
+
 type NodeSchemaSource = SourceFromSchema<NodeSchemaModelSchema>;
 
 MODULE.devExpose({ NodeSchemaModel });
 
 export { nodeSchemaEntries, NodeSchemaModel };
-export type { NodeSchemaEntries, NodeSchemaModelSchema, NodeSchemaSource };
+export type { NodeSchemaEntries, NodeSchemaModelSchema, NodeSchemaModuleId, NodeSchemaSource };
