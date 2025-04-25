@@ -1,26 +1,21 @@
 import {
+    BlueprintApplication,
     BlueprintConnectionsLayer,
-    BlueprintContextMenu,
+    BlueprintEntry,
     BlueprintGridLayer,
     BlueprintMenu,
     BlueprintNode,
     BlueprintNodesLayer,
 } from "blueprint";
-import {
-    NodeType,
-    TriggerData,
-    TriggerDataCollection,
-    TriggerNodeData,
-    TriggerNodeDataSource,
-} from "data";
-import { distanceToPoint, MODULE, subtractPoint } from "module-helpers";
-import { EventKey, getFilters, NodeKey } from "schema";
+import { NodeEntryId, PartialTriggerNodeDataSource, TriggerData, WorldTriggers } from "data";
+import { distanceToPoint, getSetting, MODULE, subtractPoint } from "module-helpers";
+import { EventKey, getFilterGroups } from "schema";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized = false;
-    #parent: BlueprintMenu | undefined;
+    #parent: BlueprintApplication | undefined;
     #trigger: string | null = null;
-    #triggers = new TriggerDataCollection();
+    #worldTriggers: WorldTriggers;
     #hitArea = new PIXI.Rectangle();
     #gridLayer: BlueprintGridLayer;
     #connectionsLayer: BlueprintConnectionsLayer;
@@ -35,9 +30,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             resolution: window.devicePixelRatio,
         });
 
+        this.#worldTriggers = getSetting<WorldTriggers>("world-triggers").clone();
+
         this.stage.addChild(
             (this.#gridLayer = new BlueprintGridLayer()),
-            (this.#connectionsLayer = new BlueprintConnectionsLayer()),
+            (this.#connectionsLayer = new BlueprintConnectionsLayer(this)),
             (this.#nodesLayer = new BlueprintNodesLayer(this))
         );
 
@@ -49,7 +46,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         MODULE.debug("Blueprint\n", this);
     }
 
-    get parent(): BlueprintMenu | undefined {
+    get parent(): BlueprintApplication | undefined {
         return this.#parent;
     }
 
@@ -61,15 +58,19 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         return this.getTrigger(this.#trigger);
     }
 
-    get triggers(): TriggerDataCollection {
-        return this.#triggers;
+    get triggers(): foundry.abstract.EmbeddedCollection<TriggerData> {
+        return this.#worldTriggers.triggers;
     }
 
     get nodesLayer(): BlueprintNodesLayer {
         return this.#nodesLayer;
     }
 
-    initialize(parent: BlueprintMenu) {
+    get connectionsLayer(): BlueprintConnectionsLayer {
+        return this.#connectionsLayer;
+    }
+
+    initialize(parent: BlueprintApplication) {
         if (this.#initialized) return;
 
         this.#initialized = true;
@@ -102,21 +103,25 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.render();
     }
 
+    enableNodesInteraction(enabled: boolean) {
+        this.#nodesLayer.interactiveChildren = enabled;
+    }
+
     getBoundClientRect(): DOMRect {
         return this.view.getBoundingClientRect();
     }
 
-    getLocalCoordinates(point: Point) {
+    getLocalCoordinates(point: Point): Point {
         const viewBounds = this.getBoundClientRect();
         return { x: point.x - viewBounds.x, y: point.y - viewBounds.y };
     }
 
-    getGlobalCoordinates(point: Point) {
+    getGlobalCoordinates(point: Point): Point {
         const viewBounds = this.getBoundClientRect();
         return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
     }
 
-    getTrigger(id: Maybe<string>) {
+    getTrigger(id: Maybe<string>): TriggerData | undefined {
         return id ? this.triggers.get(id) : undefined;
     }
 
@@ -131,23 +136,30 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.resetPosition();
     }
 
-    createTrigger({ event, name, position }: CreateTriggerOptions) {
+    async createTrigger({ event, name, position }: CreateTriggerOptions) {
         try {
-            const node = new TriggerNodeData({ type: "event", key: event, position });
-            const trigger = new TriggerData({
-                name,
-                _nodes: [node.toObject()],
-            });
+            const [trigger] = await this.#worldTriggers.createEmbeddedDocuments("Trigger", [
+                {
+                    name,
+                    nodes: [
+                        {
+                            key: event,
+                            type: "event",
+                            position,
+                        },
+                    ],
+                },
+            ]);
 
-            this.triggers.add(trigger);
             this.setTrigger(trigger.id);
         } catch (error) {
             MODULE.error("An error occured while creating a new trigger.", error);
         }
     }
 
-    deleteTrigger(id: string) {
-        if (!this.triggers.delete(id)) return;
+    async deleteTrigger(id: string) {
+        await this.#worldTriggers.deleteEmbeddedDocuments("Trigger", [id]);
+
         if (this.#trigger === id) {
             this.setTrigger(null);
         } else {
@@ -155,17 +167,20 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         }
     }
 
-    createNode(data: TriggerNodeDataSource): BlueprintNode | undefined {
+    async createNode(data: PartialTriggerNodeDataSource): Promise<BlueprintNode | undefined> {
         const trigger = this.trigger;
         if (!trigger) return;
 
         try {
-            const node = new TriggerNodeData(data);
-            trigger.nodes.add(node);
-            return this.nodesLayer.addNode(node);
+            const [node] = await trigger.createEmbeddedDocuments("Node", [data]);
+            return this.nodesLayer.add(node);
         } catch (error) {
             MODULE.error("An error occured while creating a new node.", error);
         }
+    }
+
+    getEntry(id: NodeEntryId): BlueprintEntry | undefined {
+        return this.nodesLayer.get(id)?.getEntry(id);
     }
 
     resetPosition() {
@@ -187,7 +202,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const trigger = this.trigger;
         if (!trigger) return;
 
-        this.nodesLayer.draw(trigger);
+        this.nodesLayer.draw();
+        this.connectionsLayer.draw();
 
         this.stage.on("pointerdown", this.#onPointerDown, this);
     }
@@ -196,6 +212,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#trigger = null;
 
         this.nodesLayer.clear();
+        this.connectionsLayer.clear();
 
         this.stage.removeAllListeners();
 
@@ -263,25 +280,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     async #onContextMenu({ x, y }: Point) {
-        const result = await BlueprintContextMenu.wait<{ type: NodeType; key: NodeKey }>({
-            blueprint: this,
-            groups: getFilters(),
-            target: { x, y },
-            classes: ["nodes-menu"],
-        });
-
+        const result = await BlueprintMenu.waitNodes(this, getFilterGroups(), x, y);
         if (!result) return;
 
         const { key, type } = result;
-        const node = this.createNode({ key, type, position: { x, y } });
+        const node = await this.createNode({ key, type, position: { x, y } });
         if (!node) return;
 
-        // const center = {
-        //     x: x - node.width / 2,
-        //     y: y - node.height / 2,
-        // };
-        // const point = subtractPoints(center, this.stage.position);
-        // node.setPosition(point);
+        const center = { x: x - node.width / 2, y: y - node.height / 2 };
+        const point = subtractPoint(center, this.stage.position);
+        node.setPosition(point);
     }
 
     #onDropCanvasData(event: DragEvent) {

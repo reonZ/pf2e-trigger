@@ -1,6 +1,6 @@
 import { NodeRawSchema, booleanOutsSchema } from "schema";
 
-const insideAuraSchema = {
+const insideAura = {
     outs: booleanOutsSchema(),
     inputs: [
         {
@@ -25,7 +25,7 @@ const insideAuraSchema = {
 } as const satisfies NodeRawSchema;
 
 const condition = {
-    "inside-aura": insideAuraSchema,
+    "inside-aura": insideAura,
 };
 
 export { condition };

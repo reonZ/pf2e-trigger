@@ -18,7 +18,7 @@ import {
 import { EVENT_KEYS, EventKey } from "schema";
 import apps = foundry.applications.api;
 
-class BlueprintMenu extends apps.HandlebarsApplicationMixin(
+class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     apps.ApplicationV2<ApplicationConfiguration, BlueprintMenuRenderOptions>
 ) {
     #blueprint = new Blueprint();
@@ -77,6 +77,7 @@ class BlueprintMenu extends apps.HandlebarsApplicationMixin(
     }
 
     _onFirstRender(context: object, options: BlueprintMenuRenderOptions) {
+        // we wait one frame before initializing the canvas
         requestAnimationFrame(() => {
             this.blueprint.initialize(this);
         });
@@ -365,4 +366,4 @@ type BlueprintMenuParts = {
 
 type BlueprintMenuPart = keyof BlueprintMenuParts;
 
-export { BlueprintMenu };
+export { BlueprintApplication };

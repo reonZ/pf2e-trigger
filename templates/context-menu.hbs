@@ -1,7 +1,9 @@
 {{#each groups as |group|}}
-<div class="{{ifThen group.isModule 'sub-title' 'title'}}">
+{{#if group.title}}
+<div class="{{ifThen group.isSub 'sub-title' 'title'}}">
     {{group.title}}
 </div>
+{{/if}}
 <ul class="list">
     {{#each group.entries as |entry|}}
     <li {{{entry.dataset}}}>

@@ -1,5 +1,5 @@
 import { NODE_NONBRIDGE_TYPES } from "data";
-import { ArrayField, MODULE, R, StringField } from "module-helpers";
+import { MODULE, R } from "module-helpers";
 import { NodeBridgeSchema, NodeInputField, NodeSchemaIconField, NodeVariableSchema } from "schema";
 import fields = foundry.data.fields;
 
@@ -104,13 +104,13 @@ interface NodeSchemaModel
 
 type NodeSchemaModelSchema = NodeSchemaEntries & {
     icon: NodeSchemaIconField;
-    module: StringField<NodeSchemaModuleId, false, false, false>;
+    module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
 };
 
 type NodeSchemaEntries = {
-    outs: ArrayField<fields.SchemaField<NodeBridgeSchema>>;
-    inputs: ArrayField<NodeInputField>;
-    outputs: ArrayField<fields.SchemaField<NodeVariableSchema>>;
+    outs: fields.ArrayField<fields.SchemaField<NodeBridgeSchema>>;
+    inputs: fields.ArrayField<NodeInputField>;
+    outputs: fields.ArrayField<fields.SchemaField<NodeVariableSchema>>;
 };
 
 type NodeSchemaModuleId = "pf2e-toolbelt";

@@ -1,44 +1,65 @@
 import {
     Blueprint,
-    BlueprintNodesLayer,
+    BlueprintEntry,
+    BlueprintMenu,
+    EntrySchema,
     getElementSize,
     HorizontalLayoutGraphics,
     VerticalLayoutGraphics,
 } from "blueprint";
-import { NodeEntryCategory, NodeEntryType, NodeType, TriggerNode } from "data";
-import { localize, localizeIfExist, MODULE, R, subtractPoint } from "module-helpers";
-import { getSchema, IconObject, NodeKey, NodeRawSchemaEntry, NodeSchemaModel } from "schema";
+import {
+    NodeEntryCategory,
+    NodeEntryId,
+    NodeEntryValue,
+    NodeType,
+    TriggerData,
+    TriggerNodeData,
+    TriggerNodeDataSource,
+} from "data";
+import { addToPoint, localize, localizeIfExist, R, subtractPoint } from "module-helpers";
+import {
+    hasInBridge,
+    hasOuts,
+    IconObject,
+    isEvent,
+    isGetter,
+    isValue,
+    NodeKey,
+    NodeSchemaModel,
+} from "schema";
 
-const NODE_ICONS: PartialRecord<NodeType, IconObject> = {};
-
-const HEADER_COLOR: PartialRecord<NodeType, number> = {
-    event: 0xc40000,
+const NODE_ICONS: PartialRecord<NodeType, IconObject> = {
+    condition: { unicode: "\ue14f", fontWeight: "400" },
+    macro: { unicode: "\uf121", fontWeight: "400" },
+    splitter: { unicode: "\ue254", fontWeight: "400" },
 };
 
-const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
-    boolean: 0xad0303,
-    bridge: 0xffffff,
-    dc: 0x1682c9,
-    duration: 0x75db32,
-    item: 0x696fe0,
-    list: 0x874501,
-    number: 0x07b88f,
-    roll: 0x86910d,
-    select: 0xe0a06c,
-    target: 0xff3075,
-    text: 0xe0a06c,
+const HEADER_COLOR: PartialRecord<NodeType, number> = {
+    action: 0x2162bd,
+    condition: 0x188600,
+    event: 0xc40000,
+    logic: 0x7e18b5,
+    macro: 0xa1733f,
+    splitter: 0x7e18b5,
+    subtrigger: 0xc40000,
+    value: 0x757575,
 };
 
 class BlueprintNode extends PIXI.Container {
-    #data: TriggerNode;
-    #schema: NodeSchemaModel;
+    #blueprint: Blueprint;
+    #data: TriggerNodeData;
     #dragOffset: Point = { x: 0, y: 0 };
+    #entries = {
+        all: new Collection<BlueprintEntry>(),
+        inputs: new Collection<BlueprintEntry>(),
+        outputs: new Collection<BlueprintEntry>(),
+    };
 
-    constructor(data: TriggerNode) {
+    constructor(blueprint: Blueprint, data: TriggerNodeData) {
         super();
 
         this.#data = data;
-        this.#schema = getSchema(data)!;
+        this.#blueprint = blueprint;
 
         this.x = data.position.x;
         this.y = data.position.y;
@@ -47,12 +68,22 @@ class BlueprintNode extends PIXI.Container {
 
         this.eventMode = "static";
         this.on("pointerdown", this.#onPointerDown, this);
-
-        MODULE.log(this);
     }
 
-    get blueprint() {
-        return this.parent.blueprint;
+    get data(): TriggerNodeData {
+        return this.#data;
+    }
+
+    get schema(): NodeSchemaModel {
+        return this.data.nodeSchema;
+    }
+
+    get blueprint(): Blueprint {
+        return this.#blueprint;
+    }
+
+    get trigger(): TriggerData | undefined {
+        return this.blueprint.trigger;
     }
 
     get stage(): PIXI.Container {
@@ -60,44 +91,23 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get id(): string {
-        return this.#data.id;
+        return this.data.id;
     }
 
     get type(): NodeType {
-        return this.#data.type;
+        return this.data.type;
     }
 
     get key(): NodeKey {
-        return this.#data.key;
-    }
-
-    get isValue(): boolean {
-        return this.type === "value";
-    }
-
-    get isVariable(): boolean {
-        return this.type === "variable";
+        return this.data.key;
     }
 
     get isEvent(): boolean {
-        return this.type === "event";
-    }
-
-    get isSubTrigger(): boolean {
-        return this.type === "subtrigger";
+        return isEvent(this);
     }
 
     get hasHeader(): boolean {
-        return !this.isValue && (!this.isVariable || this.key !== "getter");
-    }
-
-    get hasInBridge(): boolean {
-        return (
-            !this.isValue &&
-            !this.isEvent &&
-            (!this.isVariable || this.key !== "getter") &&
-            (!this.isSubTrigger || this.key !== "subtrigger-input")
-        );
+        return !isValue(this) && !isGetter(this);
     }
 
     get opacity(): number {
@@ -108,12 +118,12 @@ class BlueprintNode extends PIXI.Container {
         return 15;
     }
 
-    get nodeLocalizePath(): string {
+    get rootLocalizePath(): string {
         return `node.${this.type}`;
     }
 
     get localizePath(): string {
-        return `${this.nodeLocalizePath}.${this.key}`;
+        return `${this.rootLocalizePath}.${this.key}`;
     }
 
     get outerPadding(): Point {
@@ -127,12 +137,12 @@ class BlueprintNode extends PIXI.Container {
     get subtitle(): string | undefined {
         return (
             localizeIfExist(this.localizePath, "subtitle") ??
-            localizeIfExist(this.nodeLocalizePath, "subtitle")
+            localizeIfExist(this.rootLocalizePath, "subtitle")
         );
     }
 
     get icon(): IconObject | undefined {
-        return this.#schema.icon ?? NODE_ICONS[this.type];
+        return this.schema.icon ?? NODE_ICONS[this.type];
     }
 
     get backgroundColor(): number {
@@ -151,19 +161,117 @@ class BlueprintNode extends PIXI.Container {
         return this.type !== "event";
     }
 
+    get contextEntries(): NodeContextValue[] {
+        const entries: NodeContextValue[] = [];
+
+        if (!this.isEvent) {
+            entries.push("delete-node", "duplicate-node");
+        }
+
+        return entries;
+    }
+
+    destroy(options?: PIXI.IDestroyOptions | boolean) {
+        this.data.delete();
+        super.destroy(true);
+    }
+
+    *entries(
+        category: NodeEntryCategory | "all" = "all"
+    ): Generator<BlueprintEntry, void, undefined> {
+        for (const entry of this.#entries[category]) {
+            yield entry;
+        }
+    }
+
+    getEntry(id: NodeEntryId): BlueprintEntry | undefined {
+        return this.#entries.all.get(id);
+    }
+
     bringToTop() {
         const highest = R.firstBy(this.parent.children, [R.prop("zIndex"), "desc"])?.zIndex ?? 0;
         this.zIndex = highest + 1;
         this.parent.sortChildren();
     }
 
-    setPosition({ x, y }: Point) {
-        this.position.set(x, y);
-        this.#data.update({ position: { x, y } });
-        // TODO update connections
+    update(data: DeepPartial<TriggerNodeDataSource>): Promise<TriggerNodeData | undefined> {
+        return this.data.update(data);
     }
 
-    fontAwesomeIcon(icon: IconObject) {
+    setPosition({ x, y }: Point) {
+        this.position.set(x, y);
+        this.update({ position: { x, y } });
+        this.#updateConnections();
+    }
+
+    #updateConnections() {
+        for (const entry of this.entries()) {
+            for (const otherId of entry.connections) {
+                const other = this.blueprint.getEntry(otherId);
+
+                if (other && other.isConnectedTo(entry)) {
+                    this.blueprint.connectionsLayer.update(entry, other);
+                }
+            }
+        }
+    }
+
+    delete() {
+        this.eventMode = "none";
+
+        if (this.blueprint.nodesLayer.delete(this)) {
+            this.destroy(true);
+        }
+    }
+
+    async duplicate() {
+        const node = this.data.clone(
+            {
+                position: addToPoint(this.data.position, 50),
+                inputs: R.mapValues(this.data.inputs, ({ value }) => {
+                    return { value: foundry.utils.deepClone(value) };
+                }),
+                outputs: {},
+            },
+            { keepId: false }
+        );
+
+        this.trigger?.nodes.set(node.id, node, { modifySource: true });
+        this.blueprint.nodesLayer.add(node);
+    }
+
+    testContains({ x, y }: Point): boolean {
+        return this.getBounds().contains(x, y);
+    }
+
+    /**
+     * return null if the point hits the node but no entry
+     * return undefined if the point isn't contained in the node at all
+     */
+    testConnection(point: Point, otherEntry: BlueprintEntry): BlueprintEntry | null | undefined {
+        if (!this.testContains(point)) return;
+
+        for (const entry of this.entries(otherEntry.oppositeCategory)) {
+            if (entry.testConnection(point, otherEntry)) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
+    getValue(id: NodeEntryId): NodeEntryValue {
+        return this.data.getValue(id);
+    }
+
+    getConnections(id: NodeEntryId): NodeEntryId[] {
+        return this.data.getConnections(id).filter((otherId) => {
+            const otherNode = this.trigger?.getNode(otherId);
+            return otherNode?.getConnections(otherId).includes(id);
+        });
+    }
+
+    fontAwesomeIcon(icon: IconObject): PreciseText {
         return this.preciseText(
             icon.unicode,
             foundry.utils.mergeObject(
@@ -173,7 +281,7 @@ class BlueprintNode extends PIXI.Container {
         );
     }
 
-    preciseText(text: string, options: Partial<PIXI.ITextStyle> = {}) {
+    preciseText(text: string, options: Partial<PIXI.ITextStyle> = {}): PreciseText {
         const style = new PIXI.TextStyle(
             foundry.utils.mergeObject(
                 {
@@ -200,7 +308,7 @@ class BlueprintNode extends PIXI.Container {
         return new foundry.canvas.containers.PreciseText(text, style);
     }
 
-    drawMask(width: number, height: number): PIXI.Graphics {
+    #drawMask(width: number, height: number): PIXI.Graphics {
         const mask = new PIXI.Graphics();
 
         mask.beginFill(0x555555);
@@ -210,7 +318,7 @@ class BlueprintNode extends PIXI.Container {
         return mask;
     }
 
-    drawBorder(width: number, height: number): PIXI.Graphics {
+    #drawBorder(width: number, height: number): PIXI.Graphics {
         const border = new PIXI.Graphics();
 
         border.clear();
@@ -220,7 +328,7 @@ class BlueprintNode extends PIXI.Container {
         return border;
     }
 
-    drawBackground(width: number, height: number): PIXI.Graphics {
+    #drawBackground(width: number, height: number): PIXI.Graphics {
         const background = new PIXI.Graphics();
 
         background.beginFill(this.backgroundColor, this.opacity);
@@ -230,67 +338,36 @@ class BlueprintNode extends PIXI.Container {
         return background;
     }
 
-    drawEntries(category: NodeEntryCategory): EntriesGroup[] {
+    #drawEntries(category: NodeEntryCategory): EntriesGroup[] {
         const groups: EntriesGroup[] = R.pipe(
-            [...this.#schema[category], ...(this.#data.custom?.[category] ?? [])],
+            [...this.schema[category], ...(this.data.custom?.[category] ?? [])],
             R.groupBy(R.prop("group")),
             R.entries(),
             R.map(([group, entries]) => ({
                 group,
-                entries: entries.map((entry) => this.drawEntry(entry, category)),
+                entries: entries.map((schema) => new BlueprintEntry(this, category, schema)),
             })),
             R.sortBy(R.prop("group"))
         );
 
-        const bridges: NodeEntry[] =
-            category === "outputs"
-                ? [...this.#schema.outs, ...(this.#data.custom?.outs ?? [])]
-                : this.hasInBridge
+        const bridges: EntrySchema[] =
+            category === "outputs" && hasOuts(this)
+                ? [...this.schema.outs, ...(this.data.custom?.outs ?? [])]
+                : hasInBridge(this)
                 ? [{ key: "in", type: "bridge" }]
                 : [];
 
         if (bridges.length) {
             groups.unshift({
                 group: "",
-                entries: bridges.map((entry) => this.drawEntry(entry, category)),
+                entries: bridges.map((schema) => new BlueprintEntry(this, category, schema)),
             });
         }
 
         return groups;
     }
 
-    drawConnector(entry: NodeEntry): PIXI.Graphics {
-        const connector = new PIXI.Graphics();
-        const color = CONNECTOR_COLOR[entry.type];
-
-        connector.cursor = "pointer";
-        connector.eventMode = "static";
-        connector.hitArea = new PIXI.Rectangle(0, 0, 12, 12);
-        connector.on("pointerdown", this.#onConnectorPointerDown, this);
-
-        // if (isActive) { // TODO
-        //     connector.beginFill(color);
-        // }
-
-        if (entry.type === "bridge") {
-            connector.lineStyle({ color, width: 1 });
-            connector.moveTo(0, 0);
-            connector.lineTo(6, 0);
-            connector.lineTo(12, 6);
-            connector.lineTo(6, 12);
-            connector.lineTo(0, 12);
-            connector.lineTo(0, 0);
-        } else {
-            connector.lineStyle({ color, width: 2 });
-            connector.drawCircle(6, 6, 6.5);
-        }
-
-        connector.endFill();
-
-        return connector;
-    }
-
-    drawGroupEntry(group: string) {
+    #drawGroupEntry(group: string) {
         const label =
             localizeIfExist(this.localizePath, "label", group) ??
             localizeIfExist("node", group) ??
@@ -298,52 +375,10 @@ class BlueprintNode extends PIXI.Container {
         return this.preciseText(label);
     }
 
-    drawField(entry: NodeEntry, category: NodeEntryCategory) {
-        const label = entry.label
-            ? localizeIfExist(entry.label) ?? game.i18n.localize(entry.label)
-            : localizeIfExist(this.localizePath, "entry", entry.key) ??
-              localize("entry", entry.key);
-
-        if (category === "outputs") {
-            return this.preciseText(label);
-        }
-
-        switch (entry.type) {
-            case "select":
-            case "text":
-            case "number":
-            case "boolean":
-
-            default: {
-                return this.preciseText(label);
-            }
-        }
-    }
-
-    drawEntry(entry: NodeEntry, category: NodeEntryCategory): HorizontalLayoutGraphics {
-        const container = new HorizontalLayoutGraphics({ spacing: 5, maxHeight: this.entryHeight });
-        const connector = this.drawConnector(entry);
-        const field = this.drawField(entry, category);
-
-        if (category === "inputs") {
-            container.addChild(connector, field);
-        } else {
-            container.addChild(field, connector);
-        }
-
-        if (entry.type === "bridge") {
-            connector.y += 1;
-        } else {
-            connector.x += category === "inputs" ? -1.5 : 1.5;
-            connector.y += 1.5;
-        }
-
-        return container;
-    }
-
-    drawBody(): NodeBody {
+    #drawBody(): NodeBody {
         const body = new HorizontalLayoutGraphics({
             spacing: 20,
+            align: "start",
             padding: {
                 x: this.outerPadding.x,
                 y: [this.outerPadding.y, this.outerPadding.y],
@@ -351,18 +386,23 @@ class BlueprintNode extends PIXI.Container {
         }) as NodeBody;
 
         const inputs = (body.inputs = new VerticalLayoutGraphics());
-        const outputs = (body.outputs = new VerticalLayoutGraphics({ align: "end" }));
+        const outputs = (body.outputs = new VerticalLayoutGraphics({
+            align: "end",
+            padding: { x: [0, -3], y: 0 },
+        }));
 
         for (const category of ["inputs", "outputs"] as const) {
-            for (const { group, entries } of this.drawEntries(category)) {
+            for (const { group, entries } of this.#drawEntries(category)) {
                 if (!entries.length) continue;
 
                 if (group) {
-                    const entry = this.drawGroupEntry(group);
+                    const entry = this.#drawGroupEntry(group);
                     body[category].addChild(entry);
                 }
 
                 for (const entry of entries) {
+                    this.#entries.all.set(entry.id, entry);
+                    this.#entries[category].set(entry.id, entry);
                     body[category].addChild(entry);
                 }
             }
@@ -374,7 +414,7 @@ class BlueprintNode extends PIXI.Container {
         return body;
     }
 
-    drawHeader(): NodeHeader | undefined {
+    #drawHeader(): NodeHeader | undefined {
         if (!this.hasHeader) return;
 
         const spacing = 5;
@@ -382,9 +422,9 @@ class BlueprintNode extends PIXI.Container {
             padding: this.outerPadding,
         }) as NodeHeader;
         const firstRow = new HorizontalLayoutGraphics({ spacing });
-        const title = (header.titleElement = this.drawTitle());
-        const icon = this.drawIcon();
-        const subtitle = this.drawSubtitle();
+        const title = (header.titleElement = this.#drawTitle());
+        const icon = this.#drawIcon();
+        const subtitle = this.#drawSubtitle();
 
         if (icon) {
             firstRow.addChild(icon);
@@ -398,28 +438,20 @@ class BlueprintNode extends PIXI.Container {
             header.addChildWithOffset(subtitle, offset);
         }
 
-        // if (icon instanceof foundry.canvas.containers.PreciseText) {
-        //     firstRow.x = this.outerPadding.x;
-
-        //     if (subtitle) {
-        //         subtitle.x += this.outerPadding.x;
-        //     }
-        // }
-
         return header;
     }
 
-    drawTitle(): PreciseText {
+    #drawTitle(): PreciseText {
         const title = this.title;
         return this.preciseText(title);
     }
 
-    drawIcon(): PreciseText | PIXI.Sprite | undefined {
+    #drawIcon(): PreciseText | PIXI.Sprite | undefined {
         const icon = this.icon;
         return icon ? this.fontAwesomeIcon(icon) : undefined;
     }
 
-    drawSubtitle(): PreciseText | undefined {
+    #drawSubtitle(): PreciseText | undefined {
         const subtitle = this.subtitle;
 
         if (subtitle) {
@@ -432,15 +464,15 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #draw() {
-        const header = this.drawHeader();
-        const body = this.drawBody();
+        const header = this.#drawHeader();
+        const body = this.#drawBody();
         const outerPadding = this.outerPadding;
 
         const totalWidth = Math.max(body.totalWidth, Math.clamp(header?.totalWidth ?? 0, 100, 200));
         const totalHeight = (header?.totalHeight ?? 0) + body.totalHeight;
 
         // we add background first
-        this.addChild(this.drawBackground(totalWidth, totalHeight));
+        this.addChild(this.#drawBackground(totalWidth, totalHeight));
 
         if (header) {
             const title = header.titleElement;
@@ -471,8 +503,8 @@ class BlueprintNode extends PIXI.Container {
             body.outputs.x = totalWidth - outerPadding.x - body.outputs.totalWidth;
         }
 
-        const border = this.drawBorder(totalWidth, totalHeight);
-        const mask = this.drawMask(totalWidth, totalHeight);
+        const border = this.#drawBorder(totalWidth, totalHeight);
+        const mask = this.#drawMask(totalWidth, totalHeight);
 
         this.mask = mask;
         this.addChild(body, border, mask);
@@ -485,7 +517,23 @@ class BlueprintNode extends PIXI.Container {
             this.bringToTop();
             this.#onDragStart(event);
         } else if (event.button === 2) {
-            // this.#onContextMenu(event);
+            this.#onContextMenu(event);
+        }
+    }
+
+    async #onContextMenu(event: PIXI.FederatedPointerEvent) {
+        const { x, y } = event.global;
+        const result = await BlueprintMenu.waitContext(this.blueprint, this.contextEntries, x, y);
+        if (!result) return;
+
+        switch (result.value) {
+            case "delete-node": {
+                return this.delete();
+            }
+
+            case "duplicate-node": {
+                return this.duplicate();
+            }
         }
     }
 
@@ -508,38 +556,17 @@ class BlueprintNode extends PIXI.Container {
         this.stage.off("pointerupoutside", this.#onDragEnd, this);
         this.stage.off("pointermove", this.#onDragMove, this);
     }
-
-    #onConnectorPointerDown(event: PIXI.FederatedPointerEvent) {
-        event.stopPropagation();
-
-        // if (event.button === 0 && this.canConnect) {
-        //     this.blueprint.connections.startConnection(this);
-        // } else if (event.button === 2) {
-        //     const { x, y } = event.global;
-        //     const context = this.node.getConnectionContext(this);
-        //     if (!context.length) return;
-
-        //     const result = await BlueprintSelectMenu.open(this.blueprint, { x, y }, context);
-        //     if (!result) return;
-
-        //     this.node["_onConnectionContext"](this, result);
-        // }
-    }
-}
-
-interface BlueprintNode extends PIXI.Container {
-    parent: BlueprintNodesLayer;
 }
 
 function elementOffset(el: PIXI.Container, direction: "x" | "y") {
     return el[direction] + getElementSize(el, direction);
 }
 
-type NodeEntry = NodeRawSchemaEntry<NodeEntryType>;
+type NodeContextValue = "delete-node" | "duplicate-node";
 
 type EntriesGroup = {
     group: string;
-    entries: HorizontalLayoutGraphics[];
+    entries: BlueprintEntry[];
 };
 
 type NodeBody = HorizontalLayoutGraphics & {

@@ -1,5 +1,6 @@
 import { NodeEntryIdField, NodeEntryValueField } from "data";
-import { NodeEntryCategory } from "./utils";
+import { ArrayField } from "module-helpers";
+import { NodeEntryCategory } from "./_utils";
 import fields = foundry.data.fields;
 
 class NodeEntryField<
@@ -32,8 +33,11 @@ class NodeEntryField<
 }
 
 type NodeEntryFieldSchema = {
-    ids: fields.ArrayField<NodeEntryIdField>;
+    ids: ArrayField<NodeEntryIdField, false, false, true>;
     value: NodeEntryValueField;
 };
 
+type TriggerEntryData = ModelPropsFromSchema<NodeEntryFieldSchema>;
+
 export { NodeEntryField };
+export type { TriggerEntryData };

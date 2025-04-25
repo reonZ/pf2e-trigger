@@ -60,16 +60,40 @@
             "title": "Edit Trigger",
             "yes": "Edit"
         },
+        "context": {
+            "delete-node": "Delete Node",
+            "duplicate-node": "Duplicate Node",
+            "disconnect": "Disconnect Entry"
+        },
         "entry": {
+            "boolean": "Boolean",
+            "dc": "DC",
+            "duration": "Duration",
+            "item": "Item",
+            "list": "List",
+            "number": "Number",
+            "roll": "Roll",
+            "select": "Select",
+            "target": "Target",
+            "text": "Text",
+
+            "in": "In",
             "out": "Out",
-            "this": "Trigger Target"
+            "this": "Trigger Target",
+            "true": "True",
+            "false": "False",
+            "formula": "formula"
         },
         "node": {
             "action": {
                 "title": "Actions",
                 "subtitle": "Action",
                 "roll-save": {
-                    "label": "Roll Save"
+                    "label": "Roll Save",
+                    "entry": {
+                        "basic": "Is Basic?",
+                        "save": "Save"
+                    }
                 },
                 "roll-damage": {
                     "label": "Roll Damage"
@@ -82,7 +106,12 @@
                 "title": "Conditions",
                 "subtitle": "Condition",
                 "inside-aura": {
-                    "label": "Is Inside Aura"
+                    "label": "Is Inside Aura",
+                    "entry": {
+                        "aura-source": "Aura Source",
+                        "slug": "aura-slug",
+                        "targets": "Targets"
+                    }
                 }
             },
             "event": {
@@ -91,7 +120,6 @@
                 "aura-enter": {
                     "label": "Aura Entered",
                     "entry": {
-                        "slug": "aura-slug",
                         "turn": "Current Turn?"
                     }
                 },
@@ -196,6 +224,9 @@
                 "subtitle": "value",
                 "number-value": {
                     "label": "Number"
+                },
+                "text-value": {
+                    "label": "Text"
                 }
             }
         }

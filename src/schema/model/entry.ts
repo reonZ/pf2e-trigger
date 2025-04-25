@@ -1,19 +1,17 @@
-import { NODE_NONBRIDGE_TYPES, NodeEntryType, NonBridgeEntry } from "data";
+import { NODE_NONBRIDGE_TYPES, NodeEntryType, NonBridgeEntryType } from "data";
 import {
     ArrayField,
-    BooleanField,
     DataUnionField,
     MODULE,
-    NumberField,
     R,
     SchemaField,
     SelectOptionField,
-    StringField,
 } from "module-helpers";
+import { NodeRawSchemaEntry, SchemaEntries } from "schema";
 import fields = foundry.data.fields;
 
 class NodeInputOptionsField extends DataUnionField<
-    StringField | ArrayField<SelectArrayOption>,
+    fields.StringField | ArrayField<SelectArrayOption>,
     SelectOptions,
     false,
     false,
@@ -144,6 +142,7 @@ class NodeInputField<
                         step: new fields.NumberField({
                             required: false,
                             nullable: false,
+                            step: 1,
                         }),
                         default: new DataUnionField(
                             [
@@ -166,6 +165,11 @@ class NodeInputField<
                             }
                         ),
                         options: new NodeInputOptionsField(),
+                        code: new fields.BooleanField({
+                            required: false,
+                            nullable: false,
+                            initial: false,
+                        }),
                     },
                     {
                         required: false,
@@ -250,14 +254,21 @@ class NodeInputField<
     }
 }
 
+function entrySchemaIsOfType<T extends NodeEntryType>(
+    schema: NodeRawSchemaEntry<NodeEntryType>,
+    type: T
+): schema is T extends keyof SchemaEntries ? SchemaEntries[T] : never {
+    return schema.type === type;
+}
+
 type NodeEntrySchema<TType extends NodeEntryType, TRequired extends boolean = true> = {
-    key: StringField<string, true>;
-    label: StringField<string, false, false, false>;
-    type: StringField<TType, TRequired>;
+    key: fields.StringField<string, string, true>;
+    label: fields.StringField<string, string, false, false, false>;
+    type: fields.StringField<TType, TType, TRequired>;
 };
 
-type NonBridgeEntrySchema = NodeEntrySchema<NonBridgeEntry> & {
-    group: StringField;
+type NonBridgeEntrySchema = NodeEntrySchema<NonBridgeEntryType> & {
+    group: fields.StringField;
 };
 
 type NodeBridgeSchema = NodeEntrySchema<"bridge", false>;
@@ -265,36 +276,34 @@ type NodeBridgeSchema = NodeEntrySchema<"bridge", false>;
 type NodeVariableSchema = NonBridgeEntrySchema;
 
 type NodeInputSchema = NonBridgeEntrySchema & {
-    connection: BooleanField<false>;
+    connection: fields.BooleanField<boolean, boolean, false>;
     field: SchemaField<NodeInputFieldSchema, false, false, false>;
 };
 
 type NodeInputFieldSchema = {
-    min: NumberField<false, false, false>;
-    max: NumberField<false, false, false>;
-    step: NumberField<false, false, false>;
+    min: fields.NumberField<number, number, false, false, false>;
+    max: fields.NumberField<number, number, false, false, false>;
+    step: fields.NumberField<number, number, false, false, false>;
     default: DataUnionField<
-        BooleanField<false> | NumberField<false, false> | StringField<string, false>,
+        | fields.BooleanField<boolean, boolean, false>
+        | fields.NumberField<number, number, false, false>
+        | fields.StringField<string, string, false>,
         boolean | number | string,
         false,
         false,
         true
     >;
     options: NodeInputOptionsField;
+    code: fields.BooleanField<boolean, boolean, false>;
 };
 
 type SelectArrayOption = DataUnionField<
-    StringField | SelectOptionField<false>,
+    fields.StringField | SelectOptionField<false>,
     SelectOptions,
     false,
     false,
     false
 >;
 
-export { NodeInputField };
-export type {
-    NodeBridgeSchema,
-    NodeInputSchema,
-    NodeVariableSchema,
-    SelectArrayOption as SelectOptionArray,
-};
+export { NodeInputField, entrySchemaIsOfType };
+export type { NodeBridgeSchema, NodeInputSchema, NodeVariableSchema, NonBridgeEntrySchema };

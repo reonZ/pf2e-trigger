@@ -1,3 +1,5 @@
+import { EntryField } from "blueprint";
+import { Blueprint } from "blueprint/blueprint";
 import {
     addListenerAll,
     ApplicationClosingOptions,
@@ -5,19 +7,21 @@ import {
     ApplicationPosition,
     ApplicationRenderOptions,
     assignStyle,
+    DatasetData,
+    dataToDatasetString,
+    localize,
+    R,
     render,
 } from "module-helpers";
-import { Blueprint } from "./blueprint";
-import { TriggerData } from "data";
-import { NodeFilterGroup } from "schema";
+import { FilterGroup, FilterNodeData } from "schema";
 
-class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.api.ApplicationV2<
-    ContextMenuConfigs<T>
+class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api.ApplicationV2<
+    BlueprintMenuConfiguration<TData>
 > {
     #blueprint: Blueprint;
-    #groups: NodeFilterGroup[];
-    #resolve: ContextMenuResolve<T>;
-    #target: Point | PIXI.Container;
+    #groups: BlueprintMenuGroup[];
+    #resolve: BlueprintMenuResolve<TData>;
+    #target: BlueprintMenuPoint | EntryField;
 
     static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
         window: {
@@ -29,7 +33,7 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
         id: "pf2e-trigger-context-menu",
     };
 
-    constructor({ blueprint, groups, resolve, target, ...options }: ContextMenuOptions<T>) {
+    constructor({ blueprint, groups, resolve, target, ...options }: BlueprintMenuOptions<TData>) {
         super(options);
 
         this.#blueprint = blueprint;
@@ -38,11 +42,55 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
         this.#target = target;
     }
 
-    static wait<T extends DOMStringMap>(
-        configs: Omit<ContextMenuOptions<T>, "resolve">
-    ): Promise<null | T> {
-        return new Promise((resolve) => {
-            new BlueprintContextMenu<T>({ ...configs, resolve }).render(true);
+    static wait<TData extends DOMStringMap>(
+        configs: Omit<BlueprintMenuOptions<TData>, "resolve">
+    ): Promise<null | TData> {
+        return new Promise((resolve: BlueprintMenuResolve<TData>) => {
+            new BlueprintMenu({ ...configs, resolve }).render(true);
+        });
+    }
+
+    static waitNodes(
+        blueprint: Blueprint,
+        groups: FilterGroup[],
+        x: number,
+        y: number
+    ): Promise<null | FilterNodeData> {
+        return BlueprintMenu.wait({
+            blueprint,
+            groups,
+            target: { x, y },
+            classes: ["nodes-menu"],
+        });
+    }
+
+    static async waitContext<TData extends string>(
+        blueprint: Blueprint,
+        entries: TData[],
+        x: number,
+        y: number
+    ): Promise<null | { value: TData }> {
+        if (!entries.length) {
+            return null;
+        }
+
+        const groups = [
+            {
+                title: "",
+                entries: entries.map((value) => {
+                    return {
+                        data: { value },
+                        label: localize("context", value),
+                    };
+                }),
+            },
+        ];
+
+        return BlueprintMenu.wait({
+            blueprint,
+            groups,
+            target: { x, y, align: "top" },
+            classes: ["node-context"],
         });
     }
 
@@ -50,17 +98,8 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
         return this.#blueprint;
     }
 
-    get trigger(): TriggerData | undefined {
-        return this.blueprint.trigger;
-    }
-
-    get target(): Point | PIXI.Container {
+    get target(): BlueprintMenuPoint | EntryField {
         return this.#target;
-    }
-
-    get fontSize(): number {
-        // TODO get the font size of the target if not a Point
-        return 15;
     }
 
     async close(options?: ApplicationClosingOptions) {
@@ -83,7 +122,18 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
 
     async _prepareContext(options: ApplicationRenderOptions): Promise<ContextMenuContext> {
         return {
-            groups: this.#groups,
+            groups: this.#groups.map(({ entries, title, isSub }) => {
+                return {
+                    entries: entries.map(({ data, label }) => {
+                        return {
+                            dataset: R.isString(data) ? data : dataToDatasetString(data),
+                            label,
+                        };
+                    }),
+                    title,
+                    isSub,
+                };
+            }),
         };
     }
 
@@ -100,43 +150,54 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
 
     _updatePosition(position: ApplicationPosition) {
         const el = this.element;
-
-        assignStyle(el, { fontSize: `${this.fontSize}px` });
-
         const target = this.target;
         const bounds = el.getBoundingClientRect();
         const viewBounds = this.blueprint.getBoundClientRect();
 
-        const mark: { top: Point; bottom: Point; width?: string } = (() => {
-            if (!(target instanceof PIXI.Container)) {
-                const { x, y } = this.blueprint.getGlobalCoordinates(target);
-                const point = { x: x - bounds.width / 2, y };
-                return { top: point, bottom: point };
+        if (target instanceof EntryField) {
+            const { left, top, bottom, width } = target.globalBounds;
+
+            position.top = bottom;
+            position.left = left;
+
+            if (bottom + bounds.height > viewBounds.height && top > viewBounds.height / 2) {
+                position.top = top - bounds.height;
             }
 
-            const { x, y } = target.getGlobalPosition();
+            el.style.minWidth = `${width}px`;
+        } else {
+            const { x, y } = this.blueprint.getGlobalCoordinates(target);
 
-            return {
-                width: `${target.width}px`,
-                top: this.blueprint.getGlobalCoordinates({ x, y: y - 1 }),
-                bottom: this.blueprint.getGlobalCoordinates({ x, y: y + target.height }),
-            };
-        })();
+            position.left = x - bounds.width / 2;
 
-        let y = mark.bottom.y - 1;
+            if (target.align === "top") {
+                position.top = y - bounds.height - 2;
 
-        if (y + bounds.height > viewBounds.bottom) {
-            y = mark.top.y - bounds.height + 2;
-        }
+                if (position.top < viewBounds.top && y < viewBounds.height / 2) {
+                    position.top = y + 2;
+                }
+            } else if (target.align === "bottom") {
+                position.top = y + 2;
 
-        if (y < viewBounds.top) {
-            y = viewBounds.top;
+                if (position.top + bounds.height > viewBounds.height && y > viewBounds.height / 2) {
+                    position.top = y - bounds.height - 2;
+                }
+            } else {
+                position.top = y - bounds.height / 2;
+
+                if (position.top + bounds.height > viewBounds.bottom) {
+                    position.top = viewBounds.bottom - bounds.height;
+                }
+
+                if (position.top < viewBounds.top) {
+                    position.top = viewBounds.top;
+                }
+            }
         }
 
         assignStyle(el, {
-            left: `${mark.top.x}px`,
-            top: `${y}px`,
-            minWidth: mark.width,
+            left: `${position.left}px`,
+            top: `${position.top}px`,
             maxHeight: `${viewBounds.height}px`,
         });
 
@@ -146,28 +207,47 @@ class BlueprintContextMenu<T extends DOMStringMap> extends foundry.applications.
     #activateListeners(html: HTMLElement) {
         addListenerAll(html, "li", (event, el) => {
             event.stopPropagation();
-            this.#resolve(el.dataset as T);
+            this.#resolve(el.dataset as TData);
             this.close();
         });
     }
 }
 
 type ContextMenuContext = {
-    groups: NodeFilterGroup[];
+    groups: (Omit<BlueprintMenuGroup, "entries"> & {
+        entries: { label: string; dataset: string }[];
+    })[];
 };
 
-type ContextMenuConfigs<T extends DOMStringMap> = ApplicationConfiguration & {
-    fontSize: number;
-    resolve: ContextMenuResolve<T>;
+type BlueprintMenuPoint = Point & {
+    align?: "top" | "center" | "bottom";
 };
 
-type ContextMenuOptions<T extends DOMStringMap> = DeepPartial<ApplicationConfiguration> & {
+type BaseContextMenuConfigs<TData extends DOMStringMap> = {
     blueprint: Blueprint;
-    groups: NodeFilterGroup[];
-    target: Point | PIXI.Container;
-    resolve: ContextMenuResolve<T>;
+    groups: BlueprintMenuGroup[];
+    target: BlueprintMenuPoint | EntryField;
+    resolve: BlueprintMenuResolve<TData>;
 };
 
-type ContextMenuResolve<T extends DOMStringMap> = (value: T | null) => void;
+type BlueprintMenuConfiguration<TData extends DOMStringMap> = ApplicationConfiguration &
+    BaseContextMenuConfigs<TData>;
 
-export { BlueprintContextMenu };
+type BlueprintMenuOptions<TData extends DOMStringMap> = DeepPartial<ApplicationConfiguration> &
+    BaseContextMenuConfigs<TData>;
+
+type BlueprintMenuResolve<T extends DOMStringMap> = (value: T | null) => void;
+
+type BlueprintMenuGroupEntry = {
+    data: DatasetData | string;
+    label: string;
+};
+
+type BlueprintMenuGroup<T extends BlueprintMenuGroupEntry = BlueprintMenuGroupEntry> = {
+    entries: T[];
+    isSub?: boolean;
+    title: string;
+};
+
+export { BlueprintMenu };
+export type { BlueprintMenuGroup, BlueprintMenuGroupEntry, BlueprintMenuOptions };

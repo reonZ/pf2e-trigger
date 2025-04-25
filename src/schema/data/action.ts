@@ -1,19 +1,19 @@
 import { NodeRawSchema } from "schema";
 
-const rollDamageSchema = {
+const rollDamage = {
     inputs: [
         {
             key: "formula",
             type: "text",
         },
         {
-            key: "roll",
-            type: "roll",
+            key: "target",
+            type: "target",
         },
     ],
 } as const satisfies NodeRawSchema;
 
-const rollSaveSchema = {
+const rollSave = {
     inputs: [
         {
             key: "save",
@@ -46,16 +46,31 @@ const rollSaveSchema = {
 const rollDamageWithSave = {
     inputs: [
         {
+            key: "predicate",
+            type: "text",
+            field: {
+                code: true,
+            },
+        },
+        {
             key: "formula",
             type: "text",
+        },
+        {
+            key: "test",
+            type: "number",
+            field: {
+                min: 0,
+                max: 10,
+            },
         },
     ],
     module: "pf2e-toolbelt",
 } as const satisfies NodeRawSchema;
 
 const action = {
-    "roll-damage": rollDamageSchema,
-    "roll-save": rollSaveSchema,
+    "roll-damage": rollDamage,
+    "roll-save": rollSave,
     "roll-damage-with-save": rollDamageWithSave,
 };
 

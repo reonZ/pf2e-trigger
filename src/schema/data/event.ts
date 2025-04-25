@@ -1,17 +1,11 @@
-import { IconObject, NodeRawSchema } from "schema";
+import { NodeRawSchema } from "schema";
 
-const eventSchema = {
-    outputs: [
-        {
-            key: "this",
-            type: "target",
-        },
-    ],
-} as const satisfies NodeRawSchema;
-
-function createEventSchema(icon: string | IconObject) {
+function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
-        icon,
+        icon: {
+            unicode,
+            fontWeight,
+        },
         outputs: [
             {
                 key: "this",
@@ -22,11 +16,11 @@ function createEventSchema(icon: string | IconObject) {
 }
 
 const event = {
-    "turn-start": eventSchema,
-    "turn-end": eventSchema,
-    "token-create": eventSchema,
-    "token-delete": eventSchema,
+    "turn-start": createEventSchema("\uf251"),
+    "turn-end": createEventSchema("\uf253"),
+    "token-create": createEventSchema("\uf2bd", "900"),
+    "token-delete": createEventSchema("\uf2bd"),
     "test-event": createEventSchema("\ue4f3"),
 };
 
-export { event, eventSchema };
+export { event };

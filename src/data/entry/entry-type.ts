@@ -35,7 +35,7 @@ class NodeEntryTypeField<
 }
 
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number];
-type NonBridgeEntry = Exclude<NodeEntryType, "bridge">;
+type NonBridgeEntryType = Exclude<NodeEntryType, "bridge">;
 
 export { NODE_ENTRY_TYPES, NODE_NONBRIDGE_TYPES, NodeEntryTypeField };
-export type { NodeEntryType, NonBridgeEntry };
+export type { NodeEntryType, NonBridgeEntryType };

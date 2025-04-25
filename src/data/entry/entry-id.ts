@@ -1,5 +1,5 @@
+import { isEntryCategory, NodeEntryCategory } from "data";
 import { MODULE } from "module-helpers";
-import { isEntryCategory, NODE_ENTRY_TYPES, NodeEntryCategory } from "data";
 import fields = foundry.data.fields;
 
 class NodeEntryIdField<
@@ -20,8 +20,6 @@ class NodeEntryIdField<
             required: true,
             blank: false,
             readonly: true,
-            choices: NODE_ENTRY_TYPES,
-            validationError: "is not a valid Node Entry ID string",
         });
     }
 
@@ -41,6 +39,11 @@ class NodeEntryIdField<
     }
 }
 
+function segmentEntryId(id: NodeEntryId): SegmentedEntryId {
+    const [nodeId, category, key] = id.split(".");
+    return { nodeId, category, key } as SegmentedEntryId;
+}
+
 interface NodeEntryIdField<
     TCategory extends NodeEntryCategory = NodeEntryCategory,
     TRequired extends boolean = true,
@@ -54,6 +57,12 @@ type NodeEntryOutputId = `${string}.outputs.${string}`;
 type NodeEntryInputId = `${string}.inputs.${string}`;
 type NodeEntryId = NodeEntryInputId | NodeEntryOutputId;
 
+type SegmentedEntryId = {
+    nodeId: string;
+    category: NodeEntryCategory;
+    key: string;
+};
+
 type NodeDataEntryIdFieldOptions<
     TSourceProp extends NodeEntryCategory,
     TRequired extends boolean,
@@ -63,5 +72,5 @@ type NodeDataEntryIdFieldOptions<
     category?: NodeEntryCategory;
 };
 
+export { NodeEntryIdField, segmentEntryId };
 export type { NodeEntryId };
-export { NodeEntryIdField };

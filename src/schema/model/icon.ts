@@ -1,8 +1,8 @@
-import { DataUnionField, R, SchemaField, StringField } from "module-helpers";
+import { DataUnionField, R, SchemaField } from "module-helpers";
 import fields = foundry.data.fields;
 
 class NodeSchemaIconField extends DataUnionField<
-    StringField | SchemaField<IconObjectSchema, false, false, false>,
+    fields.StringField | SchemaField<IconObjectSchema, false, false, false>,
     IconObject,
     false,
     false,
@@ -59,8 +59,8 @@ class NodeSchemaIconField extends DataUnionField<
 }
 
 type IconObjectSchema = {
-    unicode: StringField<string, true>;
-    fontWeight: StringField<TextStyleFontWeight, true>;
+    unicode: fields.StringField<string, string, true>;
+    fontWeight: fields.StringField<TextStyleFontWeight, TextStyleFontWeight, true>;
 };
 
 type IconObject = ModelPropsFromSchema<IconObjectSchema>;

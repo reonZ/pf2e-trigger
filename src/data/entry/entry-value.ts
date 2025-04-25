@@ -4,7 +4,7 @@ import fields = foundry.data.fields;
 class NodeEntryValueField<
     TSourceProp extends NodeEntryValue = NodeEntryValue,
     TRequired extends boolean = false,
-    TNullable extends boolean = true,
+    TNullable extends boolean = false,
     THasInitial extends boolean = false
 > extends fields.DataField<TSourceProp, TSourceProp, TRequired, TNullable, THasInitial> {
     static get _defaults() {

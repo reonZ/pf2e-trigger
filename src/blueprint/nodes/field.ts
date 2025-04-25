@@ -1,0 +1,448 @@
+import { Blueprint, BlueprintEntry, BlueprintMenu, BlueprintNode, EntrySchema } from "blueprint";
+import { NodeEntryType, NodeEntryValue } from "data";
+import { assignStyle, localizeIfExist, R } from "module-helpers";
+import { entrySchemaIsOfType } from "schema";
+
+class EntryField extends PIXI.Graphics {
+    #entry: BlueprintEntry;
+    #overlay: PIXI.Graphics;
+    #decoration: PIXI.Graphics | undefined;
+    #content: PIXI.Graphics | PreciseText;
+
+    static ALLOWED_TYPES: NodeEntryType[] = ["boolean", "number", "select", "text"];
+
+    constructor(entry: BlueprintEntry) {
+        super();
+
+        this.#entry = entry;
+
+        this.lineStyle({ color: 0xffffff, width: 1 });
+        this.drawRect(0, 0, this.width, this.height);
+
+        const children = [
+            (this.#overlay = this.#drawOverlay()),
+            (this.#content = this.#drawContent()),
+            (this.#decoration = this.#drawDecoration()),
+        ];
+
+        this.addChild(...children.filter(R.isTruthy));
+
+        this.refresh();
+
+        this.eventMode = "static";
+        this.hitArea = new PIXI.Rectangle(0, 0, this.width, this.height);
+        this.on("pointerdown", (event) => event.stopPropagation());
+        this.on("pointerup", this.#onPointerUp.bind(this));
+    }
+
+    static isFieldEntry<T extends BlueprintEntry>(entry: T): boolean {
+        return EntryField.ALLOWED_TYPES.includes(entry.type);
+    }
+
+    get entry(): BlueprintEntry {
+        return this.#entry;
+    }
+
+    get schema(): EntrySchema {
+        return this.entry.schema;
+    }
+
+    get node(): BlueprintNode {
+        return this.entry.node;
+    }
+
+    get blueprint(): Blueprint {
+        return this.node.blueprint;
+    }
+
+    get type(): NodeEntryType {
+        return this.entry.type;
+    }
+
+    get width(): number {
+        return this.type === "boolean" ? this.height : this.type === "number" ? 30 : 120;
+    }
+
+    get height(): number {
+        return this.type === "boolean" ? this.node.entryHeight * 0.75 : this.node.entryHeight;
+    }
+
+    get overlay(): PIXI.Graphics {
+        return this.#overlay;
+    }
+
+    get connected(): boolean {
+        return this.entry.connected;
+    }
+
+    get isBoolean(): boolean {
+        return this.type === "boolean";
+    }
+
+    get isText(): boolean {
+        return this.type === "text";
+    }
+
+    get isNumber(): boolean {
+        return this.type === "number";
+    }
+
+    get isSelect(): boolean {
+        return this.type == "select";
+    }
+
+    get isInput(): boolean {
+        return this.isText || this.isNumber;
+    }
+
+    get cursor(): "pointer" | "default" | "text" {
+        return this.connected ? "default" : this.isInput ? "text" : "pointer";
+    }
+
+    get inputFontSize(): number {
+        return this.entry.node.fontSize * 0.86;
+    }
+
+    get inlinePadding(): number {
+        return 4;
+    }
+
+    get value(): NonNullable<NodeEntryValue> {
+        return this.entry.value as NonNullable<NodeEntryValue>;
+    }
+
+    get content(): string {
+        const value = String(this.value).trim();
+        const schema = this.schema;
+
+        if (entrySchemaIsOfType(schema, "text") && schema.field?.code) {
+            return value.replace(/\s{1}|\\n/g, "");
+        }
+
+        if (!entrySchemaIsOfType(schema, "select")) {
+            return value;
+        }
+
+        const options = schema.field.options;
+        const option = options.find((option) => option.value === value) ?? options[0];
+
+        return localizeOption(option.label, this.node.localizePath);
+    }
+
+    get placeholder(): string {
+        return this.isNumber ? "" : this.entry.label;
+    }
+
+    get textWidth(): number {
+        return this.isSelect ? this.width - 16 : this.width;
+    }
+
+    get textElement(): PreciseText | undefined {
+        return this.#content instanceof PIXI.Text ? this.#content : undefined;
+    }
+
+    get globalBounds(): PIXI.Rectangle {
+        const { x, y } = this.getGlobalPosition();
+        const topLeft = this.blueprint.getGlobalCoordinates({ x, y });
+        const bottomRight = this.blueprint.getGlobalCoordinates({
+            x: x + this.width,
+            y: y + this.height,
+        });
+
+        const top = topLeft.y - 1;
+        const bottom = bottomRight.y + 1;
+        const left = topLeft.x - 1;
+        const right = bottomRight.x + 1;
+
+        return new PIXI.Rectangle(left, top, right - left, bottom - top);
+    }
+
+    refresh() {
+        const connected = this.connected;
+
+        this.#overlay.alpha = Number(connected);
+        this.#overlay.eventMode = connected ? "static" : "none";
+
+        if (this.#decoration) {
+            this.#decoration.alpha = connected ? 0.5 : 1;
+        }
+
+        this.#refreshContent(connected);
+    }
+
+    #drawDecoration(color = 0xffffff): PIXI.Graphics | undefined {
+        if (!this.isSelect) return;
+
+        const height = this.height;
+        const icon = new PIXI.Graphics();
+
+        icon.x = this.width - 16;
+
+        icon.lineStyle({ color: 0xffffff, width: 1 });
+        icon.moveTo(0, 0);
+        icon.lineTo(0, height);
+
+        const highPoint = height / 3;
+        const lowPoint = height * 0.66;
+
+        icon.lineStyle({ color: 0xffffff, width: 1 });
+        icon.moveTo(4, highPoint);
+        icon.lineTo(8, lowPoint);
+        icon.lineTo(12, highPoint);
+
+        return icon;
+    }
+
+    #refreshContent(connected: boolean) {
+        if (this.#content instanceof PIXI.Graphics) {
+            this.#content.alpha = Number(!connected && this.value);
+            return;
+        }
+
+        if (!connected) {
+            const label = this.content;
+
+            if (label) {
+                this.#content.text = label;
+                this.#content.style.fill = "#ffffff";
+                return;
+            }
+        }
+
+        this.#content.text = this.placeholder;
+        this.#content.style.fill = "#ffffff80";
+    }
+
+    #drawContent(): PIXI.Graphics | PreciseText {
+        const height = this.height;
+
+        if (this.isBoolean) {
+            const check = new PIXI.Graphics();
+            check.clear();
+
+            check.beginFill(0x940404, 0.5);
+            check.drawRect(1, 1, height - 2, height - 2);
+            check.endFill();
+
+            return check;
+        }
+
+        const padding = this.inlinePadding;
+        const text = this.node.preciseText("XX", {
+            fontSize: this.inputFontSize,
+        }) as PreciseText;
+
+        text.x = padding;
+        text.y = (height - text.height) / 2;
+
+        const mask = new PIXI.Graphics();
+        mask.beginFill(0x555555);
+        mask.drawRect(0, 0, this.textWidth - padding * 2, height);
+        mask.endFill();
+
+        text.addChild(mask);
+        text.mask = mask;
+
+        return text;
+    }
+
+    #drawOverlay(): PIXI.Graphics {
+        const overlay = new PIXI.Graphics();
+
+        overlay.beginFill(0x3b3b3b, 1);
+        overlay.drawRect(1, 1, this.width - 2, this.height - 2);
+        overlay.endFill();
+
+        return overlay;
+    }
+
+    #onPointerUp(event: PIXI.FederatedPointerEvent) {
+        event.stopPropagation();
+
+        this.#updateValue(event).then((value) => {
+            if (value !== this.value) {
+                this.entry.update({ value });
+                this.refresh();
+            }
+        });
+    }
+
+    async #updateValue(event: PIXI.FederatedPointerEvent): Promise<NodeEntryValue> {
+        const current = this.value;
+        const schema = this.schema;
+
+        if (this.isBoolean) {
+            return !current;
+        }
+
+        if (entrySchemaIsOfType(schema, "select")) {
+            const entries = schema.field.options.map(({ label, value }) => {
+                return {
+                    label: localizeOption(label, this.node.localizePath),
+                    data: { value, selected: value === current },
+                };
+            });
+
+            const result = await BlueprintMenu.wait<{ value: string }>({
+                blueprint: this.blueprint,
+                target: this,
+                groups: [{ title: "", entries }],
+                classes: ["input-select"],
+            });
+
+            return result?.value ?? current;
+        }
+
+        if (entrySchemaIsOfType(schema, "number")) {
+            const input = foundry.applications.fields.createNumberInput({
+                name: "field",
+                value: current as number,
+                min: schema.field?.min ?? undefined,
+                max: schema.field?.max ?? undefined,
+                step: schema.field?.step ?? 1,
+                classes: "trigger-input",
+            });
+
+            return this.#addInput(input);
+        }
+
+        if (entrySchemaIsOfType(schema, "text")) {
+            if (schema.field?.code) {
+                return this.#createCodeDialog(current as string);
+            }
+
+            const input = foundry.applications.fields.createTextInput({
+                name: "field",
+                value: current as string,
+                placeholder: this.entry.label,
+                classes: "trigger-input",
+            });
+
+            return this.#addInput(input);
+        }
+
+        return current;
+    }
+
+    async #createCodeDialog(value: string): Promise<NodeEntryValue> {
+        return new Promise((resolve) => {
+            const input = foundry.applications.elements.HTMLCodeMirrorElement.create({
+                name: "field",
+                value: value,
+                autofocus: true,
+                language: "json",
+                classes: "trigger-input",
+            });
+
+            document.body.appendChild(input);
+
+            const content = input.querySelector<HTMLElement>(".cm-content");
+            content?.focus();
+
+            const { center } = this.globalBounds;
+            const bounds = input.getBoundingClientRect();
+            const viewBounds = this.blueprint.getBoundClientRect();
+            const position: Point = {
+                x: center.x - bounds.width / 2,
+                y: center.y - bounds.height / 2,
+            };
+
+            if (position.y + bounds.height > viewBounds.bottom) {
+                position.y = viewBounds.bottom - bounds.height;
+            }
+
+            if (position.y < viewBounds.top) {
+                position.y = viewBounds.top;
+            }
+
+            if (position.x + bounds.width > viewBounds.right) {
+                position.x = viewBounds.right - bounds.width;
+            }
+
+            if (position.x < viewBounds.left) {
+                position.x = viewBounds.left;
+            }
+
+            assignStyle(input, {
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+            });
+
+            const onBlur = () => {
+                // we wait one frame so the code-mirror #onBlur can happen before
+                requestAnimationFrame(() => {
+                    resolve(input.value);
+                    input.remove();
+                });
+            };
+
+            content?.addEventListener("blur", onBlur, { once: true });
+
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    content?.removeEventListener("blur", onBlur);
+
+                    input.remove();
+                }
+            });
+        });
+    }
+
+    async #addInput(input: HTMLInputElement): Promise<NodeEntryValue> {
+        return new Promise((resolve) => {
+            const { left, top, width, height } = this.globalBounds;
+
+            document.body.appendChild(input);
+
+            input.focus();
+            input.select();
+
+            assignStyle(input, {
+                width: `${width}px`,
+                height: `${height}px`,
+                left: `${left}px`,
+                top: `${top}px`,
+                fontSize: `${this.inputFontSize}px`,
+                paddingInline: `${this.#content.x}px`,
+                paddingBlock: `0px`,
+            });
+
+            const onBlur = () => {
+                const value = input.type === "number" ? input.valueAsNumber : input.value;
+                resolve(value);
+                input.remove();
+            };
+
+            input.addEventListener("blur", onBlur, { once: true });
+
+            input.addEventListener("keydown", (event) => {
+                if (!["Enter", "Escape"].includes(event.key)) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                switch (event.key) {
+                    case "Enter": {
+                        input.blur();
+                        break;
+                    }
+
+                    case "Escape": {
+                        input.removeEventListener("blur", onBlur);
+                        input.remove();
+                        break;
+                    }
+                }
+            });
+        });
+    }
+}
+
+function localizeOption(value: string, localizePath: string): string {
+    return localizeIfExist(localizePath, "option", value) ?? game.i18n.localize(value);
+}
+
+export { EntryField };

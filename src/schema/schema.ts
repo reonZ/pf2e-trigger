@@ -1,6 +1,6 @@
-import { NodeEntryType, NodeType, NonBridgeEntry } from "data";
+import { NodeEntryType, NodeType, NonBridgeEntryType } from "data";
 import { R } from "module-helpers";
-import { action, condition, event, eventSchema, NodeSchemaModel, NodeSchemaSource } from "schema";
+import { action, condition, event, NodeSchemaModel, NodeSchemaSource, value } from "schema";
 
 const fakeSchema = {} satisfies NodeRawSchema;
 
@@ -14,18 +14,16 @@ const SCHEMAS = {
     splitter: {
         "boolean-splitter": fakeSchema,
     },
-    value: {
-        "number-value": fakeSchema,
-    },
+    value,
     variable: {
-        getter: fakeSchema,
-        setter: fakeSchema,
+        "variable-getter": fakeSchema,
+        "variable-setter": fakeSchema,
     },
     macro: {
         "use-macro": fakeSchema,
     },
     subtrigger: {
-        "subtrigger-input": eventSchema,
+        "subtrigger-input": fakeSchema,
     },
 } satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
@@ -37,19 +35,54 @@ const NODE_KEYS = R.pipe(
 
 const EVENT_KEYS = R.keys(SCHEMAS.event);
 
-function getRawSchema(type: NodeType, key: string): NodeRawSchema | undefined {
+function getRawSchema(type: NodeType, key: NodeKey): NodeRawSchema | undefined {
     // @ts-expect-error
     return foundry.utils.deepClone(SCHEMAS[type]?.[key]);
 }
 
-function getSchema({ type, key }: { type: NodeType; key: string }): NodeSchemaModel | undefined {
-    const raw = getRawSchema(type, key) as DeepPartial<NodeSchemaSource>;
-    return raw ? new NodeSchemaModel(raw) : undefined;
+function getSchema(type: NodeType, key: NodeKey): NodeSchemaModel | undefined {
+    const data = getRawSchema(type, key) as DeepPartial<NodeSchemaSource>;
+    return data ? new NodeSchemaModel(data) : undefined;
 }
 
 function isValidNodeKey(type: NodeType, key: NodeKey): boolean {
     return key in (SCHEMAS[type] ?? {});
 }
+
+function isValue({ type }: NodeAdjacent): boolean {
+    return type === "value";
+}
+
+function isEvent({ type }: NodeAdjacent): boolean {
+    return type === "event";
+}
+
+function isVariable({ type }: NodeAdjacent): boolean {
+    return type === "variable";
+}
+
+function isGetter(node: NodeAdjacent): boolean {
+    return isVariable(node) && node.key === "variable-getter";
+}
+
+function isSubTrigger({ type }: NodeAdjacent): boolean {
+    return type === "subtrigger";
+}
+
+function hasInBridge(node: NodeAdjacent): boolean {
+    return (
+        !isValue(node) &&
+        !isEvent(node) &&
+        !isGetter(node) &&
+        (!isSubTrigger(node) || node.key !== "subtrigger-input")
+    );
+}
+
+function hasOuts(node: NodeAdjacent): boolean {
+    return !isValue(node) && !isGetter(node);
+}
+
+type NodeAdjacent = { type: NodeType; key: NodeKey };
 
 type NodeKey = (typeof NODE_KEYS)[number];
 type EventKey = (typeof EVENT_KEYS)[number];
@@ -70,7 +103,7 @@ type NodeRawSchemaEntry<T extends NodeEntryType> = {
 type NodeSchemaBridge = NodeRawSchemaEntry<"bridge">;
 type NodeSchemaRawBridge = WithPartial<NodeSchemaBridge, "type">;
 
-type NodeSchemaVariable = NodeRawSchemaEntry<NonBridgeEntry>;
+type NodeSchemaVariable = NodeRawSchemaEntry<NonBridgeEntryType>;
 
 type NodeSchemaInput =
     | NodeSchemaText
@@ -85,7 +118,7 @@ type NodeSchemaInput =
     | NodeSchemaSelect;
 
 type NodeSchemaInputEntry<
-    TType extends NonBridgeEntry,
+    TType extends NonBridgeEntryType,
     TField extends Record<string, any> | never = never
 > = NodeRawSchemaEntry<TType> & {
     connection?: boolean;
@@ -93,7 +126,7 @@ type NodeSchemaInputEntry<
 };
 
 type NodeSchemaInputEntryWithField<
-    TType extends NonBridgeEntry,
+    TType extends NonBridgeEntryType,
     TField extends Record<string, any>
 > = Omit<NodeSchemaInputEntry<TType>, "field"> & { field: TField };
 
@@ -117,7 +150,7 @@ type NodeSchemaBoolean = NodeSchemaInputEntry<
 type NodeSchemaText = NodeSchemaInputEntry<
     "text",
     {
-        default?: string;
+        code?: boolean;
     }
 >;
 
@@ -136,5 +169,38 @@ type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
 
-export { EVENT_KEYS, getSchema, isValidNodeKey, NODE_KEYS, SCHEMAS };
-export type { EventKey, NodeKey, NodeRawSchema, NodeRawSchemaEntry };
+type SchemaEntries = {
+    select: SelectEntrySchema;
+    number: NodeSchemaNumber;
+    text: NodeSchemaText;
+};
+
+type SelectEntrySchema = NodeSchemaInputEntryWithField<
+    "select",
+    {
+        default?: string;
+        options: Required<SelectOption>[];
+    }
+>;
+
+export {
+    EVENT_KEYS,
+    getSchema,
+    hasInBridge,
+    hasOuts,
+    isEvent,
+    isGetter,
+    isValidNodeKey,
+    isValue,
+    NODE_KEYS,
+    SCHEMAS,
+};
+export type {
+    EventKey,
+    NodeKey,
+    NodeRawSchema,
+    NodeRawSchemaEntry,
+    NodeSchemaNumber,
+    SchemaEntries,
+    SelectEntrySchema,
+};

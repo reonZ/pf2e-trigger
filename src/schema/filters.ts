@@ -1,35 +1,68 @@
-import { NODE_TYPES, NodeEntryType, NodeType, NonBridgeEntry } from "data";
+import { BlueprintMenuGroup, BlueprintMenuGroupEntry } from "blueprint";
+import { NODE_TYPES, NodeEntryType, NodeType } from "data";
 import { dataToDatasetString, joinStr, localize, R } from "module-helpers";
 import { NodeSchemaModuleId } from "./model";
-import { getSchema, NodeKey, NodeRawSchema, SCHEMAS } from "./schema";
+import { getSchema, hasInBridge, NodeKey, NodeRawSchema, SCHEMAS } from "./schema";
+
+const COMPATIBLE_ENTRY_GROUPS = [["dc", "number"]] as const;
+
+const COMPATIBLE_ENTRIES = R.pipe(
+    COMPATIBLE_ENTRY_GROUPS,
+    R.flatMap((group) => {
+        return R.pipe(
+            group,
+            R.map((entry): [NodeEntryType, NodeEntryType[]] => {
+                return [entry, group.filter((y) => y !== entry)];
+            })
+        );
+    }),
+    R.fromEntries()
+);
 
 const FILTER_TYPES = R.difference(NODE_TYPES, [
     "event",
     "subtrigger",
     "variable",
-] as const) as FilterNodeType[];
+]) as FilterNodeType[];
 
-let FILTERS: NodeFilterGroup[] | undefined;
+let FILTERS: FilterGroup[] | undefined;
 
-function createFilters(): NodeFilterGroup[] {
+function createFilters(): FilterGroup[] {
     return R.pipe(
         R.entries(SCHEMAS) as [FilterNodeType, Record<NodeKey, NodeRawSchema>][],
         R.filter(([type]) => FILTER_TYPES.includes(type)),
         R.flatMap(([type, schemas]) => {
             return R.pipe(
                 R.entries(schemas),
-                R.map(([key]): NodeFilter | undefined => {
-                    const schema = getSchema({ type, key });
+                R.map(([key]): FilterGroupFilter | undefined => {
+                    const schema = getSchema(type, key);
                     if (!schema) return;
 
+                    const [inputs, outputs] = R.pipe(
+                        ["inputs", "outputs"] as const,
+                        R.map((category): NodeEntryType[] => {
+                            return R.pipe(
+                                schema[category] as { type: NodeEntryType }[],
+                                R.flatMap(({ type }) => {
+                                    return [type, ...(COMPATIBLE_ENTRIES[type] ?? [])];
+                                }),
+                                R.unique()
+                            );
+                        })
+                    );
+
+                    if (hasInBridge({ type, key })) {
+                        inputs.push("bridge");
+                    }
+
                     return {
-                        dataset: dataToDatasetString({ type, key }),
+                        data: dataToDatasetString({ type, key }),
                         id: joinStr(".", type, schema.module),
-                        inputs: schema.inputs.map((x) => x.type),
+                        inputs,
+                        outputs,
                         key,
                         label: localize("node", type, key, "label"),
                         module: schema.module,
-                        outputs: schema.outputs.map((x) => x.type),
                         type,
                     };
                 }),
@@ -39,45 +72,35 @@ function createFilters(): NodeFilterGroup[] {
         R.groupBy(R.prop("id")),
         R.entries(),
         R.sortBy(([id]) => id),
-        R.map(([_, entries]): NodeFilterGroup => {
+        R.map(([_, entries]): FilterGroup => {
             const { module, type } = entries[0];
             return {
                 entries,
-                isModule: !!module,
+                isSub: !!module,
                 title: module ?? localize("node", type, "title"),
             };
         })
     );
 }
 
-function getFilters(sourceEntry?: { type: NodeEntryType; key: string }): NodeFilterGroup[] {
-    const filters = (FILTERS ??= createFilters());
-
-    if (!sourceEntry) {
-        return filters;
-    }
-
-    return [];
+function getFilterGroups(): FilterGroup[] {
+    return (FILTERS ??= createFilters());
 }
 
-type FilterNodeType = Exclude<NodeType, "event" | "subtrigger" | "variable" | "setter">;
+type FilterNodeType = Exclude<NodeType, "event" | "subtrigger" | "variable">;
 
-type NodeFilter = {
-    dataset: string;
+type FilterGroupFilter = BlueprintMenuGroupEntry & {
     id: string;
-    inputs: NonBridgeEntry[];
+    inputs: NodeEntryType[];
+    outputs: NodeEntryType[];
     key: NodeKey;
-    label: string;
     module: NodeSchemaModuleId | undefined;
-    outputs: NonBridgeEntry[];
     type: FilterNodeType;
 };
 
-type NodeFilterGroup = {
-    entries: NodeFilter[];
-    isModule: boolean;
-    title: string;
-};
+type FilterGroup = BlueprintMenuGroup<FilterGroupFilter>;
 
-export { getFilters };
-export type { NodeFilterGroup };
+type FilterNodeData = { type: NodeType; key: NodeKey };
+
+export { COMPATIBLE_ENTRIES, getFilterGroups };
+export type { FilterGroup, FilterGroupFilter, FilterNodeData };
