@@ -1,4 +1,4 @@
-import { PartialTriggerDataSource, TriggerData } from "data";
+import { TriggerData, TriggerDataSource } from "data";
 import { makeModuleDocument, MODULE } from "module-helpers";
 import fields = foundry.data.fields;
 
@@ -24,7 +24,7 @@ class WorldTriggers extends makeModuleDocument<null, WorldTriggersSchema>(
 interface WorldTriggers {
     createEmbeddedDocuments(
         embeddedName: "Trigger",
-        data: PartialTriggerDataSource[],
+        data: PreCreate<TriggerDataSource>[],
         operation?: Partial<DatabaseCreateOperation<WorldTriggers>>
     ): Promise<TriggerData[]>;
 }

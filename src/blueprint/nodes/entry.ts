@@ -6,14 +6,16 @@ import {
     HorizontalLayoutGraphics,
 } from "blueprint";
 import {
+    entriesAreCompatible,
     NodeEntryCategory,
     NodeEntryId,
     NodeEntryType,
     NodeEntryValue,
-    TriggerEntryData,
+    NonBridgeEntryType,
+    TriggerData,
 } from "data";
 import { localize, localizeIfExist, R } from "module-helpers";
-import { COMPATIBLE_ENTRIES, NodeRawSchemaEntry } from "schema";
+import { hasInputConnector, NodeRawSchemaEntry } from "schema";
 
 const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
     boolean: 0xad0303,
@@ -31,11 +33,9 @@ const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
 
 class BlueprintEntry extends HorizontalLayoutGraphics {
     #category: NodeEntryCategory;
-    #connector: PIXI.Graphics;
+    #connector: PIXI.Graphics | undefined;
     #node: BlueprintNode;
     #schema: EntrySchema;
-    #field: EntryField | undefined;
-    #label: PreciseText | undefined;
 
     constructor(node: BlueprintNode, category: NodeEntryCategory, schema: EntrySchema) {
         super({ spacing: 5, maxHeight: node.entryHeight, padding: [0, 2] });
@@ -46,19 +46,19 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
         const children = [
             (this.#connector = this.#drawConnector()),
-            (this.#label = this.#drawLabel()),
-            (this.#field = this.#drawField()),
+            this.#drawLabel(),
+            this.#drawField(),
         ];
 
         const order = category === "inputs" ? children : R.reverse(children);
 
         this.addChild(...order.filter(R.isTruthy));
 
-        if (this.type === "bridge") {
+        if (this.isBridge && this.#connector) {
+            this.#connector.y += 0.5;
+        } else if (this.#connector) {
+            this.#connector.x += category === "inputs" ? -0.5 : 1.5;
             this.#connector.y += 1;
-        } else {
-            this.#connector.x += category === "inputs" ? -1.5 : 1.5;
-            this.#connector.y += 1.5;
         }
     }
 
@@ -82,12 +82,24 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.node.blueprint;
     }
 
+    get trigger(): TriggerData | undefined {
+        return this.blueprint.trigger;
+    }
+
     get category(): NodeEntryCategory {
         return this.#category;
     }
 
+    get isInput(): boolean {
+        return this.category === "inputs";
+    }
+
+    get isOutput(): boolean {
+        return this.category === "outputs";
+    }
+
     get oppositeCategory(): NodeEntryCategory {
-        return this.category === "inputs" ? "outputs" : "inputs";
+        return this.isInput ? "outputs" : "inputs";
     }
 
     get schema(): EntrySchema {
@@ -102,6 +114,10 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.node.getValue(this.id);
     }
 
+    get hasInputConnector(): boolean {
+        return hasInputConnector(this.node);
+    }
+
     get connections(): NodeEntryId[] {
         return this.node.getConnections(this.id);
     }
@@ -111,22 +127,27 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get canConnect(): boolean {
-        if (this.node.type === "event" && this.category === "inputs") {
+        if (!this.#connector) {
             return false;
         }
 
         return (
-            (this.category === "inputs" && (this.type === "bridge" || !this.connected)) ||
-            (this.category === "outputs" && (this.type !== "bridge" || !this.connected))
+            (this.isInput && (this.isBridge || !this.connected)) ||
+            (this.isOutput && (!this.isBridge || !this.connected))
         );
     }
 
     get connectorColor(): number {
-        return CONNECTOR_COLOR[this.type];
+        return getConnectorColor(this.type);
     }
 
     get connectorCenter(): Point {
+        if (!this.#connector) {
+            return { x: 0, y: 0 };
+        }
+
         const bounds = this.#connector.getBounds();
+
         return {
             x: bounds.x + bounds.width / 2,
             y: bounds.y + bounds.height / 2,
@@ -134,6 +155,10 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get connectorOffset(): Point {
+        if (!this.#connector) {
+            return { x: 0, y: 0 };
+        }
+
         const center = this.connectorCenter;
         const bounds = this.node.getBounds();
 
@@ -144,14 +169,36 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get label(): string {
+        if (this.isOutput && this.node.isGetter) {
+            const targetLabel = this.node.targetLabel;
+            if (targetLabel) {
+                return targetLabel;
+            }
+        }
+
         const schema = this.schema;
-        return schema.label
-            ? localizeIfExist(schema.label) ?? game.i18n.localize(schema.label)
-            : localizeIfExist(this.localizePath, schema.key) ?? localize("entry", schema.key);
+
+        if (schema.label) {
+            return (
+                localizeIfExist(schema.label) ??
+                localizeIfExist("entry", schema.label) ??
+                game.i18n.localize(schema.label)
+            );
+        }
+
+        return localizeIfExist(this.localizePath, schema.key) ?? localize("entry", schema.key);
     }
 
     get contextEntries(): EntryContextValue[] {
         const entries: EntryContextValue[] = [];
+
+        if (this.isOutput && !this.node.isEvent && !this.node.isVariable && !this.isBridge) {
+            if (this.trigger?.getVariable(this.id)) {
+                entries.push("delete-variable", "edit-variable");
+            } else {
+                entries.push("create-variable");
+            }
+        }
 
         if (this.connected) {
             entries.push("disconnect");
@@ -160,59 +207,8 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return entries;
     }
 
-    get field(): EntryField | undefined {
-        return this.#field;
-    }
-
-    update(data: UpdateData<TriggerEntryData>) {
-        if ("value" in data && R.isNullish(data.value)) {
-            delete data.value;
-            data["-=value"] = null;
-        }
-
-        this.node.update({
-            [this.category]: {
-                [this.key]: data,
-            },
-        });
-    }
-
-    addConnection(other: BlueprintEntry | NodeEntryId) {
-        const connections = this.connections;
-        connections.push(other instanceof BlueprintEntry ? other.id : other);
-        this.update({ ids: R.unique(connections) });
-    }
-
-    removeConnection(other: BlueprintEntry | NodeEntryId) {
-        const otherid = other instanceof BlueprintEntry ? other.id : other;
-        const connections = this.connections;
-        const removed = connections.findSplice((id) => id === otherid);
-
-        if (removed) {
-            this.update({ ids: R.unique(connections) });
-        }
-    }
-
-    disconnect(skipSelf?: boolean) {
-        const toRefresh: BlueprintEntry[] = [];
-
-        for (const otherId of this.connections) {
-            const other = this.blueprint.getEntry(otherId);
-            if (!other) continue;
-
-            toRefresh.push(other);
-            other.removeConnection(this);
-            this.blueprint.connectionsLayer.remove(this, other);
-        }
-
-        if (!skipSelf) {
-            toRefresh.push(this);
-            this.update({ ids: [] });
-        }
-
-        for (const entry of toRefresh) {
-            entry.refreshConnector();
-        }
+    get isBridge(): boolean {
+        return this.type === "bridge";
     }
 
     isConnectedTo(other: BlueprintEntry | NodeEntryId): boolean {
@@ -221,12 +217,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
     isCompatibleWith(other: BlueprintEntry | NodeEntryType): boolean {
         const otherType = other instanceof BlueprintEntry ? other.type : other;
-
-        if (this.type === otherType) {
-            return true;
-        }
-
-        return !!COMPATIBLE_ENTRIES[this.type]?.includes(otherType);
+        return entriesAreCompatible(this.type, otherType);
     }
 
     canConnectTo(other: BlueprintEntry): boolean {
@@ -247,31 +238,20 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.testContains(point) && this.canConnectTo(other);
     }
 
-    refreshConnector() {
-        this.#connector?.clear();
-        this.#drawConnector(this.#connector);
-        this.#field?.refresh();
-    }
-
     #drawLabel(): PreciseText | undefined {
-        switch (this.type) {
-            case "select":
-            case "text": {
-                return;
-            }
-
-            default: {
-                return this.node.preciseText(this.label);
-            }
-        }
+        if (this.isInput && ["select", "text"].includes(this.type)) return;
+        return this.node.preciseText(this.label);
     }
 
     #drawField(): EntryField | undefined {
-        if (this.category === "outputs" || !EntryField.ALLOWED_TYPES.includes(this.type)) return;
+        if (this.isOutput || !EntryField.ALLOWED_TYPES.includes(this.type)) return;
         return new EntryField(this);
     }
 
-    #drawConnector(connector = new PIXI.Graphics()): PIXI.Graphics {
+    #drawConnector(): PIXI.Graphics | undefined {
+        if (this.isInput && !this.hasInputConnector) return;
+
+        const connector = new PIXI.Graphics();
         const color = this.connectorColor;
 
         connector.eventMode = "static";
@@ -282,7 +262,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
             connector.beginFill(color);
         }
 
-        if (this.type === "bridge") {
+        if (this.isBridge) {
             connector.lineStyle({ color, width: 1 });
             connector.moveTo(0, 0);
             connector.lineTo(6, 0);
@@ -316,25 +296,39 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         if (!result) return;
 
         switch (result.value) {
-            case "add-variable": {
-                break;
+            case "create-variable": {
+                return this.blueprint.createVariable(
+                    this as BlueprintEntry & { type: NonBridgeEntryType }
+                );
             }
 
-            case "remove-variable": {
-                break;
+            case "delete-variable": {
+                return this.blueprint.deleteVariable(this.id);
+            }
+
+            case "edit-variable": {
+                return this.blueprint.editVariable(this.id);
             }
 
             case "disconnect": {
-                this.disconnect();
+                this.node.data.disconnect(this.id);
+                this.blueprint.refresh();
                 break;
             }
         }
     }
 }
 
-type EntryContextValue = "add-variable" | "remove-variable" | "disconnect";
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex: true): string;
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: false): number;
+function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: boolean): number | string {
+    const decimal = CONNECTOR_COLOR[type];
+    return hex ? decimal.toString(16).padStart(6, "0") : decimal;
+}
+
+type EntryContextValue = "create-variable" | "delete-variable" | "edit-variable" | "disconnect";
 
 type EntrySchema = NodeRawSchemaEntry<NodeEntryType>;
 
-export { BlueprintEntry };
+export { BlueprintEntry, getConnectorColor };
 export type { EntrySchema };

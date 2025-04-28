@@ -44,7 +44,7 @@
         <div class="header">
             <div class="title">{{@root.i18n 'variable.title'}}</div>
             <div class="controls right">
-                <a data-action="add-variable" {{{@root.i18n.tooltip 'variable.add' }}} {{disabled
+                <a data-action="create-variable" {{{@root.i18n.tooltip 'variable.add' }}} {{disabled
                     (not selected)}}>
                     <i class="fa-solid fa-plus"></i>
                 </a>
@@ -53,22 +53,31 @@
         <div class="scroll">
             <ul class="variables">
                 {{#each variables as |variable|}}
-                <li class="variable" data-id="{{variable.entryId}}">
+                <li class="variable" {{#unless variable.locked}} data-id="{{variable.id}}"
+                    {{/unless}}>
                     <div class="name" style="--entry-color: #{{variable.color}};">
                         {{#if variable.global}}
-                        <i class="fa-regular fa-circle" {{{@root.i18n.tooltip 'variable.global' }}}>
+                        <i class="fa-solid fa-circle" {{{@root.i18n.tooltip 'variable.global'
+                            type=variable.type}}}>
                         </i>
                         {{else}}
-                        <i class="fa-solid fa-circle" {{{@root.i18n.tooltip 'variable.linked' }}}>
+                        <i class="fa-regular fa-circle" {{{@root.i18n.tooltip 'variable.linked'
+                            type=variable.type}}}>
                         </i>
                         {{/if}}
                         {{variable.label}}
                     </div>
                     <div class="controls">
+                        {{#if variable.locked}}
+                        <span {{{@root.i18n.tooltip 'variable.locked' }}}>
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        {{else}}
                         <a data-action="remove-variable" {{{@root.i18n.tooltip 'variable.delete'
                             }}}>
                             <i class="fa-solid fa-trash"></i>
                         </a>
+                        {{/if}}
                     </div>
                 </li>
                 {{/each}}

@@ -4,12 +4,30 @@ import {
     BlueprintEntry,
     BlueprintGridLayer,
     BlueprintMenu,
+    BlueprintMenuGroup,
     BlueprintNode,
     BlueprintNodesLayer,
 } from "blueprint";
-import { NodeEntryId, PartialTriggerNodeDataSource, TriggerData, WorldTriggers } from "data";
-import { distanceToPoint, getSetting, MODULE, subtractPoint } from "module-helpers";
-import { EventKey, getFilterGroups } from "schema";
+import {
+    NODE_NONBRIDGE_TYPES,
+    NodeEntryId,
+    NonBridgeEntryType,
+    TriggerData,
+    TriggerNodeDataSource,
+    WorldTriggers,
+} from "data";
+import {
+    confirmDialog,
+    dataToDatasetString,
+    distanceToPoint,
+    getSetting,
+    localize,
+    MODULE,
+    R,
+    subtractPoint,
+    waitDialog,
+} from "module-helpers";
+import { EventKey, FilterGroupEntry, FilterNodeData, getFilterGroups } from "schema";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized = false;
@@ -86,6 +104,12 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.removeAllListeners();
 
         super.destroy(true, true);
+    }
+
+    refresh() {
+        this.#clear();
+        this.#draw();
+        this.parent?.refresh();
     }
 
     resizeAll() {
@@ -167,15 +191,134 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         }
     }
 
-    async createNode(data: PartialTriggerNodeDataSource): Promise<BlueprintNode | undefined> {
+    async createNodeFromFilter(
+        target: Point,
+        entry?: BlueprintEntry
+    ): Promise<BlueprintNode | undefined> {
         const trigger = this.trigger;
         if (!trigger) return;
 
+        const groups = this.#getFilterGroups(entry);
+        const result = await BlueprintMenu.wait<FilterNodeData>({
+            blueprint: this,
+            groups,
+            target,
+            classes: ["nodes-menu"],
+        });
+        if (!result) return;
+
+        const { key, type, variable } = result;
+        const data: TriggerNodeDataSource = { type, key };
+
+        if (variable) {
+            data.target = variable.target;
+
+            if (key === "variable-getter") {
+                data.custom = {
+                    outputs: [{ type: variable.type, key: "output" }],
+                };
+            } else {
+                data.custom = {
+                    inputs: [{ type: variable.type, key: "input", label: variable.type }],
+                    outputs: [{ type: variable.type, key: "value" }],
+                };
+            }
+        }
+
         try {
             const [node] = await trigger.createEmbeddedDocuments("Node", [data]);
+
+            if (node.invalid) {
+                throw new Error("invalid document data");
+            }
+
             return this.nodesLayer.add(node);
         } catch (error) {
             MODULE.error("An error occured while creating a new node.", error);
+        }
+    }
+
+    async createVariable(entry?: BlueprintEntry & { type: NonBridgeEntryType }) {
+        const trigger = this.trigger;
+        if (!trigger) return;
+
+        const global = !entry;
+        const placeholder = entry?.label ?? "";
+        const options = global ? NODE_NONBRIDGE_TYPES : [{ value: "", label: entry.type }];
+
+        const result = await waitDialog<{ label: string; type: NonBridgeEntryType }>({
+            content: [
+                {
+                    type: "text",
+                    inputConfig: {
+                        name: "label",
+                        placeholder,
+                    },
+                },
+                {
+                    type: "select",
+                    inputConfig: {
+                        name: "type",
+                        options,
+                        i18n: "entry",
+                        disabled: !global,
+                    },
+                },
+            ],
+            i18n: "create-variable",
+            skipAnimate: true,
+        });
+
+        if (!result) return;
+
+        const type = entry?.type ?? result.type;
+        const label = result.label.trim() || placeholder || localize("entry", type);
+        const id = entry?.id ?? `${trigger.event.id}.outputs.${foundry.utils.randomID()}`;
+
+        trigger.addVariable(id, { type, label, global });
+        this.parent?.refresh();
+    }
+
+    async deleteVariable(id: NodeEntryId) {
+        const variable = this.trigger?.getVariable(id);
+        if (!variable) return;
+
+        const result = await confirmDialog("delete-variable", {
+            skipAnimate: true,
+            data: { name: variable.label },
+        });
+
+        if (result) {
+            this.trigger?.removeVariable(id);
+            this.refresh();
+        }
+    }
+
+    async editVariable(id: NodeEntryId) {
+        const variable = this.trigger?.getVariable(id);
+        if (!variable) return;
+
+        const result = await waitDialog<{ label: string }>({
+            content: [
+                {
+                    type: "text",
+                    inputConfig: {
+                        name: "label",
+                        value: variable.label,
+                        placeholder: localize("entry", variable.type),
+                    },
+                    groupConfig: {
+                        i18n: "create-variable",
+                    },
+                },
+            ],
+            i18n: "edit-variable",
+            skipAnimate: true,
+        });
+
+        if (result && result.label !== variable.label) {
+            this.trigger?.update({ variables: { [id]: result } });
+            this.refresh();
         }
     }
 
@@ -198,6 +341,88 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
+    #getFilterGroups(entry?: BlueprintEntry): BlueprintMenuGroup[] {
+        const groups = getFilterGroups();
+        const setter = localize("node.variable.setter");
+
+        const variables = R.pipe(
+            this.trigger?.variables ?? {},
+            R.entries(),
+            R.flatMap(([target, variable]): FilterGroupEntry[] => {
+                const variableData = {
+                    ...variable,
+                    // we re-add manually otherwise it is gone for some reason
+                    type: variable.type,
+                    target,
+                };
+
+                const entries: FilterGroupEntry[] = [
+                    {
+                        type: "variable",
+                        key: "variable-getter",
+                        inputs: [],
+                        outputs: [variable.type],
+                        label: variable.label,
+                        data: dataToDatasetString({
+                            type: "variable",
+                            key: "variable-getter",
+                            variable: variableData,
+                        } satisfies FilterNodeData),
+                    },
+                ];
+
+                if (variable.global) {
+                    entries.push({
+                        type: "variable",
+                        key: "variable-setter",
+                        inputs: ["bridge", variable.type],
+                        outputs: ["bridge", variable.type],
+                        label: `${variable.label} (${setter})`,
+                        data: dataToDatasetString({
+                            type: "variable",
+                            key: "variable-setter",
+                            variable: variableData,
+                        } satisfies FilterNodeData),
+                    });
+                }
+
+                return entries;
+            }),
+            R.sortBy(R.prop("label"))
+        );
+
+        if (variables.length) {
+            groups.push({
+                title: localize("node.variable.title"),
+                entries: variables,
+            });
+        }
+
+        if (!entry) {
+            return groups;
+        }
+
+        const entryType = entry.type;
+        const oppositeCategory = entry.oppositeCategory;
+
+        return R.pipe(
+            groups,
+            R.map(({ entries, title, isSub }) => {
+                const filtered = entries.filter((filter) => {
+                    return filter[oppositeCategory].includes(entryType);
+                });
+                if (!filtered.length) return;
+
+                return {
+                    title,
+                    isSub,
+                    entries: filtered,
+                };
+            }),
+            R.filter(R.isTruthy)
+        );
+    }
+
     #draw() {
         const trigger = this.trigger;
         if (!trigger) return;
@@ -209,22 +434,10 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     #clear() {
-        this.#trigger = null;
-
         this.nodesLayer.clear();
         this.connectionsLayer.clear();
 
         this.stage.removeAllListeners();
-
-        // for (const layer of [this.nodesLayer, this.#connectionsLayer]) {
-        //     layer.removeAllListeners();
-
-        //     const removed = layer.removeChildren();
-
-        //     for (let i = 0; i < removed.length; ++i) {
-        //         removed[i].destroy(true);
-        //     }
-        // }
     }
 
     #onPointerDown(event: PIXI.FederatedPointerEvent) {
@@ -280,11 +493,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     async #onContextMenu({ x, y }: Point) {
-        const result = await BlueprintMenu.waitNodes(this, getFilterGroups(), x, y);
-        if (!result) return;
-
-        const { key, type } = result;
-        const node = await this.createNode({ key, type, position: { x, y } });
+        const node = await this.createNodeFromFilter({ x, y });
         if (!node) return;
 
         const center = { x: x - node.width / 2, y: y - node.height / 2 };

@@ -1,9 +1,7 @@
 import { NodeEntryId, TriggerData } from "data";
-import { R, subtractPoint } from "module-helpers";
-import { getFilterGroups } from "schema";
+import { subtractPoint } from "module-helpers";
 import { Blueprint } from "./blueprint";
-import { BlueprintMenu } from "./context-menu";
-import { BlueprintEntry } from "./nodes";
+import { BlueprintEntry, BlueprintNode } from "./nodes";
 
 class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
     #blueprint: Blueprint;
@@ -34,10 +32,28 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         return (this.#connector ??= this.addChild(new PIXI.Graphics()));
     }
 
+    get nodes(): Generator<BlueprintNode, void, undefined> {
+        return this.blueprint.nodesLayer.nodes();
+    }
+
     draw() {
         const trigger = this.trigger;
         if (this.#drawn || !trigger) return;
         this.#drawn = true;
+
+        for (const node of this.nodes) {
+            for (const origin of node.entries("outputs")) {
+                for (const id of origin.connections) {
+                    const target = this.blueprint.getEntry(id);
+                    if (!target) continue;
+
+                    const connection = this.addChild(new PIXI.Graphics());
+
+                    this.#drawConnection(connection, origin, target);
+                    twoWays(origin.id, target.id, (id) => this.#connections.set(id, connection));
+                }
+            }
+        }
     }
 
     clear() {
@@ -75,24 +91,6 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         }
     }
 
-    remove(origin: BlueprintEntry, target: BlueprintEntry) {
-        // because of toWays, we want to be sure to only destroy it once
-        let toRemove: PIXI.Graphics | undefined;
-
-        twoWays(origin, target, (id) => {
-            const connection = this.#connections.get(id);
-            if (!connection) return;
-
-            toRemove = connection;
-            this.#connections.delete(id);
-        });
-
-        if (toRemove) {
-            this.removeChild(toRemove);
-            toRemove.destroy(true);
-        }
-    }
-
     #drawConnection(
         connection: PIXI.Graphics,
         origin: BlueprintEntry,
@@ -112,19 +110,6 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         connection.lineTo(targetCenter.x, targetCenter.y);
     }
 
-    #addConnection(origin: BlueprintEntry, target: BlueprintEntry) {
-        const connection = this.addChild(new PIXI.Graphics());
-
-        origin.addConnection(target);
-        target.addConnection(origin);
-
-        origin.refreshConnector();
-        target.refreshConnector();
-
-        this.#drawConnection(connection, origin, target);
-        twoWays(origin.id, target.id, (id) => this.#connections.set(id, connection));
-    }
-
     #dragConnection(event: PIXI.FederatedPointerEvent) {
         if (!this.#connecting) return;
 
@@ -141,7 +126,7 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
 
         const point = event.global;
 
-        for (const otherNode of this.blueprint.nodesLayer.nodes()) {
+        for (const otherNode of this.nodes) {
             const otherEntry = otherNode.testConnection(point, entry);
             if (otherEntry === undefined) continue;
 
@@ -149,7 +134,7 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
                 this.#addConnection(entry, otherEntry);
             }
 
-            return this.connector.clear();
+            return this.blueprint.refresh();
         }
 
         await this.#onMenu(entry, point);
@@ -166,33 +151,15 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         this.blueprint.enableNodesInteraction(true);
     }
 
+    #addConnection(origin: BlueprintEntry, target: BlueprintEntry) {
+        origin.node.data.addConnection(origin.id, target.id);
+        target.node.data.addConnection(target.id, origin.id);
+    }
+
     async #onMenu(entry: BlueprintEntry, { x, y }: Point) {
         if (!this.trigger) return;
 
-        const entryType = entry.type;
-        const oppositeCategory = entry.oppositeCategory;
-        const groups = R.pipe(
-            getFilterGroups(),
-            R.map(({ entries, title, isSub }) => {
-                const filtered = entries.filter((filter) =>
-                    filter[oppositeCategory].includes(entryType)
-                );
-                if (!filtered.length) return;
-
-                return {
-                    title,
-                    isSub,
-                    entries: filtered,
-                };
-            }),
-            R.filter(R.isTruthy)
-        );
-
-        const result = await BlueprintMenu.waitNodes(this.blueprint, groups, x, y);
-        if (!result) return;
-
-        const { key, type } = result;
-        const node = await this.blueprint.createNode({ type, key, position: { x, y } });
+        const node = await this.blueprint.createNodeFromFilter({ x, y }, entry);
         if (!node) return;
 
         const otherEntry = Array.from(node.entries(entry.oppositeCategory)).find((other) =>
@@ -205,6 +172,8 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
 
         node.setPosition(point);
         this.#addConnection(entry, otherEntry);
+
+        this.blueprint.refresh();
     }
 }
 

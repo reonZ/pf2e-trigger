@@ -1,46 +1,46 @@
 import { BlueprintMenuGroup, BlueprintMenuGroupEntry } from "blueprint";
-import { NODE_TYPES, NodeEntryType, NodeType } from "data";
+import {
+    COMPATIBLE_ENTRIES,
+    NODE_TYPES,
+    NodeEntryId,
+    NodeEntryType,
+    NodeType,
+    TriggerDataVariable,
+} from "data";
 import { dataToDatasetString, joinStr, localize, R } from "module-helpers";
 import { NodeSchemaModuleId } from "./model";
-import { getSchema, hasInBridge, NodeKey, NodeRawSchema, SCHEMAS } from "./schema";
+import {
+    getSchema,
+    hasInBridge,
+    hasInputConnector,
+    hasOuts,
+    NodeKey,
+    NodeRawSchema,
+    SCHEMAS,
+} from "./schema";
 
-const COMPATIBLE_ENTRY_GROUPS = [["dc", "number"]] as const;
-
-const COMPATIBLE_ENTRIES = R.pipe(
-    COMPATIBLE_ENTRY_GROUPS,
-    R.flatMap((group) => {
-        return R.pipe(
-            group,
-            R.map((entry): [NodeEntryType, NodeEntryType[]] => {
-                return [entry, group.filter((y) => y !== entry)];
-            })
-        );
-    }),
-    R.fromEntries()
-);
-
-const FILTER_TYPES = R.difference(NODE_TYPES, [
-    "event",
-    "subtrigger",
-    "variable",
-]) as FilterNodeType[];
+const FILTER_TYPES: NodeType[] = R.difference(NODE_TYPES, ["event", "subtrigger", "variable"]);
 
 let FILTERS: FilterGroup[] | undefined;
 
 function createFilters(): FilterGroup[] {
     return R.pipe(
-        R.entries(SCHEMAS) as [FilterNodeType, Record<NodeKey, NodeRawSchema>][],
+        R.entries(SCHEMAS) as [NodeType, Record<NodeKey, NodeRawSchema>][],
         R.filter(([type]) => FILTER_TYPES.includes(type)),
         R.flatMap(([type, schemas]) => {
             return R.pipe(
                 R.entries(schemas),
-                R.map(([key]): FilterGroupFilter | undefined => {
-                    const schema = getSchema(type, key);
+                R.map(([key]): PrefilterGroupEntry | undefined => {
+                    const schema = getSchema({ type, key });
                     if (!schema) return;
 
                     const [inputs, outputs] = R.pipe(
                         ["inputs", "outputs"] as const,
                         R.map((category): NodeEntryType[] => {
+                            if (category === "inputs" && !hasInputConnector({ type, key })) {
+                                return [];
+                            }
+
                             return R.pipe(
                                 schema[category] as { type: NodeEntryType }[],
                                 R.flatMap(({ type }) => {
@@ -53,6 +53,10 @@ function createFilters(): FilterGroup[] {
 
                     if (hasInBridge({ type, key })) {
                         inputs.push("bridge");
+                    }
+
+                    if (hasOuts({ type, key })) {
+                        outputs.push("bridge");
                     }
 
                     return {
@@ -84,23 +88,30 @@ function createFilters(): FilterGroup[] {
 }
 
 function getFilterGroups(): FilterGroup[] {
-    return (FILTERS ??= createFilters());
+    return (FILTERS ??= createFilters()).slice();
 }
 
-type FilterNodeType = Exclude<NodeType, "event" | "subtrigger" | "variable">;
-
-type FilterGroupFilter = BlueprintMenuGroupEntry & {
+type PrefilterGroupEntry = FilterGroupEntry & {
     id: string;
+    module: NodeSchemaModuleId | undefined;
+};
+
+type FilterGroupEntry = BlueprintMenuGroupEntry & {
     inputs: NodeEntryType[];
     outputs: NodeEntryType[];
     key: NodeKey;
-    module: NodeSchemaModuleId | undefined;
-    type: FilterNodeType;
+    type: NodeType;
 };
 
-type FilterGroup = BlueprintMenuGroup<FilterGroupFilter>;
+type FilterGroup = BlueprintMenuGroup<FilterGroupEntry>;
 
-type FilterNodeData = { type: NodeType; key: NodeKey };
+type FilterNodeData = {
+    type: NodeType;
+    key: NodeKey;
+    variable?: TriggerDataVariable & {
+        target: NodeEntryId;
+    };
+};
 
-export { COMPATIBLE_ENTRIES, getFilterGroups };
-export type { FilterGroup, FilterGroupFilter, FilterNodeData };
+export { getFilterGroups };
+export type { FilterGroup, FilterGroupEntry, FilterNodeData };

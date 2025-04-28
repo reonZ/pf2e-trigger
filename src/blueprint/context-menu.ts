@@ -8,12 +8,12 @@ import {
     ApplicationRenderOptions,
     assignStyle,
     DatasetData,
+    datasetToData,
     dataToDatasetString,
     localize,
     R,
     render,
 } from "module-helpers";
-import { FilterGroup, FilterNodeData } from "schema";
 
 class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api.ApplicationV2<
     BlueprintMenuConfiguration<TData>
@@ -42,25 +42,11 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
         this.#target = target;
     }
 
-    static wait<TData extends DOMStringMap>(
+    static wait<TData extends Record<string, any>>(
         configs: Omit<BlueprintMenuOptions<TData>, "resolve">
     ): Promise<null | TData> {
         return new Promise((resolve: BlueprintMenuResolve<TData>) => {
             new BlueprintMenu({ ...configs, resolve }).render(true);
-        });
-    }
-
-    static waitNodes(
-        blueprint: Blueprint,
-        groups: FilterGroup[],
-        x: number,
-        y: number
-    ): Promise<null | FilterNodeData> {
-        return BlueprintMenu.wait({
-            blueprint,
-            groups,
-            target: { x, y },
-            classes: ["nodes-menu"],
         });
     }
 
@@ -207,7 +193,10 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
     #activateListeners(html: HTMLElement) {
         addListenerAll(html, "li", (event, el) => {
             event.stopPropagation();
-            this.#resolve(el.dataset as TData);
+
+            const data = datasetToData(el.dataset) as TData;
+
+            this.#resolve(data);
             this.close();
         });
     }

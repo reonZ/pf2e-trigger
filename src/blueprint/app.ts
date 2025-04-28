@@ -1,5 +1,5 @@
-import { Blueprint } from "blueprint";
-import { NodeEntryId, TriggerData } from "data";
+import { Blueprint, getConnectorColor } from "blueprint";
+import { NodeEntryId, TriggerData, TriggerDataVariable } from "data";
 import {
     addListener,
     addListenerAll,
@@ -10,6 +10,7 @@ import {
     HandlebarsTemplatePart,
     htmlClosest,
     htmlQuery,
+    localize,
     R,
     templateLocalize,
     TemplateLocalize,
@@ -54,6 +55,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         return this.#blueprint;
     }
 
+    get trigger(): TriggerData | undefined {
+        return this.blueprint.trigger;
+    }
+
     get sidebar(): HTMLElement | null {
         return htmlQuery(this.element, `[data-application-part="sidebar"]`);
     }
@@ -95,7 +100,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
             case "title": {
                 return {
-                    title: this.blueprint.trigger?.label ?? "",
+                    title: this.trigger?.label ?? "",
                 } satisfies BlueprintMenuParts["title"];
             }
 
@@ -134,17 +139,33 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     async #prepareSidebarContext(): Promise<BlueprintMenuParts["sidebar"]> {
+        const trigger = this.trigger;
         const [subtriggers, triggers] = R.partition(
             this.blueprint.triggers.contents,
-            (trigger) => trigger.isSubtrigger
+            (t) => t.isSubtrigger
+        );
+
+        const variables = R.pipe(
+            trigger?.variables ?? {},
+            R.entries(),
+            R.map(([id, variable]): BlueprintVariable => {
+                return {
+                    ...variable,
+                    id,
+                    color: getConnectorColor(variable.type, true),
+                    type: localize("entry", variable.type),
+                };
+            }),
+            R.sortBy(R.prop("label"))
         );
 
         return {
             i18n: templateLocalize("blueprint-menu.sidebar"),
-            selected: this.blueprint.trigger?.id,
+            selected: trigger?.id,
             showSidebar: this.#showSidebar,
             subtriggers,
             triggers,
+            variables,
         };
     }
 
@@ -152,7 +173,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         type TriggerHeaderAction = "close-window" | "create-trigger" | "export-all" | "import";
         type TriggerAction = "select-trigger" | "export-trigger" | "delete-trigger";
         type SubtriggerHeaderAction = "add-subtrigger";
-        type VariableHeaderAction = "add-variable";
+        type VariableHeaderAction = "create-variable";
         type VariableAction = "remove-variable";
         type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeaderAction;
 
@@ -160,14 +181,14 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             return htmlClosest(el, "[data-id]")?.dataset.id ?? "";
         };
 
-        addListenerAll(html, ".trigger .name", "contextmenu", (event, el) => {
+        addListenerAll(html, ".trigger[data-id] .name", "contextmenu", (event, el) => {
             const triggerId = getEntryId(el);
             this.#editTrigger(triggerId);
         });
 
         addListenerAll(
             html,
-            ".trigger [name='enabled']",
+            ".trigger[data-id] [name='enabled']",
             "change",
             (event, el: HTMLInputElement) => {
                 const triggerId = getEntryId(el);
@@ -202,13 +223,13 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                     return;
                 }
 
-                case "add-variable": {
-                    return;
+                case "create-variable": {
+                    return this.blueprint.createVariable();
                 }
             }
         });
 
-        addListenerAll(html, ".trigger [data-action]", (event, el) => {
+        addListenerAll(html, ".trigger[data-id] [data-action]", (event, el) => {
             const triggerId = getEntryId(el);
 
             switch (el.dataset.action as TriggerAction) {
@@ -226,12 +247,17 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             }
         });
 
-        addListenerAll(html, ".variable [data-action]", (event, el) => {
+        addListenerAll(html, ".variable[data-id] .name", "contextmenu", (event, el) => {
+            const entryId = getEntryId(el) as NodeEntryId;
+            this.blueprint.editVariable(entryId);
+        });
+
+        addListenerAll(html, ".variable[data-id] [data-action]", (event, el) => {
             const entryId = getEntryId(el) as NodeEntryId;
 
             switch (el.dataset.action as VariableAction) {
                 case "remove-variable": {
-                    return this.#removeVariable(entryId);
+                    return this.blueprint.deleteVariable(entryId);
                 }
             }
         });
@@ -327,12 +353,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         });
 
         if (result && result.name !== trigger.name) {
-            trigger.update(result);
+            trigger.update({ name: result.name });
             this.refresh();
         }
     }
-
-    #removeVariable(id: NodeEntryId) {}
 
     #exportTrigger(id: string) {}
 
@@ -352,6 +376,7 @@ type BlueprintMenuParts = {
         showSidebar: boolean;
         subtriggers: TriggerData[];
         triggers: TriggerData[];
+        variables: BlueprintVariable[];
     };
     title: {
         title: string;
@@ -362,6 +387,12 @@ type BlueprintMenuParts = {
     windowCollapsed: {
         i18n: TemplateLocalize;
     };
+};
+
+type BlueprintVariable = Omit<TriggerDataVariable, "type"> & {
+    id: NodeEntryId;
+    color: string;
+    type: string;
 };
 
 type BlueprintMenuPart = keyof BlueprintMenuParts;

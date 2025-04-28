@@ -1,13 +1,15 @@
 import {
     isEventNode,
+    NODE_NONBRIDGE_TYPES,
     NodeEntryId,
-    PartialTriggerNodeDataSource,
+    NonBridgeEntryType,
     TriggerNodeData,
-    TriggerVariableField,
+    TriggerNodeDataSource,
 } from "data";
-import { IdField, makeModuleDocument, MODULE, R, RecordField } from "module-helpers";
+import { IdField, localize, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
+import { isVariable } from "schema";
 
 const triggerDataMetadata = (): Partial<abstract.DocumentClassMetadata> => ({
     name: "Trigger",
@@ -32,13 +34,35 @@ const triggerDataSchema = (): TriggerDataSchema => ({
         initial: true,
     }),
     nodes: new fields.EmbeddedCollectionField(TriggerNodeData),
-    variables: new fields.TypedObjectField(new TriggerVariableField(), {
-        required: false,
-        nullable: false,
-    }),
+    variables: new fields.TypedObjectField(
+        new fields.SchemaField<TriggerVariableSchema>({
+            label: new fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+            }),
+            type: new fields.StringField({
+                required: true,
+                nullable: false,
+                blank: false,
+                readonly: true,
+                choices: NODE_NONBRIDGE_TYPES,
+                validationError: "is not a valid Node Entry Type string",
+            }),
+            global: new fields.BooleanField({
+                required: false,
+                nullable: false,
+                initial: false,
+            }),
+        }),
+        {
+            required: false,
+            nullable: false,
+        }
+    ),
 });
 
-class TriggerData extends makeModuleDocument<abstract._Document, TriggerDataSchema>(
+class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     triggerDataMetadata,
     triggerDataSchema
 ) {
@@ -65,9 +89,27 @@ class TriggerData extends makeModuleDocument<abstract._Document, TriggerDataSche
         return this.nodes.get(id.split(".")[0]);
     }
 
+    getVariable(id: NodeEntryId) {
+        return this.variables[id];
+    }
+
+    addVariable(id: NodeEntryId, data: TriggerDataVariableSource) {
+        this.update({ variables: { [id]: data } }, { broadcast: false });
+    }
+
+    removeVariable(id: NodeEntryId) {
+        for (const node of this.nodes) {
+            if (isVariable(node) && node.target === id) {
+                node.delete({ broadcast: false });
+            }
+        }
+
+        this.update({ variables: { [`-=${id}`]: null } }, { broadcast: false });
+    }
+
     _initializeSource(
         data: object,
-        options?: DataModelConstructionOptions<abstract._Document> | undefined
+        options?: DataModelConstructionOptions<ModuleDocument> | undefined
     ): this["_source"] {
         const source = super._initializeSource(data, options);
 
@@ -81,14 +123,47 @@ class TriggerData extends makeModuleDocument<abstract._Document, TriggerDataSche
 
     _initialize(options?: Record<string, unknown>) {
         super._initialize(options);
+
         this.event = this.nodes.find(isEventNode)!;
+
+        this.variables[`${this.event.id}.outputs.this`] = {
+            type: "target",
+            global: false,
+            label: localize("entry.this"),
+            locked: true,
+        };
+
+        // TODO add all the event variables
+    }
+
+    _onDeleteDescendantDocuments(
+        parent: ModuleDocument,
+        collection: string,
+        nodes: TriggerNodeData[],
+        nodeIds: string[],
+        options: object
+    ): void {
+        const variables: Record<string, NodeEntryId[]> = {};
+
+        for (const entryId of R.keys(this.variables)) {
+            const nodeId = entryId.split(".")[0];
+            (variables[nodeId] ??= []).push(entryId);
+        }
+
+        for (const nodeId of nodeIds) {
+            const ids = variables[nodeId];
+
+            for (const id of ids) {
+                this.removeVariable(id);
+            }
+        }
     }
 }
 
 interface TriggerData {
     createEmbeddedDocuments(
         embeddedName: "Node",
-        data: PartialTriggerNodeDataSource[],
+        data: PreCreate<TriggerNodeDataSource>[],
         operation?: Partial<DatabaseCreateOperation<TriggerData>>
     ): Promise<TriggerNodeData[]>;
 }
@@ -98,16 +173,39 @@ type TriggerDataSchema = {
     name: fields.StringField<string, string, false, false, true>;
     enabled: fields.BooleanField<boolean, boolean, false, false, true>;
     nodes: fields.EmbeddedCollectionField<TriggerNodeData>;
-    variables: RecordField<TriggerVariableField, false>;
+    variables: fields.TypedObjectField<
+        fields.SchemaField<TriggerVariableSchema>,
+        Record<NodeEntryId, Omit<TriggerDataVariable, "locked">>,
+        Record<NodeEntryId, TriggerDataVariable>,
+        false
+    >;
 };
 
-type TriggerDataSource = SourceFromSchema<TriggerDataSchema>;
+type TriggerDataSource = {
+    name?: string;
+    enabled?: boolean;
+    nodes?: TriggerNodeDataSource[];
+    variables?: Record<NodeEntryId, TriggerDataVariableSource>;
+};
 
-type PartialTriggerDataSource = Omit<DeepPartial<TriggerDataSource>, "nodes"> & {
-    nodes?: PartialTriggerNodeDataSource[];
+type TriggerVariableSchema = {
+    label: fields.StringField<string, string, true>;
+    type: fields.StringField<NonBridgeEntryType, NonBridgeEntryType, true, false, false>;
+    global: fields.BooleanField<boolean, boolean, false>;
+};
+
+type TriggerDataVariable = ModelPropsFromSchema<TriggerVariableSchema> & {
+    locked?: boolean;
+};
+
+type TriggerDataVariableSource = {
+    label: string;
+    type: NonBridgeEntryType;
+    global?: boolean;
+    locked?: boolean;
 };
 
 MODULE.devExpose({ TriggerData });
 
 export { TriggerData };
-export type { PartialTriggerDataSource };
+export type { TriggerDataSource, TriggerDataVariable, TriggerDataVariableSource };

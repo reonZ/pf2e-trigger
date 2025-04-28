@@ -16,7 +16,14 @@ import {
     TriggerNodeData,
     TriggerNodeDataSource,
 } from "data";
-import { addToPoint, localize, localizeIfExist, R, subtractPoint } from "module-helpers";
+import {
+    addToPoint,
+    localize,
+    localizeIfExist,
+    ModuleDocument,
+    R,
+    subtractPoint,
+} from "module-helpers";
 import {
     hasInBridge,
     hasOuts,
@@ -24,7 +31,9 @@ import {
     isEvent,
     isGetter,
     isValue,
+    isVariable,
     NodeKey,
+    NodeSchemaEntry,
     NodeSchemaModel,
 } from "schema";
 
@@ -34,7 +43,7 @@ const NODE_ICONS: PartialRecord<NodeType, IconObject> = {
     splitter: { unicode: "\ue254", fontWeight: "400" },
 };
 
-const HEADER_COLOR: PartialRecord<NodeType, number> = {
+const HEADER_COLOR: Record<NodeType, number> = {
     action: 0x2162bd,
     condition: 0x188600,
     event: 0xc40000,
@@ -43,6 +52,7 @@ const HEADER_COLOR: PartialRecord<NodeType, number> = {
     splitter: 0x7e18b5,
     subtrigger: 0xc40000,
     value: 0x757575,
+    variable: 0x2e2e2e,
 };
 
 class BlueprintNode extends PIXI.Container {
@@ -106,8 +116,20 @@ class BlueprintNode extends PIXI.Container {
         return isEvent(this);
     }
 
+    get isValue(): boolean {
+        return isValue(this);
+    }
+
+    get isVariable(): boolean {
+        return isVariable(this);
+    }
+
+    get isGetter(): boolean {
+        return isGetter(this);
+    }
+
     get hasHeader(): boolean {
-        return !isValue(this) && !isGetter(this);
+        return !this.isValue && !this.isGetter;
     }
 
     get opacity(): number {
@@ -130,8 +152,14 @@ class BlueprintNode extends PIXI.Container {
         return { x: 10, y: 4 };
     }
 
+    get targetLabel(): string | undefined {
+        return this.isVariable
+            ? this.trigger?.getVariable(this.data.target as NodeEntryId)?.label
+            : undefined;
+    }
+
     get title(): string {
-        return localize(this.localizePath, "label");
+        return this.targetLabel ?? localize(this.localizePath, "label");
     }
 
     get subtitle(): string | undefined {
@@ -168,12 +196,15 @@ class BlueprintNode extends PIXI.Container {
             entries.push("delete-node", "duplicate-node");
         }
 
-        return entries;
-    }
+        if (this.isVariable) {
+            const variable = this.trigger?.getVariable(this.data.target as NodeEntryId);
 
-    destroy(options?: PIXI.IDestroyOptions | boolean) {
-        this.data.delete();
-        super.destroy(true);
+            if (variable && !variable.locked) {
+                entries.push("delete-variable", "edit-variable");
+            }
+        }
+
+        return entries;
     }
 
     *entries(
@@ -194,17 +225,17 @@ class BlueprintNode extends PIXI.Container {
         this.parent.sortChildren();
     }
 
-    update(data: DeepPartial<TriggerNodeDataSource>): Promise<TriggerNodeData | undefined> {
-        return this.data.update(data);
+    update(
+        data: DeepPartial<TriggerNodeDataSource>,
+        operation?: Partial<DatabaseUpdateOperation<ModuleDocument>>
+    ): Promise<TriggerNodeData | undefined> {
+        return this.data.update(data, operation);
     }
 
     setPosition({ x, y }: Point) {
         this.position.set(x, y);
-        this.update({ position: { x, y } });
-        this.#updateConnections();
-    }
+        this.update({ position: { x, y } }, { broadcast: false });
 
-    #updateConnections() {
         for (const entry of this.entries()) {
             for (const otherId of entry.connections) {
                 const other = this.blueprint.getEntry(otherId);
@@ -219,9 +250,8 @@ class BlueprintNode extends PIXI.Container {
     delete() {
         this.eventMode = "none";
 
-        if (this.blueprint.nodesLayer.delete(this)) {
-            this.destroy(true);
-        }
+        this.data.delete();
+        this.blueprint.refresh();
     }
 
     async duplicate() {
@@ -340,7 +370,7 @@ class BlueprintNode extends PIXI.Container {
 
     #drawEntries(category: NodeEntryCategory): EntriesGroup[] {
         const groups: EntriesGroup[] = R.pipe(
-            [...this.schema[category], ...(this.data.custom?.[category] ?? [])],
+            this.schema[category] as NodeSchemaEntry[],
             R.groupBy(R.prop("group")),
             R.entries(),
             R.map(([group, entries]) => ({
@@ -352,7 +382,7 @@ class BlueprintNode extends PIXI.Container {
 
         const bridges: EntrySchema[] =
             category === "outputs" && hasOuts(this)
-                ? [...this.schema.outs, ...(this.data.custom?.outs ?? [])]
+                ? this.schema.outs
                 : hasInBridge(this)
                 ? [{ key: "in", type: "bridge" }]
                 : [];
@@ -534,6 +564,14 @@ class BlueprintNode extends PIXI.Container {
             case "duplicate-node": {
                 return this.duplicate();
             }
+
+            case "delete-variable": {
+                return this.blueprint.deleteVariable(this.data.target as NodeEntryId);
+            }
+
+            case "edit-variable": {
+                return this.blueprint.editVariable(this.data.target as NodeEntryId);
+            }
         }
     }
 
@@ -562,7 +600,7 @@ function elementOffset(el: PIXI.Container, direction: "x" | "y") {
     return el[direction] + getElementSize(el, direction);
 }
 
-type NodeContextValue = "delete-node" | "duplicate-node";
+type NodeContextValue = "delete-node" | "duplicate-node" | "edit-variable" | "delete-variable";
 
 type EntriesGroup = {
     group: string;

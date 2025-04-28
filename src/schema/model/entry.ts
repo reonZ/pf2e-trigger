@@ -124,11 +124,6 @@ class NodeInputField<
                     nullable: false,
                     choices: NODE_NONBRIDGE_TYPES,
                 }),
-                connection: new fields.BooleanField({
-                    required: false,
-                    nullable: false,
-                    initial: true,
-                }),
                 field: new fields.SchemaField(
                     {
                         min: new fields.NumberField({
@@ -261,22 +256,29 @@ function entrySchemaIsOfType<T extends NodeEntryType>(
     return schema.type === type;
 }
 
+type NodeSchemaEntry = ModelPropsFromSchema<NodeEntrySchema<NodeEntryType>>;
+
 type NodeEntrySchema<TType extends NodeEntryType, TRequired extends boolean = true> = {
     key: fields.StringField<string, string, true>;
     label: fields.StringField<string, string, false, false, false>;
     type: fields.StringField<TType, TType, TRequired>;
-};
-
-type NonBridgeEntrySchema = NodeEntrySchema<NonBridgeEntryType> & {
     group: fields.StringField;
 };
 
+type BaseNodeEntry<TType extends NodeEntryType = NonBridgeEntryType> = {
+    key: string;
+    type: TType;
+    label?: string;
+    group?: string;
+};
+
 type NodeBridgeSchema = NodeEntrySchema<"bridge", false>;
+type NodeBridgeSource = BaseNodeEntry<"bridge">;
 
-type NodeVariableSchema = NonBridgeEntrySchema;
+type NodeOutputSchema = NodeEntrySchema<NonBridgeEntryType>;
+type NodeOutputSource = BaseNodeEntry;
 
-type NodeInputSchema = NonBridgeEntrySchema & {
-    connection: fields.BooleanField<boolean, boolean, false>;
+type NodeInputSchema = NodeEntrySchema<NonBridgeEntryType> & {
     field: SchemaField<NodeInputFieldSchema, false, false, false>;
 };
 
@@ -296,6 +298,16 @@ type NodeInputFieldSchema = {
     options: NodeInputOptionsField;
     code: fields.BooleanField<boolean, boolean, false>;
 };
+type NodeInputSource = BaseNodeEntry & {
+    field?: {
+        min?: number;
+        max?: number;
+        step?: number;
+        default?: string | number | boolean;
+        options?: string | (SelectOption | string)[];
+        code?: boolean;
+    };
+};
 
 type SelectArrayOption = DataUnionField<
     fields.StringField | SelectOptionField<false>,
@@ -305,5 +317,13 @@ type SelectArrayOption = DataUnionField<
     false
 >;
 
-export { NodeInputField, entrySchemaIsOfType };
-export type { NodeBridgeSchema, NodeInputSchema, NodeVariableSchema, NonBridgeEntrySchema };
+export { entrySchemaIsOfType, NodeInputField };
+export type {
+    NodeBridgeSchema,
+    NodeBridgeSource,
+    NodeInputSchema,
+    NodeInputSource,
+    NodeOutputSchema,
+    NodeOutputSource,
+    NodeSchemaEntry,
+};

@@ -6,7 +6,6 @@ import { entrySchemaIsOfType } from "schema";
 class EntryField extends PIXI.Graphics {
     #entry: BlueprintEntry;
     #overlay: PIXI.Graphics;
-    #decoration: PIXI.Graphics | undefined;
     #content: PIXI.Graphics | PreciseText;
 
     static ALLOWED_TYPES: NodeEntryType[] = ["boolean", "number", "select", "text"];
@@ -19,18 +18,18 @@ class EntryField extends PIXI.Graphics {
         this.lineStyle({ color: 0xffffff, width: 1 });
         this.drawRect(0, 0, this.width, this.height);
 
+        const connected = this.connected;
         const children = [
-            (this.#overlay = this.#drawOverlay()),
-            (this.#content = this.#drawContent()),
-            (this.#decoration = this.#drawDecoration()),
+            (this.#overlay = this.#drawOverlay(connected)),
+            (this.#content = this.#drawContent(connected)),
+            this.#drawDecoration(connected),
         ];
 
         this.addChild(...children.filter(R.isTruthy));
 
-        this.refresh();
-
         this.eventMode = "static";
         this.hitArea = new PIXI.Rectangle(0, 0, this.width, this.height);
+
         this.on("pointerdown", (event) => event.stopPropagation());
         this.on("pointerup", this.#onPointerUp.bind(this));
     }
@@ -130,15 +129,11 @@ class EntryField extends PIXI.Graphics {
     }
 
     get placeholder(): string {
-        return this.isNumber ? "" : this.entry.label;
+        return this.isNumber ? "" : this.node.isValue ? this.node.title : this.entry.label;
     }
 
     get textWidth(): number {
         return this.isSelect ? this.width - 16 : this.width;
-    }
-
-    get textElement(): PreciseText | undefined {
-        return this.#content instanceof PIXI.Text ? this.#content : undefined;
     }
 
     get globalBounds(): PIXI.Rectangle {
@@ -157,35 +152,24 @@ class EntryField extends PIXI.Graphics {
         return new PIXI.Rectangle(left, top, right - left, bottom - top);
     }
 
-    refresh() {
-        const connected = this.connected;
-
-        this.#overlay.alpha = Number(connected);
-        this.#overlay.eventMode = connected ? "static" : "none";
-
-        if (this.#decoration) {
-            this.#decoration.alpha = connected ? 0.5 : 1;
-        }
-
-        this.#refreshContent(connected);
-    }
-
-    #drawDecoration(color = 0xffffff): PIXI.Graphics | undefined {
+    #drawDecoration(connected = this.connected): PIXI.Graphics | undefined {
         if (!this.isSelect) return;
 
+        const color = 0xffffff;
         const height = this.height;
         const icon = new PIXI.Graphics();
 
+        icon.alpha = connected ? 0.5 : 1;
         icon.x = this.width - 16;
 
-        icon.lineStyle({ color: 0xffffff, width: 1 });
+        icon.lineStyle({ color, width: 1 });
         icon.moveTo(0, 0);
         icon.lineTo(0, height);
 
         const highPoint = height / 3;
         const lowPoint = height * 0.66;
 
-        icon.lineStyle({ color: 0xffffff, width: 1 });
+        icon.lineStyle({ color, width: 1 });
         icon.moveTo(4, highPoint);
         icon.lineTo(8, lowPoint);
         icon.lineTo(12, highPoint);
@@ -193,45 +177,29 @@ class EntryField extends PIXI.Graphics {
         return icon;
     }
 
-    #refreshContent(connected: boolean) {
-        if (this.#content instanceof PIXI.Graphics) {
-            this.#content.alpha = Number(!connected && this.value);
-            return;
-        }
-
-        if (!connected) {
-            const label = this.content;
-
-            if (label) {
-                this.#content.text = label;
-                this.#content.style.fill = "#ffffff";
-                return;
-            }
-        }
-
-        this.#content.text = this.placeholder;
-        this.#content.style.fill = "#ffffff80";
-    }
-
-    #drawContent(): PIXI.Graphics | PreciseText {
+    #drawContent(connected = this.connected): PIXI.Graphics | PreciseText {
         const height = this.height;
 
         if (this.isBoolean) {
             const check = new PIXI.Graphics();
-            check.clear();
 
-            check.beginFill(0x940404, 0.5);
-            check.drawRect(1, 1, height - 2, height - 2);
-            check.endFill();
+            if (!connected && this.value) {
+                check.beginFill(0x940404, 0.5);
+                check.drawRect(1, 1, height - 2, height - 2);
+                check.endFill();
+            }
 
             return check;
         }
 
+        const label = connected ? undefined : this.content;
         const padding = this.inlinePadding;
-        const text = this.node.preciseText("XX", {
+        const text = this.node.preciseText(label || this.placeholder, {
             fontSize: this.inputFontSize,
+            fill: 0xffffff,
         }) as PreciseText;
 
+        text.alpha = connected || !label ? 0.5 : 1;
         text.x = padding;
         text.y = (height - text.height) / 2;
 
@@ -246,23 +214,27 @@ class EntryField extends PIXI.Graphics {
         return text;
     }
 
-    #drawOverlay(): PIXI.Graphics {
+    #drawOverlay(connected = this.connected): PIXI.Graphics {
         const overlay = new PIXI.Graphics();
 
         overlay.beginFill(0x3b3b3b, 1);
         overlay.drawRect(1, 1, this.width - 2, this.height - 2);
         overlay.endFill();
 
+        overlay.alpha = Number(connected);
+        overlay.eventMode = connected ? "static" : "none";
+
         return overlay;
     }
 
     #onPointerUp(event: PIXI.FederatedPointerEvent) {
         event.stopPropagation();
+        if (this.connected) return;
 
         this.#updateValue(event).then((value) => {
             if (value !== this.value) {
-                this.entry.update({ value });
-                this.refresh();
+                this.node.data.setValue(this.entry.id, value);
+                this.blueprint.refresh();
             }
         });
     }
@@ -314,7 +286,7 @@ class EntryField extends PIXI.Graphics {
             const input = foundry.applications.fields.createTextInput({
                 name: "field",
                 value: current as string,
-                placeholder: this.entry.label,
+                placeholder: this.placeholder,
                 classes: "trigger-input",
             });
 

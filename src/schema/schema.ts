@@ -1,6 +1,14 @@
-import { NodeEntryType, NodeType, NonBridgeEntryType } from "data";
+import { NodeEntryType, NodeType, NonBridgeEntryType, TriggerNodeData } from "data";
 import { R } from "module-helpers";
-import { action, condition, event, NodeSchemaModel, NodeSchemaSource, value } from "schema";
+import {
+    action,
+    condition,
+    event,
+    NodeSchemaModel,
+    NodeSchemaSource,
+    value,
+    variable,
+} from "schema";
 
 const fakeSchema = {} satisfies NodeRawSchema;
 
@@ -15,17 +23,16 @@ const SCHEMAS = {
         "boolean-splitter": fakeSchema,
     },
     value,
-    variable: {
-        "variable-getter": fakeSchema,
-        "variable-setter": fakeSchema,
-    },
+    variable,
     macro: {
         "use-macro": fakeSchema,
     },
     subtrigger: {
         "subtrigger-input": fakeSchema,
+        "subtrigger-output": fakeSchema,
+        "subtrigger-node": fakeSchema,
     },
-} satisfies Record<NodeType, Record<string, NodeRawSchema>>;
+} as const satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
 const NODE_KEYS = R.pipe(
     SCHEMAS,
@@ -35,14 +42,20 @@ const NODE_KEYS = R.pipe(
 
 const EVENT_KEYS = R.keys(SCHEMAS.event);
 
-function getRawSchema(type: NodeType, key: NodeKey): NodeRawSchema | undefined {
-    // @ts-expect-error
-    return foundry.utils.deepClone(SCHEMAS[type]?.[key]);
-}
+function getSchema(
+    data: { type: NodeType; key: NodeKey } | TriggerNodeData
+): NodeSchemaModel | undefined {
+    const schema = foundry.utils.deepClone(
+        // @ts-ignore
+        SCHEMAS[data.type]?.[data.key]
+    ) as DeepPartial<NodeSchemaSource>;
 
-function getSchema(type: NodeType, key: NodeKey): NodeSchemaModel | undefined {
-    const data = getRawSchema(type, key) as DeepPartial<NodeSchemaSource>;
-    return data ? new NodeSchemaModel(data) : undefined;
+    if (data instanceof TriggerNodeData && data._source.custom) {
+        (schema.inputs ??= []).push(...(data._source.custom.inputs ?? []));
+        (schema.outputs ??= []).push(...(data._source.custom.outputs ?? []));
+    }
+
+    return schema ? new NodeSchemaModel(schema) : undefined;
 }
 
 function isValidNodeKey(type: NodeType, key: NodeKey): boolean {
@@ -59,6 +72,10 @@ function isEvent({ type }: NodeAdjacent): boolean {
 
 function isVariable({ type }: NodeAdjacent): boolean {
     return type === "variable";
+}
+
+function isSubtrigger({ type, key }: NodeAdjacent) {
+    return type === "subtrigger" && key === "subtrigger-node";
 }
 
 function isGetter(node: NodeAdjacent): boolean {
@@ -80,6 +97,10 @@ function hasInBridge(node: NodeAdjacent): boolean {
 
 function hasOuts(node: NodeAdjacent): boolean {
     return !isValue(node) && !isGetter(node);
+}
+
+function hasInputConnector(node: NodeAdjacent) {
+    return !isEvent(node) && !isValue(node);
 }
 
 type NodeAdjacent = { type: NodeType; key: NodeKey };
@@ -187,11 +208,14 @@ export {
     EVENT_KEYS,
     getSchema,
     hasInBridge,
+    hasInputConnector,
     hasOuts,
     isEvent,
     isGetter,
+    isSubtrigger,
     isValidNodeKey,
     isValue,
+    isVariable,
     NODE_KEYS,
     SCHEMAS,
 };
