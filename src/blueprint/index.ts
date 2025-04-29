@@ -1,6 +1,6 @@
 export * from "./nodes";
 
-export * from "./app";
+export * from "./application";
 export * from "./blueprint";
 export * from "./connections";
 export * from "./context-menu";

@@ -18,7 +18,6 @@ class NodeEntryIdField<
     static get _defaults() {
         return Object.assign(super._defaults, {
             required: true,
-            blank: false,
             readonly: true,
         });
     }

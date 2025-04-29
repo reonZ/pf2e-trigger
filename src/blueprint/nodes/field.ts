@@ -1,7 +1,7 @@
-import { Blueprint, BlueprintEntry, BlueprintMenu, BlueprintNode, EntrySchema } from "blueprint";
+import { Blueprint, BlueprintEntry, BlueprintMenu, BlueprintNode } from "blueprint";
 import { NodeEntryType, NodeEntryValue } from "data";
-import { assignStyle, localizeIfExist, R } from "module-helpers";
-import { entrySchemaIsOfType } from "schema";
+import { assignStyle, drawRectangleMask, localizeIfExist, R } from "module-helpers";
+import { BaseNodeSchemaEntry, entrySchemaIsOfType } from "schema";
 
 class EntryField extends PIXI.Graphics {
     #entry: BlueprintEntry;
@@ -42,7 +42,7 @@ class EntryField extends PIXI.Graphics {
         return this.#entry;
     }
 
-    get schema(): EntrySchema {
+    get schema(): BaseNodeSchemaEntry {
         return this.entry.schema;
     }
 
@@ -203,10 +203,7 @@ class EntryField extends PIXI.Graphics {
         text.x = padding;
         text.y = (height - text.height) / 2;
 
-        const mask = new PIXI.Graphics();
-        mask.beginFill(0x555555);
-        mask.drawRect(0, 0, this.textWidth - padding * 2, height);
-        mask.endFill();
+        const mask = drawRectangleMask(0, 0, this.textWidth - padding * 2, height);
 
         text.addChild(mask);
         text.mask = mask;

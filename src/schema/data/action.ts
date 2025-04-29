@@ -1,6 +1,7 @@
 import { NodeRawSchema } from "schema";
 
 const rollDamage = {
+    icon: "\uf71c",
     inputs: [
         {
             key: "formula",
@@ -11,9 +12,10 @@ const rollDamage = {
             type: "target",
         },
     ],
-} as const satisfies NodeRawSchema;
+} as const satisfies NodeRawActionSchema;
 
 const rollSave = {
+    icon: "\uf6cf",
     inputs: [
         {
             key: "save",
@@ -41,9 +43,10 @@ const rollSave = {
             type: "number",
         },
     ],
-} as const satisfies NodeRawSchema;
+} as const satisfies NodeRawActionSchema;
 
 const rollDamageWithSave = {
+    icon: "\uf71c",
     inputs: [
         {
             key: "predicate",
@@ -66,12 +69,14 @@ const rollDamageWithSave = {
         },
     ],
     module: "pf2e-toolbelt",
-} as const satisfies NodeRawSchema;
+} as const satisfies NodeRawActionSchema;
 
 const action = {
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "roll-damage-with-save": rollDamageWithSave,
 };
+
+type NodeRawActionSchema = WithRequired<NodeRawSchema, "icon">;
 
 export { action };

@@ -1,6 +1,14 @@
-import { NODE_NONBRIDGE_TYPES, NodeEntryType } from "data";
-import { MODULE, R } from "module-helpers";
 import {
+    NODE_CUSTOM_TYPES,
+    NODE_ENTRY_CATEGORIES,
+    NODE_NONBRIDGE_TYPES,
+    NodeCustomEntryType,
+    NodeEntryCategory,
+    NodeEntryType,
+} from "data";
+import { ArrayField, MODULE, R, SchemaField } from "module-helpers";
+import {
+    baseNodeSchemaEntry,
     NodeBridgeSchema,
     NodeBridgeSource,
     NodeInputField,
@@ -20,6 +28,42 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                 nullable: false,
                 blank: false,
             }),
+            custom: new fields.ArrayField(
+                new fields.SchemaField({
+                    category: new fields.StringField({
+                        required: true,
+                        nullable: false,
+                        blank: false,
+                        readonly: true,
+                        choices: R.concat(NODE_ENTRY_CATEGORIES, ["outs"]),
+                    }),
+                    group: new fields.StringField({
+                        required: false,
+                        nullable: false,
+                        blank: true,
+                        readonly: true,
+                        initial: "",
+                    }),
+                    types: new fields.ArrayField(
+                        new fields.StringField({
+                            required: true,
+                            nullable: false,
+                            blank: false,
+                            choices: NODE_CUSTOM_TYPES,
+                        }),
+                        {
+                            required: false,
+                            nullable: false,
+                            initial: () => NODE_CUSTOM_TYPES.slice(),
+                        }
+                    ),
+                }),
+                {
+                    required: false,
+                    nullable: false,
+                    initial: () => [],
+                }
+            ),
             ...nodeSchemaEntries(),
         };
     }
@@ -37,6 +81,7 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                     label: undefined,
                     type: "bridge",
                     group: "",
+                    custom: false,
                 },
             ];
         }
@@ -51,6 +96,7 @@ function nodeSchemaEntries(): NodeSchemaEntriesSchema {
             new fields.StringField({
                 required: false,
                 nullable: false,
+                blank: false,
                 initial: "bridge",
                 choices: ["bridge"],
             })
@@ -64,6 +110,7 @@ function nodeSchemaEntries(): NodeSchemaEntriesSchema {
             new fields.StringField({
                 required: true,
                 nullable: false,
+                blank: false,
                 choices: NODE_NONBRIDGE_TYPES,
             })
         ),
@@ -75,20 +122,7 @@ function nodeSchemaEntry<
 >(typeField: T) {
     return new fields.ArrayField(
         new fields.SchemaField({
-            group: new fields.StringField<string, string, false, false, true>({
-                required: false,
-                nullable: false,
-                initial: "",
-            }),
-            key: new fields.StringField<string, string, true, false, true>({
-                required: true,
-                nullable: false,
-                blank: false,
-            }),
-            label: new fields.StringField<string, string, false, false, false>({
-                required: false,
-                nullable: false,
-            }),
+            ...baseNodeSchemaEntry(),
             type: typeField,
         }),
         {
@@ -106,6 +140,19 @@ interface NodeSchemaModel
 type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
     icon: NodeSchemaIconField;
     module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
+    custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
+};
+
+type NodeSchemaCustomSchema = {
+    category: fields.StringField<NodeCustomEntryCategory, NodeCustomEntryCategory, true>;
+    group: fields.StringField<string, string, false>;
+    types: ArrayField<fields.StringField<NodeCustomEntryType, NodeCustomEntryType, true>, false>;
+};
+
+type NodeSchemaCustom = {
+    category: NodeCustomEntryCategory;
+    group?: string;
+    types?: NodeCustomEntryType[];
 };
 
 type NodeSchemaEntriesSchema = {
@@ -120,6 +167,8 @@ type NodeSchemaEntriesSource = {
     outputs?: NodeOutputSource[];
 };
 
+type NodeCustomEntryCategory = NodeEntryCategory | "outs";
+
 type NodeSchemaModuleId = "pf2e-toolbelt";
 
 type NodeSchemaSource = SourceFromSchema<NodeSchemaModelSchema>;
@@ -128,6 +177,8 @@ MODULE.devExpose({ NodeSchemaModel });
 
 export { nodeSchemaEntries, NodeSchemaModel };
 export type {
+    NodeCustomEntryCategory,
+    NodeSchemaCustom,
     NodeSchemaEntriesSchema,
     NodeSchemaEntriesSource,
     NodeSchemaModelSchema,

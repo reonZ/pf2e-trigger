@@ -50,12 +50,12 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
         });
     }
 
-    static async waitContext<TData extends string>(
+    static async waitContext<T extends BlueprintWaitContextData<string>>(
         blueprint: Blueprint,
-        entries: TData[],
+        entries: T[],
         x: number,
         y: number
-    ): Promise<null | { value: TData }> {
+    ): Promise<null | (T extends string ? BlueprintWaitContextData<T> : T)> {
         if (!entries.length) {
             return null;
         }
@@ -63,10 +63,10 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
         const groups = [
             {
                 title: "",
-                entries: entries.map((value) => {
+                entries: entries.map((data) => {
                     return {
-                        data: { value },
-                        label: localize("context", value),
+                        data,
+                        label: localize("context", data.value, data),
                     };
                 }),
             },
@@ -238,5 +238,14 @@ type BlueprintMenuGroup<T extends BlueprintMenuGroupEntry = BlueprintMenuGroupEn
     title: string;
 };
 
+type BlueprintWaitContextData<T extends string> = {
+    value: T;
+};
+
 export { BlueprintMenu };
-export type { BlueprintMenuGroup, BlueprintMenuGroupEntry, BlueprintMenuOptions };
+export type {
+    BlueprintMenuGroup,
+    BlueprintMenuGroupEntry,
+    BlueprintMenuOptions,
+    BlueprintWaitContextData,
+};

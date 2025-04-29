@@ -2,6 +2,7 @@ import {
     Blueprint,
     BlueprintMenu,
     BlueprintNode,
+    BlueprintWaitContextData,
     EntryField,
     HorizontalLayoutGraphics,
 } from "blueprint";
@@ -14,8 +15,8 @@ import {
     NonBridgeEntryType,
     TriggerData,
 } from "data";
-import { localize, localizeIfExist, R } from "module-helpers";
-import { hasInputConnector, NodeRawSchemaEntry } from "schema";
+import { confirmDialog, localize, localizeIfExist, R } from "module-helpers";
+import { BaseNodeSchemaEntry, hasInputConnector, NodeCustomEntryCategory } from "schema";
 
 const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
     boolean: 0xad0303,
@@ -35,9 +36,9 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     #category: NodeEntryCategory;
     #connector: PIXI.Graphics | undefined;
     #node: BlueprintNode;
-    #schema: EntrySchema;
+    #schema: BaseNodeSchemaEntry;
 
-    constructor(node: BlueprintNode, category: NodeEntryCategory, schema: EntrySchema) {
+    constructor(node: BlueprintNode, category: NodeEntryCategory, schema: BaseNodeSchemaEntry) {
         super({ spacing: 5, maxHeight: node.entryHeight, padding: [0, 2] });
 
         this.#node = node;
@@ -54,11 +55,16 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
         this.addChild(...order.filter(R.isTruthy));
 
-        if (this.isBridge && this.#connector) {
-            this.#connector.y += 0.5;
-        } else if (this.#connector) {
-            this.#connector.x += category === "inputs" ? -0.5 : 1.5;
-            this.#connector.y += 1;
+        if (this.#connector) {
+            if (this.isBridge) {
+                this.#connector.y += 0.5;
+            } else if (this.isCustom) {
+                this.#connector.x += category === "inputs" ? -0 : 1;
+                this.#connector.y += 1;
+            } else {
+                this.#connector.x += category === "inputs" ? -0.5 : 1.5;
+                this.#connector.y += 1;
+            }
         }
     }
 
@@ -90,6 +96,10 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.#category;
     }
 
+    get customCategory(): NodeCustomEntryCategory {
+        return this.isInput ? "inputs" : this.isBridge ? "outs" : "outputs";
+    }
+
     get isInput(): boolean {
         return this.category === "inputs";
     }
@@ -102,7 +112,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.isInput ? "outputs" : "inputs";
     }
 
-    get schema(): EntrySchema {
+    get schema(): BaseNodeSchemaEntry {
         return this.#schema;
     }
 
@@ -179,6 +189,10 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         const schema = this.schema;
 
         if (schema.label) {
+            if (schema.custom) {
+                return schema.label;
+            }
+
             return (
                 localizeIfExist(schema.label) ??
                 localizeIfExist("entry", schema.label) ??
@@ -189,19 +203,28 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return localizeIfExist(this.localizePath, schema.key) ?? localize("entry", schema.key);
     }
 
-    get contextEntries(): EntryContextValue[] {
-        const entries: EntryContextValue[] = [];
+    get contextEntries(): EntryContextData[] {
+        const entries: EntryContextData[] = [];
 
-        if (this.isOutput && !this.node.isEvent && !this.node.isVariable && !this.isBridge) {
+        if (this.isCustom) {
+            entries.push({ value: "delete-entry" });
+        }
+
+        if (
+            this.isOutput &&
+            !this.isBridge &&
+            !this.node.isVariable &&
+            (!this.node.isEvent || this.isCustom)
+        ) {
             if (this.trigger?.getVariable(this.id)) {
-                entries.push("delete-variable", "edit-variable");
+                entries.push({ value: "delete-variable" }, { value: "edit-variable" });
             } else {
-                entries.push("create-variable");
+                entries.push({ value: "create-variable" });
             }
         }
 
         if (this.connected) {
-            entries.push("disconnect");
+            entries.push({ value: "disconnect" });
         }
 
         return entries;
@@ -209,6 +232,14 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
     get isBridge(): boolean {
         return this.type === "bridge";
+    }
+
+    get isCustom(): boolean {
+        return !!this.schema.custom;
+    }
+
+    get opacity(): number {
+        return this.node.opacity;
     }
 
     isConnectedTo(other: BlueprintEntry | NodeEntryId): boolean {
@@ -270,6 +301,9 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
             connector.lineTo(6, 12);
             connector.lineTo(0, 12);
             connector.lineTo(0, 0);
+        } else if (this.isCustom) {
+            connector.lineStyle({ color, width: 2 });
+            connector.drawRoundedRect(0, 0, 12.5, 12.5, 2.5);
         } else {
             connector.lineStyle({ color, width: 2 });
             connector.drawCircle(6, 6, 6.5);
@@ -315,6 +349,22 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
                 this.blueprint.refresh();
                 break;
             }
+
+            case "delete-entry": {
+                return this.#delete();
+            }
+        }
+    }
+
+    async #delete() {
+        const result = await confirmDialog("delete-entry", {
+            skipAnimate: true,
+            data: { name: this.schema.label },
+        });
+
+        if (result) {
+            this.node.data?.removeCustomEntry(this.customCategory, this.schema);
+            this.blueprint.refresh();
         }
     }
 }
@@ -326,9 +376,15 @@ function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: boolean): num
     return hex ? decimal.toString(16).padStart(6, "0") : decimal;
 }
 
-type EntryContextValue = "create-variable" | "delete-variable" | "edit-variable" | "disconnect";
+type EntryContextValue =
+    | "create-variable"
+    | "delete-variable"
+    | "edit-variable"
+    | "disconnect"
+    | "delete-entry";
 
-type EntrySchema = NodeRawSchemaEntry<NodeEntryType>;
+type EntryContextData = BlueprintWaitContextData<EntryContextValue> & {
+    label?: string;
+};
 
 export { BlueprintEntry, getConnectorColor };
-export type { EntrySchema };

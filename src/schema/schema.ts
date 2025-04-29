@@ -2,10 +2,15 @@ import { NodeEntryType, NodeType, NonBridgeEntryType, TriggerNodeData } from "da
 import { R } from "module-helpers";
 import {
     action,
+    BaseNodeSchemaEntry,
     condition,
     event,
+    IconObject,
+    NodeSchemaCustom,
     NodeSchemaModel,
+    NodeSchemaModuleId,
     NodeSchemaSource,
+    subtrigger,
     value,
     variable,
 } from "schema";
@@ -27,11 +32,7 @@ const SCHEMAS = {
     macro: {
         "use-macro": fakeSchema,
     },
-    subtrigger: {
-        "subtrigger-input": fakeSchema,
-        "subtrigger-output": fakeSchema,
-        "subtrigger-node": fakeSchema,
-    },
+    subtrigger,
 } as const satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
 const NODE_KEYS = R.pipe(
@@ -66,16 +67,20 @@ function isValue({ type }: NodeAdjacent): boolean {
     return type === "value";
 }
 
-function isEvent({ type }: NodeAdjacent): boolean {
-    return type === "event";
+function isEvent(node: NodeAdjacent): boolean {
+    return node.type === "event" || isSubtriggerEvent(node);
 }
 
 function isVariable({ type }: NodeAdjacent): boolean {
     return type === "variable";
 }
 
-function isSubtrigger({ type, key }: NodeAdjacent) {
-    return type === "subtrigger" && key === "subtrigger-node";
+function isSubtriggerEvent(node: NodeAdjacent): boolean {
+    return isSubTrigger(node) && node.key === "subtrigger-input";
+}
+
+function isSubtriggerNode(node: NodeAdjacent): boolean {
+    return isSubTrigger(node) && node.key === "subtrigger-node";
 }
 
 function isGetter(node: NodeAdjacent): boolean {
@@ -106,20 +111,18 @@ function hasInputConnector(node: NodeAdjacent) {
 type NodeAdjacent = { type: NodeType; key: NodeKey };
 
 type NodeKey = (typeof NODE_KEYS)[number];
-type EventKey = (typeof EVENT_KEYS)[number];
+type EventKey = (typeof EVENT_KEYS)[number] | "subtrigger-input";
 
-type NodeRawSchema = Omit<DeepPartial<NodeSchemaSource>, "outs" | "inputs" | "outputs"> & {
+type NodeRawSchema = {
+    icon?: string | IconObject;
+    module?: NodeSchemaModuleId;
+    custom?: ReadonlyArray<NodeSchemaCustom>;
     outs?: ReadonlyArray<NodeSchemaRawBridge>;
     inputs?: ReadonlyArray<NodeSchemaInput>;
     outputs?: ReadonlyArray<NodeSchemaVariable>;
 };
 
-type NodeRawSchemaEntry<T extends NodeEntryType> = {
-    key: string;
-    label?: string;
-    group?: string;
-    type: T;
-};
+type NodeRawSchemaEntry<T extends NodeEntryType> = BaseNodeSchemaEntry<T>;
 
 type NodeSchemaBridge = NodeRawSchemaEntry<"bridge">;
 type NodeSchemaRawBridge = WithPartial<NodeSchemaBridge, "type">;
@@ -212,7 +215,8 @@ export {
     hasOuts,
     isEvent,
     isGetter,
-    isSubtrigger,
+    isSubtriggerEvent,
+    isSubtriggerNode,
     isValidNodeKey,
     isValue,
     isVariable,

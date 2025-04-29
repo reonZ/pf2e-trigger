@@ -1,4 +1,5 @@
 import {
+    NodeCustomEntryType,
     NodeDataEntry,
     NodeDataEntrySource,
     NodeEntryCategory,
@@ -12,6 +13,7 @@ import {
 import {
     DataUnionField,
     IdField,
+    localize,
     makeModuleDocument,
     MODULE,
     ModuleDocument,
@@ -22,16 +24,19 @@ import {
     SchemaField,
 } from "module-helpers";
 import {
+    BaseNodeSchemaEntry,
     getSchema,
-    isSubtrigger,
+    isSubtriggerNode,
     isValidNodeKey,
     isVariable,
     NODE_KEYS,
+    NodeCustomEntryCategory,
     NodeInputSchema,
     NodeKey,
     nodeSchemaEntries,
     NodeSchemaEntriesSchema,
     NodeSchemaEntriesSource,
+    NodeSchemaEntry,
     NodeSchemaModel,
 } from "schema";
 import fields = foundry.data.fields;
@@ -123,7 +128,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
                 throw MODULE.Error("variable node must have a target NodeEntryId");
             }
 
-            if (isSubtrigger(data) && split.length !== 1) {
+            if (isSubtriggerNode(data) && split.length !== 1) {
                 throw MODULE.Error("subtrigger node must have a target subtrigger id");
             }
         }
@@ -221,7 +226,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             const otherEntry = otherNode?.[oppositeCategory][otherKey];
             if (!otherNode || !otherEntry) continue;
 
-            const otherConnections = otherEntry.ids ?? [];
+            const otherConnections = otherEntry.ids?.slice() ?? [];
             const removed = otherConnections.findSplice((id) => id === entryId);
 
             if (removed) {
@@ -247,6 +252,58 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             { [category]: { [key]: { ids: R.unique(connections) } } },
             { broadcast: false }
         );
+    }
+
+    addCustomEntry({
+        category,
+        label,
+        type,
+        group,
+    }: {
+        category: NodeCustomEntryCategory;
+        type: NodeCustomEntryType;
+        label?: string;
+        group?: string;
+    }) {
+        const entries = (this._source.custom?.[category]?.slice() ?? []) as NodeSchemaEntry[];
+        const key = foundry.utils.randomID();
+
+        entries.push({
+            key,
+            type,
+            label: label?.trim() || localize("entry", type),
+            group: group ?? "",
+            custom: true,
+        });
+
+        this.update({
+            custom: {
+                [category]: entries,
+            },
+        });
+    }
+
+    removeCustomEntry(
+        category: NodeCustomEntryCategory,
+        { type, key, group = "" }: BaseNodeSchemaEntry
+    ) {
+        const entries = this._source.custom?.[category]?.slice() ?? [];
+        const removed = entries.findSplice(
+            (entry) => entry.type === type && entry.key === key && (entry.group ?? "") === group
+        );
+
+        if (!removed) return;
+
+        if (category !== "outs") {
+            const id: NodeEntryId = `${this.id}.${category}.${removed.key}`;
+            this.parent?.removeVariable(id);
+        }
+
+        this.update({
+            custom: {
+                [category]: entries,
+            },
+        });
     }
 
     _initializeSource(

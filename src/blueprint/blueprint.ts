@@ -160,7 +160,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.resetPosition();
     }
 
-    async createTrigger({ event, name, position }: CreateTriggerOptions) {
+    async createTrigger({ event, name }: { event: EventKey; name: string }) {
         try {
             const [trigger] = await this.#worldTriggers.createEmbeddedDocuments("Trigger", [
                 {
@@ -168,8 +168,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     nodes: [
                         {
                             key: event,
-                            type: "event",
-                            position,
+                            type: event === "subtrigger-input" ? "subtrigger" : "event",
                         },
                     ],
                 },
@@ -518,11 +517,5 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         // }
     }
 }
-
-type CreateTriggerOptions = {
-    event: EventKey;
-    name?: string;
-    position?: Point;
-};
 
 export { Blueprint };

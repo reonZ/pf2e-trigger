@@ -142,7 +142,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const trigger = this.trigger;
         const [subtriggers, triggers] = R.partition(
             this.blueprint.triggers.contents,
-            (t) => t.isSubtrigger
+            (t) => t.isSubtriggerNode
         );
 
         const variables = R.pipe(
@@ -172,7 +172,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     #attachSidebarListeners(html: HTMLElement) {
         type TriggerHeaderAction = "close-window" | "create-trigger" | "export-all" | "import";
         type TriggerAction = "select-trigger" | "export-trigger" | "delete-trigger";
-        type SubtriggerHeaderAction = "add-subtrigger";
+        type SubtriggerHeaderAction = "create-subtrigger";
         type VariableHeaderAction = "create-variable";
         type VariableAction = "remove-variable";
         type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeaderAction;
@@ -219,8 +219,8 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                     return;
                 }
 
-                case "add-subtrigger": {
-                    return;
+                case "create-subtrigger": {
+                    return this.#createSubtrigger();
                 }
 
                 case "create-variable": {
@@ -291,6 +291,24 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                 }
             }
         });
+    }
+
+    async #createSubtrigger() {
+        const result = await waitDialog<{ name: string }>({
+            content: [
+                {
+                    type: "text",
+                    inputConfig: { name: "name" },
+                    groupConfig: { i18n: "create-trigger" },
+                },
+            ],
+            i18n: "create-subtrigger",
+            skipAnimate: true,
+        });
+
+        if (result) {
+            this.blueprint.createTrigger({ name: result.name, event: "subtrigger-input" });
+        }
     }
 
     async #createTrigger() {

@@ -36,6 +36,7 @@ class NodeSchemaIconField extends DataUnionField<
                     >({
                         required: true,
                         nullable: false,
+                        blank: false,
                     }),
                 },
                 {

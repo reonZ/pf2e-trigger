@@ -2,12 +2,13 @@ import {
     Blueprint,
     BlueprintEntry,
     BlueprintMenu,
-    EntrySchema,
+    BlueprintWaitContextData,
     getElementSize,
     HorizontalLayoutGraphics,
     VerticalLayoutGraphics,
 } from "blueprint";
 import {
+    NodeCustomEntryType,
     NodeEntryCategory,
     NodeEntryId,
     NodeEntryValue,
@@ -18,13 +19,18 @@ import {
 } from "data";
 import {
     addToPoint,
+    confirmDialog,
+    drawCircleMask,
+    drawRectangleMask,
     localize,
     localizeIfExist,
     ModuleDocument,
     R,
     subtractPoint,
+    waitDialog,
 } from "module-helpers";
 import {
+    BaseNodeSchemaEntry,
     hasInBridge,
     hasOuts,
     IconObject,
@@ -32,6 +38,7 @@ import {
     isGetter,
     isValue,
     isVariable,
+    NodeCustomEntryCategory,
     NodeKey,
     NodeSchemaEntry,
     NodeSchemaModel,
@@ -173,8 +180,20 @@ class BlueprintNode extends PIXI.Container {
         return this.schema.icon ?? NODE_ICONS[this.type];
     }
 
+    get helperIcon(): IconObject | undefined {
+        return this.isCustom ? { unicode: "\uf013", fontWeight: "900" } : undefined;
+    }
+
+    get isCustom(): boolean {
+        return !!this.schema.custom?.length;
+    }
+
     get backgroundColor(): number {
         return 0x000000;
+    }
+
+    get headerColor(): number {
+        return HEADER_COLOR[this.type] ?? this.backgroundColor;
     }
 
     get borderRadius(): number {
@@ -186,21 +205,32 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get canDrag(): boolean {
-        return this.type !== "event";
+        return !this.isEvent;
     }
 
-    get contextEntries(): NodeContextValue[] {
-        const entries: NodeContextValue[] = [];
+    get contextEntries(): NodeContextData[] {
+        const entries: NodeContextData[] = [];
 
         if (!this.isEvent) {
-            entries.push("delete-node", "duplicate-node");
+            entries.push({ value: "delete-node" }, { value: "duplicate-node" });
         }
 
         if (this.isVariable) {
             const variable = this.trigger?.getVariable(this.data.target as NodeEntryId);
 
             if (variable && !variable.locked) {
-                entries.push("delete-variable", "edit-variable");
+                entries.push({ value: "delete-variable" }, { value: "edit-variable" });
+            }
+        }
+
+        if (this.isCustom) {
+            for (const { category, group } of this.schema.custom) {
+                entries.push({
+                    value: "create-entry",
+                    category,
+                    group,
+                    label: group ? this.getGroupLabel(group) : localize(category, "singular"),
+                });
             }
         }
 
@@ -301,13 +331,21 @@ class BlueprintNode extends PIXI.Container {
         });
     }
 
-    fontAwesomeIcon(icon: IconObject): PreciseText {
+    getGroupLabel(group: string) {
+        return (
+            localizeIfExist(this.localizePath, "group", group) ??
+            localizeIfExist("node", group) ??
+            game.i18n.localize(group)
+        );
+    }
+
+    fontAwesomeIcon(icon: IconObject | string): PreciseText {
+        const unicode = R.isString(icon) ? icon : icon.unicode;
+        const fontWeight = R.isString(icon) ? "400" : icon.fontWeight;
+
         return this.preciseText(
-            icon.unicode,
-            foundry.utils.mergeObject(
-                { fontFamily: "Font Awesome 6 Pro" },
-                { fontWeight: icon.fontWeight }
-            )
+            unicode,
+            foundry.utils.mergeObject({ fontFamily: "Font Awesome 6 Pro" }, { fontWeight })
         );
     }
 
@@ -336,16 +374,6 @@ class BlueprintNode extends PIXI.Container {
         );
 
         return new foundry.canvas.containers.PreciseText(text, style);
-    }
-
-    #drawMask(width: number, height: number): PIXI.Graphics {
-        const mask = new PIXI.Graphics();
-
-        mask.beginFill(0x555555);
-        mask.drawRoundedRect(0, 0, width, height, 10);
-        mask.endFill();
-
-        return mask;
     }
 
     #drawBorder(width: number, height: number): PIXI.Graphics {
@@ -380,7 +408,7 @@ class BlueprintNode extends PIXI.Container {
             R.sortBy(R.prop("group"))
         );
 
-        const bridges: EntrySchema[] =
+        const bridges: BaseNodeSchemaEntry[] =
             category === "outputs" && hasOuts(this)
                 ? this.schema.outs
                 : hasInBridge(this)
@@ -395,14 +423,6 @@ class BlueprintNode extends PIXI.Container {
         }
 
         return groups;
-    }
-
-    #drawGroupEntry(group: string) {
-        const label =
-            localizeIfExist(this.localizePath, "label", group) ??
-            localizeIfExist("node", group) ??
-            game.i18n.localize(group);
-        return this.preciseText(label);
     }
 
     #drawBody(): NodeBody {
@@ -426,7 +446,8 @@ class BlueprintNode extends PIXI.Container {
                 if (!entries.length) continue;
 
                 if (group) {
-                    const entry = this.#drawGroupEntry(group);
+                    const groupLabel = this.getGroupLabel(group);
+                    const entry = this.preciseText(groupLabel);
                     body[category].addChild(entry);
                 }
 
@@ -493,31 +514,54 @@ class BlueprintNode extends PIXI.Container {
         }
     }
 
+    #drawHelper(): PIXI.Graphics | undefined {
+        const helperIcon = this.helperIcon;
+        if (!helperIcon) return;
+
+        const icon = this.fontAwesomeIcon(helperIcon);
+        icon.x = (icon.width / 2) * -1;
+        icon.y = (icon.height / 2) * -1;
+
+        const helper = new PIXI.Graphics();
+        const color = this.headerColor;
+        const radius = icon.width * 0.8;
+        const mask = drawCircleMask(0, 0, radius);
+
+        helper.beginFill(color, this.opacity);
+        helper.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });
+        helper.drawCircle(0, 0, radius);
+        helper.endFill();
+
+        helper.mask = mask;
+        helper.addChild(icon, mask);
+
+        return helper;
+    }
+
     #draw() {
         const header = this.#drawHeader();
         const body = this.#drawBody();
+        const helper = this.#drawHelper();
         const outerPadding = this.outerPadding;
 
         const totalWidth = Math.max(body.totalWidth, Math.clamp(header?.totalWidth ?? 0, 100, 200));
         const totalHeight = (header?.totalHeight ?? 0) + body.totalHeight;
 
-        // we add background first
-        this.addChild(this.#drawBackground(totalWidth, totalHeight));
+        // we draw them after calculating the totalWidth & totalHeight
+        const background = this.#drawBackground(totalWidth, totalHeight);
+        const border = this.#drawBorder(totalWidth, totalHeight);
+        const backgroundMask = drawRectangleMask(0, 0, totalWidth, totalHeight, 10);
 
         if (header) {
             const title = header.titleElement;
-            const color = HEADER_COLOR[this.type] ?? this.backgroundColor;
+            const color = this.headerColor;
             const maxTextWidth = totalWidth - outerPadding.x - header.titleElement.x;
 
             if (title.width > maxTextWidth) {
-                const mask = new PIXI.Graphics();
+                const headerMask = drawRectangleMask(0, 0, maxTextWidth, title.height);
 
-                mask.beginFill(0x555555);
-                mask.drawRect(0, 0, maxTextWidth, title.height);
-                mask.endFill();
-
-                title.mask = mask;
-                title.addChild(mask);
+                title.mask = headerMask;
+                title.addChild(headerMask);
             }
 
             header.beginFill(color, this.opacity);
@@ -526,18 +570,24 @@ class BlueprintNode extends PIXI.Container {
 
             body.y += header.totalHeight;
 
-            this.addChild(header);
+            background.addChild(header);
         }
 
         if (body.totalWidth < totalWidth) {
             body.outputs.x = totalWidth - outerPadding.x - body.outputs.totalWidth;
         }
 
-        const border = this.#drawBorder(totalWidth, totalHeight);
-        const mask = this.#drawMask(totalWidth, totalHeight);
+        background.mask = backgroundMask;
+        background.addChild(body, border, backgroundMask);
 
-        this.mask = mask;
-        this.addChild(body, border, mask);
+        this.addChild(background);
+
+        if (helper) {
+            helper.x = totalWidth + helper.width * -0.25;
+            helper.y = helper.height * 0.2;
+
+            this.addChild(helper);
+        }
     }
 
     #onPointerDown(event: PIXI.FederatedPointerEvent) {
@@ -558,7 +608,7 @@ class BlueprintNode extends PIXI.Container {
 
         switch (result.value) {
             case "delete-node": {
-                return this.delete();
+                return this.#delete();
             }
 
             case "duplicate-node": {
@@ -572,6 +622,57 @@ class BlueprintNode extends PIXI.Container {
             case "edit-variable": {
                 return this.blueprint.editVariable(this.data.target as NodeEntryId);
             }
+
+            case "create-entry": {
+                return this.#createCustomEntry(result);
+            }
+        }
+    }
+
+    async #delete() {
+        const result = await confirmDialog("delete-node", {
+            skipAnimate: true,
+        });
+
+        if (result) {
+            this.delete();
+        }
+    }
+
+    async #createCustomEntry({ category, group }: NodeContextData) {
+        const custom = this.schema.custom?.find(
+            (custom) => custom.category === category && custom.group === (group ?? "")
+        );
+        if (!category || !custom) return;
+
+        const result = await waitDialog<{ label: string; type: NodeCustomEntryType }>({
+            content: [
+                {
+                    type: "text",
+                    inputConfig: {
+                        name: "label",
+                    },
+                },
+                {
+                    type: "select",
+                    inputConfig: {
+                        name: "type",
+                        options: custom.types,
+                        i18n: "entry",
+                        disabled: custom.types.length === 1,
+                    },
+                },
+            ],
+            i18n: "create-entry",
+            skipAnimate: true,
+            data: {
+                label: group ? this.getGroupLabel(group) : localize(category, "singular"),
+            },
+        });
+
+        if (result) {
+            this.data.addCustomEntry({ ...result, category, group });
+            this.blueprint.refresh();
         }
     }
 
@@ -600,7 +701,18 @@ function elementOffset(el: PIXI.Container, direction: "x" | "y") {
     return el[direction] + getElementSize(el, direction);
 }
 
-type NodeContextValue = "delete-node" | "duplicate-node" | "edit-variable" | "delete-variable";
+type NodeContextValue =
+    | "delete-node"
+    | "duplicate-node"
+    | "edit-variable"
+    | "delete-variable"
+    | "create-entry";
+
+type NodeContextData = BlueprintWaitContextData<NodeContextValue> & {
+    category?: NodeCustomEntryCategory;
+    group?: string;
+    label?: string;
+};
 
 type EntriesGroup = {
     group: string;

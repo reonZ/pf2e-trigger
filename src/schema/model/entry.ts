@@ -25,6 +25,7 @@ class NodeInputOptionsField extends DataUnionField<
                 new fields.StringField<string, string>({
                     required: false,
                     nullable: false,
+                    blank: false,
                 }),
                 new fields.ArrayField<SelectArrayOption>(
                     new DataUnionField(
@@ -32,6 +33,7 @@ class NodeInputOptionsField extends DataUnionField<
                             new fields.StringField<string, string>({
                                 required: false,
                                 nullable: false,
+                                blank: false,
                             }),
                             new SelectOptionField({
                                 required: false,
@@ -105,23 +107,11 @@ class NodeInputField<
     constructor() {
         super(
             {
-                group: new fields.StringField({
-                    required: false,
-                    nullable: false,
-                    initial: "",
-                }),
-                key: new fields.StringField({
-                    required: true,
-                    nullable: false,
-                    blank: false,
-                }),
-                label: new fields.StringField({
-                    required: false,
-                    nullable: false,
-                }),
+                ...baseNodeSchemaEntry(),
                 type: new fields.StringField({
                     required: true,
                     nullable: false,
+                    blank: false,
                     choices: NODE_NONBRIDGE_TYPES,
                 }),
                 field: new fields.SchemaField(
@@ -249,6 +239,31 @@ class NodeInputField<
     }
 }
 
+function baseNodeSchemaEntry() {
+    return {
+        custom: new fields.BooleanField<boolean, boolean, false>({
+            required: false,
+            nullable: false,
+            initial: false,
+        }),
+        group: new fields.StringField<string, string, false, false, true>({
+            required: false,
+            nullable: false,
+            readonly: true,
+            initial: "",
+        }),
+        key: new fields.StringField<string, string, true, false, true>({
+            required: true,
+            nullable: false,
+            blank: false,
+        }),
+        label: new fields.StringField<string, string, false, false, false>({
+            required: false,
+            nullable: false,
+        }),
+    };
+}
+
 function entrySchemaIsOfType<T extends NodeEntryType>(
     schema: NodeRawSchemaEntry<NodeEntryType>,
     type: T
@@ -256,27 +271,29 @@ function entrySchemaIsOfType<T extends NodeEntryType>(
     return schema.type === type;
 }
 
-type NodeSchemaEntry = ModelPropsFromSchema<NodeEntrySchema<NodeEntryType>>;
+type NodeSchemaEntry = WithRequired<BaseNodeSchemaEntry, "label">;
 
 type NodeEntrySchema<TType extends NodeEntryType, TRequired extends boolean = true> = {
     key: fields.StringField<string, string, true>;
     label: fields.StringField<string, string, false, false, false>;
     type: fields.StringField<TType, TType, TRequired>;
     group: fields.StringField;
+    custom: fields.BooleanField<boolean, boolean, false>;
 };
 
-type BaseNodeEntry<TType extends NodeEntryType = NonBridgeEntryType> = {
+type BaseNodeSchemaEntry<TType extends NodeEntryType = NodeEntryType> = {
     key: string;
     type: TType;
     label?: string;
     group?: string;
+    custom?: boolean;
 };
 
 type NodeBridgeSchema = NodeEntrySchema<"bridge", false>;
-type NodeBridgeSource = BaseNodeEntry<"bridge">;
+type NodeBridgeSource = BaseNodeSchemaEntry<"bridge">;
 
 type NodeOutputSchema = NodeEntrySchema<NonBridgeEntryType>;
-type NodeOutputSource = BaseNodeEntry;
+type NodeOutputSource = BaseNodeSchemaEntry;
 
 type NodeInputSchema = NodeEntrySchema<NonBridgeEntryType> & {
     field: SchemaField<NodeInputFieldSchema, false, false, false>;
@@ -298,7 +315,7 @@ type NodeInputFieldSchema = {
     options: NodeInputOptionsField;
     code: fields.BooleanField<boolean, boolean, false>;
 };
-type NodeInputSource = BaseNodeEntry & {
+type NodeInputSource = BaseNodeSchemaEntry & {
     field?: {
         min?: number;
         max?: number;
@@ -317,8 +334,9 @@ type SelectArrayOption = DataUnionField<
     false
 >;
 
-export { entrySchemaIsOfType, NodeInputField };
+export { baseNodeSchemaEntry, entrySchemaIsOfType, NodeInputField };
 export type {
+    BaseNodeSchemaEntry,
     NodeBridgeSchema,
     NodeBridgeSource,
     NodeInputSchema,

@@ -81,7 +81,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         return this.name || this.id;
     }
 
-    get isSubtrigger(): boolean {
+    get isSubtriggerNode(): boolean {
         return this.event.type === "subtrigger";
     }
 
@@ -151,10 +151,10 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         }
 
         for (const nodeId of nodeIds) {
-            const ids = variables[nodeId];
+            const entryIds = variables[nodeId];
 
-            for (const id of ids) {
-                this.removeVariable(id);
+            for (const entryId of entryIds) {
+                this.removeVariable(entryId);
             }
         }
     }
