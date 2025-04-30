@@ -44,13 +44,17 @@ function entriesAreCompatible(origin: NodeEntryType, target: NodeEntryType): boo
     return origin === target || !!COMPATIBLE_ENTRIES[origin]?.includes(target);
 }
 
+function getCompatibleTypes(type: NodeEntryType): NodeEntryType[] {
+    return [type, ...(COMPATIBLE_ENTRIES[type] ?? [])];
+}
+
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number];
 type NonBridgeEntryType = (typeof NODE_NONBRIDGE_TYPES)[number];
 type NodeCustomEntryType = (typeof NODE_CUSTOM_TYPES)[number];
 
 export {
-    COMPATIBLE_ENTRIES,
     entriesAreCompatible,
+    getCompatibleTypes,
     getNodeEntryTypes,
     NODE_CUSTOM_TYPES,
     NODE_ENTRY_TYPES,

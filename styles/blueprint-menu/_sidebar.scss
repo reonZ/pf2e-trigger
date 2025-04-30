@@ -130,7 +130,13 @@
                 }
             }
 
-            .sub {
+            &.variables {
+                li {
+                    padding-left: 0.3em;
+                }
+            }
+
+            &.sub {
                 li {
                     padding-left: 0.5em;
                 }

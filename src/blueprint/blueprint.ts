@@ -9,6 +9,7 @@ import {
     BlueprintNodesLayer,
 } from "blueprint";
 import {
+    getCompatibleTypes,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
     NodeType,
@@ -29,7 +30,7 @@ import {
     subtractPoint,
     waitDialog,
 } from "module-helpers";
-import { EventKey, FilterGroupEntry, getFilterGroups, NodeKey } from "schema";
+import { EventKey, FilterGroupEntry, getFilterGroups, isSubtriggerOutput, NodeKey } from "schema";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized = false;
@@ -370,12 +371,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     target,
                 };
 
+                const compatibles = getCompatibleTypes(variable.type);
                 const entries: FilterGroupEntry[] = [
                     {
                         type: "variable",
                         key: "variable-getter",
                         inputs: [],
-                        outputs: [variable.type],
+                        outputs: [...compatibles],
                         label: variable.label,
                         data: dataToDatasetString({
                             type: "variable",
@@ -389,8 +391,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     entries.push({
                         type: "variable",
                         key: "variable-setter",
-                        inputs: ["bridge", variable.type],
-                        outputs: ["bridge", variable.type],
+                        inputs: ["bridge", ...compatibles],
+                        outputs: ["bridge", ...compatibles],
                         label: `${variable.label} (${setter})`,
                         data: dataToDatasetString({
                             type: "variable",
@@ -416,12 +418,21 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             this.trigger?.isSubtrigger ? [] : this.triggers.contents,
             R.filter((trigger) => trigger.isSubtrigger),
             R.map((trigger): FilterGroupEntry => {
+                const inputs = (trigger.event.custom?.outputs ?? []).flatMap(({ type }) => {
+                    return getCompatibleTypes(type);
+                });
+
+                const outputs = (
+                    trigger.nodes.find(isSubtriggerOutput)?.custom?.inputs ?? []
+                ).flatMap(({ type }) => {
+                    return getCompatibleTypes(type);
+                });
+
                 return {
                     type: "subtrigger",
                     key: "subtrigger-node",
-                    // TODO add those
-                    inputs: [],
-                    outputs: [],
+                    inputs: ["bridge", ...inputs],
+                    outputs: ["bridge", ...outputs],
                     label: trigger.label,
                     data: dataToDatasetString({
                         type: "subtrigger",

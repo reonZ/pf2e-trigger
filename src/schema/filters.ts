@@ -1,5 +1,5 @@
 import { BlueprintMenuGroup, BlueprintMenuGroupEntry } from "blueprint";
-import { COMPATIBLE_ENTRIES, NODE_TYPES, NodeEntryType, NodeType } from "data";
+import { getCompatibleTypes, NODE_TYPES, NodeEntryType, NodeType } from "data";
 import { dataToDatasetString, joinStr, localize, R } from "module-helpers";
 import { NodeSchemaModuleId } from "./model";
 import {
@@ -37,7 +37,7 @@ function createFilters(): FilterGroup[] {
                             return R.pipe(
                                 schema[category] as { type: NodeEntryType }[],
                                 R.flatMap(({ type }) => {
-                                    return [type, ...(COMPATIBLE_ENTRIES[type] ?? [])];
+                                    return getCompatibleTypes(type);
                                 }),
                                 R.unique()
                             );
