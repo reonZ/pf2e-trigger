@@ -314,7 +314,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     async #createTrigger() {
         const result = await waitDialog<{ name: string; event: EventKey }>({
             content: [
-                { type: "text", inputConfig: { name: "name" } },
+                {
+                    type: "text",
+                    inputConfig: { name: "name", required: true },
+                },
                 {
                     type: "select",
                     inputConfig: {

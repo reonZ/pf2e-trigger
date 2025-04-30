@@ -124,7 +124,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get value(): NodeEntryValue {
-        return this.node.getValue(this.id);
+        return this.node.getValue(this.key);
     }
 
     get hasInputConnector(): boolean {

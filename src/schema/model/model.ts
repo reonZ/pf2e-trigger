@@ -57,11 +57,54 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                             initial: () => NODE_CUSTOM_TYPES.slice(),
                         }
                     ),
+                    key: new fields.SchemaField(
+                        {
+                            name: new fields.StringField({
+                                required: true,
+                                nullable: false,
+                                blank: false,
+                            }),
+                            required: new fields.BooleanField({
+                                required: false,
+                                nullable: false,
+                                initial: false,
+                            }),
+                        },
+                        {
+                            required: false,
+                            nullable: false,
+                            initial: undefined,
+                        }
+                    ),
                 }),
                 {
                     required: false,
                     nullable: false,
                     initial: () => [],
+                }
+            ),
+            loop: new fields.BooleanField({
+                required: false,
+                nullable: false,
+                initial: false,
+            }),
+            document: new fields.SchemaField(
+                {
+                    field: new fields.StringField({
+                        required: true,
+                        nullable: false,
+                        blank: false,
+                    }),
+                    icon: new fields.BooleanField({
+                        required: false,
+                        nullable: false,
+                        initial: false,
+                    }),
+                },
+                {
+                    required: false,
+                    nullable: false,
+                    initial: undefined,
                 }
             ),
             ...nodeSchemaEntries(),
@@ -141,18 +184,35 @@ type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
     icon: NodeSchemaIconField;
     module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
     custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
+    loop: fields.BooleanField<boolean, boolean, false>;
+    document: SchemaField<NodeSchemaDocumentSchema, false, false, false>;
+};
+
+type NodeSchemaDocumentSchema = {
+    icon: fields.BooleanField<boolean, boolean, false>;
+    field: fields.StringField<string, string, true>;
 };
 
 type NodeSchemaCustomSchema = {
     category: fields.StringField<NodeCustomEntryCategory, NodeCustomEntryCategory, true>;
     group: fields.StringField<string, string, false>;
     types: ArrayField<fields.StringField<NodeCustomEntryType, NodeCustomEntryType, true>, false>;
+    key: SchemaField<NodeSchemaCustomKeySchema, false>;
+};
+
+type NodeSchemaCustomKeySchema = {
+    name: fields.StringField<string, string, true>;
+    required: fields.BooleanField<boolean, boolean, false>;
 };
 
 type NodeSchemaCustom = {
     category: NodeCustomEntryCategory;
     group?: string;
     types?: NodeCustomEntryType[];
+    key?: {
+        name: string;
+        required?: boolean;
+    };
 };
 
 type NodeSchemaEntriesSchema = {

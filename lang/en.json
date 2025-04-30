@@ -111,11 +111,15 @@
         "create-entry": {
             "title": "Create {label} Entry",
             "yes": "Create",
+            "required": "The field <strong>{name}</strong> is required.",
             "label": {
                 "label": "Entry Label"
             },
             "type": {
                 "label": "Entry Type"
+            },
+            "path": {
+                "label": "Entry Path"
             }
         },
         "delete-entry": {
@@ -144,13 +148,17 @@
             "target": "Target",
             "text": "Text",
 
+            "a": "A",
+            "b": "B",
             "false": "False",
             "formula": "formula",
             "in": "In",
             "out": "Out",
             "this": "Trigger Target",
             "true": "True",
-            "value": "Value"
+            "value": "Value",
+            "input": "Input",
+            "result": "Result"
         },
         "node": {
             "action": {
@@ -179,6 +187,11 @@
                         "aura-source": "Aura Source",
                         "slug": "aura-slug",
                         "targets": "Targets"
+                    },
+                    "option": {
+                        "all": "All",
+                        "allies": "Allies",
+                        "enemies": "Enemies"
                     }
                 }
             },
@@ -262,19 +275,52 @@
                 "subtitle": "Logic",
                 "eq-number": {
                     "label": "Equals (Number)"
+                },
+                "gt-number": {
+                    "label": "Greater Than"
+                },
+                "gte-number": {
+                    "label": "Greater Than or Equal"
+                },
+                "lt-number": {
+                    "label": "Less Than"
+                },
+                "lte-number": {
+                    "label": "Less Than or Equal"
+                },
+                "eq-text": {
+                    "label": "Equals (Text)"
+                },
+                "eq-actor": {
+                    "label": "Equals (Actor)"
                 }
             },
             "macro": {
                 "title": "Macros",
                 "header": "Run Macro",
                 "use-macro": {
-                    "label": "Run Macro"
+                    "label": "Run Macro",
+                    "entry": {
+                        "uuid": "Macro UUID"
+                    }
                 }
             },
             "splitter": {
                 "title": "Splitters",
                 "boolean-splitter": {
                     "label": "Boolean"
+                },
+                "item-splitter": {
+                    "label": "Item Data"
+                },
+                "actor-splitter": {
+                    "label": "Actor Data"
+                },
+                "string-list": {
+                    "label": "String List"
+                },
+                "success-splitter": {
+                    "label": "Degree of Success"
                 }
             },
             "subtrigger": {

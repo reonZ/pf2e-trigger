@@ -173,9 +173,8 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return this[category][key];
     }
 
-    getValue(id: NodeEntryId): NodeEntryValue {
-        const { category, key } = segmentEntryId(id);
-        const entry = this[category][key];
+    getValue(key: string): NodeEntryValue {
+        const entry = this.inputs[key];
         const schema = this.schemaInputs[key];
         if (!schema) return;
 
@@ -273,17 +272,17 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         label,
         type,
         group,
+        key,
     }: {
         category: NodeCustomEntryCategory;
         type: NodeCustomEntryType;
         label?: string;
         group?: string;
+        key?: string;
     }) {
         const entries = (this._source.custom?.[category]?.slice() ?? []) as NodeSchemaEntry[];
-        const key = foundry.utils.randomID();
-
         const entry: NodeSchemaEntry = {
-            key,
+            key: key?.trim() || foundry.utils.randomID(),
             type,
             label: label?.trim() || localize("entry", type),
             group: group ?? "",
@@ -294,7 +293,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category !== "outs" && this.isEvent) {
             // we automatically add a locked variable for this entry
-            const variableId = createEntryId("outputs", this.id, key);
+            const variableId = createEntryId("outputs", this.id, entry.key);
             this.parent?.addVariable(variableId, {
                 label: entry.label,
                 type,

@@ -6,31 +6,26 @@ import {
     condition,
     event,
     IconObject,
+    logic,
+    macro,
     NodeSchemaCustom,
     NodeSchemaModel,
     NodeSchemaModuleId,
+    splitter,
     subtrigger,
     value,
     variable,
 } from "schema";
 
-const fakeSchema = {} satisfies NodeRawSchema;
-
 const SCHEMAS = {
     event,
     action,
     condition,
-    logic: {
-        "eq-number": fakeSchema,
-    },
-    splitter: {
-        "boolean-splitter": fakeSchema,
-    },
+    logic,
+    splitter,
     value,
     variable,
-    macro: {
-        "use-macro": fakeSchema,
-    },
+    macro,
     subtrigger,
 } as const satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 
@@ -129,6 +124,8 @@ type EventKey = (typeof EVENT_KEYS)[number] | "subtrigger-input";
 type NodeRawSchema = {
     icon?: string | IconObject;
     module?: NodeSchemaModuleId;
+    loop?: boolean;
+    document?: { icon?: boolean; field: string };
     custom?: ReadonlyArray<NodeSchemaCustom>;
     outs?: ReadonlyArray<NodeSchemaRawBridge>;
     inputs?: ReadonlyArray<NodeSchemaInput>;
@@ -242,7 +239,9 @@ export type {
     NodeKey,
     NodeRawSchema,
     NodeRawSchemaEntry,
+    NodeSchemaInput,
     NodeSchemaNumber,
+    NodeSchemaVariable,
     SchemaEntries,
     SelectEntrySchema,
 };

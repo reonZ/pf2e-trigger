@@ -1,16 +1,10 @@
-import { NodeRawSchema } from "schema";
+import { NodeRawSchema, NodeSchemaInput } from "schema";
 
 const rollDamage = {
-    icon: "\uf71c",
+    icon: "\uf6cf",
     inputs: [
-        {
-            key: "formula",
-            type: "text",
-        },
-        {
-            key: "target",
-            type: "target",
-        },
+        { key: "formula", type: "text" },
+        { key: "target", type: "target" },
     ],
 } as const satisfies NodeRawActionSchema;
 
@@ -20,53 +14,19 @@ const rollSave = {
         {
             key: "save",
             type: "select",
-            field: {
-                options: "CONFIG.PF2E.saves",
-            },
+            field: { options: "CONFIG.PF2E.saves" },
         },
-        {
-            key: "dc",
-            type: "dc",
-        },
-        {
-            key: "roll",
-            type: "roll",
-        },
-        {
-            key: "basic",
-            type: "boolean",
-        },
+        { key: "basic", type: "boolean" },
+        { key: "target", type: "target" },
     ],
-    outputs: [
-        {
-            key: "result",
-            type: "number",
-        },
-    ],
+    outputs: [{ key: "result", type: "number" }],
 } as const satisfies NodeRawActionSchema;
 
 const rollDamageWithSave = {
     icon: "\uf71c",
     inputs: [
-        {
-            key: "predicate",
-            type: "text",
-            field: {
-                code: true,
-            },
-        },
-        {
-            key: "formula",
-            type: "text",
-        },
-        {
-            key: "test",
-            type: "number",
-            field: {
-                min: 0,
-                max: 10,
-            },
-        },
+        { key: "formula", type: "text" },
+        { key: "target", type: "target" },
     ],
     module: "pf2e-toolbelt",
 } as const satisfies NodeRawActionSchema;
@@ -77,6 +37,8 @@ const action = {
     "roll-damage-with-save": rollDamageWithSave,
 };
 
-type NodeRawActionSchema = WithRequired<NodeRawSchema, "icon">;
+type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
+    inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
+};
 
 export { action };

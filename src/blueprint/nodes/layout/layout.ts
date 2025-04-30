@@ -85,4 +85,4 @@ type LayoutPadding = {
 type ExtendedContainer = PIXI.Container & { offsetBlock?: number };
 
 export { PixiLayoutGraphics };
-export type { ExtendedContainer, LayoutGraphicsOptions };
+export type { ExtendedContainer, LayoutGraphicsOptions, LayoutGraphicsPadding };

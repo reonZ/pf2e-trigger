@@ -1,16 +1,20 @@
-import { NodeRawSchema } from "schema/schema";
-
-function createInputValue(type: InputEntryType) {
-    return {
-        inputs: [{ key: "input", type }],
-        outputs: [{ key: "value", type }],
-    } as const satisfies NodeRawSchema;
-}
-
 const value = {
+    "number-value": createInputValue("number"),
     "text-value": createInputValue("text"),
 };
 
+function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
+    return {
+        inputs: [{ key: "input", type }],
+        outputs: [{ key: "value", type }],
+    };
+}
+
 type InputEntryType = "number" | "boolean" | "text";
+
+type InputValueSchema<T extends InputEntryType> = {
+    inputs: [{ key: "input"; type: T }];
+    outputs: [{ key: "value"; type: T }];
+};
 
 export { value };

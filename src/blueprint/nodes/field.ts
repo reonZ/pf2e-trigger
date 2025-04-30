@@ -125,7 +125,7 @@ class EntryField extends PIXI.Graphics {
         const options = schema.field.options;
         const option = options.find((option) => option.value === value) ?? options[0];
 
-        return localizeOption(option.label, this.node.localizePath);
+        return localizeOption(option.label || option.value, this.node.localizePath);
     }
 
     get placeholder(): string {
@@ -247,7 +247,7 @@ class EntryField extends PIXI.Graphics {
         if (entrySchemaIsOfType(schema, "select")) {
             const entries = schema.field.options.map(({ label, value }) => {
                 return {
-                    label: localizeOption(label, this.node.localizePath),
+                    label: localizeOption(label || value, this.node.localizePath),
                     data: { value, selected: value === current },
                 };
             });

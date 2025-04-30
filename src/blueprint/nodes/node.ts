@@ -19,6 +19,7 @@ import {
 import {
     addToPoint,
     confirmDialog,
+    CreateFormGroupParams,
     drawCircleMask,
     drawRectangleMask,
     localize,
@@ -26,6 +27,7 @@ import {
     R,
     subtractPoint,
     waitDialog,
+    warning,
 } from "module-helpers";
 import {
     BaseNodeSchemaEntry,
@@ -168,27 +170,22 @@ class BlueprintNode extends PIXI.Container {
             : undefined;
     }
 
+    get document(): Maybe<CompendiumIndexData> {
+        const key = this.schema.document?.field;
+        const uuid = key ? this.getValue(key) : undefined;
+        return R.isString(uuid) ? fromUuidSync<CompendiumIndexData>(uuid) : undefined;
+    }
+
     get title(): string {
-        return this.targetLabel ?? localize(this.localizePath, "label");
-    }
-
-    get subtitle(): string | undefined {
-        return (
-            localizeIfExist(this.localizePath, "subtitle") ??
-            localizeIfExist(this.rootLocalizePath, "subtitle")
-        );
-    }
-
-    get icon(): IconObject | undefined {
-        return this.schema.icon ?? NODE_ICONS[this.type];
-    }
-
-    get helperIcon(): IconObject | undefined {
-        return this.isCustom ? { unicode: "\uf013", fontWeight: "900" } : undefined;
+        return this.document?.name ?? this.targetLabel ?? localize(this.localizePath, "label");
     }
 
     get isCustom(): boolean {
         return !!this.schema.custom?.length;
+    }
+
+    get isLoop(): boolean {
+        return !!this.schema.loop;
     }
 
     get backgroundColor(): number {
@@ -316,8 +313,8 @@ class BlueprintNode extends PIXI.Container {
         return null;
     }
 
-    getValue(id: NodeEntryId): NodeEntryValue {
-        return this.data.getValue(id);
+    getValue(key: string): NodeEntryValue {
+        return this.data.getValue(key);
     }
 
     getConnections(id: NodeEntryId): NodeEntryId[] {
@@ -335,17 +332,22 @@ class BlueprintNode extends PIXI.Container {
         );
     }
 
-    fontAwesomeIcon(icon: IconObject | string): PreciseText {
+    fontAwesomeIcon(icon: IconObject | string, fontSize?: number): PreciseText {
         const unicode = R.isString(icon) ? icon : icon.unicode;
         const fontWeight = R.isString(icon) ? "400" : icon.fontWeight;
 
-        return this.preciseText(
-            unicode,
-            foundry.utils.mergeObject({ fontFamily: "Font Awesome 6 Pro" }, { fontWeight })
-        );
+        return this.preciseText(unicode, {
+            fontFamily: "Font Awesome 6 Pro",
+            fontWeight,
+            fontSize,
+        });
     }
 
     preciseText(text: string, options: Partial<PIXI.ITextStyle> = {}): PreciseText {
+        if (!R.isNumber(options.fontSize)) {
+            delete options.fontSize;
+        }
+
         const style = new PIXI.TextStyle(
             foundry.utils.mergeObject(
                 {
@@ -465,13 +467,28 @@ class BlueprintNode extends PIXI.Container {
         if (!this.hasHeader) return;
 
         const spacing = 5;
-        const header = new VerticalLayoutGraphics({
-            padding: this.outerPadding,
-        }) as NodeHeader;
-        const firstRow = new HorizontalLayoutGraphics({ spacing });
-        const title = (header.titleElement = this.#drawTitle());
         const icon = this.#drawIcon();
+        const title = this.#drawTitle();
         const subtitle = this.#drawSubtitle();
+
+        const padding: { x: [number, number]; y: number } = {
+            x: [this.outerPadding.x, this.outerPadding.x],
+            y: this.outerPadding.y,
+        };
+
+        if (icon instanceof PreciseText) {
+        } else if (icon) {
+            icon.width = title.height + this.outerPadding.y * 2;
+            icon.height = icon.width;
+
+            padding.x[0] = 0;
+            padding.y = 0;
+        }
+
+        const header = new VerticalLayoutGraphics({ padding }) as NodeHeader;
+        const firstRow = new HorizontalLayoutGraphics({ spacing });
+
+        header.titleElement = title;
 
         if (icon) {
             firstRow.addChild(icon);
@@ -494,12 +511,20 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #drawIcon(): PreciseText | PIXI.Sprite | undefined {
-        const icon = this.icon;
+        const img = this.document?.img;
+
+        if (img) {
+            return PIXI.Sprite.from(img);
+        }
+
+        const icon = this.schema.icon ?? NODE_ICONS[this.type];
         return icon ? this.fontAwesomeIcon(icon) : undefined;
     }
 
     #drawSubtitle(): PreciseText | undefined {
-        const subtitle = this.subtitle;
+        const subtitle =
+            localizeIfExist(this.localizePath, "subtitle") ??
+            localizeIfExist(this.rootLocalizePath, "subtitle");
 
         if (subtitle) {
             return this.preciseText(subtitle, {
@@ -511,10 +536,15 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #drawHelper(): PIXI.Graphics | undefined {
-        const helperIcon = this.helperIcon;
+        const helperIcon: IconObject | undefined = this.isCustom
+            ? { unicode: "\uf013", fontWeight: "900" }
+            : this.isLoop
+            ? { unicode: "\uf363", fontWeight: "900" }
+            : undefined;
+
         if (!helperIcon) return;
 
-        const icon = this.fontAwesomeIcon(helperIcon);
+        const icon = this.fontAwesomeIcon(helperIcon, this.fontSize * 0.86);
         icon.x = (icon.width / 2) * -1;
         icon.y = (icon.height / 2) * -1;
 
@@ -540,7 +570,9 @@ class BlueprintNode extends PIXI.Container {
         const helper = this.#drawHelper();
         const outerPadding = this.outerPadding;
 
-        const totalWidth = Math.max(body.totalWidth, Math.clamp(header?.totalWidth ?? 0, 100, 200));
+        const minClamp = header ? 180 : 100;
+        const headerWidth = Math.clamp(header?.totalWidth ?? 0, minClamp, 250);
+        const totalWidth = Math.max(body.totalWidth, headerWidth);
         const totalHeight = (header?.totalHeight ?? 0) + body.totalHeight;
 
         // we draw them after calculating the totalWidth & totalHeight
@@ -579,8 +611,8 @@ class BlueprintNode extends PIXI.Container {
         this.addChild(background);
 
         if (helper) {
-            helper.x = totalWidth + helper.width * -0.25;
-            helper.y = helper.height * 0.2;
+            helper.x = totalWidth + helper.width * -0.2;
+            helper.y = helper.height * 0.15;
 
             this.addChild(helper);
         }
@@ -641,35 +673,57 @@ class BlueprintNode extends PIXI.Container {
         );
         if (!category || !custom) return;
 
-        const result = await waitDialog<{ label: string; type: NodeCustomEntryType }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: {
-                        name: "label",
-                    },
+        const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
+        const content: CreateFormGroupParams[] = [
+            {
+                type: "text",
+                inputConfig: {
+                    name: "label",
                 },
-                {
-                    type: "select",
-                    inputConfig: {
-                        name: "type",
-                        options: custom.types,
-                        i18n: "entry",
-                        disabled: custom.types.length === 1,
-                    },
-                },
-            ],
-            i18n: "create-entry",
-            skipAnimate: true,
-            data: {
-                label: group ? this.getGroupLabel(group) : localize(category, "singular"),
             },
-        });
+            {
+                type: "select",
+                inputConfig: {
+                    name: "type",
+                    options: custom.types,
+                    i18n: "entry",
+                    disabled: custom.types.length === 1,
+                },
+            },
+        ];
 
-        if (result) {
-            this.data.addCustomEntry({ ...result, category, group });
-            this.blueprint.refresh();
+        if (customKey) {
+            content.unshift({
+                type: "text",
+                inputConfig: {
+                    name: "key",
+                },
+                groupConfig: {
+                    label: customKey,
+                },
+            });
         }
+
+        const result = await waitDialog<{ label: string; type: NodeCustomEntryType; key?: string }>(
+            {
+                content,
+                i18n: "create-entry",
+                skipAnimate: true,
+                data: {
+                    label: group ? this.getGroupLabel(group) : localize(category, "singular"),
+                },
+            }
+        );
+
+        if (!result) return;
+
+        if (custom.key?.required && !result.key) {
+            warning("create-entry.required", { name: customKey });
+            return;
+        }
+
+        this.data.addCustomEntry({ ...result, category, group });
+        this.blueprint.refresh();
     }
 
     #onDragStart(event: PIXI.FederatedPointerEvent) {
