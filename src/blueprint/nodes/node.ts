@@ -15,7 +15,6 @@ import {
     NodeType,
     TriggerData,
     TriggerNodeData,
-    TriggerNodeDataSource,
 } from "data";
 import {
     addToPoint,
@@ -24,7 +23,6 @@ import {
     drawRectangleMask,
     localize,
     localizeIfExist,
-    ModuleDocument,
     R,
     subtractPoint,
     waitDialog,
@@ -34,7 +32,6 @@ import {
     hasInBridge,
     hasOuts,
     IconObject,
-    isEvent,
     isGetter,
     isValue,
     isVariable,
@@ -120,7 +117,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get isEvent(): boolean {
-        return isEvent(this);
+        return this.data.isEvent;
     }
 
     get isValue(): boolean {
@@ -133,6 +130,10 @@ class BlueprintNode extends PIXI.Container {
 
     get isGetter(): boolean {
         return isGetter(this);
+    }
+
+    get isSubtriggerNode(): boolean {
+        return this.data.isSubtriggerNode;
     }
 
     get hasHeader(): boolean {
@@ -162,6 +163,8 @@ class BlueprintNode extends PIXI.Container {
     get targetLabel(): string | undefined {
         return this.isVariable
             ? this.trigger?.getVariable(this.data.target as NodeEntryId)?.label
+            : this.isSubtriggerNode
+            ? this.blueprint.triggers.get(this.data.target as string)?.label
             : undefined;
     }
 
@@ -255,16 +258,9 @@ class BlueprintNode extends PIXI.Container {
         this.parent.sortChildren();
     }
 
-    update(
-        data: DeepPartial<TriggerNodeDataSource>,
-        operation?: Partial<DatabaseUpdateOperation<ModuleDocument>>
-    ): Promise<TriggerNodeData | undefined> {
-        return this.data.update(data, operation);
-    }
-
     setPosition({ x, y }: Point) {
         this.position.set(x, y);
-        this.update({ position: { x, y } }, { broadcast: false });
+        this.data.update({ position: { x, y } });
 
         for (const entry of this.entries()) {
             for (const otherId of entry.connections) {
@@ -411,7 +407,7 @@ class BlueprintNode extends PIXI.Container {
         const bridges: BaseNodeSchemaEntry[] =
             category === "outputs" && hasOuts(this)
                 ? this.schema.outs
-                : hasInBridge(this)
+                : category === "inputs" && hasInBridge(this)
                 ? [{ key: "in", type: "bridge" }]
                 : [];
 

@@ -1,12 +1,5 @@
 import { BlueprintMenuGroup, BlueprintMenuGroupEntry } from "blueprint";
-import {
-    COMPATIBLE_ENTRIES,
-    NODE_TYPES,
-    NodeEntryId,
-    NodeEntryType,
-    NodeType,
-    TriggerDataVariable,
-} from "data";
+import { COMPATIBLE_ENTRIES, NODE_TYPES, NodeEntryType, NodeType } from "data";
 import { dataToDatasetString, joinStr, localize, R } from "module-helpers";
 import { NodeSchemaModuleId } from "./model";
 import {
@@ -105,13 +98,5 @@ type FilterGroupEntry = BlueprintMenuGroupEntry & {
 
 type FilterGroup = BlueprintMenuGroup<FilterGroupEntry>;
 
-type FilterNodeData = {
-    type: NodeType;
-    key: NodeKey;
-    variable?: TriggerDataVariable & {
-        target: NodeEntryId;
-    };
-};
-
 export { getFilterGroups };
-export type { FilterGroup, FilterGroupEntry, FilterNodeData };
+export type { FilterGroup, FilterGroupEntry };

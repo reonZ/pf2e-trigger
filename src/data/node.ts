@@ -138,6 +138,10 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return isEventNode(this);
     }
 
+    get isSubtriggerNode(): boolean {
+        return isSubtriggerNode(this);
+    }
+
     *entries(): Generator<[NodeEntryCategory, key: string, NodeDataEntry], void, undefined> {
         for (const [key, input] of R.entries(this.inputs)) {
             yield ["inputs", key, input];
@@ -230,15 +234,12 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             const removed = otherConnections.findSplice((id) => id === entryId);
 
             if (removed) {
-                otherNode.update(
-                    { [oppositeCategory]: { [otherKey]: { ids: otherConnections } } },
-                    { broadcast: false }
-                );
+                otherNode.update({ [oppositeCategory]: { [otherKey]: { ids: otherConnections } } });
             }
         }
 
         if (!skipSelf) {
-            this.update({ [category]: { [key]: { ids: [] } } }, { broadcast: false });
+            this.update({ [category]: { [key]: { ids: [] } } });
         }
     }
 
@@ -248,10 +249,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         connections.push(addId);
 
-        this.update(
-            { [category]: { [key]: { ids: R.unique(connections) } } },
-            { broadcast: false }
-        );
+        this.update({ [category]: { [key]: { ids: R.unique(connections) } } });
     }
 
     addCustomEntry({
@@ -268,19 +266,32 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         const entries = (this._source.custom?.[category]?.slice() ?? []) as NodeSchemaEntry[];
         const key = foundry.utils.randomID();
 
-        entries.push({
+        const entry: NodeSchemaEntry = {
             key,
             type,
             label: label?.trim() || localize("entry", type),
             group: group ?? "",
             custom: true,
-        });
+        };
+
+        entries.push(entry);
+
+        if (category !== "outs" && this.isEvent) {
+            this.parent?.addVariable(`${this.id}.outputs.${key}`, {
+                label: entry.label,
+                type,
+                global: false,
+                locked: true,
+            });
+        }
 
         this.update({
             custom: {
                 [category]: entries,
             },
         });
+
+        // TODO update all nodes in all triggers if this is a subtrigger
     }
 
     removeCustomEntry(
@@ -304,6 +315,8 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
                 [category]: entries,
             },
         });
+
+        // TODO update all nodes in all triggers if this is a subtrigger
     }
 
     _initializeSource(

@@ -9,7 +9,6 @@ import {
     NodeSchemaCustom,
     NodeSchemaModel,
     NodeSchemaModuleId,
-    NodeSchemaSource,
     subtrigger,
     value,
     variable,
@@ -49,14 +48,29 @@ function getSchema(
     const schema = foundry.utils.deepClone(
         // @ts-ignore
         SCHEMAS[data.type]?.[data.key]
-    ) as DeepPartial<NodeSchemaSource>;
+    );
 
-    if (data instanceof TriggerNodeData && data._source.custom) {
+    if (!schema) return;
+
+    if (!(data instanceof TriggerNodeData)) {
+        return new NodeSchemaModel(schema);
+    }
+
+    if (data._source.custom) {
         (schema.inputs ??= []).push(...(data._source.custom.inputs ?? []));
         (schema.outputs ??= []).push(...(data._source.custom.outputs ?? []));
     }
 
-    return schema ? new NodeSchemaModel(schema) : undefined;
+    if (data.isSubtriggerNode && data.target && data.parent.parent) {
+        const origin = data.parent.parent.triggers.get(data.target);
+        const input = origin?.event;
+        const output = origin?.nodes.find(isSubtriggerOutput);
+
+        (schema.inputs ??= []).push(...(input?._source.custom?.outputs ?? []));
+        (schema.outputs ??= []).push(...(output?._source.custom?.inputs ?? []));
+    }
+
+    return new NodeSchemaModel(schema);
 }
 
 function isValidNodeKey(type: NodeType, key: NodeKey): boolean {
@@ -83,6 +97,10 @@ function isSubtriggerNode(node: NodeAdjacent): boolean {
     return isSubTrigger(node) && node.key === "subtrigger-node";
 }
 
+function isSubtriggerOutput(node: NodeAdjacent): boolean {
+    return isSubTrigger(node) && node.key === "subtrigger-output";
+}
+
 function isGetter(node: NodeAdjacent): boolean {
     return isVariable(node) && node.key === "variable-getter";
 }
@@ -92,16 +110,11 @@ function isSubTrigger({ type }: NodeAdjacent): boolean {
 }
 
 function hasInBridge(node: NodeAdjacent): boolean {
-    return (
-        !isValue(node) &&
-        !isEvent(node) &&
-        !isGetter(node) &&
-        (!isSubTrigger(node) || node.key !== "subtrigger-input")
-    );
+    return !isValue(node) && !isEvent(node) && !isGetter(node);
 }
 
 function hasOuts(node: NodeAdjacent): boolean {
-    return !isValue(node) && !isGetter(node);
+    return !isValue(node) && !isGetter(node) && !isSubtriggerOutput(node);
 }
 
 function hasInputConnector(node: NodeAdjacent) {

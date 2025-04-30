@@ -142,7 +142,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const trigger = this.trigger;
         const [subtriggers, triggers] = R.partition(
             this.blueprint.triggers.contents,
-            (t) => t.isSubtriggerNode
+            (t) => t.isSubtrigger
         );
 
         const variables = R.pipe(

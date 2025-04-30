@@ -210,12 +210,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
             entries.push({ value: "delete-entry" });
         }
 
-        if (
-            this.isOutput &&
-            !this.isBridge &&
-            !this.node.isVariable &&
-            (!this.node.isEvent || this.isCustom)
-        ) {
+        if (this.isOutput && !this.isBridge && !this.node.isVariable && !this.node.isEvent) {
             if (this.trigger?.getVariable(this.id)) {
                 entries.push({ value: "delete-variable" }, { value: "edit-variable" });
             } else {
@@ -235,7 +230,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get isCustom(): boolean {
-        return !!this.schema.custom;
+        return this.node.isCustom && !!this.schema.custom;
     }
 
     get opacity(): number {

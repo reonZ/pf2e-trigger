@@ -5,6 +5,7 @@ import {
     NonBridgeEntryType,
     TriggerNodeData,
     TriggerNodeDataSource,
+    WorldTriggers,
 } from "data";
 import { IdField, localize, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
 import fields = foundry.data.fields;
@@ -54,6 +55,11 @@ const triggerDataSchema = (): TriggerDataSchema => ({
                 nullable: false,
                 initial: false,
             }),
+            locked: new fields.BooleanField({
+                required: false,
+                nullable: false,
+                initial: false,
+            }),
         }),
         {
             required: false,
@@ -81,7 +87,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         return this.name || this.id;
     }
 
-    get isSubtriggerNode(): boolean {
+    get isSubtrigger(): boolean {
         return this.event.type === "subtrigger";
     }
 
@@ -94,17 +100,17 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     }
 
     addVariable(id: NodeEntryId, data: TriggerDataVariableSource) {
-        this.update({ variables: { [id]: data } }, { broadcast: false });
+        this.update({ variables: { [id]: data } });
     }
 
     removeVariable(id: NodeEntryId) {
         for (const node of this.nodes) {
             if (isVariable(node) && node.target === id) {
-                node.delete({ broadcast: false });
+                node.delete();
             }
         }
 
-        this.update({ variables: { [`-=${id}`]: null } }, { broadcast: false });
+        this.update({ variables: { [`-=${id}`]: null } });
     }
 
     _initializeSource(
@@ -161,6 +167,8 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 }
 
 interface TriggerData {
+    parent: WorldTriggers;
+
     createEmbeddedDocuments(
         embeddedName: "Node",
         data: PreCreate<TriggerNodeDataSource>[],
@@ -192,11 +200,10 @@ type TriggerVariableSchema = {
     label: fields.StringField<string, string, true>;
     type: fields.StringField<NonBridgeEntryType, NonBridgeEntryType, true, false, false>;
     global: fields.BooleanField<boolean, boolean, false>;
+    locked: fields.BooleanField<boolean, boolean, false>;
 };
 
-type TriggerDataVariable = ModelPropsFromSchema<TriggerVariableSchema> & {
-    locked?: boolean;
-};
+type TriggerDataVariable = ModelPropsFromSchema<TriggerVariableSchema>;
 
 type TriggerDataVariableSource = {
     label: string;

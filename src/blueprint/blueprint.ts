@@ -11,8 +11,10 @@ import {
 import {
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
+    NodeType,
     NonBridgeEntryType,
     TriggerData,
+    TriggerDataVariable,
     TriggerNodeDataSource,
     WorldTriggers,
 } from "data";
@@ -27,7 +29,7 @@ import {
     subtractPoint,
     waitDialog,
 } from "module-helpers";
-import { EventKey, FilterGroupEntry, FilterNodeData, getFilterGroups } from "schema";
+import { EventKey, FilterGroupEntry, getFilterGroups, NodeKey } from "schema";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized = false;
@@ -162,16 +164,24 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
     async createTrigger({ event, name }: { event: EventKey; name: string }) {
         try {
-            const [trigger] = await this.#worldTriggers.createEmbeddedDocuments("Trigger", [
+            const isSubtrigger = event === "subtrigger-input";
+            const nodes: TriggerNodeDataSource[] = [
                 {
-                    name,
-                    nodes: [
-                        {
-                            key: event,
-                            type: event === "subtrigger-input" ? "subtrigger" : "event",
-                        },
-                    ],
+                    key: event,
+                    type: isSubtrigger ? "subtrigger" : "event",
                 },
+            ];
+
+            if (isSubtrigger) {
+                nodes.push({
+                    key: "subtrigger-output",
+                    type: "subtrigger",
+                    position: { x: 1000, y: 200 },
+                });
+            }
+
+            const [trigger] = await this.#worldTriggers.createEmbeddedDocuments("Trigger", [
+                { name, nodes },
             ]);
 
             this.setTrigger(trigger.id);
@@ -198,7 +208,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!trigger) return;
 
         const groups = this.#getFilterGroups(entry);
-        const result = await BlueprintMenu.wait<FilterNodeData>({
+        const result = await BlueprintMenu.wait<BlueprintFilterData>({
             blueprint: this,
             groups,
             target,
@@ -206,7 +216,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         });
         if (!result) return;
 
-        const { key, type, variable } = result;
+        const { key, type, variable, subtrigger } = result;
         const data: TriggerNodeDataSource = { type, key };
 
         if (variable) {
@@ -222,6 +232,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     outputs: [{ type: variable.type, key: "value" }],
                 };
             }
+        } else if (subtrigger) {
+            const origin = this.triggers.get(subtrigger.target);
+            if (!origin) return;
+
+            data.target = origin.id;
         }
 
         try {
@@ -344,7 +359,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const groups = getFilterGroups();
         const setter = localize("node.variable.setter");
 
-        const variables = R.pipe(
+        const variables: FilterGroupEntry[] = R.pipe(
             this.trigger?.variables ?? {},
             R.entries(),
             R.flatMap(([target, variable]): FilterGroupEntry[] => {
@@ -366,7 +381,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                             type: "variable",
                             key: "variable-getter",
                             variable: variableData,
-                        } satisfies FilterNodeData),
+                        } satisfies BlueprintFilterData),
                     },
                 ];
 
@@ -381,7 +396,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                             type: "variable",
                             key: "variable-setter",
                             variable: variableData,
-                        } satisfies FilterNodeData),
+                        } satisfies BlueprintFilterData),
                     });
                 }
 
@@ -394,6 +409,35 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             groups.push({
                 title: localize("node.variable.title"),
                 entries: variables,
+            });
+        }
+
+        const subtriggers: FilterGroupEntry[] = R.pipe(
+            this.trigger?.isSubtrigger ? [] : this.triggers.contents,
+            R.filter((trigger) => trigger.isSubtrigger),
+            R.map((trigger): FilterGroupEntry => {
+                return {
+                    type: "subtrigger",
+                    key: "subtrigger-node",
+                    // TODO add those
+                    inputs: [],
+                    outputs: [],
+                    label: trigger.label,
+                    data: dataToDatasetString({
+                        type: "subtrigger",
+                        key: "subtrigger-node",
+                        subtrigger: {
+                            target: trigger.id,
+                        },
+                    } satisfies BlueprintFilterData),
+                };
+            })
+        );
+
+        if (subtriggers.length) {
+            groups.push({
+                title: localize("node.subtrigger.title"),
+                entries: subtriggers,
             });
         }
 
@@ -517,5 +561,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         // }
     }
 }
+
+type BlueprintFilterData = {
+    type: NodeType;
+    key: NodeKey;
+    variable?: TriggerDataVariable & {
+        target: NodeEntryId;
+    };
+    subtrigger?: {
+        target: string;
+    };
+};
 
 export { Blueprint };
