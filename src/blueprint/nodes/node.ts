@@ -476,7 +476,7 @@ class BlueprintNode extends PIXI.Container {
             y: this.outerPadding.y,
         };
 
-        if (icon instanceof PreciseText) {
+        if (icon instanceof foundry.canvas.containers.PreciseText) {
         } else if (icon) {
             icon.width = title.height + this.outerPadding.y * 2;
             icon.height = icon.width;

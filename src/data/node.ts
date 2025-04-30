@@ -264,7 +264,14 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         connections.push(addId);
 
-        this.update({ [category]: { [key]: { ids: R.unique(connections) } } });
+        this.update({
+            [category]: {
+                [key]: {
+                    ids: R.unique(connections),
+                    ["-=value"]: null,
+                },
+            },
+        });
     }
 
     addCustomEntry({
