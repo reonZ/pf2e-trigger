@@ -9,6 +9,7 @@ import {
     BlueprintNodesLayer,
 } from "blueprint";
 import {
+    createEntryId,
     getCompatibleTypes,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
@@ -288,9 +289,10 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         const type = entry?.type ?? result.type;
         const label = result.label.trim() || placeholder || localize("entry", type);
-        const id = entry?.id ?? `${trigger.event.id}.outputs.${foundry.utils.randomID()}`;
+        const variableId =
+            entry?.id ?? createEntryId("outputs", trigger.event.id, foundry.utils.randomID());
 
-        trigger.addVariable(id, { type, label, global });
+        trigger.addVariable(variableId, { type, label, global });
         this.parent?.refresh();
     }
 

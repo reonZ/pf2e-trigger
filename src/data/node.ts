@@ -1,4 +1,5 @@
 import {
+    createEntryId,
     NodeCustomEntryType,
     NodeDataEntry,
     NodeDataEntrySource,
@@ -293,7 +294,8 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category !== "outs" && this.isEvent) {
             // we automatically add a locked variable for this entry
-            this.parent?.addVariable(`${this.id}.outputs.${key}`, {
+            const variableId = createEntryId("outputs", this.id, key);
+            this.parent?.addVariable(variableId, {
                 label: entry.label,
                 type,
                 global: false,
@@ -334,9 +336,13 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category === "outputs") {
             // we remove the variable for this entry if it exist
-            const id: NodeEntryId = `${this.id}.outputs.${key}`;
-            this.parent?.removeVariable(id);
+            const variableId = createEntryId("outputs", this.id, key);
+            this.parent?.removeVariable(variableId);
         }
+
+        // we disconnect the entry before removing it
+        const entryId = createEntryId(category, this.id, key);
+        this.disconnect(entryId, true);
 
         this.update({
             custom: {
@@ -345,7 +351,9 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         });
 
         if (this.isSutriggerEvent || this.isSubtriggerOutput) {
-            // we re-initialize all the subtrigger-node out there and remove their variables
+            const oppositeCategory = category === "inputs" ? "outputs" : "inputs";
+
+            // we go overe all the subtrigger-node out there
             for (const trigger of this.triggers ?? []) {
                 if (trigger.isSubtrigger) continue;
 
@@ -353,10 +361,16 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
                     if (!node.isSubtriggerNode || node.target !== this.parent._id) continue;
 
                     if (this.isSubtriggerOutput) {
-                        const variableId: NodeEntryId = `${node.id}.outputs.${key}`;
+                        // we remove the variable if it exist
+                        const variableId = createEntryId("outputs", node.id, key);
                         trigger.removeVariable(variableId);
                     }
 
+                    // we disconnect the removed entry first
+                    const entryId = createEntryId(oppositeCategory, node.id, key);
+                    node.disconnect(entryId, true);
+
+                    // we re-initialize
                     node._initialize();
                 }
             }
@@ -385,7 +399,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     _onDelete() {
         for (const [category, key] of this.entries()) {
-            const entryId = `${this._id}.${category}.${key}` satisfies NodeEntryId;
+            const entryId = createEntryId(category, this.id, key);
             this.disconnect(entryId, true);
         }
     }

@@ -7,6 +7,7 @@ import {
     HorizontalLayoutGraphics,
 } from "blueprint";
 import {
+    createEntryId,
     entriesAreCompatible,
     NodeEntryCategory,
     NodeEntryId,
@@ -37,6 +38,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     #connector: PIXI.Graphics | undefined;
     #node: BlueprintNode;
     #schema: BaseNodeSchemaEntry;
+    #id: NodeEntryId;
 
     constructor(node: BlueprintNode, category: NodeEntryCategory, schema: BaseNodeSchemaEntry) {
         super({ spacing: 5, maxHeight: node.entryHeight, padding: [0, 2] });
@@ -44,6 +46,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         this.#node = node;
         this.#schema = schema;
         this.#category = category;
+        this.#id = createEntryId(category, node.id, this.key);
 
         const children = [
             (this.#connector = this.#drawConnector()),
@@ -69,7 +72,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get id(): NodeEntryId {
-        return `${this.node.id}.${this.category}.${this.key}`;
+        return this.#id;
     }
 
     get type(): NodeEntryType {

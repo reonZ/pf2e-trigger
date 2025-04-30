@@ -1,5 +1,6 @@
 import { isEntryCategory, NodeEntryCategory } from "data";
 import { MODULE } from "module-helpers";
+import { NodeCustomEntryCategory } from "schema";
 import fields = foundry.data.fields;
 
 class NodeEntryIdField<
@@ -43,6 +44,15 @@ function segmentEntryId(id: NodeEntryId): SegmentedEntryId {
     return { nodeId, category, key } as SegmentedEntryId;
 }
 
+function createEntryId(
+    category: NodeCustomEntryCategory,
+    nodeId: string,
+    key: string
+): NodeEntryId {
+    const realCategory = category === "inputs" ? "inputs" : "outputs";
+    return `${nodeId}.${realCategory}.${key}`;
+}
+
 interface NodeEntryIdField<
     TCategory extends NodeEntryCategory = NodeEntryCategory,
     TRequired extends boolean = true,
@@ -71,5 +81,5 @@ type NodeDataEntryIdFieldOptions<
     category?: NodeEntryCategory;
 };
 
-export { NodeEntryIdField, segmentEntryId };
+export { createEntryId, NodeEntryIdField, segmentEntryId };
 export type { NodeEntryId };
