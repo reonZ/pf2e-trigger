@@ -1,5 +1,4 @@
 import {
-    isEventNode,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
     NonBridgeEntryType,
@@ -8,9 +7,9 @@ import {
     WorldTriggers,
 } from "data";
 import { IdField, localize, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
+import { isEvent, isVariable } from "schema";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
-import { isVariable } from "schema";
 
 const triggerDataMetadata = (): Partial<abstract.DocumentClassMetadata> => ({
     name: "Trigger",
@@ -75,7 +74,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     declare event: TriggerNodeData;
 
     static validateJoint(data: SourceFromSchema<TriggerDataSchema>) {
-        const events = data.nodes.filter(isEventNode);
+        const events = data.nodes.filter(isEvent);
         if (events.length < 1) {
             throw MODULE.Error(`doesn't have an event node`);
         } else if (events.length > 1) {
@@ -89,6 +88,10 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
     get isSubtrigger(): boolean {
         return this.event.type === "subtrigger";
+    }
+
+    get triggers(): abstract.EmbeddedCollection<TriggerData> | undefined {
+        return this.parent?.triggers;
     }
 
     getNode(id: NodeEntryId): TriggerNodeData | undefined {
@@ -105,6 +108,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
     removeVariable(id: NodeEntryId) {
         for (const node of this.nodes) {
+            // we remove all the getter & setter nodes associated with the variable
             if (isVariable(node) && node.target === id) {
                 node.delete();
             }
@@ -119,7 +123,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     ): this["_source"] {
         const source = super._initializeSource(data, options);
 
-        if (!R.isArray(source.nodes) || !source.nodes.some(isEventNode)) {
+        if (!R.isArray(source.nodes) || !source.nodes.some(isEvent)) {
             const node = new TriggerNodeData({ type: "event", key: "test-event" });
             source.nodes.unshift(node.toObject());
         }
@@ -130,7 +134,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     _initialize(options?: Record<string, unknown>) {
         super._initialize(options);
 
-        this.event = this.nodes.find(isEventNode)!;
+        this.event = this.nodes.find(isEvent)!;
 
         this.variables[`${this.event.id}.outputs.this`] = {
             type: "target",
@@ -156,6 +160,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
             (variables[nodeId] ??= []).push(entryId);
         }
 
+        // we remove all the variables linked to that node and by extension their associated nodes
         for (const nodeId of nodeIds) {
             const entryIds = variables[nodeId];
 

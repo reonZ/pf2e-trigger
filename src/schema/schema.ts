@@ -61,8 +61,8 @@ function getSchema(
         (schema.outputs ??= []).push(...(data._source.custom.outputs ?? []));
     }
 
-    if (data.isSubtriggerNode && data.target && data.parent?.parent) {
-        const origin = data.parent.parent.triggers.get(data.target);
+    if (data.isSubtriggerNode && data.target && data.triggers) {
+        const origin = data.triggers.get(data.target);
         const input = origin?.event;
         const output = origin?.nodes.find(isSubtriggerOutput);
 

@@ -26,7 +26,10 @@ import {
 import {
     BaseNodeSchemaEntry,
     getSchema,
+    isEvent,
+    isSubtriggerEvent,
     isSubtriggerNode,
+    isSubtriggerOutput,
     isValidNodeKey,
     isVariable,
     NODE_KEYS,
@@ -135,11 +138,23 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
     }
 
     get isEvent(): boolean {
-        return isEventNode(this);
+        return isEvent(this);
+    }
+
+    get isSutriggerEvent(): boolean {
+        return isSubtriggerEvent(this);
+    }
+
+    get isSubtriggerOutput(): boolean {
+        return isSubtriggerOutput(this);
     }
 
     get isSubtriggerNode(): boolean {
         return isSubtriggerNode(this);
+    }
+
+    get triggers(): abstract.EmbeddedCollection<TriggerData> | undefined {
+        return this.parent?.triggers;
     }
 
     *entries(): Generator<[NodeEntryCategory, key: string, NodeDataEntry], void, undefined> {
@@ -277,6 +292,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         entries.push(entry);
 
         if (category !== "outs" && this.isEvent) {
+            // we automatically add a locked variable for this entry
             this.parent?.addVariable(`${this.id}.outputs.${key}`, {
                 label: entry.label,
                 type,
@@ -291,7 +307,18 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             },
         });
 
-        // TODO update all nodes in all triggers if this is a subtrigger
+        if (this.isSutriggerEvent || this.isSubtriggerOutput) {
+            // we re-initialize all the subtrigger-node out there
+            for (const trigger of this.triggers ?? []) {
+                if (trigger.isSubtrigger) continue;
+
+                for (const node of trigger.nodes) {
+                    if (node.isSubtriggerNode && node.target === this.parent._id) {
+                        node._initialize();
+                    }
+                }
+            }
+        }
     }
 
     removeCustomEntry(
@@ -305,8 +332,9 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (!removed) return;
 
-        if (category !== "outs") {
-            const id: NodeEntryId = `${this.id}.${category}.${removed.key}`;
+        if (category === "outputs") {
+            // we remove the variable for this entry if it exist
+            const id: NodeEntryId = `${this.id}.outputs.${key}`;
             this.parent?.removeVariable(id);
         }
 
@@ -316,7 +344,23 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             },
         });
 
-        // TODO update all nodes in all triggers if this is a subtrigger
+        if (this.isSutriggerEvent || this.isSubtriggerOutput) {
+            // we re-initialize all the subtrigger-node out there and remove their variables
+            for (const trigger of this.triggers ?? []) {
+                if (trigger.isSubtrigger) continue;
+
+                for (const node of trigger.nodes) {
+                    if (!node.isSubtriggerNode || node.target !== this.parent._id) continue;
+
+                    if (this.isSubtriggerOutput) {
+                        const variableId: NodeEntryId = `${node.id}.outputs.${key}`;
+                        trigger.removeVariable(variableId);
+                    }
+
+                    node._initialize();
+                }
+            }
+        }
     }
 
     _initializeSource(
@@ -325,7 +369,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
     ): this["_source"] {
         const source = super._initializeSource(data, options);
 
-        if (isEventNode(source)) {
+        if (isEvent(source)) {
             source.position = { x: 350, y: 200 };
         }
 
@@ -335,8 +379,8 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
     _initialize(options?: Record<string, unknown>): void {
         super._initialize(options);
 
-        const schema = (this.nodeSchema = getSchema(this)!);
-        this.schemaInputs = R.mapToObj(schema.inputs, (input) => [input.key, input]);
+        this.nodeSchema = getSchema(this)!;
+        this.schemaInputs = R.mapToObj(this.nodeSchema.inputs, (input) => [input.key, input]);
     }
 
     _onDelete() {
@@ -345,10 +389,6 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             this.disconnect(entryId, true);
         }
     }
-}
-
-function isEventNode(node: { type: NodeType; key: NodeKey }): boolean {
-    return node.type === "event" || (node.type === "subtrigger" && node.key === "subtrigger-input");
 }
 
 interface TriggerNodeData {
@@ -404,5 +444,5 @@ type TriggerNodeDataSource = {
 
 MODULE.devExpose({ TriggerNodeData });
 
-export { isEventNode, NODE_TYPES, TriggerNodeData };
+export { NODE_TYPES, TriggerNodeData };
 export type { NodeType, TriggerNodeDataSource };
