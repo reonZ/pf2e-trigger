@@ -204,7 +204,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         addListenerAll(html, ".header [data-action]", (event, el) => {
             switch (el.dataset.action as HeaderAction) {
                 case "close-window": {
-                    return;
+                    return this.#closeAndSave();
                 }
 
                 case "create-trigger": {
@@ -379,11 +379,41 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         }
     }
 
+    async #closeAndSave() {
+        const result = await confirmDialog("close-window", {
+            skipAnimate: true,
+        });
+
+        if (result === null) return;
+
+        if (result) {
+            this.blueprint.saveTriggers();
+        }
+
+        this.close();
+    }
+
+    async #saveTriggers() {
+        const result = await confirmDialog("save-triggers", {
+            skipAnimate: true,
+        });
+
+        if (result) {
+            this.blueprint.saveTriggers();
+        }
+    }
+
     #exportTrigger(id: string) {}
 
-    #saveTriggers() {}
+    async #resetTriggers() {
+        const result = await confirmDialog("reset-triggers", {
+            skipAnimate: true,
+        });
 
-    #resetTriggers() {}
+        if (result) {
+            this.blueprint.resetTriggers();
+        }
+    }
 }
 
 type BlueprintMenuRenderOptions = Omit<HandlebarsRenderOptions, "parts"> & {

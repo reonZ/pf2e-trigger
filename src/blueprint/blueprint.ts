@@ -28,6 +28,7 @@ import {
     localize,
     MODULE,
     R,
+    setSetting,
     subtractPoint,
     waitDialog,
 } from "module-helpers";
@@ -52,7 +53,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             resolution: window.devicePixelRatio,
         });
 
-        this.#worldTriggers = getSetting<WorldTriggers>("world-triggers").clone();
+        this.#worldTriggers = this.#getTriggers();
 
         this.stage.addChild(
             (this.#gridLayer = new BlueprintGridLayer()),
@@ -147,6 +148,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     getGlobalCoordinates(point: Point): Point {
         const viewBounds = this.getBoundClientRect();
         return { x: point.x + viewBounds.x, y: point.y + viewBounds.y };
+    }
+
+    saveTriggers() {
+        setSetting("world-triggers", this.#worldTriggers);
+    }
+
+    resetTriggers() {
+        this.setTrigger(null);
+        this.#worldTriggers = this.#getTriggers();
+        this.refresh();
     }
 
     getTrigger(id: Maybe<string>): TriggerData | undefined {
@@ -356,6 +367,10 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             ].flatMap((parent) => ["x", "y"].map((attribute) => ({ parent, attribute, to: 0 }))),
             { duration: distance / 4 }
         );
+    }
+
+    #getTriggers(): WorldTriggers {
+        return getSetting<WorldTriggers>("world-triggers").clone();
     }
 
     #getFilterGroups(entry?: BlueprintEntry): BlueprintMenuGroup[] {
