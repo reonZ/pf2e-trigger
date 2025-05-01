@@ -63,6 +63,20 @@
                 "expand": "Expand Triggers Window"
             }
         },
+        "close-window": {
+            "title": "Close Triggers Menu",
+            "content": "Do you want to save your triggers before closing?",
+            "yes": "Save & Close",
+            "no": "Close w/o Saving"
+        },
+        "save-triggers": {
+            "title": "Save Triggers",
+            "content": "Are you sure you want to save your triggers?"
+        },
+        "reset-triggers": {
+            "title": "Reset Triggers",
+            "content": "Are you sure you want to reset your triggers to their last saved state?"
+        },
         "create-trigger": {
             "title": "Create Trigger",
             "yes": "Create",
@@ -164,6 +178,9 @@
             "action": {
                 "title": "Actions",
                 "subtitle": "Action",
+                "console-log": {
+                    "label": "Console Log"
+                },
                 "roll-save": {
                     "label": "Roll Save",
                     "entry": {
@@ -184,7 +201,7 @@
                 "inside-aura": {
                     "label": "Is Inside Aura",
                     "entry": {
-                        "aura-source": "Aura Source",
+                        "source": "Aura Source",
                         "slug": "aura-slug",
                         "targets": "Targets"
                     },

@@ -31,7 +31,15 @@ const rollDamageWithSave = {
     module: "pf2e-toolbelt",
 } as const satisfies NodeRawActionSchema;
 
+const consoleLog = {
+    icon: "\uf120",
+    custom: [{ category: "inputs" }, { category: "outputs" }],
+} as const satisfies NodeRawSchema;
+
+//
+
 const action = {
+    "console-log": consoleLog,
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "roll-damage-with-save": rollDamageWithSave,

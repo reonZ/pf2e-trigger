@@ -15,6 +15,7 @@ const insideAura = {
         },
         { key: "target", type: "target" },
     ],
+    outputs: [{ key: "source", type: "target" }],
 } as const satisfies ConditionSchema;
 
 const condition = {
