@@ -21,9 +21,8 @@ class Trigger {
         };
     }
 
-    // TODO remove
-    get options() {
-        return this.#options;
+    get name(): string {
+        return this.#data.name;
     }
 
     get target(): TargetDocuments {
