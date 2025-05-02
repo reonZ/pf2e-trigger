@@ -1,13 +1,12 @@
 import { BlueprintApplication } from "blueprint";
-import { WorldTriggers, TriggerData, TriggerNodeData } from "data";
+import { TriggerData, TriggerNodeData, WorldTriggers } from "data";
 import { MODULE, registerSetting, registerSettingMenu } from "module-helpers";
+import { prepareTriggers } from "trigger";
 
 MODULE.register("pf2e-trigger");
 MODULE.enableDebugMode();
 
 Hooks.once("setup", () => {
-    // TriggerDataCollection.refresh();
-
     // @ts-expect-error
     CONFIG.Trigger = {
         documentClass: TriggerData,
@@ -25,7 +24,7 @@ Hooks.once("init", () => {
         scope: "world",
         config: false,
         onChange: () => {
-            // TriggerDataCollection.refresh();
+            prepareTriggers();
         },
     });
 
@@ -33,4 +32,6 @@ Hooks.once("init", () => {
         type: BlueprintApplication,
         restricted: true,
     });
+
+    prepareTriggers();
 });
