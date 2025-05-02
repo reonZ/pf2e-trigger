@@ -32,7 +32,13 @@ import {
     subtractPoint,
     waitDialog,
 } from "module-helpers";
-import { EventKey, FilterGroupEntry, getFilterGroups, isSubtriggerOutput, NodeKey } from "schema";
+import {
+    NodeEventKey,
+    FilterGroupEntry,
+    getFilterGroups,
+    isSubtriggerOutput,
+    NodeKey,
+} from "schema";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     #initialized = false;
@@ -53,7 +59,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             resolution: window.devicePixelRatio,
         });
 
-        this.#worldTriggers = this.#getTriggers();
+        this.#worldTriggers = this.#getWorldTriggers();
 
         this.stage.addChild(
             (this.#gridLayer = new BlueprintGridLayer()),
@@ -156,7 +162,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
     resetTriggers() {
         this.setTrigger(null);
-        this.#worldTriggers = this.#getTriggers();
+        this.#worldTriggers = this.#getWorldTriggers();
         this.refresh();
     }
 
@@ -171,11 +177,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             this.#draw();
         }
 
+        MODULE.debug(this.trigger);
+
         this.parent?.refresh();
         this.resetPosition();
     }
 
-    async createTrigger({ event, name }: { event: EventKey; name: string }) {
+    async createTrigger({ event, name }: { event: NodeEventKey; name: string }) {
         try {
             const isSubtrigger = event === "subtrigger-input";
             const nodes: TriggerNodeDataSource[] = [
@@ -301,7 +309,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const type = entry?.type ?? result.type;
         const label = result.label || placeholder || localize("entry", type);
         const variableId =
-            entry?.id ?? createEntryId("outputs", trigger.event.id, foundry.utils.randomID());
+            entry?.id ?? createEntryId(trigger.event.id, "outputs", foundry.utils.randomID());
 
         trigger.addVariable(variableId, { type, label, global });
         this.parent?.refresh();
@@ -369,7 +377,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
-    #getTriggers(): WorldTriggers {
+    #getWorldTriggers(): WorldTriggers {
         return getSetting<WorldTriggers>("world-triggers").clone();
     }
 

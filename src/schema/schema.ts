@@ -119,7 +119,10 @@ function hasInputConnector(node: NodeAdjacent) {
 type NodeAdjacent = { type: NodeType; key: NodeKey };
 
 type NodeKey = (typeof NODE_KEYS)[number];
-type EventKey = (typeof EVENT_KEYS)[number] | "subtrigger-input";
+type NodeEventKey = (typeof EVENT_KEYS)[number] | "subtrigger-input";
+type NonEventKey = Exclude<NodeKey, NodeEventKey>;
+
+type NodeKeys<T extends NodeType> = keyof (typeof SCHEMAS)[T];
 
 type NodeRawSchema = {
     icon?: string | IconObject;
@@ -217,6 +220,8 @@ type SelectEntrySchema = NodeSchemaInputEntryWithField<
     }
 >;
 
+type NodeSchemaOf<T extends NodeType, K extends keyof (typeof SCHEMAS)[T]> = (typeof SCHEMAS)[T][K];
+
 export {
     EVENT_KEYS,
     getSchema,
@@ -235,13 +240,17 @@ export {
     SCHEMAS,
 };
 export type {
-    EventKey,
+    NodeEventKey,
     NodeKey,
+    NodeKeys,
     NodeRawSchema,
     NodeRawSchemaEntry,
     NodeSchemaInput,
     NodeSchemaNumber,
+    NodeSchemaOf,
+    NodeSchemaRawBridge,
     NodeSchemaVariable,
+    NonEventKey,
     SchemaEntries,
     SelectEntrySchema,
 };

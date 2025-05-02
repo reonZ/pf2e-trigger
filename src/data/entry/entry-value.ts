@@ -29,5 +29,5 @@ class NodeEntryValueField<
 
 type NodeEntryValue = string | number | boolean | undefined;
 
-export type { NodeEntryValue };
 export { NodeEntryValueField };
+export type { NodeEntryValue };

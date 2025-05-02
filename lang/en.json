@@ -174,6 +174,11 @@
             "input": "Input",
             "result": "Result"
         },
+        "select-option": {
+            "all": "All",
+            "allies": "Allies",
+            "enemies": "Enemies"
+        },
         "node": {
             "action": {
                 "title": "Actions",
@@ -204,11 +209,6 @@
                         "source": "Aura Source",
                         "slug": "aura-slug",
                         "targets": "Targets"
-                    },
-                    "option": {
-                        "all": "All",
-                        "allies": "Allies",
-                        "enemies": "Enemies"
                     }
                 }
             },

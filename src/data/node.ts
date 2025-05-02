@@ -300,7 +300,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category !== "outs" && this.isEvent) {
             // we automatically add a locked variable for this entry
-            const variableId = createEntryId("outputs", this.id, entry.key);
+            const variableId = createEntryId(this.id, "outputs", entry.key);
             this.parent?.addVariable(variableId, {
                 label: entry.label,
                 type,
@@ -342,12 +342,12 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category === "outputs") {
             // we remove the variable for this entry if it exist
-            const variableId = createEntryId("outputs", this.id, key);
+            const variableId = createEntryId(this.id, "outputs", key);
             this.parent?.removeVariable(variableId);
         }
 
         // we disconnect the entry before removing it
-        const entryId = createEntryId(category, this.id, key);
+        const entryId = createEntryId(this.id, category, key);
         this.disconnect(entryId, true);
 
         this.update({
@@ -368,12 +368,12 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
                     if (this.isSubtriggerOutput) {
                         // we remove the variable if it exist
-                        const variableId = createEntryId("outputs", node.id, key);
+                        const variableId = createEntryId(node.id, "outputs", key);
                         trigger.removeVariable(variableId);
                     }
 
                     // we disconnect the removed entry first
-                    const entryId = createEntryId(oppositeCategory, node.id, key);
+                    const entryId = createEntryId(node.id, oppositeCategory, key);
                     node.disconnect(entryId, true);
 
                     // we re-initialize
@@ -405,7 +405,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     _onDelete() {
         for (const [category, key] of this.entries()) {
-            const entryId = createEntryId(category, this.id, key);
+            const entryId = createEntryId(this.id, category, key);
             this.disconnect(entryId, true);
         }
     }

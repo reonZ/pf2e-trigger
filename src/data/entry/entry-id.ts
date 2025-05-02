@@ -45,8 +45,8 @@ function segmentEntryId(id: NodeEntryId): SegmentedEntryId {
 }
 
 function createEntryId(
-    category: NodeCustomEntryCategory,
     nodeId: string,
+    category: NodeCustomEntryCategory,
     key: string
 ): NodeEntryId {
     const realCategory = category === "inputs" ? "inputs" : "outputs";

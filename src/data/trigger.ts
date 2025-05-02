@@ -7,7 +7,7 @@ import {
     WorldTriggers,
 } from "data";
 import { IdField, localize, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
-import { isEvent, isVariable } from "schema";
+import { isEvent, isVariable, NodeEventKey } from "schema";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
 
@@ -71,7 +71,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     triggerDataMetadata,
     triggerDataSchema
 ) {
-    declare event: TriggerNodeData;
+    declare event: TriggerNodeData & { key: NodeEventKey };
 
     static validateJoint(data: SourceFromSchema<TriggerDataSchema>) {
         const events = data.nodes.filter(isEvent);

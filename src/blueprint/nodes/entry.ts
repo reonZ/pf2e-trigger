@@ -46,7 +46,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         this.#node = node;
         this.#schema = schema;
         this.#category = category;
-        this.#id = createEntryId(category, node.id, this.key);
+        this.#id = createEntryId(node.id, category, this.key);
 
         const children = [
             (this.#connector = this.#drawConnector()),
@@ -197,8 +197,9 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
             }
 
             return (
-                localizeIfExist(schema.label) ??
+                localizeIfExist("node", schema.label, "entry", schema.key) ??
                 localizeIfExist("entry", schema.label) ??
+                localizeIfExist(schema.label) ??
                 game.i18n.localize(schema.label)
             );
         }

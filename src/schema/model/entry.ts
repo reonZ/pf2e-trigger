@@ -299,6 +299,8 @@ type NodeInputSchema = NodeEntrySchema<NonBridgeEntryType> & {
     field: SchemaField<NodeInputFieldSchema, false, false, false>;
 };
 
+type NodeFieldSchema = Partial<ModelPropsFromSchema<NodeInputFieldSchema>>;
+
 type NodeInputFieldSchema = {
     min: fields.NumberField<number, number, false, false, false>;
     max: fields.NumberField<number, number, false, false, false>;
@@ -315,6 +317,7 @@ type NodeInputFieldSchema = {
     options: NodeInputOptionsField;
     code: fields.BooleanField<boolean, boolean, false>;
 };
+
 type NodeInputSource = BaseNodeSchemaEntry & {
     field?: {
         min?: number;
@@ -339,6 +342,7 @@ export type {
     BaseNodeSchemaEntry,
     NodeBridgeSchema,
     NodeBridgeSource,
+    NodeFieldSchema,
     NodeInputSchema,
     NodeInputSource,
     NodeOutputSchema,

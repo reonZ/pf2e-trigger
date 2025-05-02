@@ -16,7 +16,7 @@ import {
     TemplateLocalize,
     waitDialog,
 } from "module-helpers";
-import { EVENT_KEYS, EventKey } from "schema";
+import { EVENT_KEYS, NodeEventKey } from "schema";
 import apps = foundry.applications.api;
 
 class BlueprintApplication extends apps.HandlebarsApplicationMixin(
@@ -312,7 +312,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     async #createTrigger() {
-        const result = await waitDialog<{ name: string; event: EventKey }>({
+        const result = await waitDialog<{ name: string; event: NodeEventKey }>({
             content: [
                 {
                     type: "text",

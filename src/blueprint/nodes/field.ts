@@ -411,7 +411,11 @@ class EntryField extends PIXI.Graphics {
 }
 
 function localizeOption(value: string, localizePath: string): string {
-    return localizeIfExist(localizePath, "option", value) ?? game.i18n.localize(value);
+    return (
+        localizeIfExist(localizePath, "option", value) ??
+        localizeIfExist("select-option", value) ??
+        game.i18n.localize(value)
+    );
 }
 
 export { EntryField };

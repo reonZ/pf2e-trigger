@@ -38,6 +38,7 @@ type NodeEntryFieldSchema = {
 };
 
 type NodeDataEntry = ModelPropsFromSchema<NodeEntryFieldSchema>;
+
 type NodeDataEntrySource = {
     ids?: NodeEntryId[];
     value?: NodeEntryValue;
