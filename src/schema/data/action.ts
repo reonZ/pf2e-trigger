@@ -37,7 +37,7 @@ const rollDamageWithSave = {
 
 const consoleLog = {
     icon: "\uf120",
-    custom: [{ category: "inputs" }, { category: "outputs" }],
+    custom: [{ category: "inputs" }],
 } as const satisfies NodeRawSchema;
 
 type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
