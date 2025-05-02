@@ -128,7 +128,7 @@ type NodeRawSchema = {
     icon?: string | IconObject;
     module?: NodeSchemaModuleId;
     loop?: boolean;
-    document?: { icon?: boolean; field: string };
+    document?: string;
     custom?: ReadonlyArray<NodeSchemaCustom>;
     outs?: ReadonlyArray<NodeSchemaRawBridge>;
     inputs?: ReadonlyArray<NodeSchemaInput>;
@@ -148,7 +148,6 @@ type NodeSchemaInput =
     | NodeSchemaBoolean
     | NodeSchemaTarget
     | NodeSchemaItem
-    | NodeSchemaRoll
     | NodeSchemaDc
     | NodeSchemaDuration
     | NodeSchemaList
@@ -201,7 +200,6 @@ type NodeSchemaSelect = NodeSchemaInputEntryWithField<
 
 type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
 type NodeSchemaItem = NodeSchemaInputEntry<"item">;
-type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
 type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;

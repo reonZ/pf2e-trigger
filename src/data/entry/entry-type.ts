@@ -7,7 +7,6 @@ const NODE_ENTRY_TYPES = [
     "item",
     "list",
     "number",
-    "roll",
     "select",
     "target",
     "text",

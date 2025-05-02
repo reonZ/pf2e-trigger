@@ -88,25 +88,11 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                 nullable: false,
                 initial: false,
             }),
-            document: new fields.SchemaField(
-                {
-                    field: new fields.StringField({
-                        required: true,
-                        nullable: false,
-                        blank: false,
-                    }),
-                    icon: new fields.BooleanField({
-                        required: false,
-                        nullable: false,
-                        initial: false,
-                    }),
-                },
-                {
-                    required: false,
-                    nullable: false,
-                    initial: undefined,
-                }
-            ),
+            document: new fields.StringField({
+                required: false,
+                nullable: false,
+                blank: false,
+            }),
             ...nodeSchemaEntries(),
         };
     }
@@ -185,12 +171,7 @@ type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
     module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
     custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
     loop: fields.BooleanField<boolean, boolean, false>;
-    document: SchemaField<NodeSchemaDocumentSchema, false, false, false>;
-};
-
-type NodeSchemaDocumentSchema = {
-    icon: fields.BooleanField<boolean, boolean, false>;
-    field: fields.StringField<string, string, true>;
+    document: fields.StringField<string, string, false, false, false>;
 };
 
 type NodeSchemaCustomSchema = {

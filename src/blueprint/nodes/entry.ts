@@ -27,7 +27,6 @@ const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
     item: 0x696fe0,
     list: 0x874501,
     number: 0x07b88f,
-    roll: 0x86910d,
     select: 0xe0a06c,
     target: 0xff3075,
     text: 0xe0a06c,
