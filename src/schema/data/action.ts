@@ -4,6 +4,10 @@ const rollDamage = {
     icon: "\uf6cf",
     inputs: [
         { key: "formula", type: "text" },
+        { key: "origin", type: "target" },
+        { key: "item", type: "item" },
+        { key: "options", type: "text" },
+        { key: "traits", type: "text" },
         { key: "target", type: "target" },
     ],
 } as const satisfies NodeRawActionSchema;
@@ -36,17 +40,13 @@ const consoleLog = {
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;
 
-//
+type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
+    inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
+};
 
-const action = {
+export const action = {
     "console-log": consoleLog,
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "roll-damage-with-save": rollDamageWithSave,
 };
-
-type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
-    inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
-};
-
-export { action };

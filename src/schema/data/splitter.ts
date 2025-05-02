@@ -20,12 +20,6 @@ const actorSplitter = createDocumentExtractor("target");
 
 const itemSplitter = createDocumentExtractor("item");
 
-const splitter = {
-    "boolean-splitter": booleanSplitter,
-    "actor-splitter": actorSplitter,
-    "item-splitter": itemSplitter,
-};
-
 function createDocumentExtractor<T extends NonBridgeEntryType>(
     type: T
 ): DocumentExtractorSchema<T> {
@@ -46,4 +40,8 @@ type DocumentExtractorSchema<T extends NonBridgeEntryType> = {
     custom: [NodeSchemaCustom];
 };
 
-export { splitter };
+export const splitter = {
+    "boolean-splitter": booleanSplitter,
+    "actor-splitter": actorSplitter,
+    "item-splitter": itemSplitter,
+};

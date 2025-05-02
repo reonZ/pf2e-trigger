@@ -18,13 +18,11 @@ const insideAura = {
     outputs: [{ key: "source", type: "target" }],
 } as const satisfies ConditionSchema;
 
-const condition = {
-    "inside-aura": insideAura,
-};
-
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs" | "inputs"> & {
     outs: BooleanOutsSchema;
     inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
 };
 
-export { condition };
+export const condition = {
+    "inside-aura": insideAura,
+};

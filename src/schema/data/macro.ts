@@ -6,8 +6,6 @@ const useMacro = {
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;
 
-const macro = {
+export const macro = {
     "use-macro": useMacro,
 };
-
-export { macro };

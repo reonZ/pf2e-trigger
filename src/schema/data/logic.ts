@@ -1,16 +1,6 @@
 import { NonBridgeEntryType } from "data";
 import { BooleanOutsSchema, booleanOutsSchema, IconObject } from "schema";
 
-const logic = {
-    "eq-number": createEqualsSchema("number"),
-    "gt-number": createNumberSchema("\x3e"),
-    "gte-number": createNumberSchema("\uf532"),
-    "lt-number": createNumberSchema("\x3c"),
-    "lte-number": createNumberSchema("\uf537"),
-    "eq-text": createEqualsSchema("text"),
-    "eq-actor": createEqualsSchema("target"),
-};
-
 function createLogicSchema<T extends NonBridgeEntryType>(
     type: T,
     unicode: string,
@@ -43,4 +33,12 @@ type LogicSchema<T extends NonBridgeEntryType> = {
     inputs: [{ type: T; key: "a" }, { type: T; key: "b" }];
 };
 
-export { logic };
+export const logic = {
+    "eq-number": createEqualsSchema("number"),
+    "gt-number": createNumberSchema("\x3e"),
+    "gte-number": createNumberSchema("\uf532"),
+    "lt-number": createNumberSchema("\x3c"),
+    "lte-number": createNumberSchema("\uf537"),
+    "eq-text": createEqualsSchema("text"),
+    "eq-actor": createEqualsSchema("target"),
+};

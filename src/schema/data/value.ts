@@ -1,8 +1,3 @@
-const value = {
-    "number-value": createInputValue("number"),
-    "text-value": createInputValue("text"),
-};
-
 function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
     return {
         inputs: [{ key: "input", type }],
@@ -17,4 +12,7 @@ type InputValueSchema<T extends InputEntryType> = {
     outputs: [{ key: "value"; type: T }];
 };
 
-export { value };
+export const value = {
+    "number-value": createInputValue("number"),
+    "text-value": createInputValue("text"),
+};

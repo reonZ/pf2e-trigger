@@ -15,10 +15,8 @@ const node = {
     icon: "\uf1e6",
 } as const satisfies NodeRawSchema;
 
-const subtrigger = {
+export const subtrigger = {
     "subtrigger-input": input,
     "subtrigger-output": output,
     "subtrigger-node": node,
 };
-
-export { subtrigger };
