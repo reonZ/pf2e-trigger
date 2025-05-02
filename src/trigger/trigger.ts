@@ -79,7 +79,9 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "number"
     ? TargetDocuments | undefined
     : T extends "item"
     ? ItemPF2e | undefined
-    : string;
+    : T extends "text"
+    ? string
+    : unknown;
 
 export { prepareTriggers, Trigger };
 export type { TriggerOptions, TriggerPreOptions, TriggerValue };

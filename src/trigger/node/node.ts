@@ -1,6 +1,6 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
 import { R } from "module-helpers";
-import { NodeRawSchema, NodeSchemaEntriesSource } from "schema";
+import { NodeInputSource, NodeOutputSource, NodeRawSchema } from "schema";
 import { Trigger, TriggerValue } from "trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
@@ -29,8 +29,12 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.trigger.target;
     }
 
-    get custom(): NodeSchemaEntriesSource {
-        return this.#data.custom ?? {};
+    get inputs(): NodeInputSource[] {
+        return this.#data.custom?.inputs ?? [];
+    }
+
+    get outputs(): NodeOutputSource[] {
+        return this.#data.custom?.outputs ?? [];
     }
 
     async execute(): Promise<boolean> {
@@ -128,7 +132,6 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             case "dc":
             case "duration":
             case "item":
-            case "roll":
             case "target": {
                 return undefined;
             }

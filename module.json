@@ -12,8 +12,8 @@
         "scripts/main.js"
     ],
     "compatibility": {
-        "minimum": "13.341",
-        "verified": "13.341",
+        "minimum": "13.342",
+        "verified": "13.342",
         "maximum": "13"
     },
     "version": "2.0.0",
