@@ -1,5 +1,5 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
-import { R } from "module-helpers";
+import { ActorPF2e, R } from "module-helpers";
 import { NodeInputSchema, NodeInputSource, NodeOutputSource, NodeRawSchema } from "schema";
 import { Trigger, TriggerValue } from "trigger";
 
@@ -48,7 +48,8 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     }
 
     async send(key: ExtractOutKey<TSchema>): Promise<boolean> {
-        return this.#getFirstNodeFromEntries(this.#data.outputs[key])?.node.execute() ?? false;
+        const output = String(key);
+        return this.#getFirstNodeFromEntries(this.#data.outputs[output])?.node.execute() ?? false;
     }
 
     setVariable<K extends ExtractOutputKey<TSchema>>(
@@ -62,6 +63,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     async getTarget(key: ExtractTargetKey<TSchema>): Promise<TargetDocuments | undefined> {
         const target = await this.get(key as any);
         return target === null ? undefined : (target as TargetDocuments | undefined) ?? this.target;
+    }
+
+    async getTargetActor(key: ExtractTargetKey<TSchema>): Promise<ActorPF2e | undefined> {
+        return (await this.getTarget(key))?.actor;
     }
 
     async get<K extends ExtractInputKey<TSchema>>(key: K): Promise<ExtractInputValue<TSchema, K>> {
@@ -208,7 +213,9 @@ type ExtractOutputValue<S extends NodeRawSchema, K extends ExtractOutputKey<S>> 
 type ExtractOutKey<S extends NodeRawSchema> = S extends {
     outs: ReadonlyArray<{ key: infer K extends string }>;
 }
-    ? K
+    ? K extends "true" | "false"
+        ? K | boolean
+        : K
     : "out";
 
 export { TriggerNode };

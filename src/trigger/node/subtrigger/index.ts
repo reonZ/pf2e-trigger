@@ -5,4 +5,4 @@ export const subtrigger = {
     "subtrigger-input": TriggerNode,
     "subtrigger-node": TriggerNode,
     "subtrigger-output": TriggerNode,
-} as const satisfies Record<NodeKeys<"subtrigger">, typeof TriggerNode>;
+} as Record<NodeKeys<"subtrigger">, typeof TriggerNode>;

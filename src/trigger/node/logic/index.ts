@@ -9,4 +9,4 @@ export const logic = {
     "gte-number": TriggerNode,
     "lt-number": TriggerNode,
     "lte-number": TriggerNode,
-} as const satisfies Record<NodeKeys<"logic">, typeof TriggerNode>;
+} as Record<NodeKeys<"logic">, typeof TriggerNode>;

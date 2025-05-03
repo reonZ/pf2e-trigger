@@ -3,11 +3,11 @@ import { TriggerNode } from "../node";
 import { getAurasInMemory } from "hook";
 import { actorsRespectAlliance, ActorTargetAlliance } from "module-helpers";
 
-class InsideAuraTriggerNode extends TriggerNode<InsideAuraSchema> {
+class InsideAuraTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "inside-aura">> {
     async execute(): Promise<boolean> {
         const slug = await this.get("slug");
         const targets = (await this.get("targets")) as ActorTargetAlliance;
-        const { actor } = (await this.getTarget("target")) ?? {};
+        const actor = await this.getTargetActor("target");
 
         if (!slug || !actor) {
             return this.send("false");
@@ -29,7 +29,5 @@ class InsideAuraTriggerNode extends TriggerNode<InsideAuraSchema> {
         return true;
     }
 }
-
-type InsideAuraSchema = NodeSchemaOf<"condition", "inside-aura">;
 
 export { InsideAuraTriggerNode };

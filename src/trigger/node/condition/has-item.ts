@@ -2,7 +2,7 @@ import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "../node";
 import { getItemWithSourceId } from "module-helpers";
 
-class HasItemTriggerNode extends TriggerNode<HasItemSchema> {
+class HasItemTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-item">> {
     async execute(): Promise<boolean> {
         const uuid = await this.get("uuid");
         const target = await this.getTarget("target");
@@ -21,7 +21,5 @@ class HasItemTriggerNode extends TriggerNode<HasItemSchema> {
         }
     }
 }
-
-type HasItemSchema = NodeSchemaOf<"condition", "has-item">;
 
 export { HasItemTriggerNode };

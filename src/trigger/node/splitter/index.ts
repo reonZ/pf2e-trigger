@@ -5,4 +5,4 @@ export const splitter = {
     "actor-splitter": TriggerNode,
     "boolean-splitter": TriggerNode,
     "item-splitter": TriggerNode,
-} as const satisfies Record<NodeKeys<"splitter">, typeof TriggerNode>;
+} as Record<NodeKeys<"splitter">, typeof TriggerNode>;
