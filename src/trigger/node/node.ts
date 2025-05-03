@@ -1,6 +1,6 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
 import { R } from "module-helpers";
-import { NodeInputSource, NodeOutputSource, NodeRawSchema } from "schema";
+import { NodeInputSchema, NodeInputSource, NodeOutputSource, NodeRawSchema } from "schema";
 import { Trigger, TriggerValue } from "trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
@@ -69,6 +69,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             return this.#get[key]();
         }
 
+        const schemaInput = this.#data.schemaInputs[key];
         const input = this.#data.inputs[key] ?? {};
         const nodeEntry = this.#getFirstNodeFromEntries(input);
 
@@ -76,32 +77,49 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             const { entryId, node } = nodeEntry;
 
             if (["value", "variable"].includes(node.type)) {
-                const schemaInput = this.#data.schemaInputs[key];
-
-                if (schemaInput.type === "select") {
-                    const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-
-                    this.#get[key] = async () => {
-                        const query = ((await node.query(key)) ?? "") as string;
-                        return options.includes(query) ? query : options[0] ?? "";
-                    };
-                } else {
-                    this.#get[key] = () => node.query(key) ?? this.#getDefault(key);
-                }
+                this.#get[key] = async () => {
+                    const value = await node.query(key);
+                    return this.#getConverted(schemaInput, value);
+                };
             } else {
-                this.#get[key] = () => this.trigger.getVariable(entryId) ?? this.#getDefault(key);
+                this.#get[key] = () => {
+                    const value = this.trigger.getVariable(entryId);
+                    return this.#getConverted(schemaInput, value);
+                };
             }
         } else if (R.isNonNullish(input.value)) {
             this.#get[key] = () => input.value;
         } else {
-            this.#get[key] = () => this.#getDefault(key);
+            this.#get[key] = () => this.#getDefault(schemaInput);
         }
 
         return this.#get[key]();
     }
 
-    #getDefault(key: string) {
-        const schemaInput = this.#data.schemaInputs[key];
+    #getConverted(schemaInput: ModelPropsFromSchema<NodeInputSchema>, value: any) {
+        if (R.isNullish(value)) {
+            return this.#getDefault(schemaInput);
+        }
+
+        const expectedType = schemaInput.type;
+
+        switch (expectedType) {
+            case "select": {
+                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
+                return options.includes(value) ? value : options[0] ?? "";
+            }
+
+            // TODO finish conversions
+            case "number":
+            case "dc":
+
+            default: {
+                return value;
+            }
+        }
+    }
+
+    #getDefault(schemaInput: ModelPropsFromSchema<NodeInputSchema>) {
         const field = schemaInput.field;
 
         if (schemaInput.field && "default" in schemaInput.field) {
@@ -129,10 +147,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return field?.options?.[0].value ?? "";
             }
 
-            case "dc":
-            case "duration":
-            case "item":
-            case "target": {
+            default: {
                 return undefined;
             }
         }

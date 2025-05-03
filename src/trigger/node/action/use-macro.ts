@@ -80,12 +80,12 @@ function isValidCustomEntry(type: NodeEntryType, value: unknown) {
         }
 
         case "dc": {
-            // TODO
+            // TODO test validity of dc
             return R.isPlainObject(value);
         }
 
         case "duration": {
-            // TODO
+            // TODO test validity of duration
             return R.isPlainObject(value);
         }
 
