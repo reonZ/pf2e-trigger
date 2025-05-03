@@ -138,7 +138,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get hasHeader(): boolean {
-        return !this.isValue && !this.isGetter;
+        return !this.isGetter;
     }
 
     get opacity(): number {
@@ -183,6 +183,8 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get subtitle(): string | undefined {
+        if (this.isValue) return;
+
         const document = this.document;
         return document !== undefined
             ? localize(this.localizePath, "label")
@@ -559,14 +561,13 @@ class BlueprintNode extends PIXI.Container {
 
     #drawSubtitle(): PreciseText | undefined {
         const subtitle = this.subtitle;
+        if (!subtitle) return;
 
-        if (subtitle) {
-            return this.preciseText(subtitle, {
-                fontSize: this.fontSize * 0.93,
-                fontStyle: "italic",
-                fill: "d9d9d9",
-            });
-        }
+        return this.preciseText(subtitle, {
+            fontSize: this.fontSize * 0.93,
+            fontStyle: "italic",
+            fill: "d9d9d9",
+        });
     }
 
     #drawHelper(): PIXI.Graphics | undefined {

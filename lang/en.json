@@ -172,7 +172,10 @@
             "value": "Value",
             "input": "Input",
             "result": "Result",
-            "uuid": "Source UUID"
+            "uuid": "Source UUID",
+            "origin": "Origin",
+            "options": "Extra Options",
+            "traits": "Extra Traits"
         },
         "document": {
             "broken": "Broken Link",
@@ -214,7 +217,10 @@
                     "label": "Has Item"
                 },
                 "has-option": {
-                    "label": "Has RollOption"
+                    "label": "Has RollOption",
+                    "entry": {
+                        "options": "roll:option"
+                    }
                 },
                 "inside-aura": {
                     "label": "Is Inside Aura",

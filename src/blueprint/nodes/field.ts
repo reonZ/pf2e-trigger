@@ -157,11 +157,7 @@ class EntryField extends PIXI.Graphics {
     }
 
     get placeholder(): string {
-        return this.isNumber
-            ? ""
-            : this.node.isValue
-            ? localizeIfExist(this.entry.localizePath, this.schema.key) ?? this.node.title
-            : this.entry.label;
+        return this.isNumber ? "" : this.entry.label;
     }
 
     get textWidth(): number {

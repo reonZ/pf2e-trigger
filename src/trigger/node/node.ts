@@ -29,6 +29,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.trigger.target;
     }
 
+    get nodeTarget(): NodeEntryId | string | undefined {
+        return this.#data.target;
+    }
+
     get inputs(): NodeInputSource[] {
         return this.#data.custom?.inputs ?? [];
     }
@@ -160,7 +164,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         entries: NodeDataEntry
     ): { entryId: NodeEntryId; node: TriggerNode } | undefined {
         for (const entryId of entries?.ids ?? []) {
-            const node = this.#trigger.getNodeFromEntryId(entryId);
+            const node = this.trigger.getNodeFromEntryId(entryId);
 
             if (node) {
                 return { node, entryId };
