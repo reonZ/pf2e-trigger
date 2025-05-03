@@ -53,8 +53,8 @@ type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | 
 
 export const action = {
     "console-log": consoleLog,
+    "roll-damage-with-save": rollDamageWithSave,
     "roll-damage": rollDamage,
     "roll-save": rollSave,
-    "roll-damage-with-save": rollDamageWithSave,
     "use-macro": useMacro,
 };

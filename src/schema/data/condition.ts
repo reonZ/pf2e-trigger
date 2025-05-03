@@ -18,11 +18,22 @@ const insideAura = {
     outputs: [{ key: "source", type: "target" }],
 } as const satisfies ConditionSchema;
 
+const hasItem = {
+    outs: booleanOutsSchema(),
+    inputs: [
+        { key: "uuid", type: "text" },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "item", type: "item" }],
+    document: "uuid",
+} as const satisfies ConditionSchema;
+
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs" | "inputs"> & {
     outs: BooleanOutsSchema;
     inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
 };
 
 export const condition = {
+    "has-item": hasItem,
     "inside-aura": insideAura,
 };

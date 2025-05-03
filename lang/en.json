@@ -172,7 +172,8 @@
             "true": "True",
             "value": "Value",
             "input": "Input",
-            "result": "Result"
+            "result": "Result",
+            "uuid": "Source UUID"
         },
         "select-option": {
             "all": "All",
@@ -200,10 +201,7 @@
                     "label": "Roll Damage With Save"
                 },
                 "use-macro": {
-                    "label": "Run Macro",
-                    "entry": {
-                        "uuid": "Macro UUID"
-                    }
+                    "label": "Run Macro"
                 }
             },
             "condition": {
@@ -216,6 +214,9 @@
                         "slug": "aura-slug",
                         "targets": "Targets"
                     }
+                },
+                "has-item": {
+                    "label": "Has Item"
                 }
             },
             "event": {
