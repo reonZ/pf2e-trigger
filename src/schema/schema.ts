@@ -7,7 +7,6 @@ import {
     event,
     IconObject,
     logic,
-    macro,
     NodeSchemaCustom,
     NodeSchemaModel,
     NodeSchemaModuleId,
@@ -25,7 +24,6 @@ const SCHEMAS = {
     splitter,
     value,
     variable,
-    macro,
     subtrigger,
 } as const satisfies Record<NodeType, Record<string, NodeRawSchema>>;
 

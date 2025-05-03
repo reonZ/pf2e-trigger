@@ -54,7 +54,6 @@ const NODE_TYPES = [
     "splitter",
     "value",
     "variable",
-    "macro",
     "subtrigger",
 ] as const;
 

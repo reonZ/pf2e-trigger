@@ -40,6 +40,13 @@ const consoleLog = {
     custom: [{ category: "inputs" }],
 } as const satisfies NodeRawSchema;
 
+const useMacro = {
+    icon: "\uf121",
+    inputs: [{ type: "text", key: "uuid" }],
+    document: "uuid",
+    custom: [{ category: "inputs" }, { category: "outputs" }],
+} as const satisfies NodeRawSchema;
+
 type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
     inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
 };
@@ -49,4 +56,5 @@ export const action = {
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "roll-damage-with-save": rollDamageWithSave,
+    "use-macro": useMacro,
 };

@@ -3,7 +3,6 @@ export * from "./action";
 export * from "./condition";
 export * from "./event";
 export * from "./logic";
-export * from "./macro";
 export * from "./splitter";
 export * from "./subtrigger";
 export * from "./value";

@@ -7,6 +7,7 @@
         }
     },
     "pf2e-trigger": {
+        "broken-link": "Broken Link",
         "region": {
             "id": "Trigger Id"
         },
@@ -197,6 +198,12 @@
                 },
                 "roll-damage-with-save": {
                     "label": "Roll Damage With Save"
+                },
+                "use-macro": {
+                    "label": "Run Macro",
+                    "entry": {
+                        "uuid": "Macro UUID"
+                    }
                 }
             },
             "condition": {
@@ -309,16 +316,6 @@
                 },
                 "eq-actor": {
                     "label": "Equals (Actor)"
-                }
-            },
-            "macro": {
-                "title": "Macros",
-                "header": "Run Macro",
-                "use-macro": {
-                    "label": "Run Macro",
-                    "entry": {
-                        "uuid": "Macro UUID"
-                    }
                 }
             },
             "splitter": {

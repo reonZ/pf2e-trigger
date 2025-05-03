@@ -45,7 +45,6 @@ import {
 
 const NODE_ICONS: PartialRecord<NodeType, IconObject> = {
     condition: { unicode: "\ue14f", fontWeight: "400" },
-    macro: { unicode: "\uf121", fontWeight: "400" },
     splitter: { unicode: "\ue254", fontWeight: "400" },
 };
 
@@ -54,7 +53,6 @@ const HEADER_COLOR: Record<NodeType, number> = {
     condition: 0x188600,
     event: 0xc40000,
     logic: 0x7e18b5,
-    macro: 0xa1733f,
     splitter: 0x7e18b5,
     subtrigger: 0xc40000,
     value: 0x757575,
@@ -171,13 +169,24 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get document(): Maybe<CompendiumIndexData> {
-        const key = this.schema.document?.field;
+        const key = this.schema.document;
         const uuid = key ? this.getValue(key) : undefined;
-        return R.isString(uuid) ? fromUuidSync<CompendiumIndexData>(uuid) : undefined;
+        return R.isString(uuid) && uuid ? fromUuidSync<CompendiumIndexData>(uuid) : undefined;
     }
 
     get title(): string {
-        return this.document?.name ?? this.targetLabel ?? localize(this.localizePath, "label");
+        const document = this.document;
+        return document === null
+            ? localize("broken-link")
+            : document?.name ?? this.targetLabel ?? localize(this.localizePath, "label");
+    }
+
+    get subtitle(): string | undefined {
+        const document = this.document;
+        return document !== undefined
+            ? localize(this.localizePath, "label")
+            : localizeIfExist(this.localizePath, "subtitle") ??
+                  localizeIfExist(this.rootLocalizePath, "subtitle");
     }
 
     get isCustom(): boolean {
@@ -468,16 +477,16 @@ class BlueprintNode extends PIXI.Container {
 
         const spacing = 5;
         const icon = this.#drawIcon();
-        const title = this.#drawTitle();
+        const title = this.preciseText(this.title);
         const subtitle = this.#drawSubtitle();
+        const iconIsImage = !!icon && !(icon instanceof foundry.canvas.containers.PreciseText);
 
         const padding: { x: [number, number]; y: number } = {
             x: [this.outerPadding.x, this.outerPadding.x],
             y: this.outerPadding.y,
         };
 
-        if (icon instanceof foundry.canvas.containers.PreciseText) {
-        } else if (icon) {
+        if (iconIsImage) {
             icon.width = title.height + this.outerPadding.y * 2;
             icon.height = icon.width;
 
@@ -499,22 +508,26 @@ class BlueprintNode extends PIXI.Container {
 
         if (subtitle) {
             const offset = icon ? elementOffset(icon, "x") + spacing : 2;
+
             header.addChildWithOffset(subtitle, offset);
+
+            if (iconIsImage) {
+                subtitle.y -= this.outerPadding.y;
+            }
         }
 
         return header;
     }
 
-    #drawTitle(): PreciseText {
-        const title = this.title;
-        return this.preciseText(title);
-    }
-
     #drawIcon(): PreciseText | PIXI.Sprite | undefined {
-        const img = this.document?.img;
+        const document = this.document;
 
-        if (img) {
-            return PIXI.Sprite.from(img);
+        if (document === null) {
+            return this.fontAwesomeIcon("\uf127");
+        }
+
+        if (document?.img) {
+            return PIXI.Sprite.from(document.img);
         }
 
         const icon = this.schema.icon ?? NODE_ICONS[this.type];
@@ -522,9 +535,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #drawSubtitle(): PreciseText | undefined {
-        const subtitle =
-            localizeIfExist(this.localizePath, "subtitle") ??
-            localizeIfExist(this.rootLocalizePath, "subtitle");
+        const subtitle = this.subtitle;
 
         if (subtitle) {
             return this.preciseText(subtitle, {

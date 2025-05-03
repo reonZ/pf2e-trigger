@@ -1,6 +1,6 @@
 import { NodeEntryType } from "data";
 import { MacroPF2e, MODULE, R } from "module-helpers";
-import { NodeKeys, NodeSchemaOf } from "schema";
+import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
 class UseMacroTriggerNode extends TriggerNode<UseMacroSchema> {
@@ -95,8 +95,6 @@ function isValidCustomEntry(type: NodeEntryType, value: unknown) {
     }
 }
 
-type UseMacroSchema = NodeSchemaOf<"macro", "use-macro">;
+type UseMacroSchema = NodeSchemaOf<"action", "use-macro">;
 
-export const macro = {
-    "use-macro": UseMacroTriggerNode,
-} as Record<NodeKeys<"macro">, typeof TriggerNode>;
+export { UseMacroTriggerNode };
