@@ -137,6 +137,10 @@ class BlueprintNode extends PIXI.Container {
         return this.data.isSubtriggerNode;
     }
 
+    get isSubtriggerOutput(): boolean {
+        return this.data.isSubtriggerOutput;
+    }
+
     get hasHeader(): boolean {
         return !this.isGetter;
     }
@@ -231,16 +235,16 @@ class BlueprintNode extends PIXI.Container {
     get contextEntries(): NodeContextData[] {
         const entries: NodeContextData[] = [];
 
-        if (!this.isEvent) {
-            entries.push({ value: "delete-node" }, { value: "duplicate-node" });
-        }
-
         if (this.isVariable) {
             const variable = this.trigger?.getVariable(this.data.target as NodeEntryId);
 
             if (variable && !variable.locked) {
                 entries.push({ value: "delete-variable" }, { value: "edit-variable" });
             }
+        }
+
+        if (!this.isEvent && !this.isSubtriggerOutput) {
+            entries.push({ value: "delete-node" }, { value: "duplicate-node" });
         }
 
         if (this.isCustom) {
