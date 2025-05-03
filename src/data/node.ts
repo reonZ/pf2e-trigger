@@ -157,6 +157,11 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return this.parent?.triggers;
     }
 
+    reset(): void {
+        super.reset();
+        this._initializeSchema();
+    }
+
     *entries(): Generator<[NodeEntryCategory, key: string, NodeDataEntry], void, undefined> {
         for (const [key, input] of R.entries(this.inputs)) {
             yield ["inputs", key, input];
@@ -321,7 +326,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
                 for (const node of trigger.nodes) {
                     if (node.isSubtriggerNode && node.target === this.parent._id) {
-                        node._initialize();
+                        node.reset();
                     }
                 }
             }
@@ -376,7 +381,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
                     node.disconnect(entryId, true);
 
                     // we re-initialize
-                    node._initialize();
+                    node.reset();
                 }
             }
         }
@@ -395,9 +400,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return source;
     }
 
-    _initialize(options?: Record<string, unknown>): void {
-        super._initialize(options);
-
+    _initializeSchema() {
         this.nodeSchema = getSchema(this)!;
         this.schemaInputs = R.mapToObj(this.nodeSchema.inputs, (input) => [input.key, input]);
     }

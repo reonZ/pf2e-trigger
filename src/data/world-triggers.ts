@@ -19,7 +19,19 @@ const worldTriggersSchema = (): WorldTriggersSchema => ({
 class WorldTriggers extends makeModuleDocument<null, WorldTriggersSchema>(
     worldTriggerMetada,
     worldTriggersSchema
-) {}
+) {
+    protected _initialize(options?: Record<string, unknown>): void {
+        super._initialize(options);
+
+        // we initialize node schemas once all the triggers have been initialized and added
+        // to make sure they have access to the subtriggers
+        for (const trigger of this.triggers) {
+            for (const node of trigger.nodes) {
+                node._initializeSchema();
+            }
+        }
+    }
+}
 
 interface WorldTriggers {
     createEmbeddedDocuments(
