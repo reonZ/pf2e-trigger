@@ -1,5 +1,6 @@
 import {
     Blueprint,
+    BlueprintDropDocument,
     BlueprintEntry,
     BlueprintMenu,
     BlueprintWaitContextData,
@@ -43,22 +44,6 @@ import {
     NodeSchemaModel,
 } from "schema";
 
-const NODE_ICONS: PartialRecord<NodeType, IconObject> = {
-    condition: { unicode: "\ue14f", fontWeight: "400" },
-    splitter: { unicode: "\ue254", fontWeight: "400" },
-};
-
-const HEADER_COLOR: Record<NodeType, number> = {
-    action: 0x2162bd,
-    condition: 0x188600,
-    event: 0xc40000,
-    logic: 0x7e18b5,
-    splitter: 0x7e18b5,
-    subtrigger: 0xc40000,
-    value: 0x757575,
-    variable: 0x2e2e2e,
-};
-
 class BlueprintNode extends PIXI.Container {
     #blueprint: Blueprint;
     #data: TriggerNodeData;
@@ -67,6 +52,22 @@ class BlueprintNode extends PIXI.Container {
         all: new Collection<BlueprintEntry>(),
         inputs: new Collection<BlueprintEntry>(),
         outputs: new Collection<BlueprintEntry>(),
+    };
+
+    static NODE_ICONS: PartialRecord<NodeType, IconObject> = {
+        condition: { unicode: "\ue14f", fontWeight: "400" },
+        splitter: { unicode: "\ue254", fontWeight: "400" },
+    };
+
+    static HEADER_COLOR: Record<NodeType, number> = {
+        action: 0x2162bd,
+        condition: 0x188600,
+        event: 0xc40000,
+        logic: 0x7e18b5,
+        splitter: 0x7e18b5,
+        subtrigger: 0xc40000,
+        value: 0x757575,
+        variable: 0x2e2e2e,
     };
 
     constructor(blueprint: Blueprint, data: TriggerNodeData) {
@@ -177,7 +178,7 @@ class BlueprintNode extends PIXI.Container {
     get title(): string {
         const document = this.document;
         return document === null
-            ? localize("broken-link")
+            ? localize("document.broken")
             : document?.name ?? this.targetLabel ?? localize(this.localizePath, "label");
     }
 
@@ -193,6 +194,14 @@ class BlueprintNode extends PIXI.Container {
         return !!this.schema.custom?.length;
     }
 
+    get isAction(): boolean {
+        return this.type === "action";
+    }
+
+    get isMacro(): boolean {
+        return this.isAction && this.key === "use-macro";
+    }
+
     get isLoop(): boolean {
         return !!this.schema.loop;
     }
@@ -202,7 +211,7 @@ class BlueprintNode extends PIXI.Container {
     }
 
     get headerColor(): number {
-        return HEADER_COLOR[this.type] ?? this.backgroundColor;
+        return BlueprintNode.HEADER_COLOR[this.type] ?? this.backgroundColor;
     }
 
     get borderRadius(): number {
@@ -302,8 +311,22 @@ class BlueprintNode extends PIXI.Container {
         this.blueprint.nodesLayer.add(node);
     }
 
-    testContains({ x, y }: Point): boolean {
+    contains({ x, y }: Point): boolean {
         return this.getBounds().contains(x, y);
+    }
+
+    onDropDocument(point: Point, document: BlueprintDropDocument): boolean {
+        if (!this.contains(point)) {
+            return false;
+        }
+
+        for (const entry of this.entries("inputs")) {
+            if (entry.onDropDocument(point, document)) {
+                break;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -311,7 +334,7 @@ class BlueprintNode extends PIXI.Container {
      * return undefined if the point isn't contained in the node at all
      */
     testConnection(point: Point, otherEntry: BlueprintEntry): BlueprintEntry | null | undefined {
-        if (!this.testContains(point)) return;
+        if (!this.contains(point)) return;
 
         for (const entry of this.entries(otherEntry.oppositeCategory)) {
             if (entry.testConnection(point, otherEntry)) {
@@ -530,7 +553,7 @@ class BlueprintNode extends PIXI.Container {
             return PIXI.Sprite.from(document.img);
         }
 
-        const icon = this.schema.icon ?? NODE_ICONS[this.type];
+        const icon = this.schema.icon ?? BlueprintNode.NODE_ICONS[this.type];
         return icon ? this.fontAwesomeIcon(icon) : undefined;
     }
 

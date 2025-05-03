@@ -25,7 +25,9 @@ import {
     dataToDatasetString,
     distanceToPoint,
     getSetting,
+    ItemPF2e,
     localize,
+    MacroPF2e,
     MODULE,
     R,
     setSetting,
@@ -581,22 +583,28 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     #onDropCanvasData(event: DragEvent) {
-        // const data = TextEditor.getDragEventData(event) as unknown as DropCanvasData;
-        // if (
-        //     !R.isPlainObject(data) ||
-        //     !["Item", "Macro"].includes(data.type ?? "") ||
-        //     !R.isString(data.uuid)
-        // )
-        //     return;
-        // const document = fromUuidSync<ClientDocument | CompendiumIndexData>(data.uuid);
-        // if (!document) return;
-        // const localPoint = this.getLocalCoordinates(event);
-        // for (const node of this.nodes) {
-        //     const dropped = node.onDropDocument(localPoint, document);
-        //     if (dropped) return;
-        // }
+        const data = TextEditor.getDragEventData(event);
+
+        if (
+            !R.isString(data.type) ||
+            !R.isString(data.uuid) ||
+            !["Item", "Macro"].includes(data.type)
+        )
+            return;
+
+        const document = fromUuidSync<BlueprintDropDocument>(data.uuid);
+        if (!document) return;
+
+        const localPoint = this.getLocalCoordinates(event);
+
+        for (const node of this.nodesLayer.nodes()) {
+            const dropped = node.onDropDocument(localPoint, document);
+            if (dropped) return;
+        }
     }
 }
+
+type BlueprintDropDocument = ItemPF2e | MacroPF2e | CompendiumIndexData;
 
 type BlueprintFilterData = {
     type: NodeType;
@@ -610,3 +618,4 @@ type BlueprintFilterData = {
 };
 
 export { Blueprint };
+export type { BlueprintDropDocument };

@@ -1,14 +1,14 @@
 import { NodeEntryType } from "data";
-import { MacroPF2e, MODULE, R } from "module-helpers";
+import { isScriptMacro, MODULE, R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
 class UseMacroTriggerNode extends TriggerNode<UseMacroSchema> {
     async execute(): Promise<boolean> {
         const uuid = await this.get("uuid");
-        const macro = await fromUuid<MacroPF2e>(uuid);
+        const macro = await fromUuid(uuid);
 
-        if (!(macro instanceof Macro && macro.type === "script")) {
+        if (!isScriptMacro(macro)) {
             return this.send("out");
         }
 

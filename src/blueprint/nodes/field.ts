@@ -1,6 +1,20 @@
-import { Blueprint, BlueprintEntry, BlueprintMenu, BlueprintNode } from "blueprint";
+import {
+    Blueprint,
+    BlueprintDropDocument,
+    BlueprintEntry,
+    BlueprintMenu,
+    BlueprintNode,
+} from "blueprint";
 import { NodeEntryType, NodeEntryValue } from "data";
-import { assignStyle, drawRectangleMask, localizeIfExist, R } from "module-helpers";
+import {
+    assignStyle,
+    drawRectangleMask,
+    isClientDocument,
+    isScriptMacro,
+    localizeIfExist,
+    R,
+    warning,
+} from "module-helpers";
 import { BaseNodeSchemaEntry, entrySchemaIsOfType } from "schema";
 
 class EntryField extends PIXI.Graphics {
@@ -58,6 +72,10 @@ class EntryField extends PIXI.Graphics {
         return this.entry.type;
     }
 
+    get key(): string {
+        return this.entry.key;
+    }
+
     get width(): number {
         return this.type === "boolean" ? this.height : this.type === "number" ? 30 : 120;
     }
@@ -94,6 +112,10 @@ class EntryField extends PIXI.Graphics {
         return this.isText || this.isNumber;
     }
 
+    get isDocument(): boolean {
+        return this.node.schema.document === this.key;
+    }
+
     get cursor(): "pointer" | "default" | "text" {
         return this.connected ? "default" : this.isInput ? "text" : "pointer";
     }
@@ -108,6 +130,12 @@ class EntryField extends PIXI.Graphics {
 
     get value(): NonNullable<NodeEntryValue> {
         return this.entry.value as NonNullable<NodeEntryValue>;
+    }
+
+    set value(value: NodeEntryValue) {
+        if (value === this.value) return;
+        this.node.data.setValue(this.entry.id, value);
+        this.blueprint.refresh();
     }
 
     get content(): string {
@@ -150,6 +178,24 @@ class EntryField extends PIXI.Graphics {
         const right = bottomRight.x + 1;
 
         return new PIXI.Rectangle(left, top, right - left, bottom - top);
+    }
+
+    onDropDocument(document: BlueprintDropDocument) {
+        if (!this.isText) return;
+
+        // if we are part of a use-macro node, then we only accept macro document (and vice-versa)
+        const isvalidType = this.node.isMacro === isScriptMacro(document);
+
+        // we are a document field, so we want the source UUID
+        if (isvalidType && this.isDocument) {
+            const isItem = isClientDocument(document) && document instanceof Item;
+            this.value = (isItem && document.sourceId) || document.uuid;
+        } else if (isvalidType) {
+            // we fallback to the document name instead
+            this.value = document.name;
+        } else {
+            warning("document.wrong");
+        }
     }
 
     #drawDecoration(connected = this.connected): PIXI.Graphics | undefined {
@@ -229,10 +275,7 @@ class EntryField extends PIXI.Graphics {
         if (this.connected) return;
 
         this.#updateValue(event).then((value) => {
-            if (value !== this.value) {
-                this.node.data.setValue(this.entry.id, value);
-                this.blueprint.refresh();
-            }
+            this.value = value;
         });
     }
 

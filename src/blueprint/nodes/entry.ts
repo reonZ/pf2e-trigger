@@ -1,5 +1,6 @@
 import {
     Blueprint,
+    BlueprintDropDocument,
     BlueprintMenu,
     BlueprintNode,
     BlueprintWaitContextData,
@@ -19,25 +20,26 @@ import {
 import { confirmDialog, localize, localizeIfExist, R } from "module-helpers";
 import { BaseNodeSchemaEntry, hasInputConnector, NodeCustomEntryCategory } from "schema";
 
-const CONNECTOR_COLOR: Record<NodeEntryType, number> = {
-    boolean: 0xad0303,
-    bridge: 0xffffff,
-    dc: 0x1682c9,
-    duration: 0x75db32,
-    item: 0x696fe0,
-    list: 0x874501,
-    number: 0x07b88f,
-    select: 0xe0a06c,
-    target: 0xff3075,
-    text: 0xe0a06c,
-};
-
 class BlueprintEntry extends HorizontalLayoutGraphics {
     #category: NodeEntryCategory;
     #connector: PIXI.Graphics | undefined;
+    #field: EntryField | undefined;
     #node: BlueprintNode;
     #schema: BaseNodeSchemaEntry;
     #id: NodeEntryId;
+
+    static CONNECTOR_COLOR: Record<NodeEntryType, number> = {
+        boolean: 0xad0303,
+        bridge: 0xffffff,
+        dc: 0x1682c9,
+        duration: 0x75db32,
+        item: 0x696fe0,
+        list: 0x874501,
+        number: 0x07b88f,
+        select: 0xe0a06c,
+        target: 0xff3075,
+        text: 0xe0a06c,
+    };
 
     constructor(node: BlueprintNode, category: NodeEntryCategory, schema: BaseNodeSchemaEntry) {
         super({ spacing: 5, maxHeight: node.entryHeight, padding: [0, 2] });
@@ -50,7 +52,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         const children = [
             (this.#connector = this.#drawConnector()),
             this.#drawLabel(),
-            this.#drawField(),
+            (this.#field = this.#drawField()),
         ];
 
         const order = category === "inputs" ? children : R.reverse(children);
@@ -240,6 +242,18 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.node.opacity;
     }
 
+    onDropDocument(point: Point, document: BlueprintDropDocument): boolean | null {
+        if (!this.contains(point)) {
+            return false;
+        }
+
+        if (!this.connected) {
+            this.#field?.onDropDocument(document);
+        }
+
+        return true;
+    }
+
     isConnectedTo(other: BlueprintEntry | NodeEntryId): boolean {
         return this.connections.includes(other instanceof BlueprintEntry ? other.id : other);
     }
@@ -259,12 +273,12 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         );
     }
 
-    testContains({ x, y }: Point): boolean {
+    contains({ x, y }: Point): boolean {
         return this.getBounds().contains(x, y);
     }
 
     testConnection(point: Point, other: BlueprintEntry): boolean {
-        return this.testContains(point) && this.canConnectTo(other);
+        return this.contains(point) && this.canConnectTo(other);
     }
 
     #drawLabel(): PreciseText | undefined {
@@ -370,7 +384,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 function getConnectorColor(type: NonNullable<NodeEntryType>, hex: true): string;
 function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: false): number;
 function getConnectorColor(type: NonNullable<NodeEntryType>, hex?: boolean): number | string {
-    const decimal = CONNECTOR_COLOR[type];
+    const decimal = BlueprintEntry.CONNECTOR_COLOR[type];
     return hex ? decimal.toString(16).padStart(6, "0") : decimal;
 }
 
