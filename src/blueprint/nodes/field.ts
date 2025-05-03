@@ -146,18 +146,22 @@ class EntryField extends PIXI.Graphics {
             return value.replace(/\s{1}|\\n/g, "");
         }
 
-        if (!entrySchemaIsOfType(schema, "select")) {
-            return value;
+        if (entrySchemaIsOfType(schema, "select")) {
+            const options = schema.field.options;
+            const option = options.find((option) => option.value === value) ?? options[0];
+
+            return localizeOption(option.label || option.value, this.node.localizePath);
         }
 
-        const options = schema.field.options;
-        const option = options.find((option) => option.value === value) ?? options[0];
-
-        return localizeOption(option.label || option.value, this.node.localizePath);
+        return value;
     }
 
     get placeholder(): string {
-        return this.isNumber ? "" : this.node.isValue ? this.node.title : this.entry.label;
+        return this.isNumber
+            ? ""
+            : this.node.isValue
+            ? localizeIfExist(this.entry.localizePath, this.schema.key) ?? this.node.title
+            : this.entry.label;
     }
 
     get textWidth(): number {

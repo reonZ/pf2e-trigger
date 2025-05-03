@@ -47,9 +47,9 @@ function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "4
 export const event = {
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
-    "turn-start": createEventSchema("\uf251"),
-    "turn-end": createEventSchema("\uf253"),
+    "test-event": createEventSchema("\ue4f3"),
     "token-create": createEventSchema("\uf2bd", "900"),
     "token-delete": createEventSchema("\uf2bd"),
-    "test-event": createEventSchema("\ue4f3"),
+    "turn-end": createEventSchema("\uf253"),
+    "turn-start": createEventSchema("\uf251"),
 };

@@ -283,6 +283,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
     #drawLabel(): PreciseText | undefined {
         if (this.isInput && ["select", "text"].includes(this.type)) return;
+        if (this.isInput && this.node.isValue && this.type === "number") return;
         return this.node.preciseText(this.label);
     }
 

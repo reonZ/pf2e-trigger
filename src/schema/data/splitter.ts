@@ -16,10 +16,6 @@ const booleanSplitter = {
     outs: booleanOutsSchema(),
 } as const satisfies NodeRawSchema;
 
-const actorSplitter = createDocumentExtractor("target");
-
-const itemSplitter = createDocumentExtractor("item");
-
 function createDocumentExtractor<T extends NonBridgeEntryType>(
     type: T
 ): DocumentExtractorSchema<T> {
@@ -41,7 +37,9 @@ type DocumentExtractorSchema<T extends NonBridgeEntryType> = {
 };
 
 export const splitter = {
+    "actor-splitter": createDocumentExtractor("target"),
     "boolean-splitter": booleanSplitter,
-    "actor-splitter": actorSplitter,
-    "item-splitter": itemSplitter,
+    "item-splitter": createDocumentExtractor("item"),
+    "string-list": {},
+    "success-splitter": {},
 };

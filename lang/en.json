@@ -190,15 +190,15 @@
                 "console-log": {
                     "label": "Console Log"
                 },
+                "roll-damage": {
+                    "label": "Roll Damage"
+                },
                 "roll-save": {
                     "label": "Roll Save",
                     "entry": {
                         "basic": "Is Basic?",
                         "save": "Save"
                     }
-                },
-                "roll-damage": {
-                    "label": "Roll Damage"
                 },
                 "roll-damage-with-save": {
                     "label": "Roll Damage With Save"
@@ -210,6 +210,12 @@
             "condition": {
                 "title": "Conditions",
                 "subtitle": "Condition",
+                "has-item": {
+                    "label": "Has Item"
+                },
+                "has-option": {
+                    "label": "Has RollOption"
+                },
                 "inside-aura": {
                     "label": "Is Inside Aura",
                     "entry": {
@@ -217,9 +223,6 @@
                         "slug": "aura-slug",
                         "targets": "Targets"
                     }
-                },
-                "has-item": {
-                    "label": "Has Item"
                 }
             },
             "event": {
@@ -234,11 +237,10 @@
                 "aura-leave": {
                     "label": "Aura Left"
                 },
-                "turn-start": {
-                    "label": "Turn Started"
-                },
-                "turn-end": {
-                    "label": "Turn Ended"
+                "test-event": {
+                    "label": "Test Event",
+                    "subtitle": "game.trigger.test()",
+                    "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
                 },
                 "token-create": {
                     "label": "Token Created"
@@ -246,62 +248,24 @@
                 "token-delete": {
                     "label": "Token Deleted"
                 },
-                "test-event": {
-                    "label": "Test Event",
-                    "subtitle": "game.trigger.test()",
-                    "warning": "You need to select a single token to execute the <strong>Test Event</strong> triggers."
+                "turn-end": {
+                    "label": "Turn Ended"
                 },
-                "execute-event": {
-                    "label": "Execute Event",
-                    "copied": "The trigger ID has been copied to the clipboard."
-                },
-                "region-event": {
-                    "label": "Scene Region",
-                    "copied": "The trigger ID has been copied to the clipboard."
-                },
-                "damage-received": {
-                    "label": "Health Lost"
-                },
-                "heal-received": {
-                    "label": "Health Gained"
-                },
-                "condition-gain": {
-                    "label": "Condition Added",
-                    "entry": {
-                        "update": "With Update?"
-                    }
-                },
-                "condition-lose": {
-                    "label": "Condition Removed"
-                },
-                "item-gain": {
-                    "label": "Item Added"
-                },
-                "item-lose": {
-                    "label": "Item Lost"
-                },
-                "damage-taken": {
-                    "label": "Damage Taken",
-                    "entry": {
-                        "other": "Damage Origin",
-                        "item": "Damage Item",
-                        "heal": "Is Healing",
-                        "options": "Roll Options",
-                        "negated": "No Damage?"
-                    }
-                },
-                "damage-dealt": {
-                    "label": "Damage Dealt",
-                    "entry": {
-                        "other": "Damage Target"
-                    }
+                "turn-start": {
+                    "label": "Turn Started"
                 }
             },
             "logic": {
                 "title": "Logic",
                 "subtitle": "Logic",
+                "eq-actor": {
+                    "label": "Equals (Actor)"
+                },
                 "eq-number": {
                     "label": "Equals (Number)"
+                },
+                "eq-text": {
+                    "label": "Equals (Text)"
                 },
                 "gt-number": {
                     "label": "Greater Than"
@@ -314,24 +278,18 @@
                 },
                 "lte-number": {
                     "label": "Less Than or Equal"
-                },
-                "eq-text": {
-                    "label": "Equals (Text)"
-                },
-                "eq-actor": {
-                    "label": "Equals (Actor)"
                 }
             },
             "splitter": {
                 "title": "Splitters",
+                "actor-splitter": {
+                    "label": "Actor Data"
+                },
                 "boolean-splitter": {
                     "label": "Boolean"
                 },
                 "item-splitter": {
                     "label": "Item Data"
-                },
-                "actor-splitter": {
-                    "label": "Actor Data"
                 },
                 "string-list": {
                     "label": "String List"
@@ -353,11 +311,14 @@
             "value": {
                 "title": "Values",
                 "subtitle": "value",
+                "item-source": {
+                    "label": "Item Source"
+                },
                 "number-value": {
-                    "label": "Number"
+                    "label": "Number Entry"
                 },
                 "text-value": {
-                    "label": "Text"
+                    "label": "Text Entry"
                 }
             },
             "variable": {
