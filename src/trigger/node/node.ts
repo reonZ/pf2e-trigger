@@ -41,9 +41,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         throw new Error(`execute not implemented in ${this.constructor.name}.`);
     }
 
-    async query<K extends ExtractOutputKey<TSchema>>(
-        key: K
-    ): Promise<ExtractOutputValue<TSchema, K>> {
+    async query<K extends ExtractOutputKey<TSchema>>(key: K): Promise<TriggerValue> {
         throw new Error(`query not implemented in ${this.constructor.name}.`);
     }
 
