@@ -157,6 +157,7 @@
             "item": "Item",
             "list": "List",
             "number": "Number",
+            "roll": "Roll",
             "select": "Select",
             "target": "Target",
             "text": "Text",
@@ -173,9 +174,7 @@
             "input": "Input",
             "result": "Result",
             "uuid": "Source UUID",
-            "origin": "Origin",
-            "options": "Extra Options",
-            "traits": "Extra Traits"
+            "origin": "Origin"
         },
         "document": {
             "broken": "Broken Link",
@@ -317,11 +316,28 @@
             "value": {
                 "title": "Values",
                 "subtitle": "value",
+                "dc-target": {
+                    "label": "Difficulty Class (Target)",
+                    "entry": {
+                        "against": "against",
+                        "adjustment": "Adjustment"
+                    }
+                },
+                "dc-value": {
+                    "label": "Difficulty Class (Value)"
+                },
                 "item-source": {
                     "label": "Item Source"
                 },
                 "number-value": {
                     "label": "Number Entry"
+                },
+                "roll-data": {
+                    "label": "Roll Data",
+                    "entry": {
+                        "options": "extra, options",
+                        "traits": "extra, traits"
+                    }
                 },
                 "text-value": {
                     "label": "Text Entry"

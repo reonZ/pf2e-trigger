@@ -11,6 +11,7 @@ const NODE_ENTRY_TYPES = [
     "target",
     "text",
     "bridge",
+    "roll",
 ] as const;
 
 const NODE_NONBRIDGE_TYPES = NODE_ENTRY_TYPES.filter((type) => type !== "bridge");

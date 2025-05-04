@@ -1,7 +1,7 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
 import { ActorPF2e, R } from "module-helpers";
 import { NodeInputSchema, NodeInputSource, NodeKey, NodeOutputSource, NodeRawSchema } from "schema";
-import { Trigger, TriggerValue } from "trigger";
+import { Trigger, TriggerDcEntry, TriggerRollEntry, TriggerValue } from "trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     #trigger: Trigger;
@@ -160,6 +160,17 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
 
             case "select": {
                 return field?.options?.[0].value ?? "";
+            }
+
+            case "dc": {
+                return { value: 0 } satisfies TriggerDcEntry;
+            }
+
+            case "roll": {
+                return {
+                    options: [],
+                    traits: [],
+                } satisfies TriggerRollEntry;
             }
 
             default: {

@@ -1,6 +1,6 @@
 import { NodeEntryId, NodeEntryType, TriggerData, WorldTriggers } from "data";
 import { prepareHooks } from "hook";
-import { getSetting, ItemPF2e, R } from "module-helpers";
+import { ActorPF2e, CheckDC, getSetting, ItemPF2e, R } from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
 
 let SUBTRIGGERS: Record<string, TriggerData> = {};
@@ -82,15 +82,32 @@ type TriggerPreOptions = {
 
 type TriggerOptions = WithRequired<TriggerPreOptions, "variables">;
 
-type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "number"
+type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
+    ? boolean
+    : T extends "number"
     ? number
     : T extends "target"
     ? TargetDocuments | undefined
     : T extends "item"
     ? ItemPF2e | undefined
-    : T extends "text"
+    : T extends "text" | "select"
     ? string
+    : T extends "roll"
+    ? TriggerRollEntry
+    : T extends "dc"
+    ? TriggerDcEntry
     : unknown;
 
+type TriggerRollEntry = {
+    origin?: TargetDocuments;
+    item?: ItemPF2e<ActorPF2e>;
+    options: string[];
+    traits: string[];
+};
+
+type TriggerDcEntry = WithRequired<CheckDC, "scope"> & {
+    target?: TargetDocuments;
+};
+
 export { getSubtrigger, prepareTriggers, Trigger };
-export type { TriggerOptions, TriggerPreOptions, TriggerValue };
+export type { TriggerDcEntry, TriggerOptions, TriggerPreOptions, TriggerRollEntry, TriggerValue };

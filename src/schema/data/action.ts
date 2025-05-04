@@ -1,30 +1,28 @@
-import { NodeRawSchema, NodeSchemaInput } from "schema";
+import { NodeRawSchema } from "schema";
 
 const rollDamage = {
     icon: "\uf6cf",
     inputs: [
         { key: "formula", type: "text" },
-        { key: "origin", type: "target" },
-        { key: "item", type: "item" },
-        { key: "options", type: "text" },
-        { key: "traits", type: "text" },
+        { key: "roll", type: "roll" },
         { key: "target", type: "target" },
     ],
-} as const satisfies NodeRawActionSchema;
+} as const satisfies NodeRawSchema;
 
 const rollSave = {
     icon: "\uf6cf",
     inputs: [
+        { key: "roll", type: "roll" },
         {
             key: "save",
             type: "select",
             field: { options: "CONFIG.PF2E.saves" },
         },
+        { key: "dc", type: "dc" },
         { key: "basic", type: "boolean" },
-        { key: "target", type: "target" },
     ],
     outputs: [{ key: "result", type: "number" }],
-} as const satisfies NodeRawActionSchema;
+} as const satisfies NodeRawSchema;
 
 const rollDamageWithSave = {
     icon: "\uf71c",
@@ -33,7 +31,7 @@ const rollDamageWithSave = {
         { key: "target", type: "target" },
     ],
     module: "pf2e-toolbelt",
-} as const satisfies NodeRawActionSchema;
+} as const satisfies NodeRawSchema;
 
 const consoleLog = {
     icon: "\uf120",
@@ -46,10 +44,6 @@ const useMacro = {
     document: "uuid",
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;
-
-type NodeRawActionSchema = Omit<WithRequired<NodeRawSchema, "icon">, "inputs" | "outs"> & {
-    inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
-};
 
 export const action = {
     "console-log": consoleLog,

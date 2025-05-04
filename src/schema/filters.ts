@@ -30,7 +30,10 @@ function createFilters(): FilterGroup[] {
                     const [inputs, outputs] = R.pipe(
                         ["inputs", "outputs"] as const,
                         R.map((category): NodeEntryType[] => {
-                            if (category === "inputs" && !hasInputConnector({ type, key })) {
+                            if (
+                                category === "inputs" &&
+                                !hasInputConnector({ type, key }, schema)
+                            ) {
                                 return [];
                             }
 

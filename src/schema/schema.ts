@@ -110,8 +110,8 @@ function hasOuts(node: NodeAdjacent): boolean {
     return !isValue(node) && !isGetter(node) && !isSubtriggerOutput(node);
 }
 
-function hasInputConnector(node: NodeAdjacent) {
-    return !isEvent(node) && !isValue(node);
+function hasInputConnector(node: NodeAdjacent, schema: NodeSchemaModel) {
+    return !isEvent(node) && (!isValue(node) || schema.inputs.length > 1);
 }
 
 type NodeAdjacent = { type: NodeType; key: NodeKey };
@@ -141,28 +141,30 @@ type NodeSchemaRawBridge = WithPartial<NodeSchemaBridge, "type">;
 type NodeSchemaVariable = NodeRawSchemaEntry<NonBridgeEntryType>;
 
 type NodeSchemaInput =
-    | NodeSchemaText
-    | NodeSchemaNumber
     | NodeSchemaBoolean
-    | NodeSchemaTarget
-    | NodeSchemaItem
     | NodeSchemaDc
     | NodeSchemaDuration
+    | NodeSchemaItem
     | NodeSchemaList
-    | NodeSchemaSelect;
+    | NodeSchemaNumber
+    | NodeSchemaRoll
+    | NodeSchemaSelect
+    | NodeSchemaTarget
+    | NodeSchemaText;
 
 type NodeSchemaInputEntry<
     TType extends NonBridgeEntryType,
     TField extends Record<string, any> | never = never
 > = NodeRawSchemaEntry<TType> & {
-    connection?: boolean;
     field?: TField extends Record<string, any> ? TField : never;
 };
 
 type NodeSchemaInputEntryWithField<
     TType extends NonBridgeEntryType,
     TField extends Record<string, any>
-> = Omit<NodeSchemaInputEntry<TType>, "field"> & { field: TField };
+> = Omit<NodeSchemaInputEntry<TType>, "field"> & {
+    field: TField;
+};
 
 type NodeSchemaNumber = NodeSchemaInputEntry<
     "number",
@@ -196,11 +198,12 @@ type NodeSchemaSelect = NodeSchemaInputEntryWithField<
     }
 >;
 
-type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
-type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
+type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
+type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
+type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
 
 type SchemaEntries = {
     select: SelectEntrySchema;

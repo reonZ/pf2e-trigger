@@ -3,7 +3,7 @@ import { isScriptMacro, MODULE, R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
-class UseMacroTriggerNode extends TriggerNode<UseMacroSchema> {
+class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro">> {
     async execute(): Promise<boolean> {
         const uuid = await this.get("uuid");
         const macro = await fromUuid(uuid);
@@ -89,12 +89,15 @@ function isValidCustomEntry(type: NodeEntryType, value: unknown) {
             return R.isPlainObject(value);
         }
 
+        case "roll": {
+            // TODO test validity of roll
+            return R.isPlainObject(value);
+        }
+
         default: {
             return false;
         }
     }
 }
-
-type UseMacroSchema = NodeSchemaOf<"action", "use-macro">;
 
 export { UseMacroTriggerNode };

@@ -2,7 +2,7 @@ import { getExtraRollOptions, rollDamageFromFormula } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
-class RollDamageTriggerNode extends TriggerNode<RollDamageSchema> {
+class RollDamageTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll-damage">> {
     async execute(): Promise<boolean> {
         const formula = await this.get("formula");
 
@@ -10,23 +10,18 @@ class RollDamageTriggerNode extends TriggerNode<RollDamageSchema> {
             return this.send("out");
         }
 
-        const extraRollOptions = getExtraRollOptions({
-            options: await this.get("options"),
-            traits: await this.get("traits"),
-        });
+        const roll = await this.get("roll");
 
         await rollDamageFromFormula(formula, {
-            item: await this.get("item"),
-            origin: await this.get("origin"),
+            item: roll.item,
+            origin: roll.origin,
             target: await this.getTarget("target"),
             skipDialog: true,
-            extraRollOptions,
+            extraRollOptions: getExtraRollOptions(roll),
         });
 
         return this.send("out");
     }
 }
-
-type RollDamageSchema = NodeSchemaOf<"action", "roll-damage">;
 
 export { RollDamageTriggerNode };

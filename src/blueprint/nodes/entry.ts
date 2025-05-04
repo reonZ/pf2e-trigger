@@ -36,6 +36,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         item: 0x696fe0,
         list: 0x874501,
         number: 0x07b88f,
+        roll: 0x86910d,
         select: 0xe0a06c,
         target: 0xff3075,
         text: 0xe0a06c,
@@ -129,7 +130,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     get hasInputConnector(): boolean {
-        return hasInputConnector(this.node);
+        return hasInputConnector(this.node, this.node.schema);
     }
 
     get connections(): NodeEntryId[] {
@@ -283,7 +284,6 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
     #drawLabel(): PreciseText | undefined {
         if (this.isInput && ["select", "text"].includes(this.type)) return;
-        if (this.isInput && this.node.isValue && this.type === "number") return;
         return this.node.preciseText(this.label);
     }
 
