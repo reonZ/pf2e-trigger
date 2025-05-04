@@ -1,6 +1,6 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
 import { ActorPF2e, R } from "module-helpers";
-import { NodeInputSchema, NodeInputSource, NodeOutputSource, NodeRawSchema } from "schema";
+import { NodeInputSchema, NodeInputSource, NodeKey, NodeOutputSource, NodeRawSchema } from "schema";
 import { Trigger, TriggerValue } from "trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
@@ -21,6 +21,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.type;
     }
 
+    get key(): NodeKey {
+        return this.#data.key;
+    }
+
     get trigger(): Trigger {
         return this.#trigger;
     }
@@ -33,20 +37,24 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.target;
     }
 
-    get inputs(): NodeInputSource[] {
+    get customInputs(): NodeInputSource[] {
         return this.#data.custom?.inputs ?? [];
     }
 
-    get outputs(): NodeOutputSource[] {
+    get customOutputs(): NodeOutputSource[] {
         return this.#data.custom?.outputs ?? [];
     }
 
+    get schemaInputs(): NodeInputSource[] {
+        return this.#data.nodeSchema.inputs;
+    }
+
     async execute(): Promise<boolean> {
-        throw new Error(`execute not implemented in ${this.constructor.name}.`);
+        throw new Error(`execute not implemented in ${this.key}.`);
     }
 
     async query<K extends ExtractOutputKey<TSchema>>(key: K): Promise<TriggerValue> {
-        throw new Error(`query not implemented in ${this.constructor.name}.`);
+        throw new Error(`query not implemented in ${this.key}.`);
     }
 
     async send(key: ExtractOutKey<TSchema>): Promise<boolean> {

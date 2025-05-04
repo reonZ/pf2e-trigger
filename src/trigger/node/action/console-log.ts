@@ -6,7 +6,7 @@ class ConsoleLogTriggerNode extends TriggerNode<ConsoleLogSchema> {
     async execute(): Promise<boolean> {
         const target = this.target;
         const entries = await Promise.all(
-            this.inputs.map(
+            this.customInputs.map(
                 async (input) => [input.label ?? input.key, await this.get(input.key)] as const
             )
         );

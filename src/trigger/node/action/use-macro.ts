@@ -16,7 +16,7 @@ class UseMacroTriggerNode extends TriggerNode<UseMacroSchema> {
 
         const target = this.target;
         const values = await Promise.all(
-            this.inputs.map(async (input) => this.get(input.key as never))
+            this.customInputs.map(async (input) => this.get(input.key as never))
         );
 
         try {
@@ -30,7 +30,7 @@ class UseMacroTriggerNode extends TriggerNode<UseMacroSchema> {
                 return this.send("out");
             }
 
-            const outputs = this.outputs;
+            const outputs = this.customOutputs;
             for (let i = 0; i < outputs.length; i++) {
                 const value = returnedValues[i];
                 if (R.isNullish(value)) continue;

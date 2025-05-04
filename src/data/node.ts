@@ -157,11 +157,6 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return this.parent?.triggers;
     }
 
-    reset(): void {
-        super.reset();
-        this._initializeSchema();
-    }
-
     *entries(): Generator<[NodeEntryCategory, key: string, NodeDataEntry], void, undefined> {
         for (const [key, input] of R.entries(this.inputs)) {
             yield ["inputs", key, input];
@@ -398,6 +393,11 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         }
 
         return source;
+    }
+
+    _initialize(options?: Record<string, unknown>) {
+        super._initialize(options);
+        this._initializeSchema();
     }
 
     _initializeSchema() {

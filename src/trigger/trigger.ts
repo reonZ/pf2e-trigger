@@ -3,6 +3,8 @@ import { prepareHooks } from "hook";
 import { getSetting, ItemPF2e, R } from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
 
+let SUBTRIGGERS: Record<string, TriggerData> = {};
+
 class Trigger {
     #data: TriggerData;
     #options: TriggerOptions;
@@ -13,12 +15,10 @@ class Trigger {
         this.#data = data;
         this.#event = createTriggerNode(this, data.event);
 
-        this.#options = {
-            ...options,
-            variables: {
-                [`${this.#event.id}.outputs.this`]: options.this,
-            },
-        };
+        options.variables ??= {};
+        options.variables[`${this.#event.id}.outputs.this`] = options.this;
+
+        this.#options = options as TriggerOptions;
     }
 
     get name(): string {
@@ -35,6 +35,10 @@ class Trigger {
 
     setVariable(entryId: NodeEntryId, value: TriggerValue) {
         this.#options.variables[entryId] = value;
+    }
+
+    setOptions(key: Exclude<string, "variables" | "this">, value: any) {
+        this.#options[key] = value;
     }
 
     getNode(id: string): TriggerNode | undefined {
@@ -61,17 +65,22 @@ function prepareTriggers() {
         R.partition((trigger) => trigger.isSubtrigger)
     );
 
+    SUBTRIGGERS = R.mapToObj(subtriggers, (trigger) => [trigger.id, trigger]);
+
     prepareHooks(triggers, subtriggers);
+}
+
+function getSubtrigger(id: string): TriggerData | undefined {
+    return SUBTRIGGERS[id];
 }
 
 type TriggerPreOptions = {
     this: TargetDocuments;
+    variables?: Record<NodeEntryId, TriggerValue>;
     [k: string]: any;
 };
 
-type TriggerOptions = TriggerPreOptions & {
-    variables: Record<NodeEntryId, TriggerValue>;
-};
+type TriggerOptions = WithRequired<TriggerPreOptions, "variables">;
 
 type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "number"
     ? number
@@ -83,5 +92,5 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "number"
     ? string
     : unknown;
 
-export { prepareTriggers, Trigger };
+export { getSubtrigger, prepareTriggers, Trigger };
 export type { TriggerOptions, TriggerPreOptions, TriggerValue };
