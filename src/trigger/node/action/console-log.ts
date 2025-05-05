@@ -2,7 +2,7 @@ import { localize, MODULE } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
-class ConsoleLogTriggerNode extends TriggerNode<ConsoleLogSchema> {
+class ConsoleLogTriggerNode extends TriggerNode<NodeSchemaOf<"action", "console-log">> {
     async execute(): Promise<boolean> {
         const target = this.target;
         const entries = await Promise.all(
@@ -23,7 +23,5 @@ class ConsoleLogTriggerNode extends TriggerNode<ConsoleLogSchema> {
         return this.send("out");
     }
 }
-
-type ConsoleLogSchema = NodeSchemaOf<"action", "console-log">;
 
 export { ConsoleLogTriggerNode };
