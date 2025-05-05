@@ -262,7 +262,6 @@
             },
             "logic": {
                 "title": "Logic",
-                "subtitle": "Logic",
                 "eq-actor": {
                     "label": "Equals (Actor)"
                 },
@@ -338,6 +337,9 @@
                         "options": "extra, options",
                         "traits": "extra, traits"
                     }
+                },
+                "success-value": {
+                    "label": "Degree of Success"
                 },
                 "text-value": {
                     "label": "Text Entry"

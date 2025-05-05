@@ -44,6 +44,37 @@ const rollData = {
     outputs: [{ key: "roll", type: "roll" }],
 } as const satisfies NodeRawSchema;
 
+const successValue = {
+    inputs: [
+        {
+            key: "input",
+            type: "select",
+            field: {
+                default: "success",
+                options: [
+                    {
+                        value: "criticalFailure",
+                        label: "PF2E.Check.Result.Degree.Check.criticalFailure",
+                    },
+                    {
+                        value: "failure",
+                        label: "PF2E.Check.Result.Degree.Check.failure",
+                    },
+                    {
+                        value: "success",
+                        label: "PF2E.Check.Result.Degree.Check.success",
+                    },
+                    {
+                        value: "criticalSuccess",
+                        label: "PF2E.Check.Result.Degree.Check.criticalSuccess",
+                    },
+                ],
+            },
+        },
+    ],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies NodeRawSchema;
+
 function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
     return {
         inputs: [{ key: "input", type }],
@@ -64,5 +95,6 @@ export const value = {
     "item-source": itemSource,
     "number-value": createInputValue("number"),
     "roll-data": rollData,
+    "success-value": successValue,
     "text-value": createInputValue("text"),
 };
