@@ -23,7 +23,7 @@ class RollSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll-save"
             skipDialog: true,
         });
 
-        this.setVariable("result", rolled?.degreeOfSuccess ?? 1);
+        this.setVariable("result", rolled?.degreeOfSuccess ?? 0);
         return this.send("out");
     }
 }

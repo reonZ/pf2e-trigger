@@ -20,7 +20,7 @@ const NODE_CUSTOM_TYPES = NODE_NONBRIDGE_TYPES.filter((type) => type !== "select
 
 const COMPATIBLE_ENTRY_GROUPS: NodeEntryType[][] = [
     ["dc", "number"],
-    ["text", "select"],
+    ["text", "select", "list"],
 ];
 
 const COMPATIBLE_ENTRIES = R.pipe(

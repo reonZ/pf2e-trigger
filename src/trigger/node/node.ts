@@ -1,7 +1,13 @@
 import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
 import { ActorPF2e, R } from "module-helpers";
 import { NodeInputSchema, NodeInputSource, NodeKey, NodeOutputSource, NodeRawSchema } from "schema";
-import { Trigger, TriggerDcEntry, TriggerRollEntry, TriggerValue } from "trigger";
+import {
+    Trigger,
+    TriggerDcEntry,
+    TriggerDurationEntry,
+    TriggerRollEntry,
+    TriggerValue,
+} from "trigger";
 
 class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     #trigger: Trigger;
@@ -119,14 +125,31 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         const expectedType = schemaInput.type;
 
         switch (expectedType) {
-            case "select": {
-                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-                return options.includes(value) ? value : options[0] ?? "";
+            case "text": {
+                // if it is a list, we take the first entry
+                return R.isArray(value) ? value[0] ?? "" : value;
             }
 
-            // TODO finish conversions
-            case "number":
-            case "dc":
+            case "select": {
+                // if it is a list, we take the first entry
+                const option = R.isArray(value) ? value[0] ?? "" : value;
+                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
+                return options.includes(option) ? option : options[0] ?? "";
+            }
+
+            case "list": {
+                return R.isArray(value) ? value : [value];
+            }
+
+            case "number": {
+                return isDcEntry(value) ? value.value : value;
+            }
+
+            case "dc": {
+                return R.isNumber(value)
+                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
+                    : value;
+            }
 
             default: {
                 return value;
@@ -163,14 +186,11 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             }
 
             case "dc": {
-                return { value: 0 } satisfies TriggerDcEntry;
+                return { value: 0, scope: "check" } satisfies TriggerDcEntry;
             }
 
             case "roll": {
-                return {
-                    options: [],
-                    traits: [],
-                } satisfies TriggerRollEntry;
+                return { options: [], traits: [] } satisfies TriggerRollEntry;
             }
 
             default: {
@@ -190,6 +210,18 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             }
         }
     }
+}
+
+function isRollEntry(value: unknown): value is TriggerRollEntry {
+    return R.isPlainObject(value);
+}
+
+function isDcEntry(value: unknown): value is TriggerDcEntry {
+    return R.isPlainObject(value) && R.isNumber(value.value);
+}
+
+function isDurationEntry(value: unknown): value is TriggerDurationEntry {
+    return R.isPlainObject(value);
 }
 
 // input
@@ -239,4 +271,4 @@ type ExtractOutKey<S extends NodeRawSchema> = S extends {
         : K
     : "out";
 
-export { TriggerNode };
+export { isDcEntry, isDurationEntry, isRollEntry, TriggerNode };

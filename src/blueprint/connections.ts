@@ -1,5 +1,5 @@
 import { NodeEntryId, TriggerData } from "data";
-import { subtractPoint } from "module-helpers";
+import { calculateMidPoint, subtractPoint } from "module-helpers";
 import { Blueprint } from "./blueprint";
 import { BlueprintEntry, BlueprintNode } from "./nodes";
 
@@ -7,7 +7,7 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
     #blueprint: Blueprint;
     #connecting: BlueprintEntry | null = null;
     #connections: Map<TwoWaysId, PIXI.Graphics> = new Map();
-    #connector: PIXI.Graphics | null = null;
+    #connector: NodeConnection | null = null;
     #drawn: boolean = false;
 
     constructor(blueprint: Blueprint) {
@@ -92,22 +92,62 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
     }
 
     #drawConnection(
-        connection: PIXI.Graphics,
+        connection: NodeConnection,
         origin: BlueprintEntry,
         target: Point | BlueprintEntry
     ) {
+        const targetIsEntry = target instanceof BlueprintEntry;
+        const originType = origin.type;
+        const targetType = targetIsEntry ? target.type : originType;
         const originCenter = subtractPoint(origin.connectorCenter, this.stage.position);
         const targetCenter = subtractPoint(
-            target instanceof BlueprintEntry ? target.connectorCenter : target,
+            targetIsEntry ? target.connectorCenter : target,
             this.stage.position
         );
-
-        // TODO draw bi-color if needed
 
         connection.clear();
         connection.moveTo(originCenter.x, originCenter.y);
         connection.lineStyle(6, origin.connectorColor, 1, 0.5);
+
+        if (!targetIsEntry || originType === targetType) {
+            connection.lineTo(targetCenter.x, targetCenter.y);
+            return;
+        }
+
+        const halfPoint = calculateMidPoint(originCenter, targetCenter);
+
+        connection.lineTo(halfPoint.x, halfPoint.y);
+        connection.lineStyle(6, target.connectorColor, 1, 0.5);
         connection.lineTo(targetCenter.x, targetCenter.y);
+
+        const converter = (connection.converter ??= (() => {
+            const padding = { x: 4, y: 2 };
+            const converter = new PIXI.Graphics();
+            const icon = origin.node.fontAwesomeIcon("\uf0ec");
+
+            const width = icon.width + padding.x * 2;
+            const height = icon.height + padding.y * 2;
+
+            icon.position.set(padding.x, padding.y);
+
+            converter.beginFill(0x0, 0.5);
+            converter.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });
+            converter.drawRoundedRect(0, 0, width, height, 4);
+            converter.endFill();
+
+            converter.addChild(icon);
+
+            return converter;
+        })());
+
+        converter.position.set(
+            halfPoint.x - converter.width / 2,
+            halfPoint.y - converter.height / 2
+        );
+
+        converter.rotation;
+
+        connection.addChild(converter);
     }
 
     #dragConnection(event: PIXI.FederatedPointerEvent) {
@@ -189,6 +229,8 @@ function twoWays(
         callback(id);
     }
 }
+
+type NodeConnection = PIXI.Graphics & { converter?: PIXI.Graphics };
 
 type TwoWaysId = `${NodeEntryId}-${NodeEntryId}`;
 

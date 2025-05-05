@@ -109,5 +109,15 @@ type TriggerDcEntry = WithRequired<CheckDC, "scope"> & {
     target?: TargetDocuments;
 };
 
+// TODO duration type
+type TriggerDurationEntry = {};
+
 export { getSubtrigger, prepareTriggers, Trigger };
-export type { TriggerDcEntry, TriggerOptions, TriggerPreOptions, TriggerRollEntry, TriggerValue };
+export type {
+    TriggerDcEntry,
+    TriggerDurationEntry,
+    TriggerOptions,
+    TriggerPreOptions,
+    TriggerRollEntry,
+    TriggerValue,
+};

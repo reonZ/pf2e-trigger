@@ -1,7 +1,7 @@
 import { NodeEntryType } from "data";
 import { isScriptMacro, MODULE, R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "trigger";
+import { isDcEntry, isDurationEntry, isRollEntry, TriggerNode } from "trigger";
 
 class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro">> {
     async execute(): Promise<boolean> {
@@ -80,18 +80,15 @@ function isValidCustomEntry(type: NodeEntryType, value: unknown) {
         }
 
         case "dc": {
-            // TODO test validity of dc
-            return R.isPlainObject(value);
+            return isDcEntry(value);
         }
 
         case "duration": {
-            // TODO test validity of duration
-            return R.isPlainObject(value);
+            return isDurationEntry(value);
         }
 
         case "roll": {
-            // TODO test validity of roll
-            return R.isPlainObject(value);
+            return isRollEntry(value);
         }
 
         default: {
