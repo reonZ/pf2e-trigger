@@ -4,12 +4,14 @@ import { ItemSourceTriggerNode } from "./item-source";
 import { RollDataTriggerNode } from "./roll-data";
 import { DcTargetTriggerNode } from "./dc-target";
 import { DcValueTriggerNode } from "./dc-value";
+import { InputValueTriggerNode } from "./input";
 
 export const value = {
     "dc-target": DcTargetTriggerNode,
     "dc-value": DcValueTriggerNode,
     "item-source": ItemSourceTriggerNode,
-    "number-value": TriggerNode,
-    "text-value": TriggerNode,
+    "number-value": InputValueTriggerNode,
+    "success-value": TriggerNode,
+    "text-value": InputValueTriggerNode,
     "roll-data": RollDataTriggerNode,
 } as Record<NodeKeys<"value">, typeof TriggerNode>;
