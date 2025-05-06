@@ -50,6 +50,7 @@ function getSchema(
     }
 
     if (data._source.custom) {
+        (schema.outs ??= []).push(...(data._source.custom.outs ?? []));
         (schema.inputs ??= []).push(...(data._source.custom.inputs ?? []));
         (schema.outputs ??= []).push(...(data._source.custom.outputs ?? []));
     }

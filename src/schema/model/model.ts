@@ -115,6 +115,12 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
             ];
         }
 
+        for (const custom of source.custom) {
+            if (custom.category === "outs") {
+                custom.types = [];
+            }
+        }
+
         return source;
     }
 }
