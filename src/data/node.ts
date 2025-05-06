@@ -410,19 +410,6 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 interface TriggerNodeData {
     parent: TriggerData;
 
-    clone(
-        data: DeepPartial<TriggerNodeDataSource>,
-        context: DocumentCloneContext & { save: true }
-    ): Promise<this>;
-    clone(
-        data?: DeepPartial<TriggerNodeDataSource>,
-        context?: DocumentCloneContext & { save?: false }
-    ): this;
-    clone(
-        data?: DeepPartial<TriggerNodeDataSource>,
-        context?: DocumentCloneContext
-    ): this | Promise<this>;
-
     update(
         data: DeepPartial<TriggerNodeDataSource>,
         operation?: Partial<DatabaseUpdateOperation<ModuleDocument>>

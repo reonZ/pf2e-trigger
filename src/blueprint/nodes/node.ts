@@ -306,9 +306,12 @@ class BlueprintNode extends PIXI.Container {
             {
                 position: addToPoint(this.data.position, 50),
                 inputs: R.mapValues(this.data.inputs, ({ value }) => {
-                    return { value: foundry.utils.deepClone(value) };
+                    return {
+                        "-=ids": null,
+                        value,
+                    };
                 }),
-                outputs: {},
+                "-=outputs": null,
             },
             { keepId: false }
         );
