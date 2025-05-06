@@ -1,11 +1,15 @@
-import { createEntryId } from "data";
+import { createEntryId, TriggerData } from "data";
 import { R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { getSubtrigger, Trigger, TriggerNode, TriggerPreOptions } from "trigger";
 
 class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "subtrigger-node">> {
+    get subtrigger(): TriggerData | undefined {
+        return getSubtrigger(this.nodeTarget);
+    }
+
     async execute(): Promise<boolean> {
-        const subtrigger = getSubtrigger(this.nodeTarget as string);
+        const subtrigger = this.subtrigger;
 
         if (!subtrigger) {
             return this.send("out");
@@ -36,6 +40,10 @@ class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "
 
         return this.send("out");
     }
+}
+
+interface SubtriggerNodeTriggerNode {
+    get nodeTarget(): string;
 }
 
 type SubtriggerOptions = TriggerPreOptions & {
