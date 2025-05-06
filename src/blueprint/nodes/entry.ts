@@ -48,7 +48,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         this.#node = node;
         this.#schema = schema;
         this.#category = category;
-        this.#id = createEntryId(node.id, category, this.key);
+        this.#id = createEntryId(node, category, this.key);
 
         const children = [
             (this.#connector = this.#drawConnector()),

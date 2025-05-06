@@ -1,7 +1,9 @@
-import { isEntryCategory, NodeEntryCategory } from "data";
+import { isEntryCategory, NodeEntryCategory, TriggerNodeData } from "data";
 import { MODULE } from "module-helpers";
 import { NodeCustomEntryCategory } from "schema";
+import { TriggerNode } from "trigger";
 import fields = foundry.data.fields;
+import { BlueprintNode } from "blueprint";
 
 class NodeEntryIdField<
     TCategory extends NodeEntryCategory = NodeEntryCategory,
@@ -45,12 +47,12 @@ function segmentEntryId(id: NodeEntryId): SegmentedEntryId {
 }
 
 function createEntryId(
-    nodeId: string,
+    node: TriggerNode | TriggerNodeData | BlueprintNode,
     category: NodeCustomEntryCategory,
     key: string
 ): NodeEntryId {
     const realCategory = category === "inputs" ? "inputs" : "outputs";
-    return `${nodeId}.${realCategory}.${key}`;
+    return `${node.id}.${realCategory}.${key}`;
 }
 
 interface NodeEntryIdField<

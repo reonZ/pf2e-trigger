@@ -311,7 +311,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const type = entry?.type ?? result.type;
         const label = result.label || placeholder || localize("entry", type);
         const variableId =
-            entry?.id ?? createEntryId(trigger.event.id, "outputs", foundry.utils.randomID());
+            entry?.id ?? createEntryId(trigger.event, "outputs", foundry.utils.randomID());
 
         trigger.addVariable(variableId, { type, label, global });
         this.parent?.refresh();

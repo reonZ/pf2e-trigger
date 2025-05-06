@@ -335,12 +335,12 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         if (category === "outputs") {
             // we remove the variable for this entry if it exist
-            const variableId = createEntryId(this.id, "outputs", key);
+            const variableId = createEntryId(this, "outputs", key);
             this.parent?.removeVariable(variableId);
         }
 
         // we disconnect the entry before removing it
-        const entryId = createEntryId(this.id, category, key);
+        const entryId = createEntryId(this, category, key);
         this.disconnect(entryId, true);
 
         this.update({
@@ -361,12 +361,12 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
                     if (this.isSubtriggerOutput) {
                         // we remove the variable if it exist
-                        const variableId = createEntryId(node.id, "outputs", key);
+                        const variableId = createEntryId(node, "outputs", key);
                         trigger.removeVariable(variableId);
                     }
 
                     // we disconnect the removed entry first
-                    const entryId = createEntryId(node.id, oppositeCategory, key);
+                    const entryId = createEntryId(node, oppositeCategory, key);
                     node.disconnect(entryId, true);
 
                     // we re-initialize
@@ -401,7 +401,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     _onDelete() {
         for (const [category, key] of this.entries()) {
-            const entryId = createEntryId(this.id, category, key);
+            const entryId = createEntryId(this, category, key);
             this.disconnect(entryId, true);
         }
     }

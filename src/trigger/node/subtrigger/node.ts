@@ -11,11 +11,10 @@ class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "
             return this.send("out");
         }
 
-        const subId = subtrigger.event.id;
         const variables = R.fromEntries(
             await Promise.all(
                 this.schemaInputs.map(async ({ key }) => [
-                    createEntryId(subId, "outputs", key),
+                    createEntryId(subtrigger.event, "outputs", key),
                     await this.get(key),
                 ])
             )

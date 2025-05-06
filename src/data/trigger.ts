@@ -1,4 +1,5 @@
 import {
+    createEntryId,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
     NonBridgeEntryType,
@@ -139,7 +140,8 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
         // we generate all the output variables of the event node
         for (const { type, key, label } of this.event.nodeSchema.outputs) {
-            this.variables[`${this.event.id}.outputs.${key}`] = {
+            const entryId = createEntryId(this.event, "outputs", key);
+            this.variables[entryId] = {
                 type,
                 label: label ?? localize("entry", type),
                 global: false,

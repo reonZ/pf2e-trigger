@@ -72,7 +72,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         key: K,
         value: ExtractOutputValue<TSchema, K>
     ) {
-        const entryId = createEntryId(this.id, "outputs", key);
+        const entryId = createEntryId(this, "outputs", key);
         this.trigger.setVariable(entryId, value);
     }
 
