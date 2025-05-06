@@ -96,6 +96,8 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     ? TriggerRollEntry
     : T extends "dc"
     ? TriggerDcEntry
+    : T extends "list"
+    ? string[]
     : unknown;
 
 type TriggerRollEntry = {

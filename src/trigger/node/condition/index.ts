@@ -5,9 +5,10 @@ import { InsideAuraTriggerNode } from "./inside-aura";
 import { HasOptionTriggerNode } from "./has-option";
 import { IsCombatantTriggerNode } from "./is-combatant";
 import { InCombatTriggerNode } from "./in-combat";
+import { ContainsEntryTriggerNode } from "./contains-entry";
 
 export const condition = {
-    "contains-entry": {},
+    "contains-entry": ContainsEntryTriggerNode,
     "has-item": HasItemTriggerNode,
     "has-option": HasOptionTriggerNode,
     "in-combat": InCombatTriggerNode,
