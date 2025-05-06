@@ -1,5 +1,5 @@
 import { TriggerValue } from "trigger/trigger";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 
 class InputValueTriggerNode extends TriggerNode {
     async query(): Promise<TriggerValue> {

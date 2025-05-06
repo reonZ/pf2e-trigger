@@ -1,5 +1,5 @@
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 import { hasRollOption } from "module-helpers";
 
 class HasOptionTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-option">> {

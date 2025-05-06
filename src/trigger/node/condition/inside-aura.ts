@@ -1,5 +1,5 @@
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 import { getAurasInMemory } from "hook";
 import { actorsRespectAlliance, ActorTargetAlliance } from "module-helpers";
 

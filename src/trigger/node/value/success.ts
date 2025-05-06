@@ -1,6 +1,6 @@
 import { degreeOfSuccessNumber } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 
 class SuccessValueTriggerNode extends TriggerNode<NodeSchemaOf<"value", "success-value">> {
     async query(): Promise<number> {

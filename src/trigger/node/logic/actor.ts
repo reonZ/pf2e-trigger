@@ -1,5 +1,5 @@
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 
 class EqActorTriggerNode extends TriggerNode<NodeSchemaOf<"logic", "eq-actor">> {
     async execute(): Promise<boolean> {

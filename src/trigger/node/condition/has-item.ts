@@ -1,5 +1,5 @@
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "../node";
+import { TriggerNode } from "trigger";
 import { getItemWithSourceId } from "module-helpers";
 
 class HasItemTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-item">> {
