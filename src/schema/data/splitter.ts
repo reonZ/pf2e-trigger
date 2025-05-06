@@ -11,9 +11,31 @@ const EXTRACT_TYPES = [
     "target",
 ] as const satisfies NonBridgeEntryType[];
 
-const booleanSplitter = {
+const boolean = {
     inputs: [{ key: "input", type: "boolean" }],
     outs: booleanOutsSchema(),
+} as const satisfies NodeRawSchema;
+
+const success = {
+    inputs: [{ key: "input", type: "number" }],
+    outs: [
+        {
+            key: "criticalFailure",
+            label: "PF2E.Check.Result.Degree.Check.criticalFailure",
+        },
+        {
+            key: "failure",
+            label: "PF2E.Check.Result.Degree.Check.failure",
+        },
+        {
+            key: "success",
+            label: "PF2E.Check.Result.Degree.Check.success",
+        },
+        {
+            key: "criticalSuccess",
+            label: "PF2E.Check.Result.Degree.Check.criticalSuccess",
+        },
+    ],
 } as const satisfies NodeRawSchema;
 
 function createDocumentExtractor<T extends NonBridgeEntryType>(
@@ -38,8 +60,8 @@ type DocumentExtractorSchema<T extends NonBridgeEntryType> = {
 
 export const splitter = {
     "actor-splitter": createDocumentExtractor("target"),
-    "boolean-splitter": booleanSplitter,
+    "boolean-splitter": boolean,
     "item-splitter": createDocumentExtractor("item"),
     "string-list": {},
-    "success-splitter": {},
+    "success-splitter": success,
 };
