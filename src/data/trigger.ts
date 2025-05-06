@@ -157,7 +157,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         nodeIds: string[],
         options: object
     ): void {
-        const variables: Record<string, NodeEntryId[]> = {};
+        const variables: PartialRecord<string, NodeEntryId[]> = {};
 
         for (const entryId of R.keys(this.variables)) {
             const nodeId = entryId.split(".")[0];
@@ -166,7 +166,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
         // we remove all the variables linked to that node and by extension their associated nodes
         for (const nodeId of nodeIds) {
-            const entryIds = variables[nodeId];
+            const entryIds = variables[nodeId] ?? [];
 
             for (const entryId of entryIds) {
                 this.removeVariable(entryId);
