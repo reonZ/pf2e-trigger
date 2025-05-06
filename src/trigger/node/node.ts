@@ -1,6 +1,20 @@
-import { createEntryId, NodeDataEntry, NodeEntryId, NodeType, TriggerNodeData } from "data";
+import {
+    createEntryId,
+    NodeDataEntry,
+    NodeEntryId,
+    NodeEntryType,
+    NodeType,
+    TriggerNodeData,
+} from "data";
 import { ActorPF2e, R } from "module-helpers";
-import { NodeInputSchema, NodeInputSource, NodeKey, NodeOutputSource, NodeRawSchema } from "schema";
+import {
+    NodeFieldSchema,
+    NodeInputSchema,
+    NodeInputSource,
+    NodeKey,
+    NodeOutputSource,
+    NodeRawSchema,
+} from "schema";
 import {
     Trigger,
     TriggerDcEntry,
@@ -51,8 +65,8 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.custom?.outputs ?? [];
     }
 
-    get schemaInputs(): NodeInputSource[] {
-        return this.#data.nodeSchema.inputs;
+    get schemaInputs(): Collection<ModelPropsFromSchema<NodeInputSchema>> {
+        return this.#data.schemaInputs;
     }
 
     async execute(): Promise<boolean> {
@@ -90,7 +104,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             return this.#get[key]();
         }
 
-        const schemaInput = this.#data.schemaInputs[key];
+        const schemaInput = this.schemaInputs.get(key)!;
         const input = this.#data.inputs[key] ?? {};
         const nodeEntry = this.#getFirstNodeFromEntries(input);
 
@@ -100,68 +114,28 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             if (["value", "variable"].includes(node.type)) {
                 this.#get[key] = async () => {
                     const value = await node.query(key);
-                    return this.#getConverted(schemaInput, value);
+                    return this.getConvertedValue(schemaInput, value);
                 };
             } else {
                 this.#get[key] = () => {
                     const value = this.trigger.getVariable(entryId);
-                    return this.#getConverted(schemaInput, value);
+                    return this.getConvertedValue(schemaInput, value);
                 };
             }
         } else if (R.isNonNullish(input.value)) {
             this.#get[key] = () => input.value;
         } else {
-            this.#get[key] = () => this.#getDefault(schemaInput);
+            this.#get[key] = () => this.getDefaultValue(schemaInput);
         }
 
         return this.#get[key]();
     }
 
-    #getConverted(schemaInput: ModelPropsFromSchema<NodeInputSchema>, value: any) {
-        if (R.isNullish(value)) {
-            return this.#getDefault(schemaInput);
-        }
-
-        const expectedType = schemaInput.type;
-
-        switch (expectedType) {
-            case "text": {
-                // if it is a list, we take the first entry
-                return R.isArray(value) ? value[0] ?? "" : value;
-            }
-
-            case "select": {
-                // if it is a list, we take the first entry
-                const option = R.isArray(value) ? value[0] ?? "" : value;
-                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-                return options.includes(option) ? option : options[0] ?? "";
-            }
-
-            case "list": {
-                return R.isArray(value) ? value : [value];
-            }
-
-            case "number": {
-                return isDcEntry(value) ? value.value : value;
-            }
-
-            case "dc": {
-                return R.isNumber(value)
-                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
-                    : value;
-            }
-
-            default: {
-                return value;
-            }
-        }
-    }
-
-    #getDefault(schemaInput: ModelPropsFromSchema<NodeInputSchema>) {
+    getDefaultValue(schemaInput: SchemaInputAdjacent) {
         const field = schemaInput.field;
 
-        if (schemaInput.field && "default" in schemaInput.field) {
-            return schemaInput.field.default;
+        if (field && "default" in field) {
+            return field.default;
         }
 
         switch (schemaInput.type) {
@@ -199,6 +173,94 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         }
     }
 
+    getConvertedValue(schemaInput: SchemaInputAdjacent, value: any) {
+        if (R.isNullish(value)) {
+            return this.getDefaultValue(schemaInput);
+        }
+
+        // expected type
+        switch (schemaInput.type) {
+            case "text": {
+                // if it is a list, we take the first entry
+                return R.isArray(value) ? value[0] ?? "" : value;
+            }
+
+            case "select": {
+                // if it is a list, we take the first entry
+                const option = R.isArray(value) ? value[0] ?? "" : value;
+                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
+                return options.includes(option) ? option : options[0] ?? "";
+            }
+
+            case "list": {
+                return R.isArray(value) ? value : [value];
+            }
+
+            case "number": {
+                return isDcEntry(value) ? value.value : value;
+            }
+
+            case "dc": {
+                return R.isNumber(value)
+                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
+                    : value;
+            }
+
+            default: {
+                return value;
+            }
+        }
+    }
+
+    isValidCustomEntry(type: NodeEntryType, value: unknown) {
+        switch (type) {
+            case "number": {
+                return R.isNumber(value);
+            }
+
+            case "boolean": {
+                return R.isBoolean(value);
+            }
+
+            case "select":
+            case "text": {
+                return R.isString(value);
+            }
+
+            case "item": {
+                return value instanceof Item;
+            }
+
+            case "target": {
+                return (
+                    R.isPlainObject(value) &&
+                    value.actor instanceof Actor &&
+                    (!value.token || value.token instanceof TokenDocument)
+                );
+            }
+
+            case "list": {
+                return R.isArray(value) && value.every(R.isString);
+            }
+
+            case "dc": {
+                return isDcEntry(value);
+            }
+
+            case "duration": {
+                return isDurationEntry(value);
+            }
+
+            case "roll": {
+                return isRollEntry(value);
+            }
+
+            default: {
+                return false;
+            }
+        }
+    }
+
     #getFirstNodeFromEntries(
         entries: NodeDataEntry
     ): { entryId: NodeEntryId; node: TriggerNode } | undefined {
@@ -223,6 +285,11 @@ function isDcEntry(value: unknown): value is TriggerDcEntry {
 function isDurationEntry(value: unknown): value is TriggerDurationEntry {
     return R.isPlainObject(value);
 }
+
+type SchemaInputAdjacent = {
+    type: NodeEntryType;
+    field?: NodeFieldSchema;
+};
 
 // input
 

@@ -117,7 +117,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
     triggerNodeDataSchema
 ) {
     declare nodeSchema: NodeSchemaModel;
-    declare schemaInputs: Record<string, ModelPropsFromSchema<NodeInputSchema>>;
+    declare schemaInputs: Collection<ModelPropsFromSchema<NodeInputSchema>>;
 
     static validateJoint(data: SourceFromSchema<TriggerNodeDataSchema>): void {
         if (!isValidNodeKey(data.type, data.key)) {
@@ -174,7 +174,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     getValue(key: string): NodeEntryValue {
         const entry = this.inputs[key];
-        const schema = this.schemaInputs[key];
+        const schema = this.schemaInputs.get(key);
         if (!schema) return;
 
         const value = entry?.value;
@@ -396,7 +396,13 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     _initializeSchema() {
         this.nodeSchema = getSchema(this)!;
-        this.schemaInputs = R.mapToObj(this.nodeSchema.inputs, (input) => [input.key, input]);
+
+        this.schemaInputs = new Collection(
+            R.pipe(
+                this.nodeSchema.inputs,
+                R.map((input) => [input.key, input] as const)
+            )
+        );
     }
 
     _onDelete() {

@@ -1,7 +1,6 @@
-import { NodeEntryType } from "data";
 import { isScriptMacro, MODULE, R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { isDcEntry, isDurationEntry, isRollEntry, TriggerNode } from "trigger";
+import { TriggerNode } from "trigger";
 
 class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro">> {
     async execute(): Promise<boolean> {
@@ -37,7 +36,7 @@ class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro"
 
                 const output = outputs[i];
 
-                if (isValidCustomEntry(output.type, value)) {
+                if (this.isValidCustomEntry(output.type, value)) {
                     this.setVariable(output.key, value as never);
                 }
             }
@@ -46,54 +45,6 @@ class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro"
         }
 
         return this.send("out");
-    }
-}
-
-function isValidCustomEntry(type: NodeEntryType, value: unknown) {
-    switch (type) {
-        case "number": {
-            return R.isNumber(value);
-        }
-
-        case "boolean": {
-            return R.isBoolean(value);
-        }
-
-        case "text": {
-            return R.isString(value);
-        }
-
-        case "item": {
-            return value instanceof Item;
-        }
-
-        case "target": {
-            return (
-                R.isPlainObject(value) &&
-                value.actor instanceof Actor &&
-                (!value.token || value.token instanceof TokenDocument)
-            );
-        }
-
-        case "list": {
-            return R.isArray(value) && value.every(R.isString);
-        }
-
-        case "dc": {
-            return isDcEntry(value);
-        }
-
-        case "duration": {
-            return isDurationEntry(value);
-        }
-
-        case "roll": {
-            return isRollEntry(value);
-        }
-
-        default: {
-            return false;
-        }
     }
 }
 
