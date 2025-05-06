@@ -216,6 +216,9 @@
             "condition": {
                 "title": "Conditions",
                 "subtitle": "Condition",
+                "contains-entry": {
+                    "label": "List Contains Entry"
+                },
                 "has-item": {
                     "label": "Has Item"
                 },
@@ -225,6 +228,9 @@
                         "options": "roll:option"
                     }
                 },
+                "in-combat": {
+                    "label": "Is In Combat"
+                },
                 "inside-aura": {
                     "label": "Is Inside Aura",
                     "entry": {
@@ -232,6 +238,9 @@
                         "slug": "aura-slug",
                         "targets": "Targets"
                     }
+                },
+                "is-combatant": {
+                    "label": "Is Current Combatant"
                 }
             },
             "event": {

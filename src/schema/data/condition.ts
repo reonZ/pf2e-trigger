@@ -1,4 +1,4 @@
-import { BooleanOutsSchema, NodeRawSchema, NodeSchemaInput, booleanOutsSchema } from "schema";
+import { BooleanOutsSchema, NodeRawSchema, booleanOutsSchema } from "schema";
 
 const insideAura = {
     loop: true,
@@ -36,13 +36,33 @@ const hasOptions = {
     ],
 } as const satisfies ConditionSchema;
 
-type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs" | "inputs"> & {
+const containsEntry = {
+    outs: booleanOutsSchema(),
+    inputs: [
+        { key: "list", type: "list" },
+        { key: "entry", type: "text" },
+    ],
+} as const satisfies ConditionSchema;
+
+const inCombat = {
+    outs: booleanOutsSchema(),
+    inputs: [{ key: "target", type: "target" }],
+} as const satisfies ConditionSchema;
+
+const isCombatant = {
+    outs: booleanOutsSchema(),
+    inputs: [{ key: "target", type: "target" }],
+} as const satisfies ConditionSchema;
+
+type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
     outs: BooleanOutsSchema;
-    inputs: [...NodeSchemaInput[], { type: "target"; key: "target" }];
 };
 
 export const condition = {
+    "contains-entry": containsEntry,
     "has-item": hasItem,
     "has-option": hasOptions,
+    "in-combat": inCombat,
     "inside-aura": insideAura,
+    "is-combatant": isCombatant,
 };
