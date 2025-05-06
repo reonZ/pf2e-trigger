@@ -139,15 +139,24 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
         const target = this.target;
         const bounds = el.getBoundingClientRect();
         const viewBounds = this.blueprint.getBoundClientRect();
+        const viewBoundCenter = (viewBounds.top + viewBounds.height) / 2;
 
         if (target instanceof EntryField) {
-            const { left, top, bottom, width } = target.globalBounds;
+            const { left, top, bottom, width, center } = target.globalBounds;
 
             position.top = bottom;
             position.left = left;
 
-            if (bottom + bounds.height > viewBounds.height && top > viewBounds.height / 2) {
+            if (position.top + bounds.height > viewBounds.bottom && center.y > viewBoundCenter) {
                 position.top = top - bounds.height;
+            }
+
+            if (position.top + bounds.height > viewBounds.bottom) {
+                position.top = viewBounds.bottom - viewBounds.height;
+            }
+
+            if (position.top < viewBounds.top) {
+                position.top = viewBounds.top;
             }
 
             el.style.minWidth = `${width}px`;
@@ -159,13 +168,13 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
             if (target.align === "top") {
                 position.top = y - bounds.height - 2;
 
-                if (position.top < viewBounds.top && y < viewBounds.height / 2) {
+                if (position.top < viewBounds.top && y < viewBoundCenter) {
                     position.top = y + 2;
                 }
             } else if (target.align === "bottom") {
                 position.top = y + 2;
 
-                if (position.top + bounds.height > viewBounds.height && y > viewBounds.height / 2) {
+                if (position.top + bounds.height > viewBounds.bottom && y > viewBoundCenter) {
                     position.top = y - bounds.height - 2;
                 }
             } else {
