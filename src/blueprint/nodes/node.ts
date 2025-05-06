@@ -723,7 +723,10 @@ class BlueprintNode extends PIXI.Container {
                     name: "label",
                 },
             },
-            {
+        ];
+
+        if (custom.types.length) {
+            content.push({
                 type: "select",
                 inputConfig: {
                     name: "type",
@@ -731,8 +734,8 @@ class BlueprintNode extends PIXI.Container {
                     i18n: "entry",
                     disabled: custom.types.length === 1,
                 },
-            },
-        ];
+            });
+        }
 
         if (customKey) {
             content.unshift({
