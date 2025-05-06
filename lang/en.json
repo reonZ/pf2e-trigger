@@ -19,6 +19,10 @@
                 }
             }
         },
+        "outs": {
+            "singular": "Output",
+            "plural": "Outputs"
+        },
         "inputs": {
             "singular": "Input",
             "plural": "Inputs"
@@ -294,9 +298,6 @@
                 },
                 "item-splitter": {
                     "label": "Item Data"
-                },
-                "string-list": {
-                    "label": "String List"
                 },
                 "success-splitter": {
                     "label": "Degree of Success"
