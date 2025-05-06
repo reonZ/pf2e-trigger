@@ -7,9 +7,11 @@ import { IsCombatantTriggerNode } from "./is-combatant";
 import { InCombatTriggerNode } from "./in-combat";
 import { ContainsEntryTriggerNode } from "./contains-entry";
 import { MatchPredicateTriggerNode } from "./match-predicate";
+import { HasConditionTriggerNode } from "./has-condition";
 
 export const condition = {
     "contains-entry": ContainsEntryTriggerNode,
+    "has-condition": HasConditionTriggerNode,
     "has-item": HasItemTriggerNode,
     "has-option": HasOptionTriggerNode,
     "in-combat": InCombatTriggerNode,

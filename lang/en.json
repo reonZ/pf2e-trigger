@@ -219,6 +219,9 @@
                 "contains-entry": {
                     "label": "List Contains Entry"
                 },
+                "has-condition": {
+                    "label": "Has Condition"
+                },
                 "has-item": {
                     "label": "Has Item"
                 },

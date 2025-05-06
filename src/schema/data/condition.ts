@@ -4,6 +4,7 @@ const insideAura = {
     loop: true,
     outs: booleanOutsSchema(),
     inputs: [
+        { key: "target", type: "target" },
         { key: "slug", type: "text" },
         {
             key: "targets",
@@ -13,7 +14,6 @@ const insideAura = {
                 options: ["all", "allies", "enemies"],
             },
         },
-        { key: "target", type: "target" },
     ],
     outputs: [{ key: "source", type: "target" }],
 } as const satisfies ConditionSchema;
@@ -21,8 +21,8 @@ const insideAura = {
 const hasItem = {
     outs: booleanOutsSchema(),
     inputs: [
-        { key: "uuid", type: "text" },
         { key: "target", type: "target" },
+        { key: "uuid", type: "text" },
     ],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
@@ -31,8 +31,8 @@ const hasItem = {
 const hasOptions = {
     outs: booleanOutsSchema(),
     inputs: [
-        { key: "option", type: "text" },
         { key: "target", type: "target" },
+        { key: "option", type: "text" },
     ],
 } as const satisfies ConditionSchema;
 
@@ -70,12 +70,36 @@ const matchPredicate = {
     ],
 } as const satisfies ConditionSchema;
 
+const hasCondition = {
+    outs: booleanOutsSchema(),
+    inputs: [
+        { key: "target", type: "target" },
+        {
+            key: "condition",
+            type: "select",
+            field: {
+                options: "CONFIG.Pf2eTrigger.addConditionTypes",
+            },
+        },
+        {
+            key: "counter",
+            type: "number",
+            label: "PF2E.Item.Effect.Badge.Type.counter",
+            field: {
+                default: 1,
+                min: 1,
+            },
+        },
+    ],
+} as const satisfies ConditionSchema;
+
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
     outs: BooleanOutsSchema;
 };
 
 export const condition = {
     "contains-entry": containsEntry,
+    "has-condition": hasCondition,
     "has-item": hasItem,
     "has-option": hasOptions,
     "in-combat": inCombat,
