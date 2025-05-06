@@ -297,22 +297,16 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
         entries.push(entry);
 
-        if (category !== "outs" && this.isEvent) {
-            // we automatically add a locked variable for this entry
-            const variableId = createEntryId(this.id, "outputs", entry.key);
-            this.parent?.addVariable(variableId, {
-                label: entry.label,
-                type,
-                global: false,
-                locked: true,
-            });
-        }
-
         this.update({
             custom: {
                 [category]: entries,
             },
         });
+
+        if (this.isSutriggerEvent) {
+            // we re-initialize the trigger to update the variables
+            this.parent.reset();
+        }
 
         if (this.isSutriggerEvent || this.isSubtriggerOutput) {
             // we re-initialize all the subtrigger-node out there

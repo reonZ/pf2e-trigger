@@ -134,16 +134,18 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     _initialize(options?: Record<string, unknown>) {
         super._initialize(options);
 
+        // we know there is an event because of TriggerData#validateJoint
         this.event = this.nodes.find(isEvent)!;
 
-        this.variables[`${this.event.id}.outputs.this`] = {
-            type: "target",
-            global: false,
-            label: localize("entry.this"),
-            locked: true,
-        };
-
-        // TODO add all the event variables
+        // we generate all the output variables of the event node
+        for (const { type, key, label } of this.event.nodeSchema.outputs) {
+            this.variables[`${this.event.id}.outputs.${key}`] = {
+                type,
+                label: label ?? localize("entry", type),
+                global: false,
+                locked: true,
+            };
+        }
     }
 
     _onDeleteDescendantDocuments(
