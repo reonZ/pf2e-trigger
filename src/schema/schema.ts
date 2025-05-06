@@ -188,6 +188,7 @@ type NodeSchemaText = NodeSchemaInputEntry<
     "text",
     {
         code?: boolean;
+        default?: string;
     }
 >;
 

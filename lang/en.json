@@ -241,6 +241,9 @@
                 },
                 "is-combatant": {
                     "label": "Is Current Combatant"
+                },
+                "match-predicate": {
+                    "label": "List Matches Predicate"
                 }
             },
             "event": {

@@ -6,6 +6,7 @@ import { HasOptionTriggerNode } from "./has-option";
 import { IsCombatantTriggerNode } from "./is-combatant";
 import { InCombatTriggerNode } from "./in-combat";
 import { ContainsEntryTriggerNode } from "./contains-entry";
+import { MatchPredicateTriggerNode } from "./match-predicate";
 
 export const condition = {
     "contains-entry": ContainsEntryTriggerNode,
@@ -14,4 +15,5 @@ export const condition = {
     "in-combat": InCombatTriggerNode,
     "inside-aura": InsideAuraTriggerNode,
     "is-combatant": IsCombatantTriggerNode,
+    "match-predicate": MatchPredicateTriggerNode,
 } as Record<NodeKeys<"condition">, typeof TriggerNode>;

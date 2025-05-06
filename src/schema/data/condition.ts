@@ -36,14 +36,6 @@ const hasOptions = {
     ],
 } as const satisfies ConditionSchema;
 
-const containsEntry = {
-    outs: booleanOutsSchema(),
-    inputs: [
-        { key: "list", type: "list" },
-        { key: "entry", type: "text" },
-    ],
-} as const satisfies ConditionSchema;
-
 const inCombat = {
     outs: booleanOutsSchema(),
     inputs: [{ key: "target", type: "target" }],
@@ -52,6 +44,30 @@ const inCombat = {
 const isCombatant = {
     outs: booleanOutsSchema(),
     inputs: [{ key: "target", type: "target" }],
+} as const satisfies ConditionSchema;
+
+const containsEntry = {
+    outs: booleanOutsSchema(),
+    inputs: [
+        { key: "list", type: "list" },
+        { key: "entry", type: "text" },
+    ],
+} as const satisfies ConditionSchema;
+
+const matchPredicate = {
+    outs: booleanOutsSchema(),
+    inputs: [
+        { key: "list", type: "list" },
+        {
+            key: "predicate",
+            type: "text",
+            label: "PF2E.RuleEditor.General.Predicate",
+            field: {
+                code: true,
+                default: "[\n  \n]",
+            },
+        },
+    ],
 } as const satisfies ConditionSchema;
 
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
@@ -65,4 +81,5 @@ export const condition = {
     "in-combat": inCombat,
     "inside-aura": insideAura,
     "is-combatant": isCombatant,
+    "match-predicate": matchPredicate,
 };
