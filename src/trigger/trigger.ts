@@ -1,14 +1,6 @@
 import { NodeEntryId, NodeEntryType, TriggerData, WorldTriggers } from "data";
 import { prepareHooks } from "hook";
-import {
-    ActorPF2e,
-    CheckDC,
-    DurationData,
-    EffectContextData,
-    getSetting,
-    ItemPF2e,
-    R,
-} from "module-helpers";
+import { ActorPF2e, CheckDC, DurationData, getSetting, ItemPF2e, R } from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
 
 let SUBTRIGGERS: Record<string, TriggerData> = {};
@@ -107,7 +99,7 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     : T extends "list"
     ? string[]
     : T extends "duration"
-    ? TriggerDurationEntry | undefined
+    ? TriggerDurationEntry
     : unknown;
 
 type TriggerRollEntry = {
@@ -122,7 +114,7 @@ type TriggerDcEntry = WithRequired<CheckDC, "scope"> & {
 };
 
 type TriggerDurationEntry = DurationData & {
-    context?: EffectContextData;
+    origin?: TargetDocuments;
 };
 
 export { getSubtrigger, prepareTriggers, Trigger };

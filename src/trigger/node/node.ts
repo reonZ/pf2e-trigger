@@ -171,6 +171,14 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return { options: [], traits: [] } satisfies TriggerRollEntry;
             }
 
+            case "duration": {
+                return {
+                    expiry: null,
+                    unit: "unlimited",
+                    value: -1,
+                } satisfies TriggerDurationEntry;
+            }
+
             default: {
                 return undefined;
             }
