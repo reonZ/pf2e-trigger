@@ -8,15 +8,17 @@ abstract class DocumentSplitterTriggerNode<T> extends TriggerNode {
     async execute(): Promise<boolean> {
         const document = await this.getDocument();
 
-        for (const { key, type } of this.customOutputs) {
-            const value = foundry.utils.getProperty(document ?? {}, key);
-            const interpreted = this.#interpretValue(type as NodeCustomEntryType, value);
-            const converted = this.getConvertedValue({ type }, interpreted);
+        await Promise.all(
+            this.customOutputs.map(async ({ key, type }) => {
+                const value = foundry.utils.getProperty(document ?? {}, key);
+                const interpreted = this.#interpretValue(type as NodeCustomEntryType, value);
+                const converted = await this.getConvertedValue({ type }, interpreted);
 
-            if (R.isNonNullish(converted)) {
-                this.setVariable(key, converted);
-            }
-        }
+                if (R.isNonNullish(converted)) {
+                    this.setVariable(key, converted);
+                }
+            })
+        );
 
         return this.send("out");
     }

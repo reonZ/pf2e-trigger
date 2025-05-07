@@ -6,7 +6,7 @@ import {
     NodeType,
     TriggerNodeData,
 } from "data";
-import { ActorPF2e, R } from "module-helpers";
+import { ActorPF2e, getItemFromUuid, ItemPF2e, R } from "module-helpers";
 import {
     NodeFieldSchema,
     NodeInputSchema,
@@ -185,36 +185,47 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         }
     }
 
-    getConvertedValue(schemaInput: SchemaInputAdjacent, value: any) {
+    async getConvertedValue(schemaInput: SchemaInputAdjacent, value: any): Promise<any> {
         if (R.isNullish(value)) {
             return this.getDefaultValue(schemaInput);
         }
 
         // expected type
         switch (schemaInput.type) {
-            case "text": {
-                // if it is a list, we take the first entry
-                return R.isArray(value) ? value[0] ?? "" : value;
+            // number
+            case "dc": {
+                return R.isNumber(value)
+                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
+                    : value;
             }
 
-            case "select": {
-                // if it is a list, we take the first entry
-                const option = R.isArray(value) ? value[0] ?? "" : value;
-                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-                return options.includes(option) ? option : options[0] ?? "";
+            // text
+            case "item": {
+                return R.isString(value) ? getItemFromUuid(value) : value;
             }
 
+            // select, text
             case "list": {
                 return R.isArray(value) ? value : [value];
             }
 
+            // dc
             case "number": {
                 return isDcEntry(value) ? value.value : value;
             }
 
-            case "dc": {
-                return R.isNumber(value)
-                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
+            // text
+            case "select": {
+                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
+                return options.includes(value) ? value : options[0] ?? "";
+            }
+
+            // item, list, select
+            case "text": {
+                return value instanceof Item
+                    ? (value as ItemPF2e).sourceId ?? value.uuid
+                    : R.isArray(value)
+                    ? value[0] ?? ""
                     : value;
             }
 
