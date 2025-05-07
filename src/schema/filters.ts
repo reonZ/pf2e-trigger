@@ -75,7 +75,7 @@ function createFilters(): FilterGroup[] {
         R.map(([_, entries]): FilterGroup => {
             const { module, type } = entries[0];
             return {
-                entries,
+                entries: R.sortBy(entries, R.prop("label")),
                 isSub: !!module,
                 title: module ?? localize("node", type, "title"),
             };

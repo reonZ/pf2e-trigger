@@ -469,7 +469,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                         },
                     } satisfies BlueprintFilterData),
                 };
-            })
+            }),
+            R.sortBy(R.prop("label"))
         );
 
         if (subtriggers.length) {
