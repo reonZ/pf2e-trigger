@@ -6,7 +6,7 @@ import { prepareTriggers } from "trigger";
 MODULE.register("pf2e-trigger");
 MODULE.enableDebugMode();
 
-Hooks.once("setup", () => {
+Hooks.once("init", () => {
     // @ts-expect-error
     CONFIG.Trigger = {
         documentClass: TriggerData,
@@ -28,9 +28,8 @@ Hooks.once("setup", () => {
             R.mapToObj(([key, value]) => [key, value])
         ),
     };
-});
 
-Hooks.once("init", () => {
+    // we register after CONFIG is set because foundry creates an instance right away
     registerSetting("world-triggers", {
         type: WorldTriggers,
         default: new WorldTriggers(),
