@@ -14,7 +14,7 @@ import {
 import {
     DataUnionField,
     IdField,
-    localize,
+    localizeIfExist,
     makeModuleDocument,
     MODULE,
     ModuleDocument,
@@ -286,11 +286,13 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         group?: string;
         key?: string;
     }) {
+        key = key?.trim() || foundry.utils.randomID();
+
         const entries = (this._source.custom?.[category]?.slice() ?? []) as NodeSchemaEntry[];
         const entry: NodeSchemaEntry = {
-            key: key?.trim() || foundry.utils.randomID(),
+            key,
             type,
-            label: label?.trim() || localize("entry", type),
+            label: label?.trim() || localizeIfExist("entry", type) || key,
             group: group ?? "",
             custom: true,
         };
