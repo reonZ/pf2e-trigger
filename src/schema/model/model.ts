@@ -192,8 +192,10 @@ type NodeSchemaCustomKeySchema = {
     required: fields.BooleanField<boolean, boolean, false>;
 };
 
-type NodeSchemaCustom = {
-    category: NodeCustomEntryCategory;
+type NodeSchemaCustom = NodeSchemaCustomInput | NodeSchemaCustomOutput | NodeSchemaCustomOut;
+
+type BaseNodeSchemaCustom<T extends NodeCustomEntryCategory> = {
+    category: T;
     group?: string;
     types?: NodeCustomEntryType[];
     key?: {
@@ -201,6 +203,10 @@ type NodeSchemaCustom = {
         required?: boolean;
     };
 };
+
+type NodeSchemaCustomInput = BaseNodeSchemaCustom<"inputs">;
+type NodeSchemaCustomOutput = BaseNodeSchemaCustom<"outputs">;
+type NodeSchemaCustomOut = Omit<BaseNodeSchemaCustom<"outs">, "types" | "group">;
 
 type NodeSchemaEntriesSchema = {
     outs: fields.ArrayField<fields.SchemaField<NodeBridgeSchema>>;

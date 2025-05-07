@@ -38,6 +38,17 @@ const success = {
     ],
 } as const satisfies NodeRawSchema;
 
+const text = {
+    outs: [{ key: "none" }],
+    inputs: [{ key: "input", type: "text" }],
+    custom: [
+        {
+            category: "outs",
+            key: { name: "value", required: true },
+        },
+    ],
+} as const satisfies NodeRawSchema;
+
 function createDocumentExtractor<T extends NonBridgeEntryType>(
     type: T
 ): DocumentExtractorSchema<T> {
@@ -63,4 +74,5 @@ export const splitter = {
     "boolean-splitter": boolean,
     "item-splitter": createDocumentExtractor("item"),
     "success-splitter": success,
+    "text-splitter": text,
 };

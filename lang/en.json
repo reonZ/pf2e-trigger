@@ -138,6 +138,9 @@
             },
             "path": {
                 "label": "Entry Path"
+            },
+            "value": {
+                "label": "Value"
             }
         },
         "delete-entry": {
@@ -318,7 +321,10 @@
                     "label": "Branch Out Degree of Success"
                 },
                 "text-splitter": {
-                    "label": "Branch Out Text"
+                    "label": "Branch Out Text",
+                    "entry": {
+                        "none": "No Match"
+                    }
                 }
             },
             "subtrigger": {

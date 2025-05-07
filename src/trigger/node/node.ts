@@ -65,6 +65,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.custom?.outputs ?? [];
     }
 
+    get customOuts(): NodeOutputSource[] {
+        return this.#data.custom?.outs ?? [];
+    }
+
     get schemaInputs(): Collection<ModelPropsFromSchema<NodeInputSchema>> {
         return this.#data.schemaInputs;
     }
