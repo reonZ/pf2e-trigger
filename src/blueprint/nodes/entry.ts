@@ -259,14 +259,12 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.connections.includes(other instanceof BlueprintEntry ? other.id : other);
     }
 
-    isCompatibleWith(other: BlueprintEntry | NodeEntryType): boolean {
-        const otherType = other instanceof BlueprintEntry ? other.type : other;
-        return entriesAreCompatible(this.type, otherType);
+    isCompatibleWith(other: BlueprintEntry): boolean {
+        return entriesAreCompatible(this, other);
     }
 
     canConnectTo(other: BlueprintEntry): boolean {
         return (
-            this.category !== other.category &&
             this.node.id !== other.node.id &&
             this.canConnect &&
             !this.isConnectedTo(other) &&

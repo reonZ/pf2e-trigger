@@ -40,7 +40,7 @@ function createFilters(): FilterGroup[] {
                             return R.pipe(
                                 schema[category] as { type: NodeEntryType }[],
                                 R.flatMap(({ type }) => {
-                                    return getCompatibleTypes(type);
+                                    return getCompatibleTypes(type, category);
                                 }),
                                 R.unique()
                             );

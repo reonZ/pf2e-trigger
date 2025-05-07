@@ -398,13 +398,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     target,
                 };
 
-                const compatibles = getCompatibleTypes(variable.type);
+                const outputCompatibles = getCompatibleTypes(variable.type, "outputs");
                 const entries: FilterGroupEntry[] = [
                     {
                         type: "variable",
                         key: "variable-getter",
                         inputs: [],
-                        outputs: [...compatibles],
+                        outputs: outputCompatibles,
                         label: variable.label,
                         data: dataToDatasetString({
                             type: "variable",
@@ -418,8 +418,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                     entries.push({
                         type: "variable",
                         key: "variable-setter",
-                        inputs: ["bridge", ...compatibles],
-                        outputs: ["bridge", ...compatibles],
+                        inputs: ["bridge", ...getCompatibleTypes(variable.type, "inputs")],
+                        outputs: ["bridge", ...outputCompatibles],
                         label: `${variable.label} (${setter})`,
                         data: dataToDatasetString({
                             type: "variable",
@@ -446,13 +446,13 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             R.filter((trigger) => trigger.isSubtrigger),
             R.map((trigger): FilterGroupEntry => {
                 const inputs = (trigger.event.custom?.outputs ?? []).flatMap(({ type }) => {
-                    return getCompatibleTypes(type);
+                    return getCompatibleTypes(type, "inputs");
                 });
 
                 const outputs = (
                     trigger.nodes.find(isSubtriggerOutput)?.custom?.inputs ?? []
                 ).flatMap(({ type }) => {
-                    return getCompatibleTypes(type);
+                    return getCompatibleTypes(type, "outputs");
                 });
 
                 return {

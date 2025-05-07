@@ -1,4 +1,6 @@
+import { BlueprintEntry } from "blueprint";
 import { R } from "module-helpers";
+import { NodeEntryCategory } from "./_utils";
 
 const NODE_ENTRY_TYPES = [
     "boolean",
@@ -18,34 +20,45 @@ const NODE_NONBRIDGE_TYPES = NODE_ENTRY_TYPES.filter((type) => type !== "bridge"
 
 const NODE_CUSTOM_TYPES = NODE_NONBRIDGE_TYPES.filter((type) => type !== "select");
 
-const COMPATIBLE_ENTRY_GROUPS: NodeEntryType[][] = [
-    ["dc", "number"],
-    ["text", "select", "list"],
-];
+// output -> input
+const OUTPUT_COMPATIBLES: PartialRecord<NodeEntryType, NodeEntryType[]> = {
+    dc: ["number"],
+    item: ["text"],
+    list: ["text"],
+    number: ["dc"],
+    select: ["text", "list"],
+    text: ["select", "list", "item"],
+};
 
-const COMPATIBLE_ENTRIES = R.pipe(
-    COMPATIBLE_ENTRY_GROUPS,
-    R.flatMap((group) => {
-        return R.pipe(
-            group,
-            R.map((entry): [NodeEntryType, NodeEntryType[]] => {
-                return [entry, group.filter((y) => y !== entry)];
-            })
-        );
+// input -> output
+const INPUT_COMPATIBLES = R.pipe(
+    OUTPUT_COMPATIBLES,
+    R.entries(),
+    R.flatMap(([output, inputs]) => {
+        return inputs.map((input) => ({ input, output }));
     }),
-    R.fromEntries()
+    R.groupBy(R.prop("input")),
+    R.mapValues((outputs) => outputs.map(R.prop("output")))
 );
 
-function getNodeEntryTypes(): NodeEntryType[] {
-    return NODE_ENTRY_TYPES as unknown as NodeEntryType[];
+const COMPATIBLES: Record<NodeEntryCategory, PartialRecord<NodeEntryType, NodeEntryType[]>> = {
+    inputs: INPUT_COMPATIBLES,
+    outputs: OUTPUT_COMPATIBLES,
+};
+
+function getCompatibleTypes(type: NodeEntryType, category: NodeEntryCategory): NodeEntryType[] {
+    return (COMPATIBLES[category][type] ?? []).concat(type);
 }
 
-function entriesAreCompatible(origin: NodeEntryType, target: NodeEntryType): boolean {
-    return origin === target || !!COMPATIBLE_ENTRIES[origin]?.includes(target);
-}
+function entriesAreCompatible(origin: BlueprintEntry, target: BlueprintEntry): boolean {
+    if (origin.category === target.category) {
+        return false;
+    }
 
-function getCompatibleTypes(type: NodeEntryType): NodeEntryType[] {
-    return [type, ...(COMPATIBLE_ENTRIES[type] ?? [])];
+    return (
+        origin.type === target.type ||
+        !!COMPATIBLES[origin.category][origin.type]?.includes(target.type)
+    );
 }
 
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number];
@@ -55,7 +68,6 @@ type NodeCustomEntryType = (typeof NODE_CUSTOM_TYPES)[number];
 export {
     entriesAreCompatible,
     getCompatibleTypes,
-    getNodeEntryTypes,
     NODE_CUSTOM_TYPES,
     NODE_ENTRY_TYPES,
     NODE_NONBRIDGE_TYPES,
