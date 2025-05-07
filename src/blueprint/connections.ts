@@ -57,6 +57,8 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
     }
 
     clear() {
+        this.#terminateConnection();
+
         this.removeAllListeners();
 
         this.#drawn = false;
@@ -160,7 +162,7 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
     async #endConnection(event: PIXI.FederatedPointerEvent) {
         const entry = this.#connecting;
 
-        this.#terminateConnection(event);
+        this.#terminateConnection();
 
         if (!entry) return;
 
@@ -181,7 +183,7 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         this.connector.clear();
     }
 
-    #terminateConnection(event: PIXI.FederatedPointerEvent) {
+    #terminateConnection() {
         this.#connecting = null;
 
         this.stage.off("pointermove", this.#dragConnection, this);
