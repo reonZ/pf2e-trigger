@@ -1,5 +1,5 @@
 import { NonBridgeEntryType } from "data";
-import { BooleanOutsSchema, booleanOutsSchema, IconObject } from "schema";
+import { SchemaBooleanOuts, schemaBooleanOuts, IconObject } from "schema";
 
 function createLogicSchema<T extends NonBridgeEntryType>(
     type: T,
@@ -11,7 +11,7 @@ function createLogicSchema<T extends NonBridgeEntryType>(
             unicode,
             fontWeight,
         },
-        outs: booleanOutsSchema(),
+        outs: schemaBooleanOuts(),
         inputs: [
             { type, key: "a" },
             { type, key: "b" },
@@ -29,7 +29,7 @@ function createNumberSchema(unicode: string): LogicSchema<"number"> {
 
 type LogicSchema<T extends NonBridgeEntryType> = {
     icon: IconObject;
-    outs: BooleanOutsSchema;
+    outs: SchemaBooleanOuts;
     inputs: [{ type: T; key: "a" }, { type: T; key: "b" }];
 };
 

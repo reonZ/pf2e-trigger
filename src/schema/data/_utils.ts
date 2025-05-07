@@ -1,8 +1,40 @@
-function booleanOutsSchema() {
+function schemaBooleanOuts() {
     return [{ key: "true" }, { key: "false" }] as const;
 }
 
-type BooleanOutsSchema = ReturnType<typeof booleanOutsSchema>
+function schemaConditionEntries(type: "add") {
+    const option = type === "add" ? "addConditionTypes" : "";
+    return [
+        {
+            key: "condition",
+            type: "select",
+            field: {
+                options: `CONFIG.Pf2eTrigger.${option}`,
+            },
+        },
+        {
+            key: "counter",
+            type: "number",
+            label: "PF2E.Item.Effect.Badge.Type.counter",
+            field: {
+                default: 1,
+                min: 1,
+            },
+        },
+    ] as const;
+}
 
-export { booleanOutsSchema };
-export type {BooleanOutsSchema}
+function schemaUnidentifiedEntry() {
+    return [
+        {
+            key: "unidentified",
+            type: "boolean",
+            label: "PF2E.Item.Effect.Unidentified",
+        },
+    ] as const;
+}
+
+type SchemaBooleanOuts = ReturnType<typeof schemaBooleanOuts>;
+
+export { schemaBooleanOuts, schemaConditionEntries, schemaUnidentifiedEntry };
+export type { SchemaBooleanOuts };

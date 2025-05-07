@@ -1,8 +1,13 @@
-import { BooleanOutsSchema, NodeRawSchema, booleanOutsSchema } from "schema";
+import {
+    SchemaBooleanOuts,
+    NodeRawSchema,
+    schemaBooleanOuts,
+    schemaConditionEntries,
+} from "schema";
 
 const insideAura = {
     loop: true,
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
         { key: "slug", type: "text" },
@@ -19,7 +24,7 @@ const insideAura = {
 } as const satisfies ConditionSchema;
 
 const hasItem = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
         { key: "uuid", type: "text" },
@@ -29,7 +34,7 @@ const hasItem = {
 } as const satisfies ConditionSchema;
 
 const hasOptions = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
         { key: "option", type: "text" },
@@ -37,17 +42,17 @@ const hasOptions = {
 } as const satisfies ConditionSchema;
 
 const inCombat = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [{ key: "target", type: "target" }],
 } as const satisfies ConditionSchema;
 
 const isCombatant = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [{ key: "target", type: "target" }],
 } as const satisfies ConditionSchema;
 
 const containsEntry = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [
         { key: "list", type: "list" },
         { key: "entry", type: "text" },
@@ -55,7 +60,7 @@ const containsEntry = {
 } as const satisfies ConditionSchema;
 
 const matchPredicate = {
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
     inputs: [
         { key: "list", type: "list" },
         {
@@ -71,30 +76,12 @@ const matchPredicate = {
 } as const satisfies ConditionSchema;
 
 const hasCondition = {
-    outs: booleanOutsSchema(),
-    inputs: [
-        { key: "target", type: "target" },
-        {
-            key: "condition",
-            type: "select",
-            field: {
-                options: "CONFIG.Pf2eTrigger.addConditionTypes",
-            },
-        },
-        {
-            key: "counter",
-            type: "number",
-            label: "PF2E.Item.Effect.Badge.Type.counter",
-            field: {
-                default: 1,
-                min: 1,
-            },
-        },
-    ],
+    outs: schemaBooleanOuts(),
+    inputs: [{ key: "target", type: "target" }, ...schemaConditionEntries("add")],
 } as const satisfies ConditionSchema;
 
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
-    outs: BooleanOutsSchema;
+    outs: SchemaBooleanOuts;
 };
 
 export const condition = {

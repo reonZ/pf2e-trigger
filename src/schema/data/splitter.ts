@@ -1,6 +1,6 @@
 import { NonBridgeEntryType } from "data";
 import { NodeRawSchema } from "schema/schema";
-import { booleanOutsSchema } from "./_utils";
+import { schemaBooleanOuts } from "./_utils";
 import { NodeSchemaCustom } from "schema/model";
 
 const EXTRACT_TYPES = [
@@ -13,7 +13,7 @@ const EXTRACT_TYPES = [
 
 const boolean = {
     inputs: [{ key: "input", type: "boolean" }],
-    outs: booleanOutsSchema(),
+    outs: schemaBooleanOuts(),
 } as const satisfies NodeRawSchema;
 
 const success = {
