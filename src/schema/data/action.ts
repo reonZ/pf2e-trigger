@@ -56,11 +56,28 @@ const addCondition = {
     ],
 } as const satisfies NodeRawSchema;
 
+const reduceCondition = {
+    icon: "\ue54d",
+    inputs: [
+        ...schemaConditionEntries("add"),
+        {
+            key: "min",
+            type: "number",
+            field: {
+                default: 0,
+                min: 0,
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies NodeRawSchema;
+
 const addTemporary = {} as const satisfies NodeRawSchema;
 
 export const action = {
     "add-condition": addCondition,
     "console-log": consoleLog,
+    "reduce-condition": reduceCondition,
     "roll-damage-with-save": rollDamageWithSave,
     "roll-damage": rollDamage,
     "roll-save": rollSave,

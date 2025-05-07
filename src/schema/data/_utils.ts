@@ -2,8 +2,8 @@ function schemaBooleanOuts() {
     return [{ key: "true" }, { key: "false" }] as const;
 }
 
-function schemaConditionEntries(type: "add") {
-    const option = type === "add" ? "addConditionTypes" : "";
+function schemaConditionEntries(type: "add" | "reduce") {
+    const option = type === "add" ? "addConditionTypes" : "reduceConditionTypes";
     return [
         {
             key: "condition",

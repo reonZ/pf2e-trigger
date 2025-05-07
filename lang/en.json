@@ -184,7 +184,8 @@
             "origin": "Origin",
             "targets": "Targets",
             "unit": "Unit",
-            "label": "Label"
+            "label": "Label",
+            "min": "Minimum"
         },
         "document": {
             "broken": "Broken Link",
@@ -204,6 +205,12 @@
                 },
                 "console-log": {
                     "label": "Console Log"
+                },
+                "reduce-condition": {
+                    "label": "Reduce Condition",
+                    "entry": {
+                        "counter": "Value"
+                    }
                 },
                 "roll-damage": {
                     "label": "Roll Damage"
