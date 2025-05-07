@@ -306,16 +306,19 @@
             "splitter": {
                 "title": "Splitters",
                 "actor-splitter": {
-                    "label": "Actor Data"
+                    "label": "Extract Data (Actor)"
                 },
                 "boolean-splitter": {
-                    "label": "Boolean"
+                    "label": "Branch Out Boolean"
                 },
                 "item-splitter": {
-                    "label": "Item Data"
+                    "label": "Extract Data (Item)"
                 },
                 "success-splitter": {
-                    "label": "Degree of Success"
+                    "label": "Branch Out Degree of Success"
+                },
+                "text-splitter": {
+                    "label": "Branch Out Text"
                 }
             },
             "subtrigger": {
