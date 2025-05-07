@@ -1,4 +1,4 @@
-import { NodeRawSchema } from "schema";
+import { NodeRawSchema, schemaConditionEntries, schemaUnidentifiedEntry } from "schema";
 
 const rollDamage = {
     icon: "\uf6cf",
@@ -45,7 +45,21 @@ const useMacro = {
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;
 
+const addCondition = {
+    icon: { unicode: "\ue54d", fontWeight: "900" },
+    inputs: [
+        ...schemaConditionEntries("add"),
+        ...schemaUnidentifiedEntry(),
+        { key: "duration", type: "duration" },
+        { key: "label", type: "text" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies NodeRawSchema;
+
+const addTemporary = {} as const satisfies NodeRawSchema;
+
 export const action = {
+    "add-condition": addCondition,
     "console-log": consoleLog,
     "roll-damage-with-save": rollDamageWithSave,
     "roll-damage": rollDamage,

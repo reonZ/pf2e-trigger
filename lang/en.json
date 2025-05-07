@@ -183,7 +183,8 @@
             "uuid": "Source UUID",
             "origin": "Origin",
             "targets": "Targets",
-            "unit": "Unit"
+            "unit": "Unit",
+            "label": "Label"
         },
         "document": {
             "broken": "Broken Link",
