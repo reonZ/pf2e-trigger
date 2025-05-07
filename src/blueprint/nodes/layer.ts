@@ -1,5 +1,5 @@
 import { Blueprint, BlueprintNode } from "blueprint";
-import { NodeEntryId, TriggerNodeData } from "data";
+import { NodeEntryId, nodeIdFromEntry, TriggerNodeData } from "data";
 
 class BlueprintNodesLayer extends PIXI.Container<PIXI.Container> {
     #blueprint: Blueprint;
@@ -33,7 +33,7 @@ class BlueprintNodesLayer extends PIXI.Container<PIXI.Container> {
     }
 
     get(id: NodeEntryId): BlueprintNode | undefined {
-        return this.#nodes.get(id.split(".")[0]);
+        return this.#nodes.get(nodeIdFromEntry(id));
     }
 
     add(data: TriggerNodeData): BlueprintNode {

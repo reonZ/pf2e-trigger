@@ -35,10 +35,10 @@ import {
     waitDialog,
 } from "module-helpers";
 import {
-    NodeEventKey,
     FilterGroupEntry,
     getFilterGroups,
     isSubtriggerOutput,
+    NodeEventKey,
     NodeKey,
 } from "schema";
 
@@ -387,10 +387,16 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const groups = getFilterGroups();
         const setter = localize("node.variable.setter");
 
+        const entryTarget = entry?.node.data.target;
         const variables: FilterGroupEntry[] = R.pipe(
             this.trigger?.variables ?? {},
             R.entries(),
             R.flatMap(([target, variable]): FilterGroupEntry[] => {
+                // we prevent getter & setter to connect to each other
+                if (entryTarget && entryTarget === target) {
+                    return [];
+                }
+
                 const variableData = {
                     ...variable,
                     // we re-add manually otherwise it is gone for some reason
@@ -493,6 +499,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 const filtered = entries.filter((filter) => {
                     return filter[oppositeCategory].includes(entryType);
                 });
+
                 if (!filtered.length) return;
 
                 return {

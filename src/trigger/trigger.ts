@@ -1,4 +1,4 @@
-import { NodeEntryId, NodeEntryType, TriggerData, WorldTriggers } from "data";
+import { NodeEntryId, NodeEntryType, nodeIdFromEntry, TriggerData, WorldTriggers } from "data";
 import { prepareHooks } from "hook";
 import { ActorPF2e, CheckDC, DurationData, getSetting, ItemPF2e, R } from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
@@ -49,8 +49,7 @@ class Trigger {
     }
 
     getNodeFromEntryId(entryId: NodeEntryId): TriggerNode | undefined {
-        const nodeId = entryId.split(".")[0];
-        return this.getNode(nodeId);
+        return this.getNode(nodeIdFromEntry(entryId));
     }
 
     async execute() {

@@ -2,6 +2,7 @@ import {
     createEntryId,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
+    nodeIdFromEntry,
     NonBridgeEntryType,
     TriggerNodeData,
     TriggerNodeDataSource,
@@ -96,7 +97,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     }
 
     getNode(id: NodeEntryId): TriggerNodeData | undefined {
-        return this.nodes.get(id.split(".")[0]);
+        return this.nodes.get(nodeIdFromEntry(id));
     }
 
     getVariable(id: NodeEntryId) {
@@ -160,7 +161,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         const variables: PartialRecord<string, NodeEntryId[]> = {};
 
         for (const entryId of R.keys(this.variables)) {
-            const nodeId = entryId.split(".")[0];
+            const nodeId = nodeIdFromEntry(entryId);
             (variables[nodeId] ??= []).push(entryId);
         }
 

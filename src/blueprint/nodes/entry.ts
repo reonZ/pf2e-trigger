@@ -265,7 +265,10 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
 
     canConnectTo(other: BlueprintEntry): boolean {
         return (
+            // we prevent nodes from connecting to self
             this.node.id !== other.node.id &&
+            // we prevent variables from connecting to each others (getter & setter)
+            (!this.node.data.target || this.node.data.target !== other.node.data.target) &&
             this.canConnect &&
             !this.isConnectedTo(other) &&
             this.isCompatibleWith(other)
