@@ -181,7 +181,9 @@
             "input": "Input",
             "result": "Result",
             "uuid": "Source UUID",
-            "origin": "Origin"
+            "origin": "Origin",
+            "targets": "Targets",
+            "unit": "Unit"
         },
         "document": {
             "broken": "Broken Link",
@@ -196,6 +198,9 @@
             "action": {
                 "title": "Actions",
                 "subtitle": "Action",
+                "add-condition": {
+                    "label": "Add Condition"
+                },
                 "console-log": {
                     "label": "Console Log"
                 },
@@ -241,8 +246,7 @@
                     "label": "Is Inside Aura",
                     "entry": {
                         "source": "Aura Source",
-                        "slug": "aura-slug",
-                        "targets": "Targets"
+                        "slug": "aura-slug"
                     }
                 },
                 "is-combatant": {
@@ -349,6 +353,12 @@
                 },
                 "dc-value": {
                     "label": "Difficulty Class (Value)"
+                },
+                "duration-simple": {
+                    "label": "Effect Duration"
+                },
+                "duration-unit": {
+                    "label": "Effect Duration (Unit)"
                 },
                 "item-source": {
                     "label": "Item Source"

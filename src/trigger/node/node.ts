@@ -287,7 +287,7 @@ function isDcEntry(value: unknown): value is TriggerDcEntry {
 }
 
 function isDurationEntry(value: unknown): value is TriggerDurationEntry {
-    return R.isPlainObject(value);
+    return R.isPlainObject(value) && R.isNumber(value.value);
 }
 
 type SchemaInputAdjacent = {

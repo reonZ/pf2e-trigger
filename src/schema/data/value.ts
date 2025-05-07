@@ -75,6 +75,67 @@ const successValue = {
     outputs: [{ key: "value", type: "number" }],
 } as const satisfies NodeRawSchema;
 
+const simpleDuration = {
+    inputs: [
+        {
+            key: "unit",
+            type: "select",
+            field: {
+                options: [
+                    { value: "unlimited", label: "PF2E.Time.Unit.Unlimited" },
+                    { value: "encounter", label: "PF2E.Time.Unit.UntilEncounterEnds" },
+                ],
+            },
+        },
+    ],
+    outputs: [{ key: "duration", type: "duration" }],
+} as const satisfies NodeRawSchema;
+
+const unitDuration = {
+    inputs: [
+        {
+            key: "origin",
+            type: "target",
+        },
+        {
+            key: "value",
+            type: "number",
+            label: "PF2E.Time.Duration",
+            field: {
+                default: 1,
+                min: 0,
+            },
+        },
+        {
+            key: "unit",
+            type: "select",
+            field: {
+                default: "rounds",
+                options: [
+                    { value: "days", label: "PF2E.Time.Unit.Days" },
+                    { value: "hours", label: "PF2E.Time.Unit.Hours" },
+                    { value: "minutes", label: "PF2E.Time.Unit.Minutes" },
+                    { value: "rounds", label: "PF2E.Time.Unit.Rounds" },
+                ],
+            },
+        },
+        {
+            key: "expiry",
+            type: "select",
+            label: "PF2E.Item.Effect.Expiry.ExpiresOn",
+            field: {
+                default: "turn-start",
+                options: [
+                    { value: "turn-start", label: "PF2E.Item.Effect.Expiry.StartOfTurn" },
+                    { value: "turn-end", label: "PF2E.Item.Effect.Expiry.EndOfTurn" },
+                    { value: "round-end", label: "PF2E.Item.Effect.Expiry.EndOfRound" },
+                ],
+            },
+        },
+    ],
+    outputs: [{ key: "duration", type: "duration" }],
+} as const satisfies NodeRawSchema;
+
 function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
     return {
         inputs: [{ key: "input", type }],
@@ -92,6 +153,8 @@ type InputValueSchema<T extends NodeEntryType> = {
 export const value = {
     "dc-target": dcTarget,
     "dc-value": dcValue,
+    "duration-simple": simpleDuration,
+    "duration-unit": unitDuration,
     "item-source": itemSource,
     "number-value": createInputValue("number"),
     "roll-data": rollData,
