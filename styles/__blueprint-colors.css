@@ -1,0 +1,25 @@
+#connections {
+    --boolean: #ad0303;
+    --bridge: #ffffff;
+    --dc: #1682c9;
+    --duration: #75db32;
+    --item: #696fe0;
+    --list: #874501;
+    --number: #07b88f;
+    --roll: #86910d;
+    --select: #e0a06c;
+    --target: #ff3075;
+    --text: #e0a06c;
+    --uuid: #696fe0;
+}
+
+#headers {
+    --action: #2162bd;
+    --condition: #188600;
+    --event: #c40000;
+    --logic: #7e18b5;
+    --splitter: #7e18b5;
+    --subtrigger: #c40000;
+    --value: #757575;
+    --variable: #2e2e2e;
+}
