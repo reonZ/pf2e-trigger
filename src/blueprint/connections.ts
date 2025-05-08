@@ -204,16 +204,18 @@ class BlueprintConnectionsLayer extends PIXI.Container<PIXI.Graphics> {
         const node = await this.blueprint.createNodeFromFilter({ x, y }, entry);
         if (!node) return;
 
-        const otherEntry = Array.from(node.entries(entry.oppositeCategory)).find((other) =>
-            other.isCompatibleWith(entry)
-        );
-        if (!otherEntry) return;
+        const otherEntries = Array.from(node.entries(entry.oppositeCategory));
+        // we first give priority to a potential exact match
+        const matching = otherEntries.find((other) => other.type === entry.type);
+        // or look for a compatible entry
+        const other = matching ?? otherEntries.find((other) => other.isCompatibleWith(entry));
+        if (!other) return;
 
-        const offset = subtractPoint({ x, y }, otherEntry.connectorOffset);
+        const offset = subtractPoint({ x, y }, other.connectorOffset);
         const point = subtractPoint(offset, this.stage.position);
 
         node.setPosition(point);
-        this.#addConnection(entry, otherEntry);
+        this.#addConnection(entry, other);
 
         this.blueprint.refresh();
     }
