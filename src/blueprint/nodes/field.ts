@@ -10,7 +10,6 @@ import {
     assignStyle,
     drawRectangleMask,
     isClientDocument,
-    isScriptMacro,
     localizeIfExist,
     R,
     warning,
@@ -22,7 +21,7 @@ class EntryField extends PIXI.Graphics {
     #overlay: PIXI.Graphics;
     #content: PIXI.Graphics | PreciseText;
 
-    static ALLOWED_TYPES: NodeEntryType[] = ["boolean", "number", "select", "text"];
+    static ALLOWED_TYPES: NodeEntryType[] = ["boolean", "number", "select", "text", "uuid"];
 
     constructor(entry: BlueprintEntry) {
         super();
@@ -108,12 +107,12 @@ class EntryField extends PIXI.Graphics {
         return this.type == "select";
     }
 
-    get isInput(): boolean {
-        return this.isText || this.isNumber;
+    get isUuid(): boolean {
+        return this.type === "uuid";
     }
 
-    get isDocument(): boolean {
-        return this.node.schema.document === this.key;
+    get isInput(): boolean {
+        return this.isText || this.isNumber || this.isUuid;
     }
 
     get cursor(): "pointer" | "default" | "text" {
@@ -180,19 +179,18 @@ class EntryField extends PIXI.Graphics {
         return new PIXI.Rectangle(left, top, right - left, bottom - top);
     }
 
-    onDropDocument(document: BlueprintDropDocument) {
-        if (!this.isText) return;
+    onDropDocument(type: string, document: BlueprintDropDocument) {
+        if (this.isText) {
+            this.value = document.name;
+            return;
+        }
 
-        // if we are part of a use-macro node, then we only accept macro document (and vice-versa)
-        const isvalidType = this.node.isMacro === isScriptMacro(document);
+        const schema = this.schema;
+        if (!entrySchemaIsOfType(schema, "uuid")) return;
 
-        // we are a document field, so we want the source UUID
-        if (isvalidType && this.isDocument) {
+        if (schema.field.document === type) {
             const isItem = isClientDocument(document) && document instanceof Item;
             this.value = (isItem && document.sourceId) || document.uuid;
-        } else if (isvalidType) {
-            // we fallback to the document name instead
-            this.value = document.name;
         } else {
             warning("document.wrong");
         }
@@ -240,6 +238,7 @@ class EntryField extends PIXI.Graphics {
 
         const label = connected ? undefined : this.content;
         const padding = this.inlinePadding;
+
         const text = this.node.preciseText(label || this.placeholder, {
             fontSize: this.inputFontSize,
             fill: 0xffffff,
@@ -323,6 +322,17 @@ class EntryField extends PIXI.Graphics {
                 return this.#createCodeDialog(current as string);
             }
 
+            const input = foundry.applications.fields.createTextInput({
+                name: "field",
+                value: current as string,
+                placeholder: this.placeholder,
+                classes: "trigger-input",
+            });
+
+            return this.#addInput(input);
+        }
+
+        if (entrySchemaIsOfType(schema, "uuid")) {
             const input = foundry.applications.fields.createTextInput({
                 name: "field",
                 value: current as string,

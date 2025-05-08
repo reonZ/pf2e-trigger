@@ -591,7 +591,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     #onDropCanvasData(event: DragEvent) {
-        const data = TextEditor.getDragEventData(event);
+        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
 
         if (
             !R.isString(data.type) ||
@@ -606,7 +606,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const localPoint = this.getLocalCoordinates(event);
 
         for (const node of this.nodesLayer.nodes()) {
-            const dropped = node.onDropDocument(localPoint, document);
+            const dropped = node.onDropDocument(localPoint, data.type, document);
             if (dropped) return;
         }
     }

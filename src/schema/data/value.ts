@@ -2,7 +2,7 @@ import { NodeEntryType } from "data";
 import { NodeRawSchema } from "schema/schema";
 
 const itemSource = {
-    inputs: [{ key: "uuid", type: "text" }],
+    inputs: [{ key: "uuid", type: "uuid", field: { document: "Item" } }],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
 } as const satisfies NodeRawSchema;

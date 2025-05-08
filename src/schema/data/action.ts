@@ -40,7 +40,7 @@ const consoleLog = {
 
 const useMacro = {
     icon: "\uf121",
-    inputs: [{ type: "text", key: "uuid" }],
+    inputs: [{ type: "uuid", key: "uuid", field: { document: "Macro" } }],
     document: "uuid",
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;

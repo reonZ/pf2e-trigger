@@ -1,4 +1,4 @@
-import { NodeCustomEntryType } from "data";
+import { NodeEntryType } from "data";
 import { ActorPF2e, ItemPF2e, R, TokenDocumentPF2e } from "module-helpers";
 import { TriggerNode } from "trigger";
 
@@ -11,7 +11,7 @@ abstract class DocumentSplitterTriggerNode<T> extends TriggerNode {
         await Promise.all(
             this.customOutputs.map(async ({ key, type }) => {
                 const value = foundry.utils.getProperty(document ?? {}, key);
-                const interpreted = this.#interpretValue(type as NodeCustomEntryType, value);
+                const interpreted = this.#interpretValue(type, value);
                 const converted = await this.getConvertedValue({ type }, interpreted);
 
                 if (R.isNonNullish(converted)) {
@@ -23,7 +23,7 @@ abstract class DocumentSplitterTriggerNode<T> extends TriggerNode {
         return this.send("out");
     }
 
-    #interpretValue(type: NodeCustomEntryType, value: any) {
+    #interpretValue(type: NodeEntryType, value: any) {
         switch (type) {
             case "target": {
                 return this.#interpretTargetValue(value);

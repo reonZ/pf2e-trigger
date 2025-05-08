@@ -40,6 +40,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         select: 0xe0a06c,
         target: 0xff3075,
         text: 0xe0a06c,
+        uuid: 0x696fe0,
     };
 
     constructor(node: BlueprintNode, category: NodeEntryCategory, schema: BaseNodeSchemaEntry) {
@@ -243,13 +244,13 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.node.opacity;
     }
 
-    onDropDocument(point: Point, document: BlueprintDropDocument): boolean | null {
+    onDropDocument(point: Point, type: string, document: BlueprintDropDocument): boolean | null {
         if (!this.contains(point)) {
             return false;
         }
 
         if (!this.connected) {
-            this.#field?.onDropDocument(document);
+            this.#field?.onDropDocument(type, document);
         }
 
         return true;
@@ -284,7 +285,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     #drawLabel(): PreciseText | undefined {
-        if (this.isInput && ["select", "text"].includes(this.type)) return;
+        if (this.isInput && ["select", "text", "uuid"].includes(this.type)) return;
         return this.node.preciseText(this.label);
     }
 

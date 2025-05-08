@@ -151,7 +151,8 @@ type NodeSchemaInput =
     | NodeSchemaRoll
     | NodeSchemaSelect
     | NodeSchemaTarget
-    | NodeSchemaText;
+    | NodeSchemaText
+    | NodeSchemaUuid;
 
 type NodeSchemaInputEntry<
     TType extends NonBridgeEntryType,
@@ -200,17 +201,26 @@ type NodeSchemaSelect = NodeSchemaInputEntryWithField<
     }
 >;
 
+type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
+
+type NodeSchemaUuid = NodeSchemaInputEntryWithField<
+    "uuid",
+    {
+        document: "Item" | "Macro";
+    }
+>;
+
 type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
 type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
-type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
 type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
 
 type SchemaEntries = {
     select: SelectEntrySchema;
     number: NodeSchemaNumber;
     text: NodeSchemaText;
+    uuid: NodeSchemaUuid;
 };
 
 type SelectEntrySchema = NodeSchemaInputEntryWithField<
@@ -250,6 +260,7 @@ export type {
     NodeSchemaNumber,
     NodeSchemaOf,
     NodeSchemaRawBridge,
+    NodeSchemaUuid,
     NodeSchemaVariable,
     NonEventKey,
     SchemaEntries,

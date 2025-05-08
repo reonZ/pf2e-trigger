@@ -89,7 +89,7 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     ? TargetDocuments | undefined
     : T extends "item"
     ? ItemPF2e | undefined
-    : T extends "text" | "select"
+    : T extends "text" | "select" | "uuid"
     ? string
     : T extends "roll"
     ? TriggerRollEntry

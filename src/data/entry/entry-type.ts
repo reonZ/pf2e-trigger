@@ -14,20 +14,27 @@ const NODE_ENTRY_TYPES = [
     "text",
     "bridge",
     "roll",
+    "uuid",
 ] as const;
+
+const DOCUMENT_TYPES = ["Item", "Macro"] as const;
 
 const NODE_NONBRIDGE_TYPES = NODE_ENTRY_TYPES.filter((type) => type !== "bridge");
 
-const NODE_CUSTOM_TYPES = NODE_NONBRIDGE_TYPES.filter((type) => type !== "select");
+const NODE_CUSTOM_TYPES = R.difference(NODE_NONBRIDGE_TYPES, [
+    "select",
+    "uuid",
+]) as NodeCustomEntryType[];
 
 // output -> input
 const OUTPUT_COMPATIBLES: PartialRecord<NodeEntryType, NodeEntryType[]> = {
     dc: ["number"],
-    item: ["text"],
+    item: ["uuid"],
     list: ["text"],
     number: ["dc"],
     select: ["text", "list"],
-    text: ["select", "list", "item"],
+    text: ["select", "list"],
+    uuid: ["item"],
 };
 
 // input -> output
@@ -63,11 +70,12 @@ function entriesAreCompatible(origin: BlueprintEntry, target: BlueprintEntry): b
 
 type NodeEntryType = (typeof NODE_ENTRY_TYPES)[number];
 type NonBridgeEntryType = (typeof NODE_NONBRIDGE_TYPES)[number];
-type NodeCustomEntryType = (typeof NODE_CUSTOM_TYPES)[number];
+type NodeCustomEntryType = Exclude<NonBridgeEntryType, "select" | "uuid">;
 
 export {
     entriesAreCompatible,
     getCompatibleTypes,
+    DOCUMENT_TYPES,
     NODE_CUSTOM_TYPES,
     NODE_ENTRY_TYPES,
     NODE_NONBRIDGE_TYPES,

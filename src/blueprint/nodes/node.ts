@@ -23,6 +23,7 @@ import {
     CreateFormGroupParams,
     drawCircleMask,
     drawRectangleMask,
+    isUuidOf,
     localize,
     localizeIfExist,
     R,
@@ -32,6 +33,7 @@ import {
 } from "module-helpers";
 import {
     BaseNodeSchemaEntry,
+    entrySchemaIsOfType,
     hasInBridge,
     hasOuts,
     IconObject,
@@ -175,8 +177,15 @@ class BlueprintNode extends PIXI.Container {
 
     get document(): Maybe<CompendiumIndexData> {
         const key = this.schema.document;
-        const uuid = key ? this.getValue(key) : undefined;
-        return R.isString(uuid) && uuid ? fromUuidSync<CompendiumIndexData>(uuid) : undefined;
+        const schema = key ? this.#data.schemaInputs.get(key) : undefined;
+        if (!key || !schema || !entrySchemaIsOfType(schema, "uuid")) return;
+
+        const uuid = this.getValue(key) as Maybe<string>;
+        if (!uuid) return;
+
+        return isUuidOf(uuid, schema.field.document)
+            ? fromUuidSync<CompendiumIndexData>(uuid)
+            : null;
     }
 
     get title(): string {
@@ -324,13 +333,13 @@ class BlueprintNode extends PIXI.Container {
         return this.getBounds().contains(x, y);
     }
 
-    onDropDocument(point: Point, document: BlueprintDropDocument): boolean {
+    onDropDocument(point: Point, type: string, document: BlueprintDropDocument): boolean {
         if (!this.contains(point)) {
             return false;
         }
 
         for (const entry of this.entries("inputs")) {
-            if (entry.onDropDocument(point, document)) {
+            if (entry.onDropDocument(point, type, document)) {
                 break;
             }
         }

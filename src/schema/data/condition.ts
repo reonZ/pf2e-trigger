@@ -27,7 +27,7 @@ const hasItem = {
     outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
-        { key: "uuid", type: "text" },
+        { key: "uuid", type: "uuid", field: { document: "Item" } },
     ],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",

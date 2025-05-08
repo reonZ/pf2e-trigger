@@ -155,6 +155,12 @@ class NodeInputField<
                             nullable: false,
                             initial: false,
                         }),
+                        document: new fields.StringField({
+                            required: false,
+                            nullable: false,
+                            readonly: true,
+                            choices: ["Item", "Macro"],
+                        }),
                     },
                     {
                         required: false,
@@ -316,6 +322,7 @@ type NodeInputFieldSchema = {
     >;
     options: NodeInputOptionsField;
     code: fields.BooleanField<boolean, boolean, false>;
+    document: fields.StringField<"Item" | "Macro", "Item" | "Macro", false, false, false>;
 };
 
 type NodeInputSource = BaseNodeSchemaEntry & {
@@ -326,6 +333,7 @@ type NodeInputSource = BaseNodeSchemaEntry & {
         default?: string | number | boolean;
         options?: string | (SelectOption | string)[];
         code?: boolean;
+        document?: "Item" | "Macro";
     };
 };
 

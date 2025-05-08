@@ -1,12 +1,14 @@
 import {
     createEntryId,
+    DOCUMENT_TYPES,
+    NodeCustomEntryType,
     NodeDataEntry,
     NodeEntryId,
     NodeEntryType,
     NodeType,
     TriggerNodeData,
 } from "data";
-import { ActorPF2e, getItemFromUuid, ItemPF2e, R } from "module-helpers";
+import { ActorPF2e, getItemFromUuid, isUuidOf, ItemPF2e, R } from "module-helpers";
 import {
     NodeFieldSchema,
     NodeInputSchema,
@@ -151,7 +153,8 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return false;
             }
 
-            case "text": {
+            case "text":
+            case "uuid": {
                 return "";
             }
 
@@ -199,9 +202,11 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                     : value;
             }
 
-            // text
+            // uuid
             case "item": {
-                return R.isString(value) ? getItemFromUuid(value) : value;
+                return R.isString(value) && isUuidOf(value, "Item")
+                    ? getItemFromUuid(value)
+                    : value;
             }
 
             // select, text
@@ -220,13 +225,14 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return options.includes(value) ? value : options[0] ?? "";
             }
 
-            // item, list, select
+            // list, select
             case "text": {
-                return value instanceof Item
-                    ? (value as ItemPF2e).sourceId ?? value.uuid
-                    : R.isArray(value)
-                    ? value[0] ?? ""
-                    : value;
+                return R.isArray(value) ? value[0] ?? "" : value;
+            }
+
+            // item
+            case "uuid": {
+                return value instanceof Item ? (value as ItemPF2e).sourceId ?? value.uuid : value;
             }
 
             default: {
@@ -236,7 +242,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     }
 
     isValidCustomEntry(type: NodeEntryType, value: unknown) {
-        switch (type) {
+        switch (type as NodeCustomEntryType) {
             case "number": {
                 return R.isNumber(value);
             }
@@ -245,7 +251,6 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return R.isBoolean(value);
             }
 
-            case "select":
             case "text": {
                 return R.isString(value);
             }
@@ -295,6 +300,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
             }
         }
     }
+}
+
+function isUuidEntry(value: unknown): value is DocumentUUID {
+    return R.isString(value) && isUuidOf(value, DOCUMENT_TYPES);
 }
 
 function isRollEntry(value: unknown): value is TriggerRollEntry {
@@ -361,4 +370,4 @@ type ExtractOutKey<S extends NodeRawSchema> = S extends {
         : K
     : "out";
 
-export { isDcEntry, isDurationEntry, isRollEntry, TriggerNode };
+export { isDcEntry, isDurationEntry, isRollEntry, isUuidEntry, TriggerNode };

@@ -43,6 +43,7 @@ import {
     NodeSchemaEntry,
     NodeSchemaModel,
 } from "schema";
+import { isUuidEntry } from "trigger";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
 
@@ -206,6 +207,10 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
                 return R.isString(value) && options.find((option) => option.value === value)
                     ? value
                     : defaultValue ?? options[0].value;
+            }
+
+            case "uuid": {
+                return isUuidEntry(value) ? value : "";
             }
 
             default: {
