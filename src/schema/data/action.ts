@@ -45,6 +45,17 @@ const useMacro = {
     custom: [{ category: "inputs" }, { category: "outputs" }],
 } as const satisfies NodeRawSchema;
 
+const addItem = {
+    icon: "\uf466",
+    inputs: [
+        { key: "uuid", type: "uuid", field: { document: "Item" } },
+        { key: "duplicate", type: "boolean", field: { default: true } },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "item", type: "item" }],
+    document: "uuid",
+} as const satisfies NodeRawSchema;
+
 const addCondition = {
     icon: { unicode: "\ue54d", fontWeight: "900" },
     inputs: [
@@ -76,6 +87,7 @@ const addTemporary = {} as const satisfies NodeRawSchema;
 
 export const action = {
     "add-condition": addCondition,
+    "add-item": addItem,
     "console-log": consoleLog,
     "reduce-condition": reduceCondition,
     "roll-damage-with-save": rollDamageWithSave,

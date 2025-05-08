@@ -8,7 +8,7 @@ import {
     NodeType,
     TriggerNodeData,
 } from "data";
-import { ActorPF2e, getItemFromUuid, isUuidOf, ItemPF2e, R } from "module-helpers";
+import { ActorPF2e, getItemFromUuid, getItemSourceId, isUuidOf, ItemPF2e, R } from "module-helpers";
 import {
     NodeFieldSchema,
     NodeInputSchema,
@@ -232,7 +232,7 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
 
             // item
             case "uuid": {
-                return value instanceof Item ? (value as ItemPF2e).sourceId ?? value.uuid : value;
+                return value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
             }
 
             default: {

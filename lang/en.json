@@ -203,6 +203,12 @@
                 "add-condition": {
                     "label": "Add Condition"
                 },
+                "add-item": {
+                    "label": "Add Item",
+                    "entry": {
+                        "duplicate": "Duplicate?"
+                    }
+                },
                 "console-log": {
                     "label": "Console Log"
                 },

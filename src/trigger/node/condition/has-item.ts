@@ -1,6 +1,6 @@
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
-import { getItemWithSourceId } from "module-helpers";
+import { findItemWithSourceId } from "module-helpers";
 
 class HasItemTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-item">> {
     async execute(): Promise<boolean> {
@@ -11,7 +11,7 @@ class HasItemTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-item
             return this.send("false");
         }
 
-        const item = getItemWithSourceId(target.actor, uuid);
+        const item = findItemWithSourceId(target.actor, uuid);
 
         if (item) {
             this.setVariable("item", item);
