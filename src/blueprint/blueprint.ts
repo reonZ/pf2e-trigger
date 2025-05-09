@@ -323,7 +323,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         const result = await confirmDialog("delete-variable", {
             skipAnimate: true,
-            data: { name: variable.label },
+            data: variable,
         });
 
         if (result) {

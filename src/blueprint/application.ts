@@ -10,6 +10,7 @@ import {
     HandlebarsTemplatePart,
     htmlClosest,
     htmlQuery,
+    info,
     localize,
     R,
     templateLocalize,
@@ -171,7 +172,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     #attachSidebarListeners(html: HTMLElement) {
         type TriggerHeaderAction = "close-window" | "create-trigger" | "export-all" | "import";
-        type TriggerAction = "select-trigger" | "export-trigger" | "delete-trigger";
+        type TriggerAction = "select-trigger" | "export-trigger" | "delete-trigger" | "copy-id";
         type SubtriggerHeaderAction = "create-subtrigger";
         type VariableHeaderAction = "create-variable";
         type VariableAction = "remove-variable";
@@ -243,6 +244,11 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
                 case "export-trigger": {
                     return this.#exportTrigger(triggerId);
+                }
+
+                case "copy-id": {
+                    game.clipboard.copyPlainText(triggerId);
+                    return info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
                 }
             }
         });
@@ -343,7 +349,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         const result = await confirmDialog("delete-trigger", {
             skipAnimate: true,
-            data: { name: trigger.label },
+            data: trigger,
         });
 
         if (result) {
@@ -371,6 +377,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             ],
             i18n: "edit-trigger",
             skipAnimate: true,
+            data: trigger,
         });
 
         if (result && result.name !== trigger.name) {

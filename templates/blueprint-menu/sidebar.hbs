@@ -22,22 +22,7 @@
         <div class="scroll scroll-triggers">
             <ul class="triggers">
                 {{#each triggers as |trigger|}}
-                <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
-                    data-id="{{trigger.id}}">
-                    <input class="enabled" type="checkbox" name="enabled" {{checked
-                        trigger.enabled}}>
-                    <div class="name" data-action="select-trigger">
-                        {{trigger.label}}
-                    </div>
-                    <div class="controls">
-                        <a data-action="export-trigger" {{{@root.i18n.tooltip 'trigger.export' }}}>
-                            <i class="fa-solid fa-file-export"></i>
-                        </a>
-                        <a data-action="delete-trigger" {{{@root.i18n.tooltip 'trigger.delete' }}}>
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </div>
-                </li>
+                {{> 'trigger' type='trigger' trigger=trigger}}
                 {{/each}}
             </ul>
         </div>
@@ -94,22 +79,7 @@
         <div class="scroll scroll-subtriggers">
             <ul class="triggers sub">
                 {{#each subtriggers as |trigger|}}
-                <li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}"
-                    data-id="{{trigger.id}}">
-                    <div class="name" data-action="select-trigger">
-                        {{trigger.label}}
-                    </div>
-                    <div class="controls">
-                        <a data-action="export-trigger" {{{@root.i18n.tooltip 'subtrigger.export'
-                            }}}>
-                            <i class="fa-solid fa-file-export"></i>
-                        </a>
-                        <a data-action="delete-trigger" {{{@root.i18n.tooltip 'subtrigger.delete'
-                            }}}>
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </div>
-                </li>
+                {{> 'trigger' type='subtrigger' trigger=trigger}}
                 {{/each}}
             </ul>
         </div>
@@ -120,3 +90,26 @@
         </i>
     </div>
 </div>
+
+
+{{#*inline "trigger"}}
+<li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}" data-id="{{trigger.id}}">
+    {{#if (eq type 'trigger')}}
+    <input class="enabled" type="checkbox" name="enabled" {{checked trigger.enabled}}>
+    {{/if}}
+    <div class="name" data-action="select-trigger">
+        {{trigger.label}}
+    </div>
+    <div class="controls">
+        <a data-action="copy-id" {{{@root.i18n.tooltip type 'copy' }}}>
+            <i class="fa-solid fa-copy"></i>
+        </a>
+        <a data-action="export-trigger" {{{@root.i18n.tooltip type 'export' }}}>
+            <i class="fa-solid fa-file-export"></i>
+        </a>
+        <a data-action="delete-trigger" {{{@root.i18n.tooltip type 'delete' }}}>
+            <i class="fa-solid fa-trash"></i>
+        </a>
+    </div>
+</li>
+{{/inline}}

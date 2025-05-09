@@ -707,6 +707,7 @@ class BlueprintNode extends PIXI.Container {
     async #delete() {
         const result = await confirmDialog("delete-node", {
             skipAnimate: true,
+            data: this,
         });
 
         if (result) {
