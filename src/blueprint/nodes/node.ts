@@ -131,6 +131,10 @@ class BlueprintNode extends PIXI.Container {
         return isVariable(this);
     }
 
+    get isTemporary(): boolean {
+        return ["remove-temporary", "has-temporary"].includes(this.key);
+    }
+
     get isGetter(): boolean {
         return isGetter(this);
     }
@@ -163,6 +167,12 @@ class BlueprintNode extends PIXI.Container {
         return { x: 10, y: 4 };
     }
 
+    get temporaryLabel(): string | undefined {
+        return this.isTemporary
+            ? this.blueprint.getTrigger(this.data.inputs.trigger?.value as string)?.label
+            : undefined;
+    }
+
     get targetLabel(): string | undefined {
         return this.isVariable
             ? this.trigger?.getVariable(this.data.target as NodeEntryId)?.label
@@ -186,19 +196,30 @@ class BlueprintNode extends PIXI.Container {
 
     get title(): string {
         const document = this.document;
-        return document === null
-            ? localize("document.broken")
-            : document?.name ?? this.targetLabel ?? localize(this.localizePath, "label");
+
+        if (document === null) {
+            return localize("document.broken");
+        }
+
+        return (
+            document?.name ??
+            this.targetLabel ??
+            this.temporaryLabel ??
+            localize(this.localizePath, "label")
+        );
     }
 
     get subtitle(): string | undefined {
         if (this.isValue) return;
 
-        const document = this.document;
-        return document !== undefined
-            ? localize(this.localizePath, "label")
-            : localizeIfExist(this.localizePath, "subtitle") ??
-                  localizeIfExist(this.data.rootLocalizePath, "subtitle");
+        if (this.document !== undefined || this.temporaryLabel) {
+            return localize(this.localizePath, "label");
+        }
+
+        return (
+            localizeIfExist(this.localizePath, "subtitle") ??
+            localizeIfExist(this.data.rootLocalizePath, "subtitle")
+        );
     }
 
     get isCustom(): boolean {
