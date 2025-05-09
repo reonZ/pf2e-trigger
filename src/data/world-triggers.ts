@@ -1,5 +1,5 @@
 import { TriggerData, TriggerDataSource } from "data";
-import { makeModuleDocument, MODULE } from "module-helpers";
+import { makeModuleDocument, MODULE, ModuleDocument } from "module-helpers";
 import fields = foundry.data.fields;
 
 const worldTriggerMetada = (): Partial<foundry.abstract.DocumentClassMetadata> => ({
@@ -31,6 +31,31 @@ class WorldTriggers extends makeModuleDocument<null, WorldTriggersSchema>(
             }
         }
     }
+
+    _onDeleteDescendantDocuments(
+        parent: ModuleDocument,
+        collection: string,
+        documents: ModuleDocument[],
+        triggerIds: string[],
+        options: object
+    ): void {
+        for (const triggerId of triggerIds) {
+            for (const trigger of this.triggers) {
+                let removed = false;
+
+                for (const node of trigger.nodes) {
+                    if (node.isSubtriggerNode && node.target === triggerId) {
+                        node.delete();
+                        removed = true;
+                    }
+                }
+
+                if (removed) {
+                    trigger.reset();
+                }
+            }
+        }
+    }
 }
 
 interface WorldTriggers {
@@ -38,6 +63,12 @@ interface WorldTriggers {
         embeddedName: "Trigger",
         data: PreCreate<TriggerDataSource>[],
         operation?: Partial<DatabaseCreateOperation<WorldTriggers>>
+    ): Promise<TriggerData[]>;
+
+    deleteEmbeddedDocuments(
+        embeddedName: "Trigger",
+        dataId: string[],
+        operation?: Partial<DatabaseDeleteOperation<this>>
     ): Promise<TriggerData[]>;
 }
 

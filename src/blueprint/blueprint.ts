@@ -214,10 +214,12 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     async deleteTrigger(id: string) {
-        await this.#worldTriggers.deleteEmbeddedDocuments("Trigger", [id]);
+        const [deleted] = await this.#worldTriggers.deleteEmbeddedDocuments("Trigger", [id]);
 
         if (this.#trigger === id) {
             this.setTrigger(null);
+        } else if (deleted.isSubtrigger) {
+            this.refresh();
         } else {
             this.parent?.refresh();
         }
