@@ -382,7 +382,12 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         if (result && result.name !== trigger.name) {
             trigger.update({ name: result.name });
-            this.refresh();
+
+            if (trigger.isSubtrigger) {
+                this.blueprint.refresh();
+            } else {
+                this.refresh();
+            }
         }
     }
 
