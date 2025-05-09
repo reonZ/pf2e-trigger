@@ -93,6 +93,15 @@ const addTemporary = {
     ],
 } as const satisfies ActionRawSchema;
 
+const removeTemporary = {
+    icon: "\uf017",
+    inputs: [
+        { key: "trigger", type: "text" },
+        { key: "identifier", type: "text" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -103,6 +112,7 @@ export const action = {
     "add-temporary": addTemporary,
     "console-log": consoleLog,
     "reduce-condition": reduceCondition,
+    "remove-temporary": removeTemporary,
     "roll-damage-with-save": rollDamageWithSave,
     "roll-damage": rollDamage,
     "roll-save": rollSave,

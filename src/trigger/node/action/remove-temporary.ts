@@ -1,21 +1,21 @@
-import { hasRollOption } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { getTemporaryIdentifier, TriggerNode } from "trigger";
 
-class HasTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "has-temporary">> {
+class RemoveTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "remove-temporary">> {
     async execute(): Promise<boolean> {
         const actor = await this.getTargetActor("target");
 
         if (!actor) {
-            return this.send("false");
+            return this.send("out");
         }
 
         const triggerId = await this.get("trigger");
         const { slug } = await getTemporaryIdentifier(this as any, triggerId);
-        const sendKey = hasRollOption(actor, `self:effect:${slug}`);
+        const exist = actor.itemTypes.effect.find((item) => item.slug === slug);
 
-        return this.send(sendKey);
+        await exist?.delete();
+        return this.send("out");
     }
 }
 
-export { HasTemporaryTriggerNode };
+export { RemoveTemporaryTriggerNode };

@@ -225,6 +225,9 @@
                         "counter": "Value"
                     }
                 },
+                "remove-temporary": {
+                    "label": "Remove Trigger Effect"
+                },
                 "roll-damage": {
                     "label": "Roll Damage"
                 },

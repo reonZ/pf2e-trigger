@@ -83,9 +83,9 @@ const hasCondition = {
 const hasTemporary = {
     outs: schemaBooleanOuts(),
     inputs: [
+        { key: "target", type: "target" },
         { key: "trigger", type: "text" },
         { key: "identifier", type: "text" },
-        { key: "target", type: "target" },
     ],
 } as const satisfies ConditionSchema;
 

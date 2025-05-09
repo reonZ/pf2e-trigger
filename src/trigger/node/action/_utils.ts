@@ -22,12 +22,10 @@ async function getTemporaryIdentifier(
     const identifier = (await node.get("identifier")) || "temporary";
     const target = triggerId || node.trigger.id;
     const slug = game.pf2e.system.sluggify(`${target}-${identifier}`);
-    const option = `self:effect:${slug}`;
 
     return {
         identifier,
         slug,
-        option,
     };
 }
 
@@ -40,7 +38,6 @@ type NodeEffectData = {
 type NodeTemporaryData = {
     identifier: string;
     slug: string;
-    option: string;
 };
 
 type TemporaryDataNode = TriggerNode<{
