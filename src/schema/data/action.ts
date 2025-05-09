@@ -7,7 +7,7 @@ const rollDamage = {
         { key: "roll", type: "roll" },
         { key: "target", type: "target" },
     ],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const rollSave = {
     icon: "\uf6cf",
@@ -22,7 +22,7 @@ const rollSave = {
         { key: "basic", type: "boolean" },
     ],
     outputs: [{ key: "result", type: "number" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const rollDamageWithSave = {
     icon: "\uf71c",
@@ -31,19 +31,19 @@ const rollDamageWithSave = {
         { key: "target", type: "target" },
     ],
     module: "pf2e-toolbelt",
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const consoleLog = {
     icon: "\uf120",
     custom: [{ category: "inputs" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const useMacro = {
     icon: "\uf121",
     inputs: [{ type: "uuid", key: "uuid", field: { document: "Macro" } }],
     document: "uuid",
     custom: [{ category: "inputs" }, { category: "outputs" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const addItem = {
     icon: "\uf466",
@@ -54,7 +54,7 @@ const addItem = {
     ],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const addCondition = {
     icon: { unicode: "\ue54d", fontWeight: "900" },
@@ -65,7 +65,7 @@ const addCondition = {
         { key: "label", type: "text" },
         { key: "target", type: "target" },
     ],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
 const reduceCondition = {
     icon: "\ue54d",
@@ -81,13 +81,27 @@ const reduceCondition = {
         },
         { key: "target", type: "target" },
     ],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
 
-const addTemporary = {} as const satisfies NodeRawSchema;
+const addTemporary = {
+    icon: { unicode: "\uf017", fontWeight: "900" },
+    inputs: [
+        {
+            key: "identifier",
+            type: "text",
+        },
+        ...schemaUnidentifiedEntry(true),
+        { key: "duration", type: "duration" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
+type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 
 export const action = {
     "add-condition": addCondition,
     "add-item": addItem,
+    "add-temporary": addTemporary,
     "console-log": consoleLog,
     "reduce-condition": reduceCondition,
     "roll-damage-with-save": rollDamageWithSave,

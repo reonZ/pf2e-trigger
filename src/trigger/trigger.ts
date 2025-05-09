@@ -21,8 +21,12 @@ class Trigger {
         this.#options = options as TriggerOptions;
     }
 
-    get name(): string {
-        return this.#data.name;
+    get id(): string {
+        return this.#data.id;
+    }
+
+    get label(): string {
+        return this.#data.label;
     }
 
     get target(): TargetDocuments {

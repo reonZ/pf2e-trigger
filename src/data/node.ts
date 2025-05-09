@@ -158,6 +158,14 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         return this.parent?.triggers;
     }
 
+    get rootLocalizePath(): string {
+        return `node.${this.type}`;
+    }
+
+    get localizePath(): string {
+        return `${this.rootLocalizePath}.${this.key}`;
+    }
+
     *entries(): Generator<[NodeEntryCategory, key: string, NodeDataEntry], void, undefined> {
         for (const [key, input] of R.entries(this.inputs)) {
             yield ["inputs", key, input];

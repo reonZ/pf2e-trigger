@@ -75,6 +75,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
         return this.#data.schemaInputs;
     }
 
+    get localizePath(): string {
+        return this.#data.localizePath;
+    }
+
     async execute(): Promise<boolean> {
         throw new Error(`execute not implemented in ${this.key}.`);
     }

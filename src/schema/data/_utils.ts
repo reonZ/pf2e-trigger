@@ -24,12 +24,15 @@ function schemaConditionEntries(type: "add" | "reduce") {
     ] as const;
 }
 
-function schemaUnidentifiedEntry() {
+function schemaUnidentifiedEntry(enabled: boolean = false) {
     return [
         {
             key: "unidentified",
             type: "boolean",
             label: "PF2E.Item.Effect.Unidentified",
+            field: {
+                default: enabled,
+            },
         },
     ] as const;
 }

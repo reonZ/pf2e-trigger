@@ -155,12 +155,8 @@ class BlueprintNode extends PIXI.Container {
         return 15;
     }
 
-    get rootLocalizePath(): string {
-        return `node.${this.type}`;
-    }
-
     get localizePath(): string {
-        return `${this.rootLocalizePath}.${this.key}`;
+        return this.data.localizePath;
     }
 
     get outerPadding(): Point {
@@ -202,7 +198,7 @@ class BlueprintNode extends PIXI.Container {
         return document !== undefined
             ? localize(this.localizePath, "label")
             : localizeIfExist(this.localizePath, "subtitle") ??
-                  localizeIfExist(this.rootLocalizePath, "subtitle");
+                  localizeIfExist(this.data.rootLocalizePath, "subtitle");
     }
 
     get isCustom(): boolean {

@@ -144,18 +144,18 @@
             }
         },
         "delete-entry": {
-            "title": "Delete {label} Entry",
-            "content": "Are you sure you want to delete the <strong>{name}</strong> entry?"
+            "content": "Are you sure you want to delete the <strong>{name}</strong> entry?",
+            "title": "Delete {label} Entry"
         },
         "context": {
-            "delete-node": "Delete Node",
-            "duplicate-node": "Duplicate Node",
-            "create-variable": "Create Variable",
-            "delete-variable": "Delete Variable",
-            "edit-variable": "Edit Variable",
-            "disconnect": "Disconnect Entry",
             "create-entry": "Create {label} Entry",
-            "delete-entry": "Delete Entry"
+            "create-variable": "Create Variable",
+            "delete-entry": "Delete Entry",
+            "delete-node": "Delete Node",
+            "delete-variable": "Delete Variable",
+            "disconnect": "Disconnect Entry",
+            "duplicate-node": "Duplicate Node",
+            "edit-variable": "Edit Variable"
         },
         "entry": {
             "boolean": "Boolean",
@@ -174,18 +174,19 @@
             "b": "B",
             "false": "False",
             "formula": "formula",
+            "identifier": "Identifier",
             "in": "In",
+            "input": "Input",
+            "label": "Label",
+            "min": "Minimum",
+            "origin": "Origin",
             "out": "Out",
+            "result": "Result",
+            "targets": "Targets",
             "this": "Trigger Target",
             "true": "True",
-            "value": "Value",
-            "input": "Input",
-            "result": "Result",
-            "origin": "Origin",
-            "targets": "Targets",
             "unit": "Unit",
-            "label": "Label",
-            "min": "Minimum"
+            "value": "Value"
         },
         "document": {
             "broken": "Broken Link",
@@ -208,6 +209,9 @@
                     "entry": {
                         "duplicate": "Duplicate?"
                     }
+                },
+                "add-temporary": {
+                    "label": "Add Trigger Effect"
                 },
                 "console-log": {
                     "label": "Console Log"

@@ -7,10 +7,12 @@ import { RollSaveTriggerNode } from "./roll-save";
 import { AddConditionTriggerNode } from "./add-condition";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
 import { AddItemTriggerNode } from "./add-item";
+import { AddTemporaryTriggerNode } from "./add-temorary";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
     "add-item": AddItemTriggerNode,
+    "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
     "roll-damage": RollDamageTriggerNode,
