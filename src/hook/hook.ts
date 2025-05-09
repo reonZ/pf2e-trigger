@@ -26,14 +26,14 @@ abstract class TriggerHook {
         trigger: for (const trigger of triggers) {
             if (eventKeys.includes(trigger.event.key)) {
                 this.#triggers.set(trigger.id, trigger);
-                break trigger;
+                continue trigger;
             }
 
             if (nodeKeys.length) {
                 for (const node of trigger.nodes) {
                     if (nodeKeys.includes(node.key)) {
                         this.#triggers.set(trigger.id, trigger);
-                        break trigger;
+                        continue trigger;
                     }
                 }
             }
@@ -41,12 +41,12 @@ abstract class TriggerHook {
 
         let active = this.#triggers.size > 0;
 
-        subtrigger: if (!active && nodeKeys.length) {
-            for (const trigger of subtriggers) {
+        if (!active && nodeKeys.length) {
+            subtrigger: for (const trigger of subtriggers) {
                 for (const node of trigger.nodes) {
                     if (nodeKeys.includes(node.key)) {
                         active = true;
-                        break subtrigger;
+                        continue subtrigger;
                     }
                 }
             }
