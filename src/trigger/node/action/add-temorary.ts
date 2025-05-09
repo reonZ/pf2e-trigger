@@ -1,7 +1,6 @@
 import { createCustomEffect, imagePath } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "trigger";
-import { getEffectData } from "./_utils";
+import { getEffectData, getTemporaryIdentifier, TriggerNode } from "trigger";
 
 class AddTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-temporary">> {
     async execute(): Promise<boolean> {
@@ -11,12 +10,12 @@ class AddTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-te
             return this.send("out");
         }
 
-        const identifier = (await this.get("identifier")) || "temporary";
+        const { identifier, slug } = await getTemporaryIdentifier(this);
         const effect = createCustomEffect({
             ...(await getEffectData(this)),
             img: imagePath("clockwork", "svg"),
             name: `${this.trigger.label} (${identifier})`,
-            slug: game.pf2e.system.sluggify(`${this.trigger.id}-${identifier}`),
+            slug,
         });
 
         if (effect) {

@@ -1,7 +1,6 @@
-import { NodeSchemaOf } from "schema";
-import { TriggerNode } from "trigger";
 import { createCustomCondition } from "module-helpers";
-import { getEffectData } from "./_utils";
+import { NodeSchemaOf } from "schema";
+import { getEffectData, TriggerNode } from "trigger";
 
 class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-condition">> {
     async execute(): Promise<boolean> {

@@ -86,15 +86,14 @@ const reduceCondition = {
 const addTemporary = {
     icon: { unicode: "\uf017", fontWeight: "900" },
     inputs: [
-        {
-            key: "identifier",
-            type: "text",
-        },
+        { key: "identifier", type: "text" },
         ...schemaUnidentifiedEntry(true),
         { key: "duration", type: "duration" },
         { key: "target", type: "target" },
     ],
 } as const satisfies ActionRawSchema;
+
+//
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 

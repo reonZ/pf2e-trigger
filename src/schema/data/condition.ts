@@ -80,6 +80,17 @@ const hasCondition = {
     inputs: [{ key: "target", type: "target" }, ...schemaConditionEntries("add")],
 } as const satisfies ConditionSchema;
 
+const hasTemporary = {
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "trigger", type: "text" },
+        { key: "identifier", type: "text" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ConditionSchema;
+
+//
+
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
     outs: SchemaBooleanOuts;
 };
@@ -89,6 +100,7 @@ export const condition = {
     "has-condition": hasCondition,
     "has-item": hasItem,
     "has-option": hasOptions,
+    "has-temporary": hasTemporary,
     "in-combat": inCombat,
     "inside-aura": insideAura,
     "is-combatant": isCombatant,
