@@ -151,6 +151,15 @@ const removeSourceItem = {
     document: "uuid",
 } as const satisfies ActionRawSchema;
 
+const getChoiceset = {
+    inputs: [
+        { key: "item", type: "item" },
+        { key: "flag", type: "text" },
+        { key: "option", type: "text" },
+    ],
+    outputs: [{ key: "selection", type: "text" }],
+} as const satisfies NodeRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -161,6 +170,7 @@ export const action = {
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "console-log": consoleLog,
+    "get-choiceset": getChoiceset,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
     "remove-item-source": removeSourceItem,

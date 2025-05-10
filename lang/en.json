@@ -230,6 +230,14 @@
                 "console-log": {
                     "label": "Console Log"
                 },
+                "get-choiceset": {
+                    "label": "Retrieve Item ChoiceSet",
+                    "entry": {
+                        "flag": "flag",
+                        "option": "rollOption",
+                        "selection": "Selection"
+                    }
+                },
                 "reduce-condition": {
                     "label": "Reduce Condition",
                     "entry": {
