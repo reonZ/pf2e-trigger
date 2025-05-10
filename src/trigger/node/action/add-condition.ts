@@ -4,21 +4,20 @@ import { getEffectData, TriggerNode } from "trigger";
 
 class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-condition">> {
     async execute(): Promise<boolean> {
-        const actor = await this.getTargetActor("target");
+        const data = await getEffectData(this);
 
-        if (!actor) {
+        if (!data) {
             return this.send("out");
         }
 
         const effect = createCustomCondition({
-            ...(await getEffectData(this)),
+            ...data,
             slug: (await this.get("condition")) as ConditionSlug,
             counter: await this.get("counter"),
-            name: await this.get("label"),
         });
 
         if (effect) {
-            await actor.createEmbeddedDocuments("Item", [effect]);
+            await data.actor.createEmbeddedDocuments("Item", [effect]);
         }
 
         return this.send("out");

@@ -1,7 +1,12 @@
-import { NodeSchemaInput } from "schema";
+import { ActorPF2e } from "module-helpers";
+import { NodeSchemaInput, SchemaEffectDetails } from "schema";
 import { TriggerDurationEntry, TriggerNode } from "trigger";
 
-async function getEffectData(node: EffectDataNode): Promise<NodeEffectData> {
+async function getEffectData(node: EffectDataNode): Promise<NodeEffectData | undefined> {
+    const actor = await node.getTargetActor("target");
+    if (!actor) return;
+
+    const name = await node.get("label");
     const duration = await node.get("duration");
     const unidentified = await node.get("unidentified");
 
@@ -9,7 +14,9 @@ async function getEffectData(node: EffectDataNode): Promise<NodeEffectData> {
     delete duration.origin;
 
     return {
+        actor,
         duration,
+        name,
         unidentified,
         origin,
     };
@@ -30,7 +37,9 @@ async function getTemporaryIdentifier(
 }
 
 type NodeEffectData = {
+    actor: ActorPF2e;
     duration: TriggerDurationEntry;
+    name: string;
     unidentified: boolean;
     origin: TargetDocuments | undefined;
 };
@@ -45,11 +54,7 @@ type TemporaryDataNode = TriggerNode<{
 }>;
 
 type EffectDataNode = TriggerNode<{
-    inputs: Array<
-        | { key: "duration"; type: "duration" }
-        | { key: "unidentified"; type: "boolean" }
-        | NodeSchemaInput
-    >;
+    inputs: Array<SchemaEffectDetails | NodeSchemaInput>;
 }>;
 
 export { getEffectData, getTemporaryIdentifier };

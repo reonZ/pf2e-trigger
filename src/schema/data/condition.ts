@@ -2,7 +2,7 @@ import {
     SchemaBooleanOuts,
     NodeRawSchema,
     schemaBooleanOuts,
-    schemaConditionSelectEntries,
+    schemaConditionEntries,
 } from "schema";
 
 const insideAura = {
@@ -27,7 +27,11 @@ const hasItem = {
     outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
-        { key: "uuid", type: "uuid", field: { document: "Item" } },
+        {
+            key: "uuid",
+            type: "uuid",
+            field: { document: "Item" },
+        },
     ],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
@@ -77,7 +81,10 @@ const matchPredicate = {
 
 const hasCondition = {
     outs: schemaBooleanOuts(),
-    inputs: [{ key: "target", type: "target" }, ...schemaConditionSelectEntries("add")],
+    inputs: [
+        { key: "target", type: "target" }, //
+        ...schemaConditionEntries("add"),
+    ],
 } as const satisfies ConditionSchema;
 
 const hasTemporary = {

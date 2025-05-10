@@ -221,7 +221,10 @@
                     }
                 },
                 "add-temporary": {
-                    "label": "Add Trigger Effect"
+                    "label": "Add Trigger Effect",
+                    "entry": {
+                        "image": "image/path.webp"
+                    }
                 },
                 "console-log": {
                     "label": "Console Log"
@@ -385,7 +388,7 @@
                 "title": "Values",
                 "subtitle": "value",
                 "dc-target": {
-                    "label": "Difficulty Class (Target)",
+                    "label": "Difficulty Class (Against)",
                     "entry": {
                         "against": "against",
                         "adjustment": "Adjustment"

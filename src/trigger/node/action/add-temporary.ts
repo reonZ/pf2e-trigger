@@ -4,22 +4,23 @@ import { getEffectData, getTemporaryIdentifier, TriggerNode } from "trigger";
 
 class AddTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-temporary">> {
     async execute(): Promise<boolean> {
-        const actor = await this.getTargetActor("target");
+        const data = await getEffectData(this);
 
-        if (!actor) {
+        if (!data) {
             return this.send("out");
         }
 
+        const image = (await this.get("image")) as ImageFilePath;
         const { identifier, slug } = await getTemporaryIdentifier(this);
         const effect = createCustomEffect({
-            ...(await getEffectData(this)),
-            img: imagePath("clockwork", "svg"),
-            name: `${this.trigger.label} (${identifier})`,
+            ...data,
+            img: image || imagePath("clockwork", "svg"),
+            name: data.name || `${this.trigger.label} (${identifier})`,
             slug,
         });
 
         if (effect) {
-            await actor.createEmbeddedDocuments("Item", [effect]);
+            await data.actor.createEmbeddedDocuments("Item", [effect]);
         }
 
         return this.send("out");
