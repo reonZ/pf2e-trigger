@@ -42,7 +42,10 @@ const useMacro = {
     icon: "\uf121",
     inputs: [{ type: "uuid", key: "uuid", field: { document: "Macro" } }],
     document: "uuid",
-    custom: [{ category: "inputs" }, { category: "outputs" }],
+    custom: [
+        { category: "inputs" }, //
+        { category: "outputs" },
+    ],
 } as const satisfies ActionRawSchema;
 
 const addItem = {
@@ -148,34 +151,12 @@ const removeSourceItem = {
     document: "uuid",
 } as const satisfies ActionRawSchema;
 
-const addImmunity = {
-    icon: { unicode: "\uf644", fontWeight: "900" },
-    inputs: [
-        {
-            key: "value",
-            type: "number",
-            field: {
-                min: 1,
-                default: 5,
-            },
-        },
-        {
-            key: "type",
-            type: "select",
-            field: {
-                options: "CONFIG.PF2E.immunityTypes",
-            },
-        },
-    ],
-} as const satisfies ActionRawSchema;
-
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 
 export const action = {
     "add-condition": addCondition,
-    "add-immunity": addImmunity,
     "add-item": addItem,
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,

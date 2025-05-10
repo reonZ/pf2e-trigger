@@ -771,7 +771,6 @@ class BlueprintNode extends PIXI.Container {
                     name: "type",
                     options: custom.types,
                     i18n: "entry",
-                    disabled: custom.types.length === 1,
                 },
             });
         }
