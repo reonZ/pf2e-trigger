@@ -163,6 +163,7 @@
             "boolean": "Boolean",
             "dc": "DC",
             "duration": "Duration",
+            "effect": "Effect",
             "item": "Item",
             "list": "List",
             "number": "Number",
@@ -402,6 +403,9 @@
                 },
                 "duration-unit": {
                     "label": "Effect Duration (Unit)"
+                },
+                "effect-data": {
+                    "label": "Effect Data"
                 },
                 "item-source": {
                     "label": "Item Source"

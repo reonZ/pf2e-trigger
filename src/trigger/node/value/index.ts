@@ -8,12 +8,14 @@ import { RollDataTriggerNode } from "./roll-data";
 import { SuccessValueTriggerNode } from "./success";
 import { DurationSimpleTriggerNode } from "./duration-simple";
 import { DurationUnitTriggerNode } from "./duration-unit";
+import { EffectDataTriggerNode } from "./effect-data";
 
 export const value = {
     "dc-target": DcTargetTriggerNode,
     "dc-value": DcValueTriggerNode,
     "duration-simple": DurationSimpleTriggerNode,
     "duration-unit": DurationUnitTriggerNode,
+    "effect-data": EffectDataTriggerNode,
     "item-source": ItemSourceTriggerNode,
     "number-value": InputValueTriggerNode,
     "success-value": SuccessValueTriggerNode,

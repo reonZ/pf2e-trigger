@@ -40,23 +40,7 @@ function schemaUnidentifiedEntry(enabled: boolean = false) {
     ] as const;
 }
 
-function schemaEffectDetailsEntries() {
-    return [
-        ...schemaUnidentifiedEntry(),
-        { key: "label", type: "text" },
-        { key: "duration", type: "duration" },
-        { key: "target", type: "target" },
-    ] as const;
-}
-
-type SchemaEffectDetails = ReturnType<typeof schemaEffectDetailsEntries>[number];
-
 type SchemaBooleanOuts = ReturnType<typeof schemaBooleanOuts>;
 
-export {
-    schemaBooleanOuts,
-    schemaConditionEntries,
-    schemaEffectDetailsEntries,
-    schemaUnidentifiedEntry,
-};
-export type { SchemaBooleanOuts, SchemaEffectDetails };
+export { schemaBooleanOuts, schemaConditionEntries, schemaUnidentifiedEntry };
+export type { SchemaBooleanOuts };

@@ -40,12 +40,6 @@ class NodeSchemaIconField extends DataUnionField<
                         blank: false,
                         readonly: true,
                     }),
-                    replace: new fields.StringField<string, string, false, false, false>({
-                        required: false,
-                        nullable: false,
-                        blank: true,
-                        readonly: true,
-                    }),
                 },
                 {
                     required: false,
@@ -60,7 +54,6 @@ class NodeSchemaIconField extends DataUnionField<
             return {
                 unicode: value,
                 fontWeight: "400",
-                replace: undefined,
             } satisfies IconObject;
         }
 
@@ -71,10 +64,9 @@ class NodeSchemaIconField extends DataUnionField<
 type IconObjectSchema = {
     unicode: fields.StringField<string, string, true>;
     fontWeight: fields.StringField<TextStyleFontWeight, TextStyleFontWeight, true>;
-    replace: fields.StringField<string, string, false, false, false>;
 };
 
-type IconObject = WithPartial<ModelPropsFromSchema<IconObjectSchema>, "replace">;
+type IconObject = ModelPropsFromSchema<IconObjectSchema>;
 
 export { NodeSchemaIconField };
 export type { IconObject };

@@ -1,26 +1,26 @@
 import { createCustomEffect, imagePath } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { getEffectData, getTemporaryIdentifier, TriggerNode } from "trigger";
+import { getTemporaryIdentifier, TriggerNode } from "trigger";
 
 class AddTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-temporary">> {
     async execute(): Promise<boolean> {
-        const data = await getEffectData(this);
+        const actor = await this.getTargetActor("target");
 
-        if (!data) {
+        if (!actor) {
             return this.send("out");
         }
 
-        const image = (await this.get("image")) as ImageFilePath;
+        const data = await this.get("effect");
         const { identifier, slug } = await getTemporaryIdentifier(this);
         const effect = createCustomEffect({
             ...data,
-            img: image || imagePath("clockwork", "svg"),
+            img: data.img || imagePath("clockwork", "svg"),
             name: data.name || `${this.trigger.label} (${identifier})`,
             slug,
         });
 
         if (effect) {
-            await data.actor.createEmbeddedDocuments("Item", [effect]);
+            await actor.createEmbeddedDocuments("Item", [effect]);
         }
 
         return this.send("out");

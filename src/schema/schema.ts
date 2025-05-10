@@ -128,6 +128,7 @@ type NodeRawSchema = {
     module?: NodeSchemaModuleId;
     loop?: boolean;
     document?: string;
+    image?: string;
     custom?: ReadonlyArray<NodeSchemaCustom>;
     outs?: ReadonlyArray<NodeSchemaRawBridge>;
     inputs?: ReadonlyArray<NodeSchemaInput>;
@@ -145,6 +146,7 @@ type NodeSchemaInput =
     | NodeSchemaBoolean
     | NodeSchemaDc
     | NodeSchemaDuration
+    | NodeSchemaEffect
     | NodeSchemaItem
     | NodeSchemaList
     | NodeSchemaNumber
@@ -201,8 +203,6 @@ type NodeSchemaSelect = NodeSchemaInputEntryWithField<
     }
 >;
 
-type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
-
 type NodeSchemaUuid = NodeSchemaInputEntryWithField<
     "uuid",
     {
@@ -212,8 +212,10 @@ type NodeSchemaUuid = NodeSchemaInputEntryWithField<
 
 type NodeSchemaDc = NodeSchemaInputEntry<"dc">;
 type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
+type NodeSchemaEffect = NodeSchemaInputEntry<"effect">;
 type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
+type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
 type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
 
 type SchemaEntries = {

@@ -6,6 +6,7 @@ const NODE_ENTRY_TYPES = [
     "boolean",
     "dc",
     "duration",
+    "effect",
     "item",
     "list",
     "number",

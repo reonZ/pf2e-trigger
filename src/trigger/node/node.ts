@@ -21,6 +21,7 @@ import {
     Trigger,
     TriggerDcEntry,
     TriggerDurationEntry,
+    TriggerEffectEntry,
     TriggerRollEntry,
     TriggerValue,
 } from "trigger";
@@ -186,6 +187,19 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 } satisfies TriggerDurationEntry;
             }
 
+            case "effect": {
+                return {
+                    name: "",
+                    unidentified: false,
+                    img: "" as ImageFilePath,
+                    duration: {
+                        expiry: null,
+                        unit: "unlimited",
+                        value: -1,
+                    },
+                } satisfies TriggerEffectEntry;
+            }
+
             default: {
                 return undefined;
             }
@@ -287,6 +301,10 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
                 return isRollEntry(value);
             }
 
+            case "effect": {
+                return isEffectEntry(value);
+            }
+
             default: {
                 return false;
             }
@@ -312,6 +330,10 @@ function isUuidEntry(value: unknown): value is DocumentUUID {
 
 function isRollEntry(value: unknown): value is TriggerRollEntry {
     return R.isPlainObject(value);
+}
+
+function isEffectEntry(value: unknown): value is TriggerEffectEntry {
+    return R.isPlainObject(value) && (!value.duration || isDurationEntry(value.duration));
 }
 
 function isDcEntry(value: unknown): value is TriggerDcEntry {
@@ -374,4 +396,4 @@ type ExtractOutKey<S extends NodeRawSchema> = S extends {
         : K
     : "out";
 
-export { isDcEntry, isDurationEntry, isRollEntry, isUuidEntry, TriggerNode };
+export { isUuidEntry, TriggerNode };

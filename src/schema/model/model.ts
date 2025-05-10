@@ -93,6 +93,11 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                 nullable: false,
                 blank: false,
             }),
+            image: new fields.StringField({
+                required: false,
+                nullable: false,
+                blank: false,
+            }),
             ...nodeSchemaEntries(),
         };
     }
@@ -178,6 +183,7 @@ type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
     custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
     loop: fields.BooleanField<boolean, boolean, false>;
     document: fields.StringField<string, string, false, false, false>;
+    image: fields.StringField<string, string, false, false, false>;
 };
 
 type NodeSchemaCustomSchema = {

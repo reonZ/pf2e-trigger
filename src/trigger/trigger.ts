@@ -103,6 +103,8 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     ? string[]
     : T extends "duration"
     ? TriggerDurationEntry
+    : T extends "effect"
+    ? TriggerEffectEntry
     : unknown;
 
 type TriggerRollEntry = {
@@ -120,10 +122,18 @@ type TriggerDurationEntry = DurationData & {
     origin?: TargetDocuments;
 };
 
+type TriggerEffectEntry = {
+    unidentified: boolean;
+    name: string;
+    duration: TriggerDurationEntry;
+    img: ImageFilePath;
+};
+
 export { getSubtrigger, prepareTriggers, Trigger };
 export type {
     TriggerDcEntry,
     TriggerDurationEntry,
+    TriggerEffectEntry,
     TriggerOptions,
     TriggerPreOptions,
     TriggerRollEntry,

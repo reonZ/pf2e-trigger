@@ -592,16 +592,15 @@ class BlueprintNode extends PIXI.Container {
             return this.fontAwesomeIcon("\uf1e6");
         }
 
-        const icon = (this.schema.icon ?? BlueprintNode.NODE_ICONS[this.type]) as Maybe<IconObject>;
-
-        if (icon?.replace) {
-            const image = this.data.inputs[icon.replace]?.value as Maybe<string>;
+        if (this.schema.image) {
+            const image = this.data.inputs[this.schema.image]?.value as Maybe<string>;
 
             if (image) {
                 return PIXI.Sprite.from(image);
             }
         }
 
+        const icon = this.schema.icon ?? BlueprintNode.NODE_ICONS[this.type];
         return icon ? this.fontAwesomeIcon(icon) : undefined;
     }
 

@@ -1,5 +1,6 @@
 import { NodeEntryType } from "data";
 import { NodeRawSchema } from "schema/schema";
+import { schemaUnidentifiedEntry } from "./_utils";
 
 const itemSource = {
     inputs: [{ key: "uuid", type: "uuid", field: { document: "Item" } }],
@@ -136,12 +137,25 @@ const unitDuration = {
     outputs: [{ key: "duration", type: "duration" }],
 } as const satisfies NodeRawSchema;
 
+const effectData = {
+    inputs: [
+        ...schemaUnidentifiedEntry(),
+        { key: "label", type: "text" },
+        { key: "image", type: "text" },
+        { key: "duration", type: "duration" },
+    ],
+    outputs: [{ key: "effect", type: "effect" }],
+    image: "image",
+} as const satisfies NodeRawSchema;
+
 function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
     return {
         inputs: [{ key: "input", type }],
         outputs: [{ key: "value", type }],
     };
 }
+
+//
 
 type InputEntryType = "number" | "boolean" | "text";
 
@@ -155,6 +169,7 @@ export const value = {
     "dc-value": dcValue,
     "duration-simple": simpleDuration,
     "duration-unit": unitDuration,
+    "effect-data": effectData,
     "item-source": itemSource,
     "number-value": createInputValue("number"),
     "roll-data": rollData,

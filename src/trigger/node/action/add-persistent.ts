@@ -1,24 +1,24 @@
 import { createCustomPersistentDamage, DamageType } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { getEffectData, TriggerNode } from "trigger";
+import { TriggerNode } from "trigger";
 
 class AddPersistentTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-persistent">> {
     async execute(): Promise<boolean> {
-        const data = await getEffectData(this);
+        const actor = await this.getTargetActor("target");
 
-        if (!data) {
+        if (!actor) {
             return this.send("out");
         }
 
         const effect = createCustomPersistentDamage({
-            ...data,
+            ...(await this.get("effect")),
             dc: await this.get("dc"),
             die: (await this.get("die")) || "1d6",
             type: (await this.get("type")) as DamageType,
         });
 
         if (effect) {
-            await data.actor.createEmbeddedDocuments("Item", [effect]);
+            await actor.createEmbeddedDocuments("Item", [effect]);
         }
 
         return this.send("out");

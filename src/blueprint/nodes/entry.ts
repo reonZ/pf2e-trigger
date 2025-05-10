@@ -33,6 +33,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         bridge: 0xffffff,
         dc: 0x1682c9,
         duration: 0x75db32,
+        effect: 0xe100ff,
         item: 0x696fe0,
         list: 0x874501,
         number: 0x07b88f,

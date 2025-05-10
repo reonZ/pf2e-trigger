@@ -1,4 +1,4 @@
-import { NodeRawSchema, schemaConditionEntries, schemaEffectDetailsEntries } from "schema";
+import { NodeRawSchema, schemaConditionEntries } from "schema";
 
 const rollDamage = {
     icon: "\uf6cf",
@@ -58,7 +58,11 @@ const addItem = {
 
 const addCondition = {
     icon: { unicode: "\ue54d", fontWeight: "900" },
-    inputs: [...schemaConditionEntries("add"), ...schemaEffectDetailsEntries()],
+    inputs: [
+        ...schemaConditionEntries("add"), //
+        { key: "effect", type: "effect" },
+        { key: "target", type: "target" },
+    ],
 } as const satisfies ActionRawSchema;
 
 const reduceCondition = {
@@ -78,16 +82,13 @@ const reduceCondition = {
 } as const satisfies ActionRawSchema;
 
 const addTemporary = {
-    icon: {
-        unicode: "\uf017",
-        fontWeight: "900",
-        replace: "image",
-    },
+    icon: { unicode: "\uf017", fontWeight: "900" },
     inputs: [
         { key: "identifier", type: "text" },
-        { key: "image", type: "text" },
-        ...schemaEffectDetailsEntries(),
+        { key: "effect", type: "effect" },
+        { key: "target", type: "target" },
     ],
+    image: "image",
 } as const satisfies ActionRawSchema;
 
 const removeTemporary = {
@@ -121,7 +122,8 @@ const addPersistent = {
                 min: 0,
             },
         },
-        ...schemaEffectDetailsEntries(),
+        { key: "effect", type: "effect" },
+        { key: "target", type: "target" },
     ],
 } as const satisfies ActionRawSchema;
 
@@ -164,7 +166,6 @@ const addImmunity = {
                 options: "CONFIG.PF2E.immunityTypes",
             },
         },
-        ...schemaEffectDetailsEntries(),
     ],
 } as const satisfies ActionRawSchema;
 
