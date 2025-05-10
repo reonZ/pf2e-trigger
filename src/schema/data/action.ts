@@ -152,13 +152,19 @@ const removeSourceItem = {
 } as const satisfies ActionRawSchema;
 
 const getChoiceset = {
+    icon: "\uf03a",
     inputs: [
         { key: "item", type: "item" },
         { key: "flag", type: "text" },
         { key: "option", type: "text" },
     ],
     outputs: [{ key: "selection", type: "text" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ActionRawSchema;
+
+const getCombatant = {
+    icon: "\ue2bf",
+    outputs: [{ key: "combatant", type: "target" }],
+} as const satisfies ActionRawSchema;
 
 //
 
@@ -171,6 +177,7 @@ export const action = {
     "add-temporary": addTemporary,
     "console-log": consoleLog,
     "get-choiceset": getChoiceset,
+    "get-combatant": getCombatant,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
     "remove-item-source": removeSourceItem,

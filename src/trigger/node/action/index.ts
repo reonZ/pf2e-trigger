@@ -14,6 +14,7 @@ import { UseMacroTriggerNode } from "./use-macro";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveItemSourceTriggerNode } from "./remove-item-source";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
+import { GetCombatantTriggerNode } from "./get-combatant";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -22,6 +23,7 @@ export const action = {
     "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
+    "get-combatant": GetCombatantTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
     "remove-item-source": RemoveItemSourceTriggerNode,
