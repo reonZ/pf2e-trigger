@@ -1,4 +1,9 @@
-import { NodeRawSchema, schemaConditionEntries, schemaUnidentifiedEntry } from "schema";
+import {
+    NodeRawSchema,
+    schemaConditionDetailsEntries,
+    schemaConditionSelectEntries,
+    schemaUnidentifiedEntry,
+} from "schema";
 
 const rollDamage = {
     icon: "\uf6cf",
@@ -58,19 +63,13 @@ const addItem = {
 
 const addCondition = {
     icon: { unicode: "\ue54d", fontWeight: "900" },
-    inputs: [
-        ...schemaConditionEntries("add"),
-        ...schemaUnidentifiedEntry(),
-        { key: "duration", type: "duration" },
-        { key: "label", type: "text" },
-        { key: "target", type: "target" },
-    ],
+    inputs: [...schemaConditionSelectEntries("add"), ...schemaConditionDetailsEntries()],
 } as const satisfies ActionRawSchema;
 
 const reduceCondition = {
     icon: "\ue54d",
     inputs: [
-        ...schemaConditionEntries("add"),
+        ...schemaConditionSelectEntries("add"),
         {
             key: "min",
             type: "number",
@@ -102,6 +101,32 @@ const removeTemporary = {
     ],
 } as const satisfies ActionRawSchema;
 
+const addPersistent = {
+    icon: "\uf780",
+    inputs: [
+        {
+            key: "die",
+            type: "text",
+        },
+        {
+            key: "type",
+            type: "select",
+            field: {
+                options: "CONFIG.PF2E.damageTypes",
+            },
+        },
+        {
+            key: "dc",
+            type: "number",
+            field: {
+                default: 15,
+                min: 0,
+            },
+        },
+        ...schemaConditionDetailsEntries(),
+    ],
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -109,6 +134,7 @@ type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 export const action = {
     "add-condition": addCondition,
     "add-item": addItem,
+    "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "console-log": consoleLog,
     "reduce-condition": reduceCondition,

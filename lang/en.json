@@ -188,6 +188,7 @@
             "this": "Trigger Target",
             "trigger": "Trigger ID",
             "true": "True",
+            "type": "Type",
             "unit": "Unit",
             "value": "Value"
         },
@@ -211,6 +212,12 @@
                     "label": "Add Item",
                     "entry": {
                         "duplicate": "Duplicate?"
+                    }
+                },
+                "add-persistent": {
+                    "label": "Add Persistent Damage",
+                    "entry": {
+                        "die": "1d6"
                     }
                 },
                 "add-temporary": {

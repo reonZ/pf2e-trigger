@@ -1,19 +1,21 @@
 export * from "./_utils";
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
+import { AddConditionTriggerNode } from "./add-condition";
+import { AddItemTriggerNode } from "./add-item";
+import { AddPersistentTriggerNode } from "./add-persistent";
+import { AddTemporaryTriggerNode } from "./add-temporary";
 import { ConsoleLogTriggerNode } from "./console-log";
-import { UseMacroTriggerNode } from "./use-macro";
+import { ReduceConditionTriggerNode } from "./reduce-condition";
+import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollSaveTriggerNode } from "./roll-save";
-import { AddConditionTriggerNode } from "./add-condition";
-import { ReduceConditionTriggerNode } from "./reduce-condition";
-import { AddItemTriggerNode } from "./add-item";
-import { AddTemporaryTriggerNode } from "./add-temorary";
-import { RemoveTemporaryTriggerNode } from "./remove-temporary";
+import { UseMacroTriggerNode } from "./use-macro";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
     "add-item": AddItemTriggerNode,
+    "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,

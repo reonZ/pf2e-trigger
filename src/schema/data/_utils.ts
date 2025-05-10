@@ -2,7 +2,7 @@ function schemaBooleanOuts() {
     return [{ key: "true" }, { key: "false" }] as const;
 }
 
-function schemaConditionEntries(type: "add" | "reduce") {
+function schemaConditionSelectEntries(type: "add" | "reduce") {
     const option = type === "add" ? "addConditionTypes" : "reduceConditionTypes";
     return [
         {
@@ -37,7 +37,21 @@ function schemaUnidentifiedEntry(enabled: boolean = false) {
     ] as const;
 }
 
+function schemaConditionDetailsEntries() {
+    return [
+        ...schemaUnidentifiedEntry(),
+        { key: "duration", type: "duration" },
+        { key: "label", type: "text" },
+        { key: "target", type: "target" },
+    ] as const;
+}
+
 type SchemaBooleanOuts = ReturnType<typeof schemaBooleanOuts>;
 
-export { schemaBooleanOuts, schemaConditionEntries, schemaUnidentifiedEntry };
+export {
+    schemaBooleanOuts,
+    schemaConditionDetailsEntries,
+    schemaConditionSelectEntries,
+    schemaUnidentifiedEntry,
+};
 export type { SchemaBooleanOuts };

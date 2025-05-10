@@ -1,8 +1,8 @@
-import { ConditionSlug, createCustomCondition } from "module-helpers";
+import { createCustomPersistentDamage, DamageType } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { getEffectData, TriggerNode } from "trigger";
 
-class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-condition">> {
+class AddPersistentTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-persistent">> {
     async execute(): Promise<boolean> {
         const actor = await this.getTargetActor("target");
 
@@ -10,10 +10,11 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
             return this.send("out");
         }
 
-        const effect = createCustomCondition({
+        const effect = createCustomPersistentDamage({
             ...(await getEffectData(this)),
-            slug: (await this.get("condition")) as ConditionSlug,
-            counter: await this.get("counter"),
+            dc: await this.get("dc"),
+            die: (await this.get("die")) || "1d6",
+            type: (await this.get("type")) as DamageType,
             name: await this.get("label"),
         });
 
@@ -25,4 +26,4 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
     }
 }
 
-export { AddConditionTriggerNode };
+export { AddPersistentTriggerNode };
