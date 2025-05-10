@@ -19,16 +19,26 @@ const rollSave = {
             field: { options: "CONFIG.PF2E.saves" },
         },
         { key: "dc", type: "dc" },
-        { key: "basic", type: "boolean" },
+        { key: "basic", type: "boolean", label: "action.roll-save" },
     ],
     outputs: [{ key: "result", type: "number" }],
 } as const satisfies ActionRawSchema;
 
-const rollDamageWithSave = {
+const rollDamageSave = {
     icon: "\uf71c",
     inputs: [
-        { key: "formula", type: "text" },
-        { key: "target", type: "target" },
+        ...rollSave.inputs.slice(1).map((input) => {
+            return {
+                ...input,
+                group: "save",
+            };
+        }),
+        ...rollDamage.inputs.map((input) => {
+            return {
+                ...input,
+                group: "damage",
+            };
+        }),
     ],
     module: "pf2e-toolbelt",
 } as const satisfies ActionRawSchema;
@@ -199,7 +209,7 @@ export const action = {
     "remove-item": removeItem,
     "remove-item-source": removeSourceItem,
     "remove-temporary": removeTemporary,
-    "roll-damage-with-save": rollDamageWithSave,
+    "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "use-macro": useMacro,

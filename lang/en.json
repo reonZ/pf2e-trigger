@@ -276,8 +276,12 @@
                         "save": "Save"
                     }
                 },
-                "roll-damage-with-save": {
-                    "label": "Roll Damage With Save"
+                "roll-damage-save": {
+                    "label": "Roll Damage With Save",
+                    "group": {
+                        "damage": "Damage",
+                        "save": "Save"
+                    }
                 },
                 "use-macro": {
                     "label": "Run Macro"
