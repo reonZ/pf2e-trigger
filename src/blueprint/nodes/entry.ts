@@ -6,6 +6,7 @@ import {
     BlueprintWaitContextData,
     EntryField,
     HorizontalLayoutGraphics,
+    LayoutGraphicsPadding,
 } from "blueprint";
 import {
     createEntryId,
@@ -19,6 +20,8 @@ import {
 } from "data";
 import { confirmDialog, localize, localizeIfExist, R } from "module-helpers";
 import { BaseNodeSchemaEntry, hasInputConnector, NodeCustomEntryCategory } from "schema";
+
+const ENTRY_PADDING = [0, 2] as LayoutGraphicsPadding;
 
 class BlueprintEntry extends HorizontalLayoutGraphics {
     #category: NodeEntryCategory;
@@ -403,4 +406,4 @@ type EntryContextData = BlueprintWaitContextData<EntryContextValue> & {
     label?: string;
 };
 
-export { BlueprintEntry, getConnectorColor };
+export { BlueprintEntry, ENTRY_PADDING, getConnectorColor };

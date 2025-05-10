@@ -4,6 +4,7 @@ import {
     BlueprintEntry,
     BlueprintMenu,
     BlueprintWaitContextData,
+    ENTRY_PADDING,
     getElementSize,
     HorizontalLayoutGraphics,
     VerticalLayoutGraphics,
@@ -512,8 +513,14 @@ class BlueprintNode extends PIXI.Container {
 
                 if (group) {
                     const groupLabel = this.getGroupLabel(group);
+                    const container = new HorizontalLayoutGraphics({
+                        maxHeight: this.entryHeight,
+                        padding: ENTRY_PADDING,
+                    });
                     const entry = this.preciseText(groupLabel);
-                    body[category].addChild(entry);
+
+                    container.addChild(entry);
+                    body[category].addChild(container);
                 }
 
                 for (const entry of entries) {
