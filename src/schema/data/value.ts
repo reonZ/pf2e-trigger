@@ -10,7 +10,7 @@ const itemSource = {
 
 const dcTarget = {
     inputs: [
-        { key: "target", type: "target" },
+        { key: "origin", type: "target" },
         { key: "item", type: "item" },
         { key: "against", type: "text" },
         {
@@ -28,7 +28,7 @@ const dcTarget = {
 
 const dcValue = {
     inputs: [
-        { key: "target", type: "target" },
+        { key: "origin", type: "target" },
         { key: "item", type: "item" },
         { key: "value", type: "number" },
     ],

@@ -4,11 +4,11 @@ import { TriggerDcEntry, TriggerNode } from "trigger";
 
 class DcTargetTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-target">> {
     async query(): Promise<TriggerDcEntry> {
-        const target = await this.get("target");
+        const origin = await this.get("origin");
         const against = await this.get("against");
-        const statistic = target?.actor.getStatistic(against);
+        const statistic = origin?.actor.getStatistic(against);
 
-        if (!target || !statistic) {
+        if (!origin || !statistic) {
             return { value: 0, scope: "check" };
         }
 
@@ -35,7 +35,7 @@ class DcTargetTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-target">
             game.i18n.format("PF2E.InlineCheck.DCWithName", { name: defenseStat.label });
 
         return {
-            target,
+            target: origin,
             statistic: defenseStat.dc,
             scope: "check",
             value: defenseStat.dc.value,

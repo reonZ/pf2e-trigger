@@ -4,15 +4,15 @@ import { TriggerDcEntry, TriggerNode } from "trigger";
 
 class DcValueTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-value">> {
     async query(): Promise<TriggerDcEntry> {
-        const target = await this.get("target");
+        const origin = await this.get("origin");
         const value = await this.get("value");
-        const StatisticCls = target?.actor.saves?.will?.constructor as typeof Statistic;
+        const StatisticCls = origin?.actor.saves?.will?.constructor as typeof Statistic;
 
-        if (!target || !StatisticCls) {
+        if (!origin || !StatisticCls) {
             return { value, scope: "check" };
         }
 
-        const actor = target.actor;
+        const actor = origin.actor;
         const item = await this.get("item");
         const domains = ["saving-throw", "all"];
 
@@ -45,7 +45,7 @@ class DcValueTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-value">> 
         });
 
         return {
-            target,
+            target: origin,
             statistic: statistic.dc,
             scope: "check",
             value: statistic.dc.value,
