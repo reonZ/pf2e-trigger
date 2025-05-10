@@ -11,6 +11,8 @@ import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollSaveTriggerNode } from "./roll-save";
 import { UseMacroTriggerNode } from "./use-macro";
+import { RemoveItemTriggerNode } from "./remove-item";
+import { RemoveItemSourceTriggerNode } from "./remove-item-source";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -19,6 +21,8 @@ export const action = {
     "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
+    "remove-item": RemoveItemTriggerNode,
+    "remove-item-source": RemoveItemSourceTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-with-save": TriggerNode,

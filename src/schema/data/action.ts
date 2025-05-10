@@ -127,6 +127,23 @@ const addPersistent = {
     ],
 } as const satisfies ActionRawSchema;
 
+const removeItem = {
+    icon: "\uf1f8",
+    inputs: [
+        { key: "item", type: "item" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
+const removeSourceItem = {
+    icon: "\uf1f8",
+    inputs: [
+        { key: "uuid", type: "uuid", field: { document: "Item" } },
+        { key: "target", type: "target" },
+    ],
+    document: "uuid",
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -138,6 +155,8 @@ export const action = {
     "add-temporary": addTemporary,
     "console-log": consoleLog,
     "reduce-condition": reduceCondition,
+    "remove-item": removeItem,
+    "remove-item-source": removeSourceItem,
     "remove-temporary": removeTemporary,
     "roll-damage-with-save": rollDamageWithSave,
     "roll-damage": rollDamage,

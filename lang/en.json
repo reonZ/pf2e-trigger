@@ -232,6 +232,12 @@
                         "counter": "Value"
                     }
                 },
+                "remove-item": {
+                    "label": "Remove Item"
+                },
+                "remove-item-source": {
+                    "label": "Remove Item (Source)"
+                },
                 "remove-temporary": {
                     "label": "Remove Trigger Effect"
                 },
