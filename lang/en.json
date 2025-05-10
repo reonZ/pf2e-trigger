@@ -230,6 +230,13 @@
                 "console-log": {
                     "label": "Console Log"
                 },
+                "effect-duration": {
+                    "label": "Update Effect Duration",
+                    "entry": {
+                        "effect": "Effect",
+                        "removed": "Removed"
+                    }
+                },
                 "get-choiceset": {
                     "label": "Retrieve Item ChoiceSet",
                     "entry": {

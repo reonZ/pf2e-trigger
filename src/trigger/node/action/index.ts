@@ -15,6 +15,7 @@ import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveItemSourceTriggerNode } from "./remove-item-source";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetCombatantTriggerNode } from "./get-combatant";
+import { EffectDurationTriggerNode } from "./effect-duration";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -22,6 +23,7 @@ export const action = {
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
+    "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,

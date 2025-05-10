@@ -166,6 +166,22 @@ const getCombatant = {
     outputs: [{ key: "combatant", type: "target" }],
 } as const satisfies ActionRawSchema;
 
+const effectDuration = {
+    icon: "\ue29e",
+    inputs: [
+        { key: "effect", type: "item" },
+        {
+            key: "value",
+            type: "number",
+            field: {
+                default: -1,
+                step: 1,
+            },
+        },
+    ],
+    outputs: [{ key: "removed", type: "boolean" }],
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -176,6 +192,7 @@ export const action = {
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "console-log": consoleLog,
+    "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,
     "reduce-condition": reduceCondition,
