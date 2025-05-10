@@ -588,6 +588,10 @@ class BlueprintNode extends PIXI.Container {
             return PIXI.Sprite.from(document.img);
         }
 
+        if (this.temporaryLabel) {
+            return this.fontAwesomeIcon("\uf1e6");
+        }
+
         const icon = this.schema.icon ?? BlueprintNode.NODE_ICONS[this.type];
         return icon ? this.fontAwesomeIcon(icon) : undefined;
     }
