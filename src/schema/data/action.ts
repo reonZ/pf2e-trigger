@@ -19,7 +19,11 @@ const rollSave = {
             field: { options: "CONFIG.PF2E.saves" },
         },
         { key: "dc", type: "dc" },
-        { key: "basic", type: "boolean", label: "action.roll-save" },
+        {
+            key: "basic",
+            type: "boolean",
+            label: "action.roll-save",
+        },
     ],
     outputs: [{ key: "result", type: "number" }],
 } as const satisfies ActionRawSchema;

@@ -1,5 +1,6 @@
 import {
     createEntryId,
+    getEntryLabel,
     NODE_NONBRIDGE_TYPES,
     NodeEntryId,
     nodeIdFromEntry,
@@ -8,7 +9,7 @@ import {
     TriggerNodeDataSource,
     WorldTriggers,
 } from "data";
-import { IdField, localize, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
+import { IdField, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
 import { isEvent, isVariable, NodeEventKey } from "schema";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
@@ -139,12 +140,13 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         // we know there is an event because of TriggerData#validateJoint
         this.event = this.nodes.find(isEvent)!;
 
-        // we generate all the output variables of the event node
-        for (const { type, key, label } of this.event.nodeSchema.outputs) {
-            const entryId = createEntryId(this.event, "outputs", key);
+        // we generate all the variables of the event node
+        for (const schema of this.event.nodeSchema.outputs) {
+            const entryId = createEntryId(this.event, "outputs", schema.key);
+
             this.variables[entryId] = {
-                type,
-                label: label ?? localize("entry", type),
+                type: schema.type,
+                label: getEntryLabel(schema, this.event),
                 global: false,
                 locked: true,
             };

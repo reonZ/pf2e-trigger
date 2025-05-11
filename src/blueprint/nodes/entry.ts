@@ -11,6 +11,7 @@ import {
 import {
     createEntryId,
     entriesAreCompatible,
+    getEntryLabel,
     NodeEntryCategory,
     NodeEntryId,
     NodeEntryType,
@@ -18,7 +19,7 @@ import {
     NonBridgeEntryType,
     TriggerData,
 } from "data";
-import { confirmDialog, localize, localizeIfExist, R } from "module-helpers";
+import { confirmDialog, R } from "module-helpers";
 import { BaseNodeSchemaEntry, hasInputConnector, NodeCustomEntryCategory } from "schema";
 
 const ENTRY_PADDING = [0, 2] as LayoutGraphicsPadding;
@@ -126,10 +127,6 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         return this.#schema;
     }
 
-    get localizePath(): string {
-        return `${this.node.localizePath}.entry`;
-    }
-
     get value(): NodeEntryValue {
         return this.node.getValue(this.key);
     }
@@ -197,21 +194,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         }
 
         const schema = this.schema;
-
-        if (schema.label) {
-            if (schema.custom) {
-                return schema.label;
-            }
-
-            return (
-                localizeIfExist("node", schema.label, "entry", schema.key) ??
-                localizeIfExist("entry", schema.label) ??
-                localizeIfExist(schema.label) ??
-                game.i18n.localize(schema.label)
-            );
-        }
-
-        return localizeIfExist(this.localizePath, schema.key) ?? localize("entry", schema.key);
+        return getEntryLabel(schema, this.node.data);
     }
 
     get contextEntries(): EntryContextData[] {
