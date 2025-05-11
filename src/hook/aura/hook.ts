@@ -111,7 +111,7 @@ class AuraHook extends TriggerHook {
                 if (!token) {
                     removeAuraFromMemory(actor, aura.data, aura.origin);
 
-                    if (actor.inCombat) {
+                    if (this.isValidActor(actor) && actor.inCombat) {
                         const target = { actor, token: actorTokens.at(0) };
                         this.executeTriggers({ this: target, aura }, "aura-leave");
                     }
@@ -150,7 +150,7 @@ class AuraHook extends TriggerHook {
 
                 setAuraInMemory(actor, auraData, source);
 
-                if (!already && actor.inCombat) {
+                if (!already && this.isValidActor(actor) && actor.inCombat) {
                     const target = { actor, token };
                     this.executeTriggers(
                         {

@@ -1,10 +1,11 @@
 import { TriggerData } from "data";
-import { AuraHook, TestHook, TriggerHook } from "hook";
+import { AuraHook, TestHook, TriggerHook, TurnHook } from "hook";
 import { MODULE } from "module-helpers";
 
 const HOOKS: TriggerHook[] = [
     new TestHook(), //
     new AuraHook(),
+    new TurnHook(),
 ];
 
 function prepareHooks(triggers: TriggerData[], subtriggers: TriggerData[]) {
@@ -13,6 +14,7 @@ function prepareHooks(triggers: TriggerData[], subtriggers: TriggerData[]) {
         hook.initialize(triggers, subtriggers);
     }
     MODULE.groupEnd();
+    MODULE.debug(HOOKS);
 }
 
 export { prepareHooks };

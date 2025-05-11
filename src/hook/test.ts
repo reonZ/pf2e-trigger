@@ -1,5 +1,5 @@
 import { R, warning } from "module-helpers";
-import { TriggerHook } from "./hook";
+import { TriggerHook } from "hook";
 
 class TestHook extends TriggerHook {
     get events(): ["test-event"] {
@@ -20,7 +20,7 @@ class TestHook extends TriggerHook {
         const token = R.first(canvas.tokens.controlled);
         const actor = token?.actor ?? game.user.character;
 
-        if (!actor) {
+        if (!this.isValidActor(actor)) {
             warning("node.event.test-event.warning");
             return;
         }
