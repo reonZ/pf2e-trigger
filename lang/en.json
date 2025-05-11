@@ -209,12 +209,6 @@
                 "add-condition": {
                     "label": "Add Condition"
                 },
-                "add-item": {
-                    "label": "Add Item",
-                    "entry": {
-                        "duplicate": "Duplicate?"
-                    }
-                },
                 "add-persistent": {
                     "label": "Add Persistent Damage",
                     "entry": {
@@ -229,6 +223,12 @@
                 },
                 "console-log": {
                     "label": "Console Log"
+                },
+                "create-item": {
+                    "label": "Create Item",
+                    "entry": {
+                        "duplicate": "Duplicate?"
+                    }
                 },
                 "delete-item": {
                     "label": "Delete Item"

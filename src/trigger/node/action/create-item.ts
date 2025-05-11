@@ -9,7 +9,7 @@ import {
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
-class AddItemTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-item">> {
+class CreateItemTriggerNode extends TriggerNode<NodeSchemaOf<"action", "create-item">> {
     async execute(): Promise<boolean> {
         const uuid = await this.get("uuid");
         const actor = await this.getTargetActor("target");
@@ -46,4 +46,4 @@ class AddItemTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-item">>
     }
 }
 
-export { AddItemTriggerNode };
+export { CreateItemTriggerNode };

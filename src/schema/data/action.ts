@@ -62,7 +62,7 @@ const useMacro = {
     ],
 } as const satisfies ActionRawSchema;
 
-const addItem = {
+const createItem = {
     icon: "\uf466",
     inputs: [
         { key: "uuid", type: "uuid", field: { document: "Item" } },
@@ -199,10 +199,10 @@ type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 
 export const action = {
     "add-condition": addCondition,
-    "add-item": addItem,
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "console-log": consoleLog,
+    "create-item": createItem,
     "delete-item": deleteItem,
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
