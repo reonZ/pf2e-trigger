@@ -117,3 +117,4 @@ export {
     removeAuraFromMemory,
     setAuraInMemory,
 };
+export type { ActorAura };

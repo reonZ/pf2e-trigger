@@ -26,21 +26,21 @@ function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "40
                 },
             },
         ],
+        outputs: [
+            { key: "this", type: "target" }, //
+            {
+                key: "source",
+                type: "target",
+                label: "condition.inside-aura",
+            },
+        ],
     } as const satisfies NodeRawSchema;
 }
 
 function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
-        icon: {
-            unicode,
-            fontWeight,
-        },
-        outputs: [
-            {
-                key: "this",
-                type: "target",
-            },
-        ],
+        icon: { unicode, fontWeight },
+        outputs: [{ key: "this", type: "target" }],
     } as const satisfies NodeRawSchema;
 }
 

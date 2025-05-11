@@ -41,7 +41,11 @@ class Trigger {
         this.#options.variables[entryId] = value;
     }
 
-    setOptions(key: Exclude<string, "variables" | "this">, value: any) {
+    getOption(key: Exclude<string, "variables" | "this">): unknown {
+        return this.#options[key];
+    }
+
+    setOption(key: Exclude<string, "variables" | "this">, value: any) {
         this.#options[key] = value;
     }
 

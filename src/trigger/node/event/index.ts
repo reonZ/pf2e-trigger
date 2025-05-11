@@ -1,8 +1,11 @@
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
 import { EventTriggerNode } from "./event";
+import { AuraTriggerNode } from "./aura";
 
 export const event = {
+    "aura-enter": AuraTriggerNode,
+    "aura-leave": AuraTriggerNode,
     "test-event": EventTriggerNode,
     "token-create": EventTriggerNode,
     "token-delete": EventTriggerNode,
