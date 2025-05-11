@@ -1,11 +1,11 @@
 import { TriggerData } from "data";
-import { ActorPF2e, createHook, MODULE, R, userIsGM } from "module-helpers";
+import { ActorPF2e, createHook, MODULE, PersistentHook, R, userIsGM } from "module-helpers";
 import { NodeEventKey, NodeKey, NonEventKey } from "schema";
 import { Trigger, TriggerPreOptions } from "trigger";
 
 abstract class TriggerHook {
-    #triggers = new Collection<TriggerData>();
-    #active = new Set<this["events"][number]>();
+    #triggers = new Map<string, TriggerData>();
+    #events: PartialRecord<NodeEventKey, TriggerData[]> = {};
 
     abstract get events(): NodeEventKey[];
     abstract activate(): void;
@@ -15,52 +15,52 @@ abstract class TriggerHook {
         return [];
     }
 
-    get activeEvents(): Set<this["events"][number]> {
-        return this.#active;
-    }
-
     activateAll() {}
     disableAll() {}
 
     initialize(triggers: TriggerData[], subtriggers: TriggerData[]) {
         this.#triggers.clear();
-        this.#active.clear();
+        this.#events = {};
 
         const isGM = userIsGM();
         const nodeKeys: NodeKey[] = this.nodes;
         const eventKeys = this.events;
 
-        trigger: for (const trigger of triggers) {
-            const triggerEventKey = trigger.event.key;
+        let active = false;
 
-            if (eventKeys.includes(triggerEventKey)) {
+        trigger: for (const trigger of triggers) {
+            const eventKey = trigger.event.key;
+
+            if (eventKeys.includes(eventKey)) {
                 this.#triggers.set(trigger.id, trigger);
-                this.#active.add(triggerEventKey);
+                (this.#events[eventKey] ??= []).push(trigger);
+
+                active = true;
                 continue trigger;
             }
 
-            if (nodeKeys.length) {
+            if (!active && nodeKeys.length) {
                 for (const node of trigger.nodes) {
                     if (nodeKeys.includes(node.key)) {
-                        this.#active.add(triggerEventKey);
+                        active = true;
                         continue trigger;
                     }
                 }
             }
         }
 
-        if (!this.#active.size && nodeKeys.length) {
+        if (!active && nodeKeys.length) {
             subtrigger: for (const trigger of subtriggers) {
                 for (const node of trigger.nodes) {
                     if (nodeKeys.includes(node.key)) {
-                        this.#active.add(trigger.event.key);
+                        active = true;
                         continue subtrigger;
                     }
                 }
             }
         }
 
-        if (this.#active.size) {
+        if (active) {
             MODULE.debug(this.constructor.name, "active");
             if (isGM) {
                 this.activate();
@@ -76,9 +76,9 @@ abstract class TriggerHook {
     }
 
     async executeTriggers(options: TriggerPreOptions, event?: this["events"][number]) {
-        for (const data of this.#triggers) {
-            if (event && data.event.key !== event) continue;
+        const triggers = event ? this.#events[event] : this.#triggers.values();
 
+        for (const data of triggers ?? []) {
             const trigger = new Trigger(data, options);
             await trigger.execute();
         }
@@ -92,13 +92,19 @@ abstract class TriggerHook {
         return this.isValidActor(actor) && game.user.isActiveGM;
     }
 
-    createEventHook(event: string, listener: (...args: any[]) => any) {
+    createEventHook(
+        event: string,
+        listener: (...args: any[]) => any
+    ): PersistentEventHook<this["events"][number]> {
         const hook = createHook(event, listener);
-        const activeEvents = this.activeEvents;
+        const self = this;
 
         type TriggerHookEvent = this["events"][number];
 
         return {
+            get enabled(): boolean {
+                return hook.enabled;
+            },
             activate() {
                 hook.activate();
             },
@@ -106,6 +112,7 @@ abstract class TriggerHook {
                 hook.disable();
             },
             toggle(...args: (TriggerHookEvent | boolean)[]) {
+                const activeEvents = R.keys(self.#events);
                 const [booleans, events] = R.partition(args, R.isBoolean) as [
                     boolean[],
                     TriggerHookEvent[]
@@ -113,11 +120,15 @@ abstract class TriggerHook {
 
                 hook.toggle(
                     booleans.every(R.isTruthy) &&
-                        (!events.length || events.some((event) => activeEvents.has(event)))
+                        (!events.length || events.some((event) => activeEvents.includes(event)))
                 );
             },
         };
     }
 }
+
+type PersistentEventHook<TEvents extends NodeEventKey> = Omit<PersistentHook, "toggle"> & {
+    toggle(...args: (TEvents | boolean)[]): void;
+};
 
 export { TriggerHook };
