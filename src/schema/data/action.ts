@@ -73,6 +73,14 @@ const createItem = {
     document: "uuid",
 } as const satisfies ActionRawSchema;
 
+const giveItem = {
+    icon: "\uf2b5",
+    inputs: [
+        { key: "item", type: "item" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 const addCondition = {
     icon: { unicode: "\ue54d", fontWeight: "900" },
     inputs: [
@@ -207,6 +215,7 @@ export const action = {
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,
+    "give-item": giveItem,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
     "remove-temporary": removeTemporary,

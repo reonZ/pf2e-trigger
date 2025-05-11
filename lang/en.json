@@ -254,6 +254,9 @@
                         "combatant": "Combatant"
                     }
                 },
+                "give-item": {
+                    "label": "Give Physical Item"
+                },
                 "reduce-condition": {
                     "label": "Reduce Condition",
                     "entry": {

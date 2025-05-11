@@ -17,6 +17,7 @@ import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
 import { RollSaveTriggerNode } from "./roll-save";
 import { UseMacroTriggerNode } from "./use-macro";
+import { GiveItemTriggerNode } from "./give-item";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -28,6 +29,7 @@ export const action = {
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,
+    "give-item": GiveItemTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
