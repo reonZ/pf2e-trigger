@@ -144,15 +144,12 @@ const addPersistent = {
     ],
 } as const satisfies ActionRawSchema;
 
-const removeItem = {
+const deleteItem = {
     icon: "\uf1f8",
-    inputs: [
-        { key: "item", type: "item" },
-        { key: "target", type: "target" },
-    ],
+    inputs: [{ key: "item", type: "item" }],
 } as const satisfies ActionRawSchema;
 
-const removeSourceItem = {
+const removeItem = {
     icon: "\uf1f8",
     inputs: [
         {
@@ -206,12 +203,12 @@ export const action = {
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "console-log": consoleLog,
+    "delete-item": deleteItem,
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
-    "remove-item-source": removeSourceItem,
     "remove-temporary": removeTemporary,
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,

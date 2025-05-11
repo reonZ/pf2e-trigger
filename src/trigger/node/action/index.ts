@@ -6,12 +6,12 @@ import { AddItemTriggerNode } from "./add-item";
 import { AddPersistentTriggerNode } from "./add-persistent";
 import { AddTemporaryTriggerNode } from "./add-temporary";
 import { ConsoleLogTriggerNode } from "./console-log";
+import { DeleteItemTriggerNode } from "./delete-item";
 import { EffectDurationTriggerNode } from "./effect-duration";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetCombatantTriggerNode } from "./get-combatant";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
-import { RemoveItemSourceTriggerNode } from "./remove-item-source";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
@@ -24,12 +24,12 @@ export const action = {
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "console-log": ConsoleLogTriggerNode,
+    "delete-item": DeleteItemTriggerNode,
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
-    "remove-item-source": RemoveItemSourceTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-save": RollDamageSaveTriggerNode,

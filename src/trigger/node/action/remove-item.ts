@@ -1,20 +1,18 @@
-import { findItemWithSourceId, getItemSourceId } from "module-helpers";
+import { findItemWithSourceId } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
 class RemoveItemTriggerNode extends TriggerNode<NodeSchemaOf<"action", "remove-item">> {
     async execute(): Promise<boolean> {
-        const item = await this.get("item");
         const actor = await this.getTargetActor("target");
 
-        if (!actor || !item) {
-            return this.send("out");
+        if (actor) {
+            const uuid = await this.get("uuid");
+            const exist = findItemWithSourceId(actor, uuid);
+
+            await exist?.delete();
         }
 
-        const exist =
-            item.actor === actor ? item : findItemWithSourceId(actor, getItemSourceId(item));
-
-        await exist?.delete();
         return this.send("out");
     }
 }

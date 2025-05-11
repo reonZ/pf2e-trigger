@@ -230,6 +230,9 @@
                 "console-log": {
                     "label": "Console Log"
                 },
+                "delete-item": {
+                    "label": "Delete Item"
+                },
                 "effect-duration": {
                     "label": "Update Effect Duration",
                     "entry": {
@@ -259,9 +262,6 @@
                 },
                 "remove-item": {
                     "label": "Remove Item"
-                },
-                "remove-item-source": {
-                    "label": "Remove Item (Source)"
                 },
                 "remove-temporary": {
                     "label": "Remove Trigger Effect"
