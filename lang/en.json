@@ -191,7 +191,8 @@
             "true": "True",
             "type": "Type",
             "unit": "Unit",
-            "value": "Value"
+            "value": "Value",
+            "quantity": "Quantity"
         },
         "document": {
             "broken": "Broken Link",

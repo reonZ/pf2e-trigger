@@ -77,6 +77,11 @@ const giveItem = {
     icon: "\uf2b5",
     inputs: [
         { key: "item", type: "item" },
+        {
+            key: "quantity",
+            type: "number",
+            field: { min: 1, default: 1 },
+        },
         { key: "target", type: "target" },
     ],
 } as const satisfies ActionRawSchema;
