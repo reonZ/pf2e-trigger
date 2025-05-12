@@ -6,6 +6,14 @@ const executeEvent = {
     custom: [{ category: "outputs" }],
 } as const satisfies EventNodeSchema;
 
+const regionEvent = {
+    icon: "\uf867",
+    outputs: [
+        { key: "this", type: "target" },
+        { key: "event", type: "text" },
+    ],
+} as const satisfies EventNodeSchema;
+
 function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -93,6 +101,7 @@ export const event = {
     "damage-dealt": createDamageSchema("\ue4dc", "900"),
     "damage-taken": createDamageSchema("\ue24b", "900"),
     "execute-event": executeEvent,
+    "region-event": regionEvent,
     "test-event": createEventSchema("\ue4f3"),
     "token-create": createEventSchema("\uf2bd", "900"),
     "token-delete": createEventSchema("\uf2bd"),

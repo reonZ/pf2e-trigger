@@ -1,5 +1,6 @@
 import { BlueprintApplication } from "blueprint";
 import { TriggerData, TriggerNodeData, WorldTriggers } from "data";
+import { PF2eTriggerBehaviorType } from "hook";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
 import { prepareTriggers } from "trigger";
 
@@ -28,6 +29,9 @@ Hooks.once("init", () => {
             R.mapToObj(([key, value]) => [key, value])
         ),
     };
+
+    CONFIG.RegionBehavior.dataModels[MODULE.path("trigger")] = PF2eTriggerBehaviorType;
+    CONFIG.RegionBehavior.typeIcons[MODULE.path("trigger")] = "fa-solid fa-land-mine-on";
 
     // we register after CONFIG is set because foundry creates an instance right away
     registerSetting("world-triggers", {

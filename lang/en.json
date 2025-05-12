@@ -361,6 +361,12 @@
                     "label": "Execute Event",
                     "subtitle": "game.trigger.execute()"
                 },
+                "region-event": {
+                    "label": "Scene Region",
+                    "entry": {
+                        "event": "Event"
+                    }
+                },
                 "test-event": {
                     "label": "Test Event",
                     "subtitle": "game.trigger.test()",

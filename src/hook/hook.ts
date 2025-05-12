@@ -75,6 +75,10 @@ abstract class TriggerHook {
         }
     }
 
+    getTrigger(id: string): TriggerData | undefined {
+        return this.#triggers.get(id);
+    }
+
     async executeTriggers<TOptions extends Record<string, any> | never = never>(
         options: TriggerPreOptions<TOptions>,
         event?: this["events"][number]

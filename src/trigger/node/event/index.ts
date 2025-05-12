@@ -1,9 +1,10 @@
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
-import { EventTriggerNode } from "./event";
 import { AuraTriggerNode } from "./aura";
 import { DamageTriggerNode } from "./damage";
+import { EventTriggerNode } from "./event";
 import { ExecuteTriggerNode } from "./execute";
+import { RegionTriggerNode } from "./region";
 
 export const event = {
     "aura-enter": AuraTriggerNode,
@@ -11,6 +12,7 @@ export const event = {
     "damage-dealt": DamageTriggerNode,
     "damage-taken": DamageTriggerNode,
     "execute-event": ExecuteTriggerNode,
+    "region-event": RegionTriggerNode,
     "test-event": EventTriggerNode,
     "token-create": EventTriggerNode,
     "token-delete": EventTriggerNode,
