@@ -132,7 +132,7 @@ type NodeRawSchema = {
     custom?: ReadonlyArray<NodeSchemaCustom>;
     outs?: ReadonlyArray<NodeSchemaRawBridge>;
     inputs?: ReadonlyArray<NodeSchemaInput>;
-    outputs?: ReadonlyArray<NodeSchemaVariable>;
+    outputs?: ReadonlyArray<NodeSchemaOutput>;
 };
 
 type NodeRawSchemaEntry<T extends NodeEntryType> = BaseNodeSchemaEntry<T>;
@@ -140,7 +140,7 @@ type NodeRawSchemaEntry<T extends NodeEntryType> = BaseNodeSchemaEntry<T>;
 type NodeSchemaBridge = NodeRawSchemaEntry<"bridge">;
 type NodeSchemaRawBridge = WithPartial<NodeSchemaBridge, "type">;
 
-type NodeSchemaVariable = NodeRawSchemaEntry<NonBridgeEntryType>;
+type NodeSchemaOutput = NodeRawSchemaEntry<NonBridgeEntryType>;
 
 type NodeSchemaInput =
     | NodeSchemaBoolean
@@ -265,7 +265,7 @@ export type {
     NodeSchemaRawBridge,
     NodeSchemaSelect,
     NodeSchemaUuid,
-    NodeSchemaVariable,
+    NodeSchemaOutput,
     NonEventKey,
     SchemaEntries,
     SelectEntrySchema,

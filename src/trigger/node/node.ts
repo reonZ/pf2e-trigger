@@ -8,7 +8,15 @@ import {
     NodeType,
     TriggerNodeData,
 } from "data";
-import { ActorPF2e, getItemFromUuid, getItemSourceId, isUuidOf, ItemPF2e, R } from "module-helpers";
+import {
+    ActorPF2e,
+    getItemFromUuid,
+    getItemSourceId,
+    isUuidOf,
+    ItemPF2e,
+    MODULE,
+    R,
+} from "module-helpers";
 import {
     NodeFieldSchema,
     NodeInputSchema,
@@ -319,6 +327,27 @@ class TriggerNode<
             default: {
                 return false;
             }
+        }
+    }
+
+    setOutputValues(values: unknown) {
+        if (!R.isArray(values)) return;
+
+        try {
+            const outputs = this.customOutputs;
+
+            for (let i = 0; i < outputs.length; i++) {
+                const value = values[i];
+                if (R.isNullish(value)) continue;
+
+                const output = outputs[i];
+
+                if (this.isValidCustomEntry(output.type, value)) {
+                    this.setVariable(output.key as any, value as any);
+                }
+            }
+        } catch (err) {
+            MODULE.error(`an error occured while setting output values for: ${this.id}`, err);
         }
     }
 

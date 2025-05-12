@@ -357,6 +357,10 @@
                         "negated": "No Damage?"
                     }
                 },
+                "execute-event": {
+                    "label": "Execute Event",
+                    "subtitle": "game.trigger.execute()"
+                },
                 "test-event": {
                     "label": "Test Event",
                     "subtitle": "game.trigger.test()",

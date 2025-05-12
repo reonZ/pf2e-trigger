@@ -25,10 +25,8 @@ class TestHook extends TriggerHook {
             return;
         }
 
-        this.executeTriggers({
-            // @ts-ignore
-            this: { actor, token: token?.document },
-        });
+        // @ts-ignore
+        this.executeTriggers({ this: { actor, token: token?.document } });
     }
 }
 

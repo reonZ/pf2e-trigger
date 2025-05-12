@@ -1,4 +1,10 @@
-import { NodeRawSchema } from "schema";
+import { NodeRawSchema, NodeSchemaOutput } from "schema";
+
+const executeEvent = {
+    icon: "\uf144",
+    outputs: [{ key: "this", type: "target" }],
+    custom: [{ category: "outputs" }],
+} as const satisfies EventNodeSchema;
 
 function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
@@ -27,14 +33,14 @@ function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "40
             },
         ],
         outputs: [
-            { key: "this", type: "target" }, //
+            { key: "this", type: "target" },
             {
                 key: "source",
                 type: "target",
                 label: "condition.inside-aura",
             },
         ],
-    } as const satisfies NodeRawSchema;
+    } as const satisfies EventNodeSchema;
 }
 
 function createDamageSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
@@ -67,21 +73,26 @@ function createDamageSchema(unicode: string, fontWeight: TextStyleFontWeight = "
                 label: "event.damage-taken",
             },
         ],
-    } as const satisfies NodeRawSchema;
+    } as const satisfies EventNodeSchema;
 }
 
 function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
         outputs: [{ key: "this", type: "target" }],
-    } as const satisfies NodeRawSchema;
+    } as const satisfies EventNodeSchema;
 }
+
+type EventNodeSchema = Omit<WithRequired<NodeRawSchema, "icon">, "outputs"> & {
+    outputs: ReadonlyArray<{ key: "this"; type: "target" } | NodeSchemaOutput>;
+};
 
 export const event = {
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
     "damage-dealt": createDamageSchema("\ue4dc", "900"),
     "damage-taken": createDamageSchema("\ue24b", "900"),
+    "execute-event": executeEvent,
     "test-event": createEventSchema("\ue4f3"),
     "token-create": createEventSchema("\uf2bd", "900"),
     "token-delete": createEventSchema("\uf2bd"),
