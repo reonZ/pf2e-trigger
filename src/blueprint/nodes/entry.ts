@@ -32,6 +32,8 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     #schema: BaseNodeSchemaEntry;
     #id: NodeEntryId;
 
+    static UNLABELED_ENTRIES: NodeEntryType[] = ["select", "text", "uuid"];
+
     static CONNECTOR_COLOR: Record<NodeEntryType, number> = {
         boolean: 0xad0303,
         bridge: 0xffffff,
@@ -272,13 +274,19 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
     }
 
     #drawLabel(): PreciseText | undefined {
-        if (this.isInput && ["select", "text", "uuid"].includes(this.type)) return;
-        return this.node.preciseText(this.label);
+        if (
+            this.isOutput ||
+            this.node.isSplitter ||
+            !BlueprintEntry.UNLABELED_ENTRIES.includes(this.type)
+        ) {
+            return this.node.preciseText(this.label);
+        }
     }
 
     #drawField(): EntryField | undefined {
-        if (this.isOutput || !EntryField.ALLOWED_TYPES.includes(this.type)) return;
-        return new EntryField(this);
+        if (this.isInput && !this.node.isSplitter && EntryField.ALLOWED_TYPES.includes(this.type)) {
+            return new EntryField(this);
+        }
     }
 
     #drawConnector(): PIXI.Graphics | undefined {

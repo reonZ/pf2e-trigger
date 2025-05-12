@@ -231,6 +231,10 @@ class BlueprintNode extends PIXI.Container {
         return this.type === "action";
     }
 
+    get isSplitter(): boolean {
+        return this.type === "splitter";
+    }
+
     get isMacro(): boolean {
         return this.isAction && this.key === "use-macro";
     }
