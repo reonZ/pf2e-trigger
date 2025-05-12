@@ -75,7 +75,10 @@ abstract class TriggerHook {
         }
     }
 
-    async executeTriggers(options: TriggerPreOptions, event?: this["events"][number]) {
+    async executeTriggers<TOptions extends Record<string, any> | never = never>(
+        options: TriggerPreOptions<TOptions>,
+        event?: this["events"][number]
+    ) {
         const triggers = event ? this.#events[event] : this.#triggers.values();
 
         for (const data of triggers ?? []) {

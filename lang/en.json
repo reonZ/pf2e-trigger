@@ -341,6 +341,22 @@
                 "aura-leave": {
                     "label": "Aura Left"
                 },
+                "damage-dealt": {
+                    "label": "Damage Dealt",
+                    "entry": {
+                        "other": "Damage Target"
+                    }
+                },
+                "damage-taken": {
+                    "label": "Damage Taken",
+                    "entry": {
+                        "other": "Damage Origin",
+                        "item": "Damage Item",
+                        "heal": "Is Healing",
+                        "options": "Roll Options",
+                        "negated": "No Damage?"
+                    }
+                },
                 "test-event": {
                     "label": "Test Event",
                     "subtitle": "game.trigger.test()",

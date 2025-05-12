@@ -41,7 +41,7 @@ class Trigger {
         this.#options.variables[entryId] = value;
     }
 
-    getOption(key: Exclude<string, "variables" | "this">): unknown {
+    getOption(key: string) {
         return this.#options[key];
     }
 
@@ -81,10 +81,9 @@ function getSubtrigger(id: string): TriggerData | undefined {
     return SUBTRIGGERS[id];
 }
 
-type TriggerPreOptions = {
+type TriggerPreOptions<TOptions extends Record<string, any> = Record<string, any>> = TOptions & {
     this: TargetDocuments;
     variables?: Record<NodeEntryId, TriggerValue>;
-    [k: string]: any;
 };
 
 type TriggerOptions = WithRequired<TriggerPreOptions, "variables">;

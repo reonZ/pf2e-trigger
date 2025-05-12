@@ -37,6 +37,39 @@ function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "40
     } as const satisfies NodeRawSchema;
 }
 
+function createDamageSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
+    return {
+        icon: { unicode, fontWeight },
+        outputs: [
+            { key: "this", type: "target" },
+            {
+                key: "other",
+                type: "target",
+            },
+            {
+                key: "item",
+                type: "item",
+                label: "event.damage-taken",
+            },
+            {
+                key: "heal",
+                type: "boolean",
+                label: "event.damage-taken",
+            },
+            {
+                key: "negated",
+                type: "boolean",
+                label: "event.damage-taken",
+            },
+            {
+                key: "options",
+                type: "list",
+                label: "event.damage-taken",
+            },
+        ],
+    } as const satisfies NodeRawSchema;
+}
+
 function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -47,6 +80,8 @@ function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "4
 export const event = {
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
+    "damage-dealt": createDamageSchema("\ue4dc", "900"),
+    "damage-taken": createDamageSchema("\ue24b", "900"),
     "test-event": createEventSchema("\ue4f3"),
     "token-create": createEventSchema("\uf2bd", "900"),
     "token-delete": createEventSchema("\uf2bd"),

@@ -26,7 +26,10 @@ import {
     TriggerValue,
 } from "trigger";
 
-class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
+class TriggerNode<
+    TSchema extends NodeRawSchema = NodeRawSchema,
+    TOptions extends Record<string, any> = Record<string, any>
+> {
     #trigger: Trigger;
     #data: TriggerNodeData;
     #get: Record<string, () => any> = {};
@@ -91,6 +94,14 @@ class TriggerNode<TSchema extends NodeRawSchema = NodeRawSchema> {
     async send(key: ExtractOutKey<TSchema>): Promise<boolean> {
         const output = String(key);
         return this.#getFirstNodeFromEntries(this.#data.outputs[output])?.node.execute() ?? false;
+    }
+
+    getOption<K extends keyof TOptions & string>(key: K): TOptions[K] {
+        return this.trigger.getOption(key);
+    }
+
+    setOption<K extends keyof TOptions & string>(key: K, value: TOptions[K]) {
+        this.trigger.setOption(key, value);
     }
 
     setVariable<K extends ExtractOutputKey<TSchema>>(

@@ -1,5 +1,5 @@
-import { R, warning } from "module-helpers";
 import { TriggerHook } from "hook";
+import { R, warning } from "module-helpers";
 
 class TestHook extends TriggerHook {
     get events(): ["test-event"] {
@@ -25,7 +25,10 @@ class TestHook extends TriggerHook {
             return;
         }
 
-        this.executeTriggers({ this: { actor, token: token?.document } });
+        this.executeTriggers({
+            // @ts-ignore
+            this: { actor, token: token?.document },
+        });
     }
 }
 

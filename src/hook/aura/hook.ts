@@ -1,4 +1,5 @@
 import {
+    ActorAura,
     auraCheckCleanup,
     auraSearch,
     getAurasInMemory,
@@ -113,7 +114,10 @@ class AuraHook extends TriggerHook {
 
                     if (this.isValidActor(actor) && actor.inCombat) {
                         const target = { actor, token: actorTokens.at(0) };
-                        this.executeTriggers({ this: target, aura }, "aura-leave");
+                        this.executeTriggers<AuraTriggerOptions>(
+                            { this: target, aura },
+                            "aura-leave"
+                        );
                     }
                 }
             }
@@ -152,7 +156,7 @@ class AuraHook extends TriggerHook {
 
                 if (!already && this.isValidActor(actor) && actor.inCombat) {
                     const target = { actor, token };
-                    this.executeTriggers(
+                    this.executeTriggers<AuraTriggerOptions>(
                         {
                             this: target,
                             aura: { data: auraData, origin: source },
@@ -165,4 +169,9 @@ class AuraHook extends TriggerHook {
     }
 }
 
+type AuraTriggerOptions = {
+    aura: ActorAura;
+};
+
 export { AuraHook };
+export type { AuraTriggerOptions };
