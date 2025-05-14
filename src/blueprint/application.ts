@@ -69,6 +69,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         return super.close(options);
     }
 
+    bringToFront() {
+        this.element.style.zIndex = String(++apps.ApplicationV2._maxZ);
+    }
+
     refresh() {
         this.render({ parts: ["sidebar", "title"] });
     }
@@ -80,9 +84,11 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     toggleCollapsed(collapse?: boolean) {
         this.element.classList.toggle("collapsed", collapse);
+        this.bringToFront();
     }
 
     _onFirstRender(context: object, options: BlueprintMenuRenderOptions) {
+        this.bringToFront();
         // we wait one frame before initializing the canvas
         requestAnimationFrame(() => {
             this.blueprint.initialize(this);
