@@ -36,13 +36,12 @@
                 "title": "Triggers Menu",
                 "close": "Close Window",
                 "import": "Import",
-                "export-all": "Export All",
+                "export": "Export All",
                 "trigger": {
                     "add": "Create Trigger",
                     "copied": "The Trigger ID <strong>{id}</strong> has been copied to the clipboard.",
                     "copy": "Copy Trigger ID",
                     "delete": "Delete Trigger",
-                    "export": "Export Trigger",
                     "title": "Triggers"
                 },
                 "subtrigger": {
@@ -340,12 +339,6 @@
                 },
                 "aura-leave": {
                     "label": "Aura Left"
-                },
-                "damage-dealt": {
-                    "label": "Damage Dealt",
-                    "entry": {
-                        "other": "Damage Target"
-                    }
                 },
                 "damage-taken": {
                     "label": "Damage Taken",

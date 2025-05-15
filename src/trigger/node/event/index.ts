@@ -9,7 +9,6 @@ import { RegionTriggerNode } from "./region";
 export const event = {
     "aura-enter": AuraTriggerNode,
     "aura-leave": AuraTriggerNode,
-    "damage-dealt": DamageTriggerNode,
     "damage-taken": DamageTriggerNode,
     "execute-event": ExecuteTriggerNode,
     "region-event": RegionTriggerNode,

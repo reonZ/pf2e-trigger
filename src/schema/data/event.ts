@@ -14,6 +14,37 @@ const regionEvent = {
     ],
 } as const satisfies EventNodeSchema;
 
+const damageTaken = {
+    icon: { unicode: "\ue4dc", fontWeight: "900" },
+    outputs: [
+        { key: "this", type: "target" },
+        {
+            key: "other",
+            type: "target",
+        },
+        {
+            key: "item",
+            type: "item",
+            label: "event.damage-taken",
+        },
+        {
+            key: "heal",
+            type: "boolean",
+            label: "event.damage-taken",
+        },
+        {
+            key: "negated",
+            type: "boolean",
+            label: "event.damage-taken",
+        },
+        {
+            key: "options",
+            type: "list",
+            label: "event.damage-taken",
+        },
+    ],
+} as const satisfies EventNodeSchema;
+
 function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -51,39 +82,6 @@ function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "40
     } as const satisfies EventNodeSchema;
 }
 
-function createDamageSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
-    return {
-        icon: { unicode, fontWeight },
-        outputs: [
-            { key: "this", type: "target" },
-            {
-                key: "other",
-                type: "target",
-            },
-            {
-                key: "item",
-                type: "item",
-                label: "event.damage-taken",
-            },
-            {
-                key: "heal",
-                type: "boolean",
-                label: "event.damage-taken",
-            },
-            {
-                key: "negated",
-                type: "boolean",
-                label: "event.damage-taken",
-            },
-            {
-                key: "options",
-                type: "list",
-                label: "event.damage-taken",
-            },
-        ],
-    } as const satisfies EventNodeSchema;
-}
-
 function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -98,8 +96,7 @@ type EventNodeSchema = Omit<WithRequired<NodeRawSchema, "icon">, "outputs"> & {
 export const event = {
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
-    "damage-dealt": createDamageSchema("\ue4dc", "900"),
-    "damage-taken": createDamageSchema("\ue24b", "900"),
+    "damage-taken": damageTaken,
     "execute-event": executeEvent,
     "region-event": regionEvent,
     "test-event": createEventSchema("\ue4f3"),

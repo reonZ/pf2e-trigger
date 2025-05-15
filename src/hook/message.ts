@@ -11,8 +11,8 @@ import {
 class MessageHook extends TriggerHook {
     #createMessageHook = createHook("createChatMessage", this.#onCreateMessage.bind(this));
 
-    get events(): ["damage-taken", "damage-dealt"] {
-        return ["damage-taken", "damage-dealt"];
+    get events(): ["damage-taken"] {
+        return ["damage-taken"];
     }
 
     activate(): void {
@@ -43,32 +43,16 @@ class MessageHook extends TriggerHook {
         const item = await fromUuid<ItemPF2e>(origin.uuid);
         if (!(item instanceof Item)) return;
 
-        const negated = appliedDamage == null;
-        const heal = !!appliedDamage?.isHealing;
-        const options = context?.options ?? [];
-
         this.executeTriggers<DamageTriggerOptions>(
             {
-                heal,
+                heal: !!appliedDamage?.isHealing,
                 item,
-                options,
-                negated,
+                options: context?.options ?? [],
+                negated: appliedDamage == null,
                 other: source,
                 this: target,
             },
             "damage-taken"
-        );
-
-        this.executeTriggers<DamageTriggerOptions>(
-            {
-                heal,
-                item,
-                options,
-                negated,
-                other: target,
-                this: source,
-            },
-            "damage-dealt"
         );
     }
 }
