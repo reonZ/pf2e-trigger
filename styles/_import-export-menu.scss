@@ -1,0 +1,96 @@
+#pf2e-trigger-export-menu,
+#pf2e-trigger-import-menu {
+    min-height: 600px;
+
+    .window-content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 1fr auto;
+        row-gap: 1em;
+
+        .triggers,
+        .subtriggers,
+        .items {
+            overflow: hidden;
+        }
+
+        .triggers,
+        .subtriggers {
+            &:not(:last-child) {
+                border-right: 1px solid var(--color-border);
+            }
+        }
+
+        .triggers {
+            padding-right: 1em;
+        }
+
+        .subtriggers {
+            padding-inline: 1em;
+        }
+
+        .items {
+            padding-left: 1em;
+        }
+
+        .title {
+            position: relative;
+            text-align: center;
+            margin-bottom: 0.5em;
+
+            a {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                margin-block: 0;
+
+                &.toggle {
+                    left: 0.15em;
+                }
+
+                &.add {
+                    right: 0.15em;
+                }
+            }
+
+            span {
+                font-weight: bold;
+                text-transform: uppercase;
+                font-size: 1.1em;
+            }
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+
+            li {
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+
+                input {
+                    margin: 0;
+                }
+
+                span {
+                    flex: 1;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        .buttons {
+            --nb-buttons: 1;
+
+            grid-row: 2;
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(var(--nb-buttons), 1fr);
+            gap: 1em;
+        }
+    }
+}

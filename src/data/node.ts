@@ -91,13 +91,11 @@ const triggerNodeDataSchema = (): TriggerNodeDataSchema => ({
                 required: false,
                 nullable: false,
                 blank: false,
-                readonly: true,
             }),
         ],
         {
             required: false,
             nullable: false,
-            readonly: true,
         }
     ),
     position: new PositionField(),

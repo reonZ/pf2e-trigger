@@ -1,4 +1,4 @@
-import { Blueprint, getConnectorColor } from "blueprint";
+import { Blueprint, getConnectorColor, TriggersExportMenu, TriggersImportMenu } from "blueprint";
 import { NodeEntryId, TriggerData, TriggerDataVariable } from "data";
 import {
     addListener,
@@ -177,8 +177,8 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     #attachSidebarListeners(html: HTMLElement) {
-        type TriggerHeaderAction = "close-window" | "create-trigger" | "export-all" | "import";
-        type TriggerAction = "select-trigger" | "export-trigger" | "delete-trigger" | "copy-id";
+        type TriggerHeaderAction = "close-window" | "create-trigger" | "export" | "import";
+        type TriggerAction = "select-trigger" | "delete-trigger" | "copy-id";
         type SubtriggerHeaderAction = "create-subtrigger";
         type VariableHeaderAction = "create-variable";
         type VariableAction = "remove-variable";
@@ -218,12 +218,12 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                     return this.#createTrigger();
                 }
 
-                case "export-all": {
-                    return;
+                case "export": {
+                    return new TriggersExportMenu(this.blueprint.triggers).render(true);
                 }
 
                 case "import": {
-                    return;
+                    return new TriggersImportMenu(this.blueprint).render(true);
                 }
 
                 case "create-subtrigger": {
@@ -246,10 +246,6 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
                 case "delete-trigger": {
                     return this.#deleteTrigger(triggerId);
-                }
-
-                case "export-trigger": {
-                    return this.#exportTrigger(triggerId);
                 }
 
                 case "copy-id": {
@@ -420,8 +416,6 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             this.blueprint.saveTriggers();
         }
     }
-
-    #exportTrigger(id: string) {}
 
     async #resetTriggers() {
         const result = await confirmDialog("reset-triggers", {

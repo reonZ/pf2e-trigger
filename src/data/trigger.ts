@@ -201,12 +201,7 @@ type TriggerDataSchema = {
     >;
 };
 
-type TriggerDataSource = {
-    name?: string;
-    enabled?: boolean;
-    nodes?: TriggerNodeDataSource[];
-    variables?: Record<NodeEntryId, TriggerDataVariableSource>;
-};
+type TriggerDataSource = SourceFromSchema<TriggerDataSchema>;
 
 type TriggerVariableSchema = {
     label: fields.StringField<string, string, true>;

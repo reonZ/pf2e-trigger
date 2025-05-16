@@ -16,6 +16,7 @@ import {
     NodeType,
     NonBridgeEntryType,
     TriggerData,
+    TriggerDataSource,
     TriggerDataVariable,
     TriggerNodeDataSource,
     WorldTriggers,
@@ -183,6 +184,15 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         this.parent?.refresh();
         this.resetPosition();
+    }
+
+    addTriggers(sources: TriggerDataSource[]) {
+        this.#worldTriggers.createEmbeddedDocuments("Trigger", sources, {
+            keepId: true,
+            keepEmbeddedIds: true,
+        });
+
+        this.parent?.refresh();
     }
 
     async createTrigger({ event, name }: { event: NodeEventKey; name: string }) {

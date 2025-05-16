@@ -1,0 +1,43 @@
+<div class="triggers" data-type="trigger">
+    {{> 'column' type='trigger'}}
+</div>
+<div class="subtriggers" data-type="subtrigger">
+    {{> 'column' type='subtrigger'}}
+</div>
+<div class="items" data-type="item">
+    {{> 'column' type='item'}}
+</div>
+<div class="buttons" style="--nb-buttons: {{buttons.length}};">
+    {{#each buttons as |button|}}
+    <button type="button" data-action="{{button.action}}">
+        {{button.label}}
+    </button>
+    {{/each}}
+</div>
+
+{{#*inline 'column'}}
+<div class="title" data-tooltip-direction="UP">
+    <a class="toggle" data-action="toggle-all" {{{@root.i18n.tooltip 'toggle' }}}>
+        <i class="fa-solid fa-sliders-simple"></i>
+    </a>
+    <span>{{@root.i18n (concat type '.title')}}</span>
+    {{#if (and (eq type 'item') @root.canAddItem)}}
+    <a class="add" data-action="add-item" {{{@root.i18n.tooltip 'item.add' }}}>
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    {{/if}}
+</div>
+<ul>
+    {{#each (lookup resources type) as |resource|}}
+    <li data-resource-id="{{resource.id}}">
+        <input type="checkbox" name="selected" {{checked resource.selected}}>
+        <span>{{resource.name}}</span>
+        {{#if resource.added}}
+        <a data-action="delete-item" {{{@root.i18n.tooltip 'item.delete' }}}>
+            <i class="fa-solid fa-trash"></i>
+        </a>
+        {{/if}}
+    </li>
+    {{/each}}
+</ul>
+{{/inline}}

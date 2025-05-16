@@ -36,7 +36,7 @@
                 "title": "Triggers Menu",
                 "close": "Close Window",
                 "import": "Import",
-                "export": "Export All",
+                "export": "Export",
                 "trigger": {
                     "add": "Create Trigger",
                     "copied": "The Trigger ID <strong>{id}</strong> has been copied to the clipboard.",
@@ -48,7 +48,6 @@
                     "add": "Create Sub-Trigger",
                     "copy": "Copy Sub-Trigger ID",
                     "delete": "Delete Sub-Trigger",
-                    "export": "Export Sub-Trigger",
                     "title": "Sub-Triggers"
                 },
                 "variable": {
@@ -67,6 +66,58 @@
             },
             "collapsed": {
                 "expand": "Expand Triggers Window"
+            }
+        },
+        "import-export-menu": {
+            "toggle": "Toggle All",
+            "trigger": {
+                "title": "Triggers"
+            },
+            "subtrigger": {
+                "title": "Sub-Triggers"
+            },
+            "item": {
+                "title": "Items",
+                "add": "Add Item to Export",
+                "delete": "Delete Item"
+            }
+        },
+        "export-menu": {
+            "title": "Export Triggers",
+            "cancel": {
+                "label": "Cancel Exports"
+            },
+            "copy": {
+                "label": "Copy to Clipboard",
+                "confirm": "The triggers have been copied to the clipboard."
+            },
+            "export": {
+                "label": "Export to File"
+            },
+            "add-item": {
+                "title": "Manually Add Item to Export",
+                "yes": "Add Item",
+                "uuid": {
+                    "label": "Item UUID"
+                }
+            }
+        },
+        "import-menu": {
+            "title": "Import Triggers",
+            "import": {
+                "title": "Import Selected",
+                "error": "An error occured while importing triggers data"
+            },
+            "cancel": {
+                "title": "Cancel Imports"
+            },
+            "code": {
+                "title": "Paste JSON",
+                "yes": "Parse JSON"
+            },
+            "file": {
+                "title": "Load File",
+                "yes": "Parse File"
             }
         },
         "close-window": {

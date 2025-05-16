@@ -1,4 +1,4 @@
-import { TriggerData, TriggerDataSource } from "data";
+import { TriggerData } from "data";
 import { makeModuleDocument, MODULE, ModuleDocument } from "module-helpers";
 import fields = foundry.data.fields;
 
@@ -59,12 +59,6 @@ class WorldTriggers extends makeModuleDocument<null, WorldTriggersSchema>(
 }
 
 interface WorldTriggers {
-    createEmbeddedDocuments(
-        embeddedName: "Trigger",
-        data: PreCreate<TriggerDataSource>[],
-        operation?: Partial<DatabaseCreateOperation<WorldTriggers>>
-    ): Promise<TriggerData[]>;
-
     deleteEmbeddedDocuments(
         embeddedName: "Trigger",
         dataId: string[],
