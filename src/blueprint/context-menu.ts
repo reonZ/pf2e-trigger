@@ -200,7 +200,7 @@ class BlueprintMenu<TData extends DOMStringMap> extends foundry.applications.api
     }
 
     #activateListeners(html: HTMLElement) {
-        addListenerAll(html, "li", (event, el) => {
+        addListenerAll(html, "li", (el, event) => {
             event.stopPropagation();
 
             const data = datasetToData(el.dataset) as TData;

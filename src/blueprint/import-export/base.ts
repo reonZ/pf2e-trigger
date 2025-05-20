@@ -109,7 +109,7 @@ abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     #activateListeners(html: HTMLElement) {
-        addListenerAll(html, "input", "change", (event, el) => {
+        addListenerAll(html, "input", "change", (el) => {
             const type = htmlClosest(el, `[data-type]`)?.dataset.type as ImportExportCategory;
             const resourceId = htmlClosest(el, `[data-resource-id]`)?.dataset.resourceId as string;
             const resource = this.#resources[type]?.get(resourceId);

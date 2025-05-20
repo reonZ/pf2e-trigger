@@ -188,7 +188,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             return htmlClosest(el, "[data-id]")?.dataset.id ?? "";
         };
 
-        addListenerAll(html, ".trigger[data-id] .name", "contextmenu", (event, el) => {
+        addListenerAll(html, ".trigger[data-id] .name", "contextmenu", (el) => {
             const triggerId = getEntryId(el);
             this.#editTrigger(triggerId);
         });
@@ -197,7 +197,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             html,
             ".trigger[data-id] [name='enabled']",
             "change",
-            (event, el: HTMLInputElement) => {
+            (el: HTMLInputElement) => {
                 const triggerId = getEntryId(el);
                 const trigger = this.blueprint.getTrigger(triggerId);
 
@@ -208,7 +208,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             }
         );
 
-        addListenerAll(html, ".header [data-action]", (event, el) => {
+        addListenerAll(html, ".header [data-action]", (el) => {
             switch (el.dataset.action as HeaderAction) {
                 case "close-window": {
                     return this.#closeAndSave();
@@ -236,7 +236,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             }
         });
 
-        addListenerAll(html, ".trigger[data-id] [data-action]", (event, el) => {
+        addListenerAll(html, ".trigger[data-id] [data-action]", (el) => {
             const triggerId = getEntryId(el);
 
             switch (el.dataset.action as TriggerAction) {
@@ -255,12 +255,12 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             }
         });
 
-        addListenerAll(html, ".variable[data-id] .name", "contextmenu", (event, el) => {
+        addListenerAll(html, ".variable[data-id] .name", "contextmenu", (el) => {
             const entryId = getEntryId(el) as NodeEntryId;
             this.blueprint.editVariable(entryId);
         });
 
-        addListenerAll(html, ".variable[data-id] [data-action]", (event, el) => {
+        addListenerAll(html, ".variable[data-id] [data-action]", (el) => {
             const entryId = getEntryId(el) as NodeEntryId;
 
             switch (el.dataset.action as VariableAction) {
@@ -284,7 +284,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     #attachControlsListeners(html: HTMLElement) {
         type EventAction = "collapse-window" | "save-triggers" | "reset-triggers";
 
-        addListenerAll(html, "[data-action]", (event, el) => {
+        addListenerAll(html, "[data-action]", (el) => {
             switch (el.dataset.action as EventAction) {
                 case "collapse-window": {
                     return this.element.classList.add("collapsed");
