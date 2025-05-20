@@ -11,10 +11,10 @@ import {
     TriggerHook,
 } from "hook";
 import {
-    activateWrappers,
+    activateHooksAndWrappers,
     ActorPF2e,
     createToggleableWrapper,
-    disableWrappers,
+    disableHooksAndWrappers,
     executeWhenReady,
     ScenePF2e,
     TokenAura,
@@ -53,12 +53,12 @@ class AuraHook extends TriggerHook {
     }
 
     activate(): void {
-        activateWrappers(this.#wrappers);
+        activateHooksAndWrappers(this.#wrappers);
         executeWhenReady(initialAuraCheck);
     }
 
     disable(): void {
-        disableWrappers(this.#wrappers);
+        disableHooksAndWrappers(this.#wrappers);
         executeWhenReady(auraCheckCleanup);
     }
 
