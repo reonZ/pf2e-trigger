@@ -79,16 +79,12 @@ abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
     }
 
     _onClickAction(event: PointerEvent, target: HTMLElement): any {
-        type Action = "cancel" | "toggle-all";
+        const action = target.dataset.action as "cancel" | "toggle-all";
 
-        switch (target.dataset.action as Action) {
-            case "cancel": {
-                return this.close();
-            }
-
-            case "toggle-all": {
-                return this.#toggleAll(target);
-            }
+        if (action === "cancel") {
+            this.close();
+        } else if (action === "toggle-all") {
+            this.#toggleAll(target);
         }
     }
 

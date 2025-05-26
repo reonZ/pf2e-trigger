@@ -725,26 +725,18 @@ class BlueprintNode extends PIXI.Container {
         const result = await BlueprintMenu.waitContext(this.blueprint, this.contextEntries, x, y);
         if (!result) return;
 
-        switch (result.value) {
-            case "delete-node": {
-                return this.#delete();
-            }
+        const value = result.value;
 
-            case "duplicate-node": {
-                return this.duplicate();
-            }
-
-            case "delete-variable": {
-                return this.blueprint.deleteVariable(this.data.target as NodeEntryId);
-            }
-
-            case "edit-variable": {
-                return this.blueprint.editVariable(this.data.target as NodeEntryId);
-            }
-
-            case "create-entry": {
-                return this.#createCustomEntry(result);
-            }
+        if (value === "create-entry") {
+            this.#createCustomEntry(result);
+        } else if (value === "delete-node") {
+            this.#delete();
+        } else if (value === "delete-variable") {
+            this.blueprint.deleteVariable(this.data.target as NodeEntryId);
+        } else if (value === "duplicate-node") {
+            this.duplicate();
+        } else if (value === "edit-variable") {
+            this.blueprint.editVariable(this.data.target as NodeEntryId);
         }
     }
 

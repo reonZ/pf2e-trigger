@@ -441,22 +441,17 @@ class EntryField extends PIXI.Graphics {
             input.addEventListener("blur", onBlur, { once: true });
 
             input.addEventListener("keydown", (event) => {
-                if (!["Enter", "Escape"].includes(event.key)) return;
+                const key = event.key;
+                if (!R.isIncludedIn(key, ["Enter", "Escape"] as const)) return;
 
                 event.preventDefault();
                 event.stopPropagation();
 
-                switch (event.key) {
-                    case "Enter": {
-                        input.blur();
-                        break;
-                    }
-
-                    case "Escape": {
-                        input.removeEventListener("blur", onBlur);
-                        input.remove();
-                        break;
-                    }
+                if (key === "Enter") {
+                    input.blur();
+                } else {
+                    input.removeEventListener("blur", onBlur);
+                    input.remove();
                 }
             });
         });

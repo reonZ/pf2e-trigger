@@ -24,20 +24,16 @@ abstract class DocumentSplitterTriggerNode<T> extends TriggerNode {
     }
 
     #interpretValue(type: NodeEntryType, value: any) {
-        switch (type) {
-            case "target": {
-                return this.#interpretTargetValue(value);
-            }
-
-            case "list": {
-                const list = value instanceof Set ? [...value] : R.isArray(value) ? value : [];
-                return list.filter(R.isString);
-            }
-
-            default: {
-                return this.isValidCustomEntry(type, value) ? value : undefined;
-            }
+        if (type === "target") {
+            return this.#interpretTargetValue(value);
         }
+
+        if (type === "list") {
+            const list = value instanceof Set ? [...value] : R.isArray(value) ? value : [];
+            return list.filter(R.isString);
+        }
+
+        return this.isValidCustomEntry(type, value) ? value : undefined;
     }
 
     #interpretTargetValue(value: any): Maybe<TargetDocuments> {

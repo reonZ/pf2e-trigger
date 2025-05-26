@@ -1,7 +1,6 @@
 import {
     createEntryId,
     DOCUMENT_TYPES,
-    NodeCustomEntryType,
     NodeDataEntry,
     NodeEntryId,
     NodeEntryType,
@@ -161,68 +160,61 @@ class TriggerNode<
         return this.#get[key]();
     }
 
-    getDefaultValue(schemaInput: SchemaInputAdjacent) {
+    getDefaultValue(schemaInput: SchemaInputAdjacent): any {
         const field = schemaInput.field;
 
         if (field && "default" in field) {
             return field.default;
         }
 
-        switch (schemaInput.type) {
-            case "number": {
-                return field ? Math.clamp(0, field?.min ?? -Infinity, field?.max ?? Infinity) : 0;
-            }
+        const type = schemaInput.type;
 
-            case "boolean": {
-                return false;
-            }
+        if (type === "boolean") {
+            return false;
+        }
 
-            case "text":
-            case "uuid": {
-                return "";
-            }
+        if (type === "dc") {
+            return { value: 0, scope: "check" } satisfies TriggerDcEntry;
+        }
 
-            case "list": {
-                return [];
-            }
+        if (type === "duration") {
+            return { expiry: null, unit: "unlimited", value: -1 } satisfies TriggerDurationEntry;
+        }
 
-            case "select": {
-                return field?.options?.[0].value ?? "";
-            }
-
-            case "dc": {
-                return { value: 0, scope: "check" } satisfies TriggerDcEntry;
-            }
-
-            case "roll": {
-                return { options: [], traits: [] } satisfies TriggerRollEntry;
-            }
-
-            case "duration": {
-                return {
+        if (type === "effect") {
+            return {
+                name: "",
+                unidentified: false,
+                img: "" as ImageFilePath,
+                duration: {
                     expiry: null,
                     unit: "unlimited",
                     value: -1,
-                } satisfies TriggerDurationEntry;
-            }
-
-            case "effect": {
-                return {
-                    name: "",
-                    unidentified: false,
-                    img: "" as ImageFilePath,
-                    duration: {
-                        expiry: null,
-                        unit: "unlimited",
-                        value: -1,
-                    },
-                } satisfies TriggerEffectEntry;
-            }
-
-            default: {
-                return undefined;
-            }
+                },
+            } satisfies TriggerEffectEntry;
         }
+
+        if (type === "list") {
+            return [];
+        }
+
+        if (type === "number") {
+            return field ? Math.clamp(0, field?.min ?? -Infinity, field?.max ?? Infinity) : 0;
+        }
+
+        if (type === "roll") {
+            return { options: [], traits: [] } satisfies TriggerRollEntry;
+        }
+
+        if (type === "select") {
+            return field?.options?.[0].value ?? "";
+        }
+
+        if (R.isIncludedIn(type, ["text", "uuid"] as const)) {
+            return "";
+        }
+
+        return undefined;
     }
 
     async getConvertedValue(schemaInput: SchemaInputAdjacent, value: any): Promise<any> {
@@ -231,103 +223,93 @@ class TriggerNode<
         }
 
         // expected type
-        switch (schemaInput.type) {
-            // number
-            case "dc": {
-                return R.isNumber(value)
-                    ? ({ value, scope: "check" } satisfies TriggerDcEntry)
-                    : value;
-            }
+        const type = schemaInput.type;
 
-            // uuid
-            case "item": {
-                return R.isString(value) && isUuidOf(value, "Item")
-                    ? getItemFromUuid(value)
-                    : value;
-            }
-
-            // select, text
-            case "list": {
-                return R.isArray(value) ? value : [value];
-            }
-
-            // dc
-            case "number": {
-                return isDcEntry(value) ? value.value : value;
-            }
-
-            // text
-            case "select": {
-                const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-                return options.includes(value) ? value : options[0] ?? "";
-            }
-
-            // list, select
-            case "text": {
-                return R.isArray(value) ? value[0] ?? "" : value;
-            }
-
-            // item
-            case "uuid": {
-                return value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
-            }
-
-            default: {
-                return value;
-            }
+        // number
+        if (type === "dc") {
+            return R.isNumber(value) ? ({ value, scope: "check" } satisfies TriggerDcEntry) : value;
         }
+
+        // uuid
+        if (type === "item") {
+            return R.isString(value) && isUuidOf(value, "Item") ? getItemFromUuid(value) : value;
+        }
+
+        // select, text
+        if (type === "list") {
+            return R.isArray(value) ? value : [value];
+        }
+
+        // dc
+        if (type === "number") {
+            return isDcEntry(value) ? value.value : value;
+        }
+
+        // text
+        if (type === "select") {
+            const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
+            return options.includes(value) ? value : options[0] ?? "";
+        }
+
+        // list, select
+        if (type === "text") {
+            return R.isArray(value) ? value[0] ?? "" : value;
+        }
+
+        // item
+        if (type === "uuid") {
+            return value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
+        }
+
+        return value;
     }
 
-    isValidCustomEntry(type: NodeEntryType, value: unknown) {
-        switch (type as NodeCustomEntryType) {
-            case "number": {
-                return R.isNumber(value);
-            }
-
-            case "boolean": {
-                return R.isBoolean(value);
-            }
-
-            case "text": {
-                return R.isString(value);
-            }
-
-            case "item": {
-                return value instanceof Item;
-            }
-
-            case "target": {
-                return (
-                    R.isPlainObject(value) &&
-                    value.actor instanceof Actor &&
-                    (!value.token || value.token instanceof TokenDocument)
-                );
-            }
-
-            case "list": {
-                return R.isArray(value) && value.every(R.isString);
-            }
-
-            case "dc": {
-                return isDcEntry(value);
-            }
-
-            case "duration": {
-                return isDurationEntry(value);
-            }
-
-            case "roll": {
-                return isRollEntry(value);
-            }
-
-            case "effect": {
-                return isEffectEntry(value);
-            }
-
-            default: {
-                return false;
-            }
+    isValidCustomEntry(type: NodeEntryType, value: unknown): boolean {
+        if (type === "boolean") {
+            return R.isBoolean(value);
         }
+
+        if (type === "dc") {
+            return isDcEntry(value);
+        }
+
+        if (type === "duration") {
+            return isDurationEntry(value);
+        }
+
+        if (type === "effect") {
+            return isEffectEntry(value);
+        }
+
+        if (type === "item") {
+            return value instanceof Item;
+        }
+
+        if (type === "list") {
+            return R.isArray(value) && value.every(R.isString);
+        }
+
+        if (type === "number") {
+            return R.isNumber(value);
+        }
+
+        if (type === "roll") {
+            return isRollEntry(value);
+        }
+
+        if (type === "target") {
+            return (
+                R.isPlainObject(value) &&
+                value.actor instanceof Actor &&
+                (!value.token || value.token instanceof TokenDocument)
+            );
+        }
+
+        if (type === "text") {
+            return R.isString(value);
+        }
+
+        return false;
     }
 
     setOutputValues(values: unknown) {

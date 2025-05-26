@@ -204,26 +204,18 @@ class NodeInputField<
             return validation;
         }
 
-        switch (data.type) {
-            case "number": {
-                if (!R.isNumber(defaultValue)) {
-                    throw MODULE.Error(`field.default of '${data.key}' must be a number`);
-                }
-                break;
+        const type = data.type;
+        if (type === "boolean") {
+            if (!R.isBoolean(defaultValue)) {
+                throw MODULE.Error(`field.default of '${data.key}' must be a boolean`);
             }
-
-            case "boolean": {
-                if (!R.isBoolean(defaultValue)) {
-                    throw MODULE.Error(`field.default of '${data.key}' must be a boolean`);
-                }
-                break;
+        } else if (type === "number") {
+            if (!R.isNumber(defaultValue)) {
+                throw MODULE.Error(`field.default of '${data.key}' must be a number`);
             }
-
-            case "text": {
-                if (!R.isString(defaultValue)) {
-                    throw MODULE.Error(`field.default of '${data.key}' must be a string`);
-                }
-                break;
+        } else if (type === "text") {
+            if (!R.isString(defaultValue)) {
+                throw MODULE.Error(`field.default of '${data.key}' must be a string`);
             }
         }
 

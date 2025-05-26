@@ -209,49 +209,34 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         );
 
         addListenerAll(html, ".header [data-action]", (el) => {
-            switch (el.dataset.action as HeaderAction) {
-                case "close-window": {
-                    return this.#closeAndSave();
-                }
+            const action = el.dataset.action as HeaderAction;
 
-                case "create-trigger": {
-                    return this.#createTrigger();
-                }
-
-                case "export": {
-                    return new TriggersExportMenu(this.blueprint.triggers).render(true);
-                }
-
-                case "import": {
-                    return new TriggersImportMenu(this.blueprint).render(true);
-                }
-
-                case "create-subtrigger": {
-                    return this.#createSubtrigger();
-                }
-
-                case "create-variable": {
-                    return this.blueprint.createVariable();
-                }
+            if (action === "close-window") {
+                this.#closeAndSave();
+            } else if (action === "create-subtrigger") {
+                this.#createSubtrigger();
+            } else if (action === "create-trigger") {
+                this.#createTrigger();
+            } else if (action === "create-variable") {
+                this.blueprint.createVariable();
+            } else if (action === "export") {
+                new TriggersExportMenu(this.blueprint.triggers).render(true);
+            } else if (action === "import") {
+                new TriggersImportMenu(this.blueprint).render(true);
             }
         });
 
         addListenerAll(html, ".trigger[data-id] [data-action]", (el) => {
             const triggerId = getEntryId(el);
+            const action = el.dataset.action as TriggerAction;
 
-            switch (el.dataset.action as TriggerAction) {
-                case "select-trigger": {
-                    return this.blueprint.setTrigger(triggerId);
-                }
-
-                case "delete-trigger": {
-                    return this.#deleteTrigger(triggerId);
-                }
-
-                case "copy-id": {
-                    game.clipboard.copyPlainText(triggerId);
-                    return info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
-                }
+            if (action === "copy-id") {
+                game.clipboard.copyPlainText(triggerId);
+                info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
+            } else if (action === "delete-trigger") {
+                this.#deleteTrigger(triggerId);
+            } else if (action === "select-trigger") {
+                this.blueprint.setTrigger(triggerId);
             }
         });
 
@@ -262,11 +247,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         addListenerAll(html, ".variable[data-id] [data-action]", (el) => {
             const entryId = getEntryId(el) as NodeEntryId;
+            const action = el.dataset.action as VariableAction;
 
-            switch (el.dataset.action as VariableAction) {
-                case "remove-variable": {
-                    return this.blueprint.deleteVariable(entryId);
-                }
+            if (action === "remove-variable") {
+                this.blueprint.deleteVariable(entryId);
             }
         });
 
@@ -285,18 +269,14 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         type EventAction = "collapse-window" | "save-triggers" | "reset-triggers";
 
         addListenerAll(html, "[data-action]", (el) => {
-            switch (el.dataset.action as EventAction) {
-                case "collapse-window": {
-                    return this.element.classList.add("collapsed");
-                }
+            const action = el.dataset.action as EventAction;
 
-                case "save-triggers": {
-                    return this.#saveTriggers();
-                }
-
-                case "reset-triggers": {
-                    return this.#resetTriggers();
-                }
+            if (action === "collapse-window") {
+                this.element.classList.add("collapsed");
+            } else if (action === "reset-triggers") {
+                this.#resetTriggers();
+            } else if (action === "save-triggers") {
+                this.#saveTriggers();
             }
         });
     }

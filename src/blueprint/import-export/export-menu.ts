@@ -96,24 +96,18 @@ class TriggersExportMenu extends ImportExportMenu {
 
         type Action = "copy" | "export" | "add-item" | "delete-item";
 
-        switch (target.dataset.action as Action) {
-            case "copy": {
-                return this.#copyToClipboard();
-            }
+        const action = target.dataset.action as Action;
 
-            case "export": {
-                return this.#exportToFile();
-            }
-
-            case "add-item": {
-                return this.#addItem();
-            }
-
-            case "delete-item": {
-                const parent = htmlClosest(target, `[data-resource-id]`);
-                const resourceId = parent?.dataset.resourceId as string;
-                return this.#deleteItem(resourceId);
-            }
+        if (action === "add-item") {
+            this.#addItem();
+        } else if (action === "copy") {
+            this.#copyToClipboard();
+        } else if (action === "delete-item") {
+            const parent = htmlClosest(target, `[data-resource-id]`);
+            const resourceId = parent?.dataset.resourceId as string;
+            this.#deleteItem(resourceId);
+        } else if (action === "export") {
+            this.#exportToFile();
         }
     }
 

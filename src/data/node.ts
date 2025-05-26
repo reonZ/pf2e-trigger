@@ -187,42 +187,40 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         const value = entry?.value;
         const defaultValue = schema.field?.default;
 
-        switch (schema.type) {
-            case "number": {
-                if (!R.isNumber(value)) {
-                    return defaultValue ?? 0;
-                }
+        const type = schema.type;
 
-                return Math.clamp(
-                    roundToStep(value, schema.field?.step ?? 1),
-                    schema.field?.min ?? -Infinity,
-                    schema.field?.max ?? Infinity
-                );
-            }
-
-            case "boolean": {
-                return R.isBoolean(value) ? value : defaultValue ?? false;
-            }
-
-            case "text": {
-                return R.isString(value) ? value : defaultValue ?? "";
-            }
-
-            case "select": {
-                const options = schema.field?.options ?? [];
-                return R.isString(value) && options.find((option) => option.value === value)
-                    ? value
-                    : defaultValue ?? options[0].value;
-            }
-
-            case "uuid": {
-                return isUuidEntry(value) ? value : "";
-            }
-
-            default: {
-                return value ?? defaultValue;
-            }
+        if (type === "boolean") {
+            return R.isBoolean(value) ? value : defaultValue ?? false;
         }
+
+        if (type === "number") {
+            if (!R.isNumber(value)) {
+                return defaultValue ?? 0;
+            }
+
+            return Math.clamp(
+                roundToStep(value, schema.field?.step ?? 1),
+                schema.field?.min ?? -Infinity,
+                schema.field?.max ?? Infinity
+            );
+        }
+
+        if (type === "select") {
+            const options = schema.field?.options ?? [];
+            return R.isString(value) && options.find((option) => option.value === value)
+                ? value
+                : defaultValue ?? options[0].value;
+        }
+
+        if (type === "text") {
+            return R.isString(value) ? value : defaultValue ?? "";
+        }
+
+        if (type === "uuid") {
+            return isUuidEntry(value) ? value : "";
+        }
+
+        return value ?? defaultValue;
     }
 
     setValue(id: NodeEntryId, value: NodeEntryValue) {

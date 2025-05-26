@@ -339,30 +339,19 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         const result = await BlueprintMenu.waitContext(this.blueprint, this.contextEntries, x, y);
         if (!result) return;
 
-        switch (result.value) {
-            case "create-variable": {
-                return this.blueprint.createVariable(
-                    this as BlueprintEntry & { type: NonBridgeEntryType }
-                );
-            }
+        const value = result.value;
 
-            case "delete-variable": {
-                return this.blueprint.deleteVariable(this.id);
-            }
-
-            case "edit-variable": {
-                return this.blueprint.editVariable(this.id);
-            }
-
-            case "disconnect": {
-                this.node.data.disconnect(this.id);
-                this.blueprint.refresh();
-                break;
-            }
-
-            case "delete-entry": {
-                return this.#delete();
-            }
+        if (value === "create-variable") {
+            this.blueprint.createVariable(this as BlueprintEntry & { type: NonBridgeEntryType });
+        } else if (value === "delete-entry") {
+            this.#delete();
+        } else if (value === "delete-variable") {
+            this.blueprint.deleteVariable(this.id);
+        } else if (value === "disconnect") {
+            this.node.data.disconnect(this.id);
+            this.blueprint.refresh();
+        } else if (value === "edit-variable") {
+            this.blueprint.editVariable(this.id);
         }
     }
 

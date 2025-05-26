@@ -48,18 +48,14 @@ class TriggersImportMenu extends ImportExportMenu {
 
         type Action = "import" | "code" | "file";
 
-        switch (target.dataset.action as Action) {
-            case "import": {
-                return this.#importSelected();
-            }
+        const action = target.dataset.action as Action;
 
-            case "code": {
-                return this.#importFromJSON();
-            }
-
-            case "file": {
-                return this.#importFromFile();
-            }
+        if (action === "code") {
+            this.#importFromJSON();
+        } else if (action === "file") {
+            this.#importFromFile();
+        } else if (action === "import") {
+            this.#importSelected();
         }
     }
 
