@@ -25,6 +25,7 @@ import {
     confirmDialog,
     dataToDatasetString,
     distanceToPoint,
+    getDragEventData,
     getSetting,
     ItemPF2e,
     localize,
@@ -603,7 +604,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     #onDropCanvasData(event: DragEvent) {
-        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+        const data = getDragEventData(event);
 
         if (
             !R.isString(data.type) ||
