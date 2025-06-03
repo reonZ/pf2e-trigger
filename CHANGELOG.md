@@ -1,7 +1,8 @@
 # 2.0.0
 
 -   this is a foundry `13.344` and system `7.1.0` release
--   despite the overall design remaining the same, almost nothing was kept from the v1 version and due to the drastic changes in data, no migration is being made to try to make your v1 triggers compatible with it
+-   despite the overall design remaining the same, almost nothing was kept from the v1 version
+-   due to the drastic changes in data, no migration is being made to try to make your v1 triggers compatible with it
 -   your v1 triggers while not usable still exist in your world if you somehow want to get the json (but don't try to import them)
     -   `game.settings.storage.get("world").find(x => x.key === "pf2e-trigger.triggers")`
 
