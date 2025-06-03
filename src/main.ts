@@ -5,7 +5,7 @@ import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers"
 import { prepareTriggers } from "trigger";
 
 MODULE.register("pf2e-trigger");
-MODULE.enableDebugMode();
+// MODULE.enableDebugMode();
 
 Hooks.once("init", () => {
     // @ts-expect-error
