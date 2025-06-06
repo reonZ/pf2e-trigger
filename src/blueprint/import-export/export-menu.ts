@@ -8,7 +8,6 @@ import {
     localize,
     MODULE,
     R,
-    setApplicationTitle,
     waitDialog,
 } from "module-helpers";
 import { ImportExportMenu } from ".";
@@ -25,7 +24,6 @@ class TriggersExportMenu extends ImportExportMenu {
         triggers: Collection<TriggerData>,
         options: DeepPartial<ApplicationConfiguration> = {}
     ) {
-        setApplicationTitle(options, "export-menu.title");
         super(options);
 
         this.#triggers = triggers;
@@ -78,6 +76,10 @@ class TriggersExportMenu extends ImportExportMenu {
                 }
             }
         }
+    }
+
+    get title(): string {
+        return localize("export-menu.title");
     }
 
     get canAddItem(): boolean {

@@ -1,3 +1,4 @@
+import { Blueprint } from "blueprint/blueprint";
 import { createEntryId, TriggerData, TriggerDataSource } from "data";
 import {
     ApplicationConfiguration,
@@ -7,11 +8,9 @@ import {
     localize,
     MODULE,
     R,
-    setApplicationTitle,
     waitDialog,
 } from "module-helpers";
 import { ImportExportData, ImportExportMenu } from "./base";
-import { Blueprint } from "blueprint/blueprint";
 
 class TriggersImportMenu extends ImportExportMenu {
     #blueprint: Blueprint;
@@ -26,10 +25,13 @@ class TriggersImportMenu extends ImportExportMenu {
     };
 
     constructor(blueprint: Blueprint, options: DeepPartial<ApplicationConfiguration> = {}) {
-        setApplicationTitle(options, "import-menu.title");
         super(options);
 
         this.#blueprint = blueprint;
+    }
+
+    get title(): string {
+        return localize("import-menu.title");
     }
 
     get canAddItem(): boolean {
