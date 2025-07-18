@@ -1,0 +1,537 @@
+{
+  "TYPES": {
+    "RegionBehavior": {
+      "pf2e-trigger": {
+        "trigger": "PF2e Déclencheur"
+      }
+    }
+  },
+  "pf2e-trigger": {
+    "region": {
+      "id": "Id du déclencheur"
+    },
+    "settings": {
+      "menus": {
+        "triggers-menu": {
+          "name": "Menu des déclencheurs",
+          "hint": "Enregistrez vos propres déclencheurs avec le module.",
+          "label": "Enregistrer"
+        }
+      }
+    },
+    "outs": {
+      "singular": "Sortie",
+      "plural": "Sorties"
+    },
+    "inputs": {
+      "singular": "Entrée",
+      "plural": "Entrées"
+    },
+    "outputs": {
+      "singular": "Sortie",
+      "plural": "Sorties"
+    },
+    "blueprint-menu": {
+      "sidebar": {
+        "title": "Menu des déclencheurs",
+        "close": "Fermer la fenêtre",
+        "import": "Importer",
+        "export": "Exporter",
+        "trigger": {
+          "add": "Créer un déclencheur",
+          "copied": "L'ID du déclencheur <strong>{id}</strong> a été copié dans le presse-papier.",
+          "copy": "Copier l'ID du déclencheur",
+          "delete": "Effacer le déclencheur",
+          "title": "Déclencheurs"
+        },
+        "subtrigger": {
+          "add": "Créer un sous déclencheur",
+          "copy": "Copier l'ID du sous déclencheur",
+          "delete": "Effacer le sous déclencheur",
+          "title": "Sous déclencheurs"
+        },
+        "variable": {
+          "add": "Créer une variable",
+          "delete": "Effacer une variable",
+          "global": "Ce [{type}] est global au déclencheur",
+          "linked": "Ce [{type}] est lié à une sortie",
+          "locked": "Cette variable ne peut être retirée",
+          "title": "Déclencher les variables"
+        }
+      },
+      "controls": {
+        "save": "Enregistrer les déclencheurs",
+        "reset": "Réinitialiser les déclencheurs",
+        "collapse": "Réduire la fenêtre"
+      },
+      "collapsed": {
+        "expand": "Développer la fenêtre des déclencheurs"
+      }
+    },
+    "import-export-menu": {
+      "toggle": "Activer/Désactiver tout",
+      "trigger": {
+        "title": "Déclencheurs"
+      },
+      "subtrigger": {
+        "title": "Sous-déclencheurs"
+      },
+      "item": {
+        "title": "Objets",
+        "add": "Ajouter un objet à exporter",
+        "delete": "Supprimer l'objet"
+      }
+    },
+    "export-menu": {
+      "title": "Exporter les déclencheurs",
+      "cancel": {
+        "label": "Annuler les exportations"
+      },
+      "copy": {
+        "label": "Copier dans le presse-papiers",
+        "confirm": "Les déclencheurs ont été copiés dans le presse-papiers."
+      },
+      "export": {
+        "label": "Exporter vers un fichier"
+      },
+      "add-item": {
+        "title": "Ajouter manuellement un objet à exporter",
+        "yes": "Ajouter un objet",
+        "uuid": {
+          "label": "IDUU de l'objet"
+        }
+      }
+    },
+    "import-menu": {
+      "title": "Importer les déclencheurs",
+      "import": {
+        "title": "Importer la sélection",
+        "error": "Une erreur s'est produite lors de l'importation des données des déclencheurs"
+      },
+      "cancel": {
+        "title": "Annuler les importations"
+      },
+      "code": {
+        "title": "Copier JSON",
+        "yes": "Analyser JSON"
+      },
+      "file": {
+        "title": "Charger le fichier",
+        "yes": "Analyser le fichier"
+      }
+    },
+    "close-window": {
+      "title": "Fermer le menu des déclencheurs",
+      "content": "Voulez-vous enregistrer vos déclencheurs avant de fermer ?",
+      "yes": "Enregistrer & fermer",
+      "no": "Fermer sans enregistrer"
+    },
+    "save-triggers": {
+      "title": "Enregistrer les déclencheurs",
+      "content": "Êtes-vous sûr de vouloir enregistrer vos déclencheurs ?"
+    },
+    "reset-triggers": {
+      "title": "Réinitialiser les déclencheurs",
+      "content": "Êtes-vous sûr de vouloir réinitialiser vos déclencheurs à leur dernier état enregistré ?"
+    },
+    "create-trigger": {
+      "title": "Créer un déclencheur",
+      "yes": "Créer",
+      "name": {
+        "label": "Nom du déclencheur"
+      },
+      "event": {
+        "label": "Type d'événement"
+      }
+    },
+    "delete-trigger": {
+      "title": "Effacer le déclencheur ({id})",
+      "content": "Êtes-vous certain de vouloir effacer le déclencheur <strong>{label}</strong> ?"
+    },
+    "edit-trigger": {
+      "title": "Modifier le déclencheur ({id})",
+      "yes": "Modifier"
+    },
+    "delete-node": {
+      "title": "Supprimer le nœud ({id})",
+      "content": "Êtes-vous certain de vouloir supprimer ce nœud ?"
+    },
+    "create-subtrigger": {
+      "title": "Créer un sous-déclencheur",
+      "yes": "Créer"
+    },
+    "create-variable": {
+      "title": "Créer une variable",
+      "yes": "Créer",
+      "label": {
+        "label": "Étiquette de variable"
+      },
+      "type": {
+        "label": "Type de variable"
+      }
+    },
+    "delete-variable": {
+      "title": "Supprimer la variable",
+      "content": "Êtes-vous certain de vouloir supprimer la variable <strong>{label}</strong> ?"
+    },
+    "edit-variable": {
+      "title": "Modifier la variable",
+      "yes": "Modifier"
+    },
+    "create-entry": {
+      "title": "Créer une entrée {label}",
+      "yes": "Créer",
+      "required": "Le champ <strong>{name}</strong> est obligatoire.",
+      "label": {
+        "label": "Étiquette d'entrée"
+      },
+      "type": {
+        "label": "Type d'entrée"
+      },
+      "path": {
+        "label": "Chemin d'entrée"
+      },
+      "value": {
+        "label": "Valeur"
+      }
+    },
+    "delete-entry": {
+      "content": "Êtes-vous certain de vouloir supprimer l'entrée <strong>{name}</strong> ?",
+      "title": "Supprimer l'entrée {label}"
+    },
+    "context": {
+      "create-entry": "Créer une entrée {label}",
+      "create-variable": "Créer une variable",
+      "delete-entry": "Supprimer l'entrée",
+      "delete-node": "Supprimer le nœud",
+      "delete-variable": "Supprimer la variable",
+      "disconnect": "Déconnecter l'entrée",
+      "duplicate-node": "Dupliquer le nœud",
+      "edit-variable": "Modifier la variable"
+    },
+    "entry": {
+      "boolean": "Booléen",
+      "dc": "DD",
+      "duration": "Durée",
+      "effect": "Effet",
+      "item": "Objet",
+      "list": "Liste",
+      "number": "Nombre",
+      "roll": "Lancer",
+      "select": "Sélectionner",
+      "target": "Cibler",
+      "text": "Texte",
+      "uuid": "IDUU source",
+      "a": "A",
+      "b": "B",
+      "false": "Faux",
+      "formula": "formule",
+      "identifier": "Identifiant",
+      "in": "Dans",
+      "input": "Entrée",
+      "label": "Étiquette",
+      "min": "Minimum",
+      "origin": "Origine",
+      "out": "Sortie",
+      "result": "Résultat",
+      "targets": "Cibles",
+      "this": "Déclencheur cible",
+      "trigger": "ID du déclencheur",
+      "true": "Vrai",
+      "type": "Type",
+      "unit": "Unité",
+      "value": "Valeur",
+      "quantity": "Quantité"
+    },
+    "document": {
+      "broken": "Lien cassé",
+      "wrong": "Ce champ n'accepte pas ce type de document."
+    },
+    "select-option": {
+      "all": "Tous",
+      "allies": "Alliés",
+      "enemies": "Ennemis"
+    },
+    "node": {
+      "action": {
+        "title": "Actions",
+        "subtitle": "Action",
+        "add-condition": {
+          "label": "Ajouter un état"
+        },
+        "add-persistent": {
+          "label": "Ajouter des dégâts persistants",
+          "entry": {
+            "die": "1d6"
+          }
+        },
+        "add-temporary": {
+          "label": "Ajouter un effet déclencheur",
+          "entry": {
+            "image": "image/chemin.webp"
+          }
+        },
+        "console-log": {
+          "label": "Journal de la console"
+        },
+        "create-item": {
+          "label": "Créer un objet",
+          "entry": {
+            "duplicate": "Dupliquer ?"
+          }
+        },
+        "delete-item": {
+          "label": "Supprimer l'objet"
+        },
+        "effect-duration": {
+          "label": "Mise à jour de la durée de l'effet",
+          "entry": {
+            "effect": "Effet",
+            "removed": "Supprimé"
+          }
+        },
+        "get-choiceset": {
+          "label": "Récupérer l'ensemble de choix de l'objet",
+          "entry": {
+            "flag": "fanion",
+            "option": "Option de lancer",
+            "selection": "Sélection"
+          }
+        },
+        "get-combatant": {
+          "label": "Obtenir le combattant actuel",
+          "entry": {
+            "combatant": "Combattant"
+          }
+        },
+        "give-item": {
+          "label": "Donner un objet physique"
+        },
+        "reduce-condition": {
+          "label": "Réduire l'état",
+          "entry": {
+            "counter": "Valeur"
+          }
+        },
+        "remove-item": {
+          "label": "Supprimer l'objet"
+        },
+        "remove-temporary": {
+          "label": "Supprimer l'effet déclencheur"
+        },
+        "roll-damage": {
+          "label": "Lancer les dégâts"
+        },
+        "roll-save": {
+          "label": "Lancer le jet de sauvegarde",
+          "entry": {
+            "basic": "Est-t-il basique ?",
+            "save": "Jet de sauvegarde"
+          }
+        },
+        "roll-damage-save": {
+          "label": "Lancer les dégâts avec un jet de sauvegarde",
+          "group": {
+            "damage": "Dégâts",
+            "save": "Jet de sauvegarde"
+          }
+        },
+        "use-macro": {
+          "label": "Exécuter une macro"
+        }
+      },
+      "condition": {
+        "title": "États",
+        "subtitle": "État",
+        "contains-entry": {
+          "label": "La liste contient une entrée"
+        },
+        "has-condition": {
+          "label": "A un état"
+        },
+        "has-item": {
+          "label": "Possède un objet"
+        },
+        "has-option": {
+          "label": "A une option de lancer",
+          "entry": {
+          }
+        },
+        "has-temporary": {
+          "label": "A un effet déclencheur"
+        },
+        "in-combat": {
+          "label": "Est en combat"
+        },
+        "inside-aura": {
+          "label": "Est à l'intérieur d'une aura",
+          "entry": {
+            "source": "Source de l'aura",
+            "slug": "aura-slug"
+          }
+        },
+        "is-combatant": {
+          "label": "Est le combattant actuel"
+        },
+        "match-predicate": {
+          "label": "Liste correspond aux prédicats"
+        }
+      },
+      "event": {
+        "title": "Événements",
+        "subtitle": "Événement",
+        "aura-enter": {
+          "label": "Pénètre dans l'aura",
+          "entry": {
+            "turn": "Tour actuel ?"
+          }
+        },
+        "aura-leave": {
+          "label": "Quitte l'aura"
+        },
+        "damage-taken": {
+          "label": "Dégâts subis",
+          "entry": {
+            "other": "Origine des dégâts",
+            "item": "Objet des dégâts",
+            "heal": "Est soigné",
+            "options": "Options de lancer",
+            "negated": "Aucun dégât ?"
+          }
+        },
+        "execute-event": {
+          "label": "Exécuter l'événement",
+          "subtitle": "game.trigger.execute()"
+        },
+        "region-event": {
+          "label": "Région de la scène",
+          "entry": {
+            "event": "Événement"
+          }
+        },
+        "test-event": {
+          "label": "Tester l'évènement",
+          "subtitle": "game.trigger.test()",
+          "warning": "Vous devez sélectionner un seul jeton pour exécuter<strong>Tester l'évènement</strong>."
+        },
+        "token-create": {
+          "label": "Jeton créé"
+        },
+        "token-delete": {
+          "label": "Jeton supprimé"
+        },
+        "turn-end": {
+          "label": "Tour terminé"
+        },
+        "turn-start": {
+          "label": "Tour commencé"
+        }
+      },
+      "logic": {
+        "title": "Logique",
+        "eq-actor": {
+          "label": "Égal (Acteur)"
+        },
+        "eq-number": {
+          "label": "Égal à (Nombre)"
+        },
+        "eq-text": {
+          "label": "Égal à (texte)"
+        },
+        "gt-number": {
+          "label": "Supérieur à"
+        },
+        "gte-number": {
+          "label": "Supérieur ou égal à"
+        },
+        "lt-number": {
+          "label": "Inférieur à"
+        },
+        "lte-number": {
+          "label": "Inférieur ou égal à"
+        }
+      },
+      "splitter": {
+        "title": "Séparateurs",
+        "actor-splitter": {
+          "label": "Extraction des données (acteur)"
+        },
+        "boolean-splitter": {
+          "label": "Branch out booléen"
+        },
+        "item-splitter": {
+          "label": "Extraction des données (objet)"
+        },
+        "success-splitter": {
+          "label": "Branch Out Degré de succès"
+        },
+        "text-splitter": {
+          "label": "Branch Out Texte",
+          "entry": {
+            "none": "Aucune correspondance"
+          }
+        }
+      },
+      "subtrigger": {
+        "title": "Sous-déclencheurs",
+        "subtitle": "Sous-déclencheur",
+        "subtrigger-input": {
+          "label": "Entrée"
+        },
+        "subtrigger-output": {
+          "label": "Sortie"
+        }
+      },
+      "value": {
+        "title": "Valeurs",
+        "subtitle": "valeur",
+        "dc-target": {
+          "label": "Degré de difficulté (Contre)",
+          "entry": {
+            "against": "contre",
+            "adjustment": "Ajustement"
+          }
+        },
+        "dc-value": {
+          "label": "Degré de difficulté (Valeur)"
+        },
+        "duration-simple": {
+          "label": "Durée de l'effet"
+        },
+        "duration-unit": {
+          "label": "Durée de l'effet (unité)"
+        },
+        "effect-data": {
+          "label": "Donnée de l'effet"
+        },
+        "item-source": {
+          "label": "Source de l'objet"
+        },
+        "number-value": {
+          "label": "Saisir le nombre"
+        },
+        "roll-data": {
+          "label": "Donnée du lancer",
+          "entry": {
+            "options": "extra, options",
+            "traits": "extra, traits"
+          }
+        },
+        "success-value": {
+          "label": "Degré de succès"
+        },
+        "text-value": {
+          "label": "Entrée de texte"
+        }
+      },
+      "variable": {
+        "title": "Variables",
+        "getter": "Aller chercher la variable",
+        "setter": "Mettre à jour la variable",
+        "variable-setter": {
+          "label": "Définir une variable"
+        }
+      }
+    }
+  }
+}
