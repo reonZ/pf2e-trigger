@@ -355,6 +355,7 @@
         "has-option": {
           "label": "A une option de lancer",
           "entry": {
+            "options": "roll:option"
           }
         },
         "has-temporary": {
