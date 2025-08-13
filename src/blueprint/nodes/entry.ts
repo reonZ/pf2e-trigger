@@ -43,6 +43,7 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         item: 0x696fe0,
         list: 0x874501,
         number: 0x07b88f,
+        object: 0x808080,
         roll: 0x86910d,
         select: 0xe0a06c,
         target: 0xff3075,

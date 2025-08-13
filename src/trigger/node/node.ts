@@ -202,6 +202,10 @@ class TriggerNode<
             return field ? Math.clamp(0, field?.min ?? -Infinity, field?.max ?? Infinity) : 0;
         }
 
+        if (type === "object") {
+            return {};
+        }
+
         if (type === "roll") {
             return { options: [], traits: [] } satisfies TriggerRollEntry;
         }
@@ -291,6 +295,10 @@ class TriggerNode<
 
         if (type === "number") {
             return R.isNumber(value);
+        }
+
+        if (type === "object") {
+            return R.isObjectType(value);
         }
 
         if (type === "roll") {

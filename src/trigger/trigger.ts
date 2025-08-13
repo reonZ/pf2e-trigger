@@ -108,6 +108,8 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     ? TriggerDurationEntry
     : T extends "effect"
     ? TriggerEffectEntry
+    : T extends "object"
+    ? Record<string, any>
     : unknown;
 
 type TriggerRollEntry = {

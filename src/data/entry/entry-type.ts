@@ -4,17 +4,18 @@ import { NodeEntryCategory } from "./_utils";
 
 const NODE_ENTRY_TYPES = [
     "boolean",
+    "bridge",
     "dc",
     "duration",
     "effect",
     "item",
     "list",
     "number",
+    "object",
+    "roll",
     "select",
     "target",
     "text",
-    "bridge",
-    "roll",
     "uuid",
 ] as const;
 
@@ -78,7 +79,6 @@ export {
     getCompatibleTypes,
     DOCUMENT_TYPES,
     NODE_CUSTOM_TYPES,
-    NODE_ENTRY_TYPES,
     NODE_NONBRIDGE_TYPES,
 };
 export type { NodeCustomEntryType, NodeEntryType, NonBridgeEntryType };
