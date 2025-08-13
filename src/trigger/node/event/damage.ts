@@ -1,4 +1,4 @@
-import { DAMAGE_OPTIONS, DamageTriggerOptions } from "hook/message";
+import { DAMAGE_OPTIONS, DamageTriggerOptions } from "hook";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 

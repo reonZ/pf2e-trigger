@@ -5,8 +5,10 @@ import { DamageTriggerNode } from "./damage";
 import { EventTriggerNode } from "./event";
 import { ExecuteTriggerNode } from "./execute";
 import { RegionTriggerNode } from "./region";
+import { AttackTriggerNode } from "./attack";
 
 export const event = {
+    "attack-roll": AttackTriggerNode,
     "aura-enter": AuraTriggerNode,
     "aura-leave": AuraTriggerNode,
     "damage-taken": DamageTriggerNode,

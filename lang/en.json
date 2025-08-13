@@ -232,8 +232,10 @@
             "input": "Input",
             "label": "Label",
             "min": "Minimum",
+            "options": "Roll Options",
             "origin": "Origin",
             "out": "Out",
+            "outcome": "Outcome",
             "result": "Result",
             "targets": "Targets",
             "this": "Trigger Target",
@@ -382,6 +384,14 @@
             "event": {
                 "title": "Events",
                 "subtitle": "Event",
+                "attack-roll": {
+                    "label": "Attack Rolled",
+                    "entry": {
+                        "action": "Action Slug",
+                        "other": "Attack Target",
+                        "item": "Attack Item"
+                    }
+                },
                 "aura-enter": {
                     "label": "Aura Entered",
                     "entry": {
@@ -397,7 +407,6 @@
                         "other": "Damage Origin",
                         "item": "Damage Item",
                         "heal": "Is Healing",
-                        "options": "Roll Options",
                         "negated": "No Damage?"
                     }
                 },

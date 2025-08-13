@@ -1,18 +1,21 @@
 import { TriggerHook } from "hook";
 import {
-    ActorPF2e,
     ChatMessagePF2e,
+    CheckContextChatFlag,
     createHook,
+    degreeOfSuccessNumber,
     isValidTargetDocuments,
     ItemPF2e,
     R,
+    tupleHasValue,
+    ZeroToThree,
 } from "module-helpers";
 
 class MessageHook extends TriggerHook {
     #createMessageHook = createHook("createChatMessage", this.#onCreateMessage.bind(this));
 
-    get events(): ["damage-taken"] {
-        return ["damage-taken"];
+    get events(): ["attack-roll", "damage-taken"] {
+        return ["attack-roll", "damage-taken"];
     }
 
     activate(): void {
@@ -27,37 +30,65 @@ class MessageHook extends TriggerHook {
         if (!game.user.isActiveGM) return;
 
         const { appliedDamage, origin, context } = message.flags.pf2e;
-
-        if (
-            !R.isPlainObject(context) ||
-            context.type !== "damage-taken" ||
-            !R.isPlainObject(origin) ||
-            !origin.actor
-        )
-            return;
-
-        const target = { actor: message.actor, token: message.token };
-        const source = { actor: await fromUuid<ActorPF2e>(origin.actor) };
-        if (!isValidTargetDocuments(target) || !isValidTargetDocuments(source)) return;
+        if (!context || !origin?.actor || !tupleHasValue(this.events, context.type)) return;
 
         const item = await fromUuid<ItemPF2e>(origin.uuid);
         if (!(item instanceof Item)) return;
 
-        this.executeTriggers<DamageTriggerOptions>(
-            {
-                heal: !!appliedDamage?.isHealing,
-                item,
-                options: context?.options ?? [],
-                negated: appliedDamage == null,
-                other: source,
-                this: target,
-            },
-            "damage-taken"
-        );
+        if (context.type === "damage-taken") {
+            const target = { actor: message.actor, token: message.token };
+            const source = { actor: await fromUuid(origin.actor) };
+            if (!isValidTargetDocuments(target) || !isValidTargetDocuments(source)) return;
+
+            this.executeTriggers<DamageTriggerOptions>(
+                {
+                    heal: !!appliedDamage?.isHealing,
+                    item,
+                    options: context?.options ?? [],
+                    negated: appliedDamage == null,
+                    other: source,
+                    this: target,
+                },
+                "damage-taken"
+            );
+        } else if (context.type === "attack-roll") {
+            if (!context.target || !context.outcome) return;
+
+            const outcome = degreeOfSuccessNumber(context.outcome);
+            if (R.isNullish(outcome)) return;
+
+            const source = { actor: message.actor, token: message.token };
+            const target = {
+                actor: await fromUuid(context.target.actor),
+                token: context.target.token ? await fromUuid(context.target.token) : undefined,
+            };
+            if (!isValidTargetDocuments(target) || !isValidTargetDocuments(source)) return;
+
+            this.executeTriggers<AttackTriggerOptions>(
+                {
+                    action: (context as CheckContextChatFlag & { action: string }).action ?? "",
+                    item,
+                    options: context?.options ?? [],
+                    other: target,
+                    outcome,
+                    this: source,
+                },
+                "attack-roll"
+            );
+        }
     }
 }
 
+const ATTACK_OPTIONS = ["action", "item", "options", "other", "outcome"] as const;
 const DAMAGE_OPTIONS = ["heal", "item", "negated", "options", "other"] as const;
+
+type AttackTriggerOptions = {
+    action: string;
+    item: ItemPF2e;
+    options: string[];
+    other: TargetDocuments;
+    outcome: ZeroToThree;
+};
 
 type DamageTriggerOptions = {
     heal: boolean;
@@ -67,5 +98,5 @@ type DamageTriggerOptions = {
     other: TargetDocuments;
 };
 
-export { DAMAGE_OPTIONS, MessageHook };
-export type { DamageTriggerOptions };
+export { ATTACK_OPTIONS, DAMAGE_OPTIONS, MessageHook };
+export type { AttackTriggerOptions, DamageTriggerOptions };

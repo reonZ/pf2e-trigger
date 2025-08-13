@@ -2,6 +2,7 @@ import { TriggerData } from "data";
 import {
     AuraHook,
     ExecuteHook,
+    MessageHook,
     REGION_HOOK,
     TestHook,
     TokenHook,
@@ -9,7 +10,6 @@ import {
     TurnHook,
 } from "hook";
 import { MODULE } from "module-helpers";
-import { MessageHook } from "./message";
 
 const HOOKS: TriggerHook[] = [
     new AuraHook(),

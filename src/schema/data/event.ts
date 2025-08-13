@@ -14,34 +14,27 @@ const regionEvent = {
     ],
 } as const satisfies EventNodeSchema;
 
+const attackRoll = {
+    icon: "\uf71c",
+    outputs: [
+        { key: "this", type: "target" },
+        { key: "other", type: "target" },
+        { key: "item", type: "item" },
+        { key: "outcome", type: "number" },
+        { key: "action", type: "text" },
+        { key: "options", type: "list" },
+    ],
+} as const satisfies EventNodeSchema;
+
 const damageTaken = {
     icon: { unicode: "\ue4dc", fontWeight: "900" },
     outputs: [
         { key: "this", type: "target" },
-        {
-            key: "other",
-            type: "target",
-        },
-        {
-            key: "item",
-            type: "item",
-            label: "event.damage-taken",
-        },
-        {
-            key: "heal",
-            type: "boolean",
-            label: "event.damage-taken",
-        },
-        {
-            key: "negated",
-            type: "boolean",
-            label: "event.damage-taken",
-        },
-        {
-            key: "options",
-            type: "list",
-            label: "event.damage-taken",
-        },
+        { key: "other", type: "target" },
+        { key: "item", type: "item" },
+        { key: "heal", type: "boolean" },
+        { key: "negated", type: "boolean" },
+        { key: "options", type: "list" },
     ],
 } as const satisfies EventNodeSchema;
 
@@ -94,6 +87,7 @@ type EventNodeSchema = Omit<WithRequired<NodeRawSchema, "icon">, "outputs"> & {
 };
 
 export const event = {
+    "attack-roll": attackRoll,
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
     "damage-taken": damageTaken,
