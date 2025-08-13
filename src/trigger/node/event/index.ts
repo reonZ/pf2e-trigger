@@ -6,6 +6,7 @@ import { EventTriggerNode } from "./event";
 import { ExecuteTriggerNode } from "./execute";
 import { RegionTriggerNode } from "./region";
 import { AttackTriggerNode } from "./attack";
+import { TokenMovedTriggerNode } from "./moved";
 
 export const event = {
     "attack-roll": AttackTriggerNode,
@@ -17,6 +18,7 @@ export const event = {
     "test-event": EventTriggerNode,
     "token-create": EventTriggerNode,
     "token-delete": EventTriggerNode,
+    "token-moved": TokenMovedTriggerNode,
     "turn-end": EventTriggerNode,
     "turn-start": EventTriggerNode,
 } as Record<NodeKeys<"event">, typeof TriggerNode>;

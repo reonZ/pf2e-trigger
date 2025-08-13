@@ -217,6 +217,7 @@
             "item": "Item",
             "list": "List",
             "number": "Number",
+            "object": "Object",
             "roll": "Roll",
             "select": "Select",
             "target": "Target",
@@ -430,6 +431,12 @@
                 },
                 "token-delete": {
                     "label": "Token Deleted"
+                },
+                "token-moved": {
+                    "label": "Token Moved",
+                    "entry": {
+                        "data": "Movement Data"
+                    }
                 },
                 "turn-end": {
                     "label": "Turn Ended"

@@ -38,6 +38,14 @@ const damageTaken = {
     ],
 } as const satisfies EventNodeSchema;
 
+const tokenMoved = {
+    icon: "\uf554",
+    outputs: [
+        { key: "this", type: "target" },
+        { key: "data", type: "object" },
+    ],
+} as const satisfies EventNodeSchema;
+
 function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -96,6 +104,7 @@ export const event = {
     "test-event": createEventSchema("\ue4f3"),
     "token-create": createEventSchema("\uf2bd", "900"),
     "token-delete": createEventSchema("\uf2bd"),
+    "token-moved": tokenMoved,
     "turn-end": createEventSchema("\uf253"),
     "turn-start": createEventSchema("\uf251"),
 };
