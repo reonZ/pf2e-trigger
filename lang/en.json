@@ -480,6 +480,9 @@
                 "item-splitter": {
                     "label": "Extract Data (Item)"
                 },
+                "object-splitter": {
+                    "label": "Extract Data (Object)"
+                },
                 "success-splitter": {
                     "label": "Branch Out Degree of Success"
                 },

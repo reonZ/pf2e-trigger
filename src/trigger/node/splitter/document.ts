@@ -67,4 +67,10 @@ class ItemSplitterTriggerNode extends DocumentSplitterTriggerNode<ItemPF2e> {
     }
 }
 
-export { ActorSplitterTriggerNode, ItemSplitterTriggerNode };
+class ObjectSplitterTriggerNode extends DocumentSplitterTriggerNode<Record<string, any>> {
+    async getDocument(): Promise<Maybe<Record<string, any>>> {
+        return await this.get("input");
+    }
+}
+
+export { ActorSplitterTriggerNode, ItemSplitterTriggerNode, ObjectSplitterTriggerNode };

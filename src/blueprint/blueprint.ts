@@ -381,7 +381,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         const distance = distanceToPoint(this.stage.position, { x: 0, y: 0 });
         if (distance === 0) return;
 
-        CanvasAnimation.animate(
+        foundry.canvas.animation.CanvasAnimation.animate(
             [
                 this.stage.position,
                 this.#gridLayer.position,

@@ -73,6 +73,7 @@ export const splitter = {
     "actor-splitter": createDocumentExtractor("target"),
     "boolean-splitter": boolean,
     "item-splitter": createDocumentExtractor("item"),
+    "object-splitter": createDocumentExtractor("object"),
     "success-splitter": success,
     "text-splitter": text,
 };
