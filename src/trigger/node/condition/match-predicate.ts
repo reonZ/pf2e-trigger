@@ -8,6 +8,7 @@ class MatchPredicateTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "m
         const parsedPredicate = JSON.parse(predicateStr);
         const predicate = new game.pf2e.Predicate(parsedPredicate);
         const sendKey = predicate.test(list);
+
         return this.send(sendKey);
     }
 }

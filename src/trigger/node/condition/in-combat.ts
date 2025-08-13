@@ -5,6 +5,7 @@ class InCombatTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "in-comb
     async execute(): Promise<boolean> {
         const target = await this.getTarget("target");
         const sendKey = !!target?.actor.inCombat;
+
         return this.send(sendKey);
     }
 }

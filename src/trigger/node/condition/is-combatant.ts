@@ -6,6 +6,7 @@ class IsCombatantTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "is-c
     async execute(): Promise<boolean> {
         const actor = await this.getTargetActor("target");
         const sendKey = !!actor && isCurrentCombatant(actor);
+
         return this.send(sendKey);
     }
 }

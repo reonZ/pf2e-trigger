@@ -6,6 +6,7 @@ class SuccessSplitterTriggerNode extends TriggerNode<NodeSchemaOf<"splitter", "s
     async execute(): Promise<boolean> {
         const value = await this.get("input");
         const success = degreeOfSuccessString(value) ?? "criticalFailure";
+
         return this.send(success);
     }
 }
