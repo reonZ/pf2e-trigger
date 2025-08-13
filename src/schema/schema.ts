@@ -95,6 +95,10 @@ function isSubtriggerOutput(node: NodeAdjacent): boolean {
     return isSubTrigger(node) && node.key === "subtrigger-output";
 }
 
+function isBreakProcess({ key, type }: NodeAdjacent): boolean {
+    return type === "action" && key === "break-process";
+}
+
 function isGetter(node: NodeAdjacent): boolean {
     return isVariable(node) && node.key === "variable-getter";
 }
@@ -108,7 +112,7 @@ function hasInBridge(node: NodeAdjacent): boolean {
 }
 
 function hasOuts(node: NodeAdjacent): boolean {
-    return !isValue(node) && !isGetter(node) && !isSubtriggerOutput(node);
+    return !isValue(node) && !isGetter(node) && !isSubtriggerOutput(node) && !isBreakProcess(node);
 }
 
 function hasInputConnector(node: NodeAdjacent, schema: NodeSchemaModel) {
@@ -154,7 +158,8 @@ type NodeSchemaInput =
     | NodeSchemaSelect
     | NodeSchemaTarget
     | NodeSchemaText
-    | NodeSchemaUuid;
+    | NodeSchemaUuid
+    | NodeSchemaObject;
 
 type NodeSchemaInputEntry<
     TType extends NonBridgeEntryType,
@@ -217,6 +222,7 @@ type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
 type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
 type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
+type NodeSchemaObject = NodeSchemaInputEntry<"object">;
 
 type SchemaEntries = {
     select: SelectEntrySchema;

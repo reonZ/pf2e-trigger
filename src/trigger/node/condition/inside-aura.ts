@@ -23,7 +23,10 @@ class InsideAuraTriggerNode extends TriggerNode<NodeSchemaOf<"condition", "insid
 
         for (const { origin } of auras) {
             this.setVariable("source", origin);
-            await this.send("true");
+
+            if (!(await this.send("true"))) {
+                return false;
+            }
         }
 
         return true;

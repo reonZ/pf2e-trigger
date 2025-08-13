@@ -100,7 +100,7 @@ class TriggerNode<
 
     async send(key: ExtractOutKey<TSchema>): Promise<boolean> {
         const output = String(key);
-        return this.#getFirstNodeFromEntries(this.#data.outputs[output])?.node.execute() ?? false;
+        return this.#getFirstNodeFromEntries(this.#data.outputs[output])?.node.execute() ?? true;
     }
 
     getOption<K extends keyof TOptions & string>(key: K): TOptions[K] {

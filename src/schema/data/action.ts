@@ -206,6 +206,16 @@ const effectDuration = {
     outputs: [{ key: "removed", type: "boolean" }],
 } as const satisfies ActionRawSchema;
 
+const sceneTokens = {
+    loop: true,
+    icon: "\uf0c0",
+    outputs: [{ key: "other", type: "target" }],
+} as const satisfies ActionRawSchema;
+
+const breakProcess = {
+    icon: { unicode: "\uf049", fontWeight: "900" },
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -214,6 +224,7 @@ export const action = {
     "add-condition": addCondition,
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
+    "break-process": breakProcess,
     "console-log": consoleLog,
     "create-item": createItem,
     "delete-item": deleteItem,
@@ -227,5 +238,6 @@ export const action = {
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,
     "roll-save": rollSave,
+    "scene-tokens": sceneTokens,
     "use-macro": useMacro,
 };

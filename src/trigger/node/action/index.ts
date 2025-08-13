@@ -18,11 +18,14 @@ import { RollDamageSaveTriggerNode } from "./roll-damage-save";
 import { RollSaveTriggerNode } from "./roll-save";
 import { UseMacroTriggerNode } from "./use-macro";
 import { GiveItemTriggerNode } from "./give-item";
+import { SceneTokensTriggerNode } from "./scene-tokens";
+import { BreakProcessTriggerNode } from "./break-process";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
+    "break-process": BreakProcessTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "create-item": CreateItemTriggerNode,
     "delete-item": DeleteItemTriggerNode,
@@ -36,5 +39,6 @@ export const action = {
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-save": RollDamageSaveTriggerNode,
     "roll-save": RollSaveTriggerNode,
+    "scene-tokens": SceneTokensTriggerNode,
     "use-macro": UseMacroTriggerNode,
 } as Record<NodeKeys<"action">, typeof TriggerNode>;
