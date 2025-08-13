@@ -377,6 +377,14 @@
                 "in-combat": {
                     "label": "Is In Combat"
                 },
+                "in-range": {
+                    "label": "Is In Range",
+                    "entry": {
+                        "a": "Target A",
+                        "b": "Target B",
+                        "distance": "Distance (ft.)"
+                    }
+                },
                 "inside-aura": {
                     "label": "Is Inside Aura",
                     "entry": {

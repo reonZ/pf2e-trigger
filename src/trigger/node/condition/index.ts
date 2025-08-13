@@ -9,6 +9,7 @@ import { ContainsEntryTriggerNode } from "./contains-entry";
 import { MatchPredicateTriggerNode } from "./match-predicate";
 import { HasConditionTriggerNode } from "./has-condition";
 import { HasTemporaryTriggerNode } from "./has-temporary";
+import { InRangeTriggerNode } from "./in-range";
 
 export const condition = {
     "contains-entry": ContainsEntryTriggerNode,
@@ -17,6 +18,7 @@ export const condition = {
     "has-option": HasOptionTriggerNode,
     "has-temporary": HasTemporaryTriggerNode,
     "in-combat": InCombatTriggerNode,
+    "in-range": InRangeTriggerNode,
     "inside-aura": InsideAuraTriggerNode,
     "is-combatant": IsCombatantTriggerNode,
     "match-predicate": MatchPredicateTriggerNode,

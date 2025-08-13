@@ -96,6 +96,23 @@ const hasTemporary = {
     ],
 } as const satisfies ConditionSchema;
 
+const inRange = {
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "a", type: "target" },
+        { key: "b", type: "target" },
+        {
+            key: "distance",
+            type: "number",
+            field: {
+                default: 5,
+                min: 0,
+                step: 5,
+            },
+        },
+    ],
+} as const satisfies ConditionSchema;
+
 //
 
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
@@ -109,6 +126,7 @@ export const condition = {
     "has-option": hasOptions,
     "has-temporary": hasTemporary,
     "in-combat": inCombat,
+    "in-range": inRange,
     "inside-aura": insideAura,
     "is-combatant": isCombatant,
     "match-predicate": matchPredicate,
