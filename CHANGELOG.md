@@ -1,3 +1,29 @@
+# 2.1.0
+
+-   add French localization (thanks to [rectulo](https://github.com/rectulo))
+-   add `Object` connection
+    -   this node connection doesn't serve any core role in the module as it represents a non-typed javascript object
+    -   this can however be fed to a `Run Macro` node or extracted further with the new `Extract Data (Object)`
+-   add `Add Numbers` and `Subtract Numbers` actio nodes
+    -   it simply returns the result of the operation, it doesn't automatically set a variable (you would need to use a setter)
+-   add `Extract Data (Object)` splitter node
+    -   allows you to extract arbitrary data from an `Object` type
+-   add `Scene Tokens` action node
+    -   it will loop over every token on the scene
+-   add `Break Process` action node
+    -   this will break the process of the trigger stopping any loop currently running
+-   add `Get Distance Between` action node
+    -   calculates the distance between 2 tokens
+    -   it uses the destination coordinates in case the tokens are still in motion on the board
+-   add `Is In Range` condition node
+    -   it will calculate the distance between 2 tokens while using their updated destination coordinates
+-   add `Attack Rolled` event node
+    -   this event is only triggered if the attack has a target
+-   add `Token Moved` event node
+    -   like other token related events, the `Trigger Target` is certain to contain the `token`
+    -   the event provides the movement data of the `moveToken` hook
+        -   the data is duplicated and will not be mutated further by any other context using it nor will they receive any mutation done to it
+
 # 2.0.0
 
 -   this is a foundry `13.344` and system `7.1.0` release

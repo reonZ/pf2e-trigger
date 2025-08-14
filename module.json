@@ -8,20 +8,24 @@
             "discord": "idleatre"
         }
     ],
-    "esmodules": ["scripts/main.js"],
+    "esmodules": [
+        "scripts/main.js"
+    ],
     "compatibility": {
         "minimum": "13.344",
-        "verified": "13.344",
+        "verified": "13.347",
         "maximum": "13"
     },
-    "version": "2.0.0",
+    "version": "2.1.0",
     "url": "https://github.com/reonZ/pf2e-trigger",
     "readme": "https://github.com/reonZ/pf2e-trigger/blob/master/README.md",
     "manifest": "https://raw.githubusercontent.com/reonZ/pf2e-trigger/master/module.json",
-    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/2.0.0/module.zip",
+    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/2.1.0/module.zip",
     "changelog": "https://github.com/reonZ/pf2e-trigger/blob/master/CHANGELOG.md",
     "bugs": "https://github.com/reonZ/pf2e-trigger/issues",
-    "styles": ["styles/pf2e-trigger.css"],
+    "styles": [
+        "styles/pf2e-trigger.css"
+    ],
     "documentTypes": {
         "RegionBehavior": {
             "trigger": {}
