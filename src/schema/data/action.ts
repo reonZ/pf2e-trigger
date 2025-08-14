@@ -216,6 +216,15 @@ const breakProcess = {
     icon: { unicode: "\uf049", fontWeight: "900" },
 } as const satisfies ActionRawSchema;
 
+const distanceBetween = {
+    icon: "\ue068",
+    inputs: [
+        { key: "a", type: "target" },
+        { key: "b", type: "target" },
+    ],
+    outputs: [{ key: "distance", type: "number" }],
+} as const satisfies ActionRawSchema;
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
@@ -228,6 +237,7 @@ export const action = {
     "console-log": consoleLog,
     "create-item": createItem,
     "delete-item": deleteItem,
+    "distance-between": distanceBetween,
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,

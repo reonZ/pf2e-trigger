@@ -4,22 +4,23 @@ import { TriggerNode } from "trigger";
 import { AddConditionTriggerNode } from "./add-condition";
 import { AddPersistentTriggerNode } from "./add-persistent";
 import { AddTemporaryTriggerNode } from "./add-temporary";
+import { BreakProcessTriggerNode } from "./break-process";
 import { ConsoleLogTriggerNode } from "./console-log";
 import { CreateItemTriggerNode } from "./create-item";
 import { DeleteItemTriggerNode } from "./delete-item";
+import { DistanceBetweenTriggerNode } from "./distance-between";
 import { EffectDurationTriggerNode } from "./effect-duration";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetCombatantTriggerNode } from "./get-combatant";
+import { GiveItemTriggerNode } from "./give-item";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
 import { RollSaveTriggerNode } from "./roll-save";
-import { UseMacroTriggerNode } from "./use-macro";
-import { GiveItemTriggerNode } from "./give-item";
 import { SceneTokensTriggerNode } from "./scene-tokens";
-import { BreakProcessTriggerNode } from "./break-process";
+import { UseMacroTriggerNode } from "./use-macro";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -29,6 +30,7 @@ export const action = {
     "console-log": ConsoleLogTriggerNode,
     "create-item": CreateItemTriggerNode,
     "delete-item": DeleteItemTriggerNode,
+    "distance-between": DistanceBetweenTriggerNode,
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,

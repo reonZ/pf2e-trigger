@@ -99,8 +99,16 @@ const hasTemporary = {
 const inRange = {
     outs: schemaBooleanOuts(),
     inputs: [
-        { key: "a", type: "target" },
-        { key: "b", type: "target" },
+        {
+            key: "a",
+            type: "target",
+            label: "action.distance-between",
+        },
+        {
+            key: "b",
+            type: "target",
+            label: "action.distance-between",
+        },
         {
             key: "distance",
             type: "number",

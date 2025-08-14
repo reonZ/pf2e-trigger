@@ -226,6 +226,7 @@
 
             "a": "A",
             "b": "B",
+            "distance": "Distance (ft.)",
             "false": "False",
             "formula": "formula",
             "identifier": "Identifier",
@@ -289,6 +290,13 @@
                 },
                 "delete-item": {
                     "label": "Delete Item"
+                },
+                "distance-between": {
+                    "label": "Get Distance Between",
+                    "entry": {
+                        "a": "Target A",
+                        "b": "Target B"
+                    }
                 },
                 "effect-duration": {
                     "label": "Update Effect Duration",
@@ -378,12 +386,7 @@
                     "label": "Is In Combat"
                 },
                 "in-range": {
-                    "label": "Is In Range",
-                    "entry": {
-                        "a": "Target A",
-                        "b": "Target B",
-                        "distance": "Distance (ft.)"
-                    }
+                    "label": "Is In Range"
                 },
                 "inside-aura": {
                     "label": "Is Inside Aura",
