@@ -225,12 +225,32 @@ const distanceBetween = {
     outputs: [{ key: "distance", type: "number" }],
 } as const satisfies ActionRawSchema;
 
+function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
+    return {
+        icon: { unicode, fontWeight },
+        inputs: [
+            {
+                key: "a",
+                type: "number",
+                field: { default: 1 },
+            },
+            {
+                key: "b",
+                type: "number",
+                field: { default: 1 },
+            },
+        ],
+        outputs: [{ key: "result", type: "number" }],
+    } as const satisfies ActionRawSchema;
+}
+
 //
 
 type ActionRawSchema = WithRequired<NodeRawSchema, "icon">;
 
 export const action = {
     "add-condition": addCondition,
+    "add-number": arithmeticAction("\ue59e"),
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "break-process": breakProcess,
@@ -249,5 +269,6 @@ export const action = {
     "roll-damage": rollDamage,
     "roll-save": rollSave,
     "scene-tokens": sceneTokens,
+    "subtract-number": arithmeticAction("\uf068"),
     "use-macro": useMacro,
 };

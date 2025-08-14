@@ -270,6 +270,9 @@
                         "die": "1d6"
                     }
                 },
+                "add-number": {
+                    "label": "Add Numbers"
+                },
                 "add-temporary": {
                     "label": "Add Trigger Effect",
                     "entry": {
@@ -356,6 +359,9 @@
                     "entry": {
                         "other": "Scene Target"
                     }
+                },
+                "subtract-number": {
+                    "label": "Subtract Numbers"
                 },
                 "use-macro": {
                     "label": "Run Macro"

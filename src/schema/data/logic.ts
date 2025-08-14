@@ -7,10 +7,7 @@ function createLogicSchema<T extends NonBridgeEntryType>(
     fontWeight: TextStyleFontWeight = "400"
 ): LogicSchema<T> {
     return {
-        icon: {
-            unicode,
-            fontWeight,
-        },
+        icon: { unicode, fontWeight },
         outs: schemaBooleanOuts(),
         inputs: [
             { type, key: "a" },
@@ -34,11 +31,11 @@ type LogicSchema<T extends NonBridgeEntryType> = {
 };
 
 export const logic = {
+    "eq-actor": createEqualsSchema("target"),
     "eq-number": createEqualsSchema("number"),
+    "eq-text": createEqualsSchema("text"),
     "gt-number": createNumberSchema("\x3e"),
     "gte-number": createNumberSchema("\uf532"),
     "lt-number": createNumberSchema("\x3c"),
     "lte-number": createNumberSchema("\uf537"),
-    "eq-text": createEqualsSchema("text"),
-    "eq-actor": createEqualsSchema("target"),
 };

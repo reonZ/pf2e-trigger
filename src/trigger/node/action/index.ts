@@ -21,9 +21,12 @@ import { RollDamageSaveTriggerNode } from "./roll-damage-save";
 import { RollSaveTriggerNode } from "./roll-save";
 import { SceneTokensTriggerNode } from "./scene-tokens";
 import { UseMacroTriggerNode } from "./use-macro";
+import { AddNumberTriggerNode } from "./add-number";
+import { SubtractNumberTriggerNode } from "./subtract-number";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
+    "add-number": AddNumberTriggerNode,
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "break-process": BreakProcessTriggerNode,
@@ -42,5 +45,6 @@ export const action = {
     "roll-damage-save": RollDamageSaveTriggerNode,
     "roll-save": RollSaveTriggerNode,
     "scene-tokens": SceneTokensTriggerNode,
+    "subtract-number": SubtractNumberTriggerNode,
     "use-macro": UseMacroTriggerNode,
 } as Record<NodeKeys<"action">, typeof TriggerNode>;
