@@ -217,6 +217,7 @@
       "item": "Objet",
       "list": "Liste",
       "number": "Nombre",
+      "object": "Objet",
       "roll": "Lancer",
       "select": "Sélectionner",
       "target": "Cibler",
@@ -224,6 +225,7 @@
       "uuid": "IDUU source",
       "a": "A",
       "b": "B",
+      "distance": "Distance (pieds)",
       "false": "Faux",
       "formula": "formule",
       "identifier": "Identifiant",
@@ -231,8 +233,10 @@
       "input": "Entrée",
       "label": "Étiquette",
       "min": "Minimum",
+      "options": "Options de lancer",
       "origin": "Origine",
       "out": "Sortie",
+      "outcome": "Résultat",
       "result": "Résultat",
       "targets": "Cibles",
       "this": "Déclencheur cible",
@@ -265,11 +269,17 @@
             "die": "1d6"
           }
         },
+        "add-number": {
+          "label": "Ajouter des nombres"
+        },
         "add-temporary": {
           "label": "Ajouter un effet déclencheur",
           "entry": {
             "image": "image/chemin.webp"
           }
+        },
+        "break-process": {
+          "label": "Rompre le processus"
         },
         "console-log": {
           "label": "Journal de la console"
@@ -282,6 +292,13 @@
         },
         "delete-item": {
           "label": "Supprimer l'objet"
+        },
+        "distance-between": {
+          "label": "Obtenir la distance entre",
+          "entry": {
+            "a": "Cible A",
+            "b": "Cible B"
+          }
         },
         "effect-duration": {
           "label": "Mise à jour de la durée de l'effet",
@@ -336,6 +353,15 @@
             "save": "Jet de sauvegarde"
           }
         },
+        "scene-tokens": {
+          "label": "Jetons de la scène",
+          "entry": {
+            "other": "Cible de la scène"
+          }
+        },
+        "subtract-number": {
+          "label": "Soustraire des nombres"
+        },
         "use-macro": {
           "label": "Exécuter une macro"
         }
@@ -364,6 +390,9 @@
         "in-combat": {
           "label": "Est en combat"
         },
+        "in-range": {
+          "label": "Est à portée"
+        },
         "inside-aura": {
           "label": "Est à l'intérieur d'une aura",
           "entry": {
@@ -381,6 +410,14 @@
       "event": {
         "title": "Événements",
         "subtitle": "Événement",
+        "attack-roll": {
+          "label": "Attaque lancée",
+          "entry": {
+            "action": "Slug de l'action",
+            "other": "Cible de l'attaque",
+            "item": "Attaque un objet"
+          }
+        },
         "aura-enter": {
           "label": "Pénètre dans l'aura",
           "entry": {
@@ -396,7 +433,6 @@
             "other": "Origine des dégâts",
             "item": "Objet des dégâts",
             "heal": "Est soigné",
-            "options": "Options de lancer",
             "negated": "Aucun dégât ?"
           }
         },
@@ -420,6 +456,12 @@
         },
         "token-delete": {
           "label": "Jeton supprimé"
+        },
+        "token-moved": {
+          "label": "Jeton déplacé",
+          "entry": {
+            "data": "Données de déplacement"
+          }
         },
         "turn-end": {
           "label": "Tour terminé"
@@ -462,6 +504,9 @@
         },
         "item-splitter": {
           "label": "Extraction des données (objet)"
+        },
+        "object-splitter": {
+          "label": "Extraire des données (objet)"
         },
         "success-splitter": {
           "label": "Branch Out Degré de succès"
