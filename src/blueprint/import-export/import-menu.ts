@@ -88,6 +88,8 @@ class TriggersImportMenu extends ImportExportMenu {
         getDocumentClass("Item").createDocuments(itemSources, { keepId: true });
 
         this.#blueprint.addTriggers(triggers);
+        this.#blueprint.saveTriggers();
+        this.#blueprint.parent?.close();
 
         this.close();
     }
@@ -159,10 +161,7 @@ class TriggersImportMenu extends ImportExportMenu {
                         subtriggerIds[trigger.id] = newId;
 
                         // we also enable the subtrigger
-                        return trigger.clone({
-                            _id: newId,
-                            enabled: true,
-                        });
+                        return trigger.clone({ _id: newId, enabled: true }, { keepId: true });
                     }
 
                     // we generate a new id to avoid conflicts and enable the trigger
