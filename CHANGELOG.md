@@ -1,10 +1,15 @@
+# 2.1.1
+
+-   now save & close the triggers menu when importing triggers
+-   fix subtriggers ID not being properly replaced in the nodes using it when importing triggers
+
 # 2.1.0
 
 -   add French localization (thanks to [rectulo](https://github.com/rectulo))
 -   add `Object` connection
     -   this node connection doesn't serve any core role in the module as it represents a non-typed javascript object
     -   this can however be fed to a `Run Macro` node or extracted further with the new `Extract Data (Object)`
--   add `Add Numbers` and `Subtract Numbers` actio nodes
+-   add `Add Numbers` and `Subtract Numbers` action nodes
     -   it simply returns the result of the operation, it doesn't automatically set a variable (you would need to use a setter)
 -   add `Extract Data (Object)` splitter node
     -   allows you to extract arbitrary data from an `Object` type
