@@ -1,3 +1,7 @@
+# 2.1.2
+
+-   fix `Roll Damage With Save` node not being updated with the latest tollbelt save variants changes
+
 # 2.1.1
 
 -   now save & close the triggers menu when importing triggers
