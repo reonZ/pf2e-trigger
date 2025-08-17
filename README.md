@@ -4,7 +4,7 @@
 
 This module helps you generate triggers by pairing events with conditions and actions. You can find the menu to create the triggers in the settings.
 
-![](./images/demo.webp)
+![](./images/thermal-nimbus.webp)
 
 # WIKI
 
