@@ -1,6 +1,6 @@
 # 2.1.2
 
--   fix `Roll Damage With Save` node not being updated with the latest tollbelt save variants changes
+-   fix `Roll Damage With Save` node not being updated with the latest toolbelt save variants changes
 
 # 2.1.1
 
