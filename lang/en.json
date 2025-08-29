@@ -344,11 +344,15 @@
                     "label": "Roll Save",
                     "entry": {
                         "basic": "Is Basic?",
+                        "private": "Blind Roll?",
                         "save": "Save"
                     }
                 },
                 "roll-damage-save": {
                     "label": "Roll Damage With Save",
+                    "entry": {
+                        "private": "Private Roll?"
+                    },
                     "group": {
                         "damage": "Damage",
                         "save": "Save"

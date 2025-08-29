@@ -24,6 +24,10 @@ const rollSave = {
             type: "boolean",
             label: "action.roll-save",
         },
+        {
+            key: "private",
+            type: "boolean",
+        },
     ],
     outputs: [{ key: "result", type: "number" }],
 } as const satisfies ActionRawSchema;

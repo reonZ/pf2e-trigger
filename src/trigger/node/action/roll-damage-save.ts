@@ -14,9 +14,9 @@ class RollDamageSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll
 
         damageOptions.toolbelt = {
             author: damageOptions.origin?.actor.uuid,
-            options: roll.options,
-            traits: roll.traits,
             item: roll.item?.uuid,
+            options: roll.options,
+            private: await this.get("private"),
             saveVariants: {
                 null: {
                     basic: await this.get("basic"),
@@ -24,6 +24,7 @@ class RollDamageSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll
                     statistic: (await this.get("save")) as SaveType,
                 },
             },
+            traits: roll.traits,
         };
 
         await rollDamageFromFormula(formula, damageOptions);
