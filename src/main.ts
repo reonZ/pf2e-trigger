@@ -51,3 +51,9 @@ Hooks.once("init", () => {
 
     prepareTriggers();
 });
+
+MODULE.apiExpose({
+    openBlueprintMenu: () => {
+        new BlueprintApplication().render(true);
+    },
+});
