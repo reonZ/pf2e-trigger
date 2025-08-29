@@ -1,3 +1,13 @@
+# 2.2.0
+
+-   expose the `openBlueprintMenu` function to the API
+-   `Roll Save` action node:
+    -   add a `Blind Roll?` flag to roll the save blind
+-   `Roll Damage With Save` action node:
+    -   add a `Private Roll?` flag
+        -   you need to update `PF2e Toolbelt` to the `3.11.1` version if you use the module
+        -   this is related to the `private` flag of toolbelt, it hides the tooltip of saves made by a non-owned actor
+
 # 2.1.2
 
 -   fix `Roll Damage With Save` node not being updated with the latest toolbelt save variants changes
