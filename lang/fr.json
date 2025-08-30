@@ -343,11 +343,15 @@
           "label": "Lancer le jet de sauvegarde",
           "entry": {
             "basic": "Est-t-il basique ?",
+            "private": "Jet secret ?",
             "save": "Jet de sauvegarde"
           }
         },
         "roll-damage-save": {
           "label": "Lancer les dégâts avec un jet de sauvegarde",
+          "entry": {
+            "private": "Jet privé ?"
+          },
           "group": {
             "damage": "Dégâts",
             "save": "Jet de sauvegarde"
