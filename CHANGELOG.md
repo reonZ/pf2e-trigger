@@ -1,3 +1,7 @@
+# 2.2.1
+
+-   fix not using fallback to test if a localization key exist, preventing some localization for languages without a licalization file
+
 # 2.2.0
 
 -   expose the `openBlueprintMenu` function to the API
