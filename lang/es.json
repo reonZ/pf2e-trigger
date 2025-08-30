@@ -1,0 +1,587 @@
+{
+  "TYPES": {
+    "RegionBehavior": {
+      "pf2e-trigger": {
+        "trigger": "Disparador PF2e"
+      }
+    }
+  },
+  "pf2e-trigger": {
+    "region": {
+      "id": "Identificación del disparador"
+    },
+    "settings": {
+      "menus": {
+        "triggers-menu": {
+          "name": "Menú de disparadores",
+          "hint": "Registre sus propios disparadores con el módulo.",
+          "label": "Registrar"
+        }
+      }
+    },
+    "outs": {
+      "singular": "Salida",
+      "plural": "Salidas"
+    },
+    "inputs": {
+      "singular": "Entrada",
+      "plural": "Entradas"
+    },
+    "outputs": {
+      "singular": "Salida",
+      "plural": "Salidas"
+    },
+    "blueprint-menu": {
+      "sidebar": {
+        "title": "Menú de disparadores",
+        "close": "Cerrar ventana",
+        "import": "Importar",
+        "export": "Exportar",
+        "trigger": {
+          "add": "Crear disparador",
+          "copied": "El ID del disparador <strong>{id}</strong> se ha copiado al portapapeles.",
+          "copy": "Copiar ID de disparador",
+          "delete": "Eliminar disparador",
+          "title": "Disparadores"
+        },
+        "subtrigger": {
+          "add": "Crear subdisparador",
+          "copy": "Copiar ID de subdisparador",
+          "delete": "Eliminar subdisparador",
+          "title": "Subdisparadores"
+        },
+        "variable": {
+          "add": "Crear variable",
+          "delete": "Eliminar variable",
+          "global": "Este [{type}] es global para el disparador",
+          "linked": "Este [{type}] está vinculado a una salida",
+          "locked": "Esta variable no se puede eliminar",
+          "title": "Variables de disparador"
+        }
+      },
+      "controls": {
+        "save": "Guardar disparadores",
+        "reset": "Restablecer disparadores",
+        "collapse": "Contraer ventana"
+      },
+      "collapsed": {
+        "expand": "Expandir ventana de disparadores"
+      }
+    },
+    "import-export-menu": {
+      "toggle": "Alternar todo",
+      "trigger": {
+        "title": "Disparadores"
+      },
+      "subtrigger": {
+        "title": "Subdisparadores"
+      },
+      "item": {
+        "title": "Elementos",
+        "add": "Agregar artículo a la exportación",
+        "delete": "Eliminar elemento"
+      }
+    },
+    "export-menu": {
+      "title": "Exportar disparadores",
+      "cancel": {
+        "label": "Cancelar exportaciones"
+      },
+      "copy": {
+        "label": "Copiar al portapapeles",
+        "confirm": "Los disparadores se han copiado al portapapeles."
+      },
+      "export": {
+        "label": "Exportar a archivo"
+      },
+      "add-item": {
+        "title": "Agregar elemento manualmente para exportar",
+        "yes": "Agregar elemento",
+        "uuid": {
+          "label": "UUID del elemento"
+        }
+      }
+    },
+    "import-menu": {
+      "title": "Importar disparadores",
+      "import": {
+        "title": "Importar seleccionados",
+        "error": "Se produjo un error al importar datos de disparadores"
+      },
+      "cancel": {
+        "title": "Cancelar importaciones"
+      },
+      "code": {
+        "title": "Pegar JSON",
+        "yes": "Analizar JSON"
+      },
+      "file": {
+        "title": "Cargar archivo",
+        "yes": "Analizar archivo"
+      }
+    },
+    "close-window": {
+      "title": "Cerrar menú de disparadores",
+      "content": "¿Quieres guardar tus disparadores antes de cerrar?",
+      "yes": "Guardar y cerrar",
+      "no": "Cerrar sin guardar"
+    },
+    "save-triggers": {
+      "title": "Guardar disparadores",
+      "content": "¿Estás seguro de que deseas guardar tus disparadores?"
+    },
+    "reset-triggers": {
+      "title": "Restablecer disparadores",
+      "content": "¿Estás seguro de que deseas restablecer tus disparadores a su último estado guardado?"
+    },
+    "create-trigger": {
+      "title": "Crear disparador",
+      "yes": "Crear",
+      "name": {
+        "label": "Nombre del disparador"
+      },
+      "event": {
+        "label": "Tipo de evento"
+      }
+    },
+    "delete-trigger": {
+      "title": "Eliminar disparador ({id})",
+      "content": "¿Está seguro de que desea eliminar el disparador <strong>{label}</strong>?"
+    },
+    "edit-trigger": {
+      "title": "Editar disparador ({id})",
+      "yes": "Editar"
+    },
+    "delete-node": {
+      "title": "Eliminar nodo ({id})",
+      "content": "¿Estás seguro de que deseas eliminar este nodo?"
+    },
+    "create-subtrigger": {
+      "title": "Crear subdisparador",
+      "yes": "Crear"
+    },
+    "create-variable": {
+      "title": "Crear variable",
+      "yes": "Crear",
+      "label": {
+        "label": "Etiqueta de variable"
+      },
+      "type": {
+        "label": "Tipo de variable"
+      }
+    },
+    "delete-variable": {
+      "title": "Eliminar variable",
+      "content": "¿Está seguro de que desea eliminar la variable <strong>{label}</strong>?"
+    },
+    "edit-variable": {
+      "title": "Editar variable",
+      "yes": "Editar"
+    },
+    "create-entry": {
+      "title": "Crear entrada {label}",
+      "yes": "Crear",
+      "required": "El campo <strong>{name}</strong> es obligatorio.",
+      "label": {
+        "label": "Etiqueta de entrada"
+      },
+      "type": {
+        "label": "Tipo de entrada"
+      },
+      "path": {
+        "label": "Ruta de entrada"
+      },
+      "value": {
+        "label": "Valor"
+      }
+    },
+    "delete-entry": {
+      "content": "¿Está seguro de que desea eliminar el registro <strong>{name}</strong>?",
+      "title": "Eliminar registro {label}"
+    },
+    "context": {
+      "create-entry": "Crear registro {label}",
+      "create-variable": "Crear variable",
+      "delete-entry": "Eliminar registro",
+      "delete-node": "Eliminar nodo",
+      "delete-variable": "Eliminar variable",
+      "disconnect": "Desconectar entrada",
+      "duplicate-node": "Nodo duplicado",
+      "edit-variable": "Editar variable"
+    },
+    "entry": {
+      "boolean": "Booleano",
+      "dc": "corriente continua",
+      "duration": "Duración",
+      "effect": "Efecto",
+      "item": "Elemento",
+      "list": "Lista",
+      "number": "Número",
+      "object": "Objeto",
+      "roll": "Tirada",
+      "select": "Seleccionar",
+      "target": "Objetivo",
+      "text": "Texto",
+      "uuid": "UUID de origen",
+      "a": "A",
+      "b": "B",
+      "distance": "Distancia (ft.)",
+      "false": "Falso",
+      "formula": "fórmula",
+      "identifier": "Identificador",
+      "in": "En",
+      "input": "Entrada",
+      "label": "Etiqueta",
+      "min": "Mínimo",
+      "options": "Opciones de tirar dados",
+      "origin": "Origen",
+      "out": "Afuera",
+      "outcome": "Resultado",
+      "result": "Resultado",
+      "targets": "Objetivos",
+      "this": "Objetivo del disparador",
+      "trigger": "Identificación del disparador",
+      "true": "Verdadero",
+      "type": "Tipo",
+      "unit": "Unidad",
+      "value": "Valor",
+      "quantity": "Cantidad"
+    },
+    "document": {
+      "broken": "Enlace roto",
+      "wrong": "Este campo no acepta ese tipo de documento."
+    },
+    "select-option": {
+      "all": "Todo",
+      "allies": "Aliados",
+      "enemies": "Enemigos"
+    },
+    "node": {
+      "action": {
+        "title": "Acciones",
+        "subtitle": "Acción",
+        "add-condition": {
+          "label": "Agregar condición"
+        },
+        "add-persistent": {
+          "label": "Añadir daño persistente",
+          "entry": {
+            "die": "1d6"
+          }
+        },
+        "add-number": {
+          "label": "Agregar números"
+        },
+        "add-temporary": {
+          "label": "Agregar efecto disparado",
+          "entry": {
+            "image": "imagen/ruta.webp"
+          }
+        },
+        "break-process": {
+          "label": "Proceso de ruptura"
+        },
+        "console-log": {
+          "label": "Registro de la consola"
+        },
+        "create-item": {
+          "label": "Crear elemento",
+          "entry": {
+            "duplicate": "¿Duplicado?"
+          }
+        },
+        "delete-item": {
+          "label": "Eliminar elemento"
+        },
+        "distance-between": {
+          "label": "Obtener la distancia entre",
+          "entry": {
+            "a": "Objetivo A",
+            "b": "Objetivo B"
+          }
+        },
+        "effect-duration": {
+          "label": "Actualizar la duración del efecto",
+          "entry": {
+            "effect": "Efecto",
+            "removed": "Eliminado"
+          }
+        },
+        "get-choiceset": {
+          "label": "Recuperar elemento de conjunto de opciones",
+          "entry": {
+            "flag": "bandera",
+            "option": "rollOption",
+            "selection": "Selección"
+          }
+        },
+        "get-combatant": {
+          "label": "Obtener combatiente actual",
+          "entry": {
+            "combatant": "Combatiente"
+          }
+        },
+        "give-item": {
+          "label": "Dar artículo físico"
+        },
+        "reduce-condition": {
+          "label": "Reducir condición",
+          "entry": {
+            "counter": "Valor"
+          }
+        },
+        "remove-item": {
+          "label": "Eliminar artículo"
+        },
+        "remove-temporary": {
+          "label": "Eliminar efecto de activación"
+        },
+        "roll-damage": {
+          "label": "Tirada de daño"
+        },
+        "roll-save": {
+          "label": "Tirada de salvación",
+          "entry": {
+            "basic": "¿Es básico?",
+            "private": "¿Tirada ciega?",
+            "save": "Salvación"
+          }
+        },
+        "roll-damage-save": {
+          "label": "Daño de tirada con salvación",
+          "entry": {
+            "private": "¿Tirada privada?"
+          },
+          "group": {
+            "damage": "Daño",
+            "save": "Salvación"
+          }
+        },
+        "scene-tokens": {
+          "label": "Tokens de escena",
+          "entry": {
+            "other": "Objetivo de la escena"
+          }
+        },
+        "subtract-number": {
+          "label": "Restar números"
+        },
+        "use-macro": {
+          "label": "Ejecutar macro"
+        }
+      },
+      "condition": {
+        "title": "Condiciones",
+        "subtitle": "Condición",
+        "contains-entry": {
+          "label": "La lista contiene la entrada"
+        },
+        "has-condition": {
+          "label": "Tiene condición"
+        },
+        "has-item": {
+          "label": "Tiene artículo"
+        },
+        "has-option": {
+          "label": "Tiene RollOption",
+          "entry": {
+            "options": "roll:option"
+          }
+        },
+        "has-temporary": {
+          "label": "Tiene efecto desencadenante"
+        },
+        "in-combat": {
+          "label": "Está en combate"
+        },
+        "in-range": {
+          "label": "Está en furia"
+        },
+        "inside-aura": {
+          "label": "Está dentro de Aura",
+          "entry": {
+            "source": "Fuente del aura",
+            "slug": "aura-slug"
+          }
+        },
+        "is-combatant": {
+          "label": "Es combatiente actual"
+        },
+        "match-predicate": {
+          "label": "La lista coincide con el predicado"
+        }
+      },
+      "event": {
+        "title": "Eventos",
+        "subtitle": "Evento",
+        "attack-roll": {
+          "label": "Tirada de ataque",
+          "entry": {
+            "action": "Slug de la acción",
+            "other": "Atacar objetivo",
+            "item": "Atacar objeto"
+          }
+        },
+        "aura-enter": {
+          "label": "Aura entró",
+          "entry": {
+            "turn": "¿Turno actual?"
+          }
+        },
+        "aura-leave": {
+          "label": "Aura izquierda"
+        },
+        "damage-taken": {
+          "label": "Daños recibidos",
+          "entry": {
+            "other": "Origen del daño",
+            "item": "Objeto dañado",
+            "heal": "¿Está sanando?",
+            "negated": "¿No hay daños?"
+          }
+        },
+        "execute-event": {
+          "label": "Ejecutar evento",
+          "subtitle": "juego.trigger.execute()"
+        },
+        "region-event": {
+          "label": "Región de la escena",
+          "entry": {
+            "event": "Evento"
+          }
+        },
+        "test-event": {
+          "label": "Evento de prueba",
+          "subtitle": "juego.disparador.prueba()",
+          "warning": "Debe seleccionar un solo token para ejecutar los desencadenadores del <strong>Evento de prueba</strong>."
+        },
+        "token-create": {
+          "label": "Token creado"
+        },
+        "token-delete": {
+          "label": "Token eliminado"
+        },
+        "token-moved": {
+          "label": "Token movido",
+          "entry": {
+            "data": "Datos de movimiento"
+          }
+        },
+        "turn-end": {
+          "label": "Turno terminado"
+        },
+        "turn-start": {
+          "label": "Turno iniciado"
+        }
+      },
+      "logic": {
+        "title": "Lógica",
+        "eq-actor": {
+          "label": "Igual (Actor)"
+        },
+        "eq-number": {
+          "label": "Es igual a (Número)"
+        },
+        "eq-text": {
+          "label": "Igual (Texto)"
+        },
+        "gt-number": {
+          "label": "Más que"
+        },
+        "gte-number": {
+          "label": "Mayor o igual que"
+        },
+        "lt-number": {
+          "label": "Menos que"
+        },
+        "lte-number": {
+          "label": "Menor o igual que"
+        }
+      },
+      "splitter": {
+        "title": "Divisores",
+        "actor-splitter": {
+          "label": "Extraer datos (Actor)"
+        },
+        "boolean-splitter": {
+          "label": "Ramificación booleana"
+        },
+        "item-splitter": {
+          "label": "Extraer datos (elemento)"
+        },
+        "object-splitter": {
+          "label": "Extraer datos (Object)"
+        },
+        "success-splitter": {
+          "label": "Grado de éxito de la diversificación"
+        },
+        "text-splitter": {
+          "label": "Texto de ramificación",
+          "entry": {
+            "none": "No hay coincidencia"
+          }
+        }
+      },
+      "subtrigger": {
+        "title": "Subdisparadores",
+        "subtitle": "Subdisparador",
+        "subtrigger-input": {
+          "label": "Aporte"
+        },
+        "subtrigger-output": {
+          "label": "Producción"
+        }
+      },
+      "value": {
+        "title": "Valores",
+        "subtitle": "valor",
+        "dc-target": {
+          "label": "Clase de dificultad (en contra)",
+          "entry": {
+            "against": "contra",
+            "adjustment": "Ajuste"
+          }
+        },
+        "dc-value": {
+          "label": "Clase de dificultad (valor)"
+        },
+        "duration-simple": {
+          "label": "Duración del efecto"
+        },
+        "duration-unit": {
+          "label": "Duración del efecto (Unidad)"
+        },
+        "effect-data": {
+          "label": "Datos de efectos"
+        },
+        "item-source": {
+          "label": "Origen del artículo"
+        },
+        "number-value": {
+          "label": "Entrada de número"
+        },
+        "roll-data": {
+          "label": "Datos del rollo",
+          "entry": {
+            "options": "extra, opciones",
+            "traits": "extra, rasgos"
+          }
+        },
+        "success-value": {
+          "label": "Grado de éxito"
+        },
+        "text-value": {
+          "label": "Entrada de texto"
+        }
+      },
+      "variable": {
+        "title": "Variables",
+        "getter": "Adquiridor",
+        "setter": "Setter",
+        "variable-setter": {
+          "label": "Establecer variable"
+        }
+      }
+    }
+  }
+}
