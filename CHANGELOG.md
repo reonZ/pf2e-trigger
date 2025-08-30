@@ -1,3 +1,7 @@
+# 2.2.2
+
+-   fix not using fallback to test if a localization key exist, preventing some localization for languages without a localization file (again)
+
 # 2.2.1
 
 -   fix not using fallback to test if a localization key exist, preventing some localization for languages without a localization file
