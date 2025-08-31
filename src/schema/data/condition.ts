@@ -72,7 +72,7 @@ const matchPredicate = {
             type: "text",
             label: "PF2E.RuleEditor.General.Predicate",
             field: {
-                code: true,
+                type: "code",
                 default: "[\n  \n]",
             },
         },

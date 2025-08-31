@@ -81,6 +81,20 @@ const useMacro = {
     ],
 } as const satisfies ActionRawSchema;
 
+const createMessage = {
+    icon: "\uf4b6",
+    inputs: [
+        {
+            key: "message",
+            type: "text",
+            field: {
+                type: "description",
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 const createItem = {
     icon: "\uf466",
     inputs: [
@@ -275,6 +289,7 @@ export const action = {
     "break-process": breakProcess,
     "console-log": consoleLog,
     "create-item": createItem,
+    "create-message": createMessage,
     "delete-item": deleteItem,
     "distance-between": distanceBetween,
     "effect-duration": effectDuration,

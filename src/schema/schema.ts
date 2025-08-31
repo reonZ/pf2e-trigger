@@ -10,6 +10,7 @@ import {
     NodeSchemaCustom,
     NodeSchemaModel,
     NodeSchemaModuleId,
+    NodeTextInputType,
     splitter,
     subtrigger,
     value,
@@ -195,7 +196,7 @@ type NodeSchemaBoolean = NodeSchemaInputEntry<
 type NodeSchemaText = NodeSchemaInputEntry<
     "text",
     {
-        code?: boolean;
+        type?: NodeTextInputType;
         default?: string;
     }
 >;

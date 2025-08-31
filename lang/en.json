@@ -289,6 +289,13 @@
                         "duplicate": "Duplicate?"
                     }
                 },
+                "create-message": {
+                    "label": "Create Chat Message",
+                    "entry": {
+                        "message": "Message",
+                        "target": "Speaker"
+                    }
+                },
                 "delete-item": {
                     "label": "Delete Item"
                 },

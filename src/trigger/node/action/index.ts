@@ -2,11 +2,13 @@ export * from "./_utils";
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
 import { AddConditionTriggerNode } from "./add-condition";
+import { AddNumberTriggerNode } from "./add-number";
 import { AddPersistentTriggerNode } from "./add-persistent";
 import { AddTemporaryTriggerNode } from "./add-temporary";
 import { BreakProcessTriggerNode } from "./break-process";
 import { ConsoleLogTriggerNode } from "./console-log";
 import { CreateItemTriggerNode } from "./create-item";
+import { CreateMessageTriggerNode } from "./create-message";
 import { DeleteItemTriggerNode } from "./delete-item";
 import { DistanceBetweenTriggerNode } from "./distance-between";
 import { EffectDurationTriggerNode } from "./effect-duration";
@@ -18,12 +20,11 @@ import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
+import { RollFlatTriggerNode } from "./roll-flat";
 import { RollSaveTriggerNode } from "./roll-save";
 import { SceneTokensTriggerNode } from "./scene-tokens";
-import { UseMacroTriggerNode } from "./use-macro";
-import { AddNumberTriggerNode } from "./add-number";
 import { SubtractNumberTriggerNode } from "./subtract-number";
-import { RollFlatTriggerNode } from "./roll-flat";
+import { UseMacroTriggerNode } from "./use-macro";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -33,6 +34,7 @@ export const action = {
     "break-process": BreakProcessTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "create-item": CreateItemTriggerNode,
+    "create-message": CreateMessageTriggerNode,
     "delete-item": DeleteItemTriggerNode,
     "distance-between": DistanceBetweenTriggerNode,
     "effect-duration": EffectDurationTriggerNode,

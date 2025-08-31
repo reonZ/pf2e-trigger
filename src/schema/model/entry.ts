@@ -10,6 +10,8 @@ import {
 import { NodeRawSchemaEntry, SchemaEntries } from "schema";
 import fields = foundry.data.fields;
 
+const NODE_INPUT_TEXT_TYPES = ["code", "description"] as const;
+
 class NodeInputOptionsField extends DataUnionField<
     fields.StringField | ArrayField<SelectArrayOption>,
     SelectOptions,
@@ -150,10 +152,11 @@ class NodeInputField<
                             }
                         ),
                         options: new NodeInputOptionsField(),
-                        code: new fields.BooleanField({
+                        type: new fields.StringField({
                             required: false,
-                            nullable: false,
-                            initial: false,
+                            nullable: true,
+                            choices: NODE_INPUT_TEXT_TYPES,
+                            initial: undefined,
                         }),
                         document: new fields.StringField({
                             required: false,
@@ -313,7 +316,7 @@ type NodeInputFieldSchema = {
         true
     >;
     options: NodeInputOptionsField;
-    code: fields.BooleanField<boolean, boolean, false>;
+    type: fields.StringField<NodeInputFieldType, NodeInputFieldType, false, true, true>;
     document: fields.StringField<"Item" | "Macro", "Item" | "Macro", false, false, false>;
 };
 
@@ -324,7 +327,7 @@ type NodeInputSource = BaseNodeSchemaEntry & {
         step?: number;
         default?: string | number | boolean;
         options?: string | (SelectOption | string)[];
-        code?: boolean;
+        type?: NodeInputFieldType;
         document?: "Item" | "Macro";
     };
 };
@@ -337,6 +340,10 @@ type SelectArrayOption = DataUnionField<
     false
 >;
 
+type NodeTextInputType = (typeof NODE_INPUT_TEXT_TYPES)[number];
+
+type NodeInputFieldType = NodeTextInputType;
+
 export { baseNodeSchemaEntry, entrySchemaIsOfType, NodeInputField };
 export type {
     BaseNodeSchemaEntry,
@@ -348,4 +355,5 @@ export type {
     NodeOutputSchema,
     NodeOutputSource,
     NodeSchemaEntry,
+    NodeTextInputType,
 };

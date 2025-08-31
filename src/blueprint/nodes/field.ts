@@ -141,7 +141,7 @@ class EntryField extends PIXI.Graphics {
         const value = String(this.value).trim();
         const schema = this.schema;
 
-        if (entrySchemaIsOfType(schema, "text") && schema.field?.code) {
+        if (entrySchemaIsOfType(schema, "text") && schema.field?.type === "code") {
             return value.replace(/\s{1}|\\n/g, "");
         }
 
@@ -318,8 +318,12 @@ class EntryField extends PIXI.Graphics {
         }
 
         if (entrySchemaIsOfType(schema, "text")) {
-            if (schema.field?.code) {
+            if (schema.field?.type === "code") {
                 return this.#createCodeDialog(current as string);
+            }
+
+            if (schema.field?.type === "description") {
+                return this.#createDescriptionDialog(current as string);
             }
 
             const input = foundry.applications.fields.createTextInput({
@@ -346,49 +350,59 @@ class EntryField extends PIXI.Graphics {
         return current;
     }
 
-    async #createCodeDialog(value: string): Promise<NodeEntryValue> {
+    #createDescriptionDialog(value: string): Promise<NodeEntryValue> {
         return new Promise((resolve) => {
-            const input = foundry.applications.elements.HTMLCodeMirrorElement.create({
-                name: "field",
-                value: value,
+            const input = foundry.applications.elements.HTMLProseMirrorElement.create({
                 autofocus: true,
-                language: "json",
                 classes: "trigger-input",
+                collaborate: false,
+                compact: true,
+                height: 320,
+                name: "field",
+                toggled: false,
+                value: value,
             });
 
-            document.body.appendChild(input);
+            this.#addDialogToDOM(input);
+
+            requestAnimationFrame(() => {
+                const content = input.querySelector<HTMLElement>(".editor-content");
+                content?.focus();
+            });
+
+            const onSave = () => {
+                resolve(input.value);
+                input.remove();
+            };
+
+            input.addEventListener("save", onSave, { once: true });
+
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    input?.removeEventListener("save", onSave);
+                    input.remove();
+                }
+            });
+        });
+    }
+
+    #createCodeDialog(value: string): Promise<NodeEntryValue> {
+        return new Promise((resolve) => {
+            const input = foundry.applications.elements.HTMLCodeMirrorElement.create({
+                autofocus: true,
+                classes: "trigger-input",
+                language: "json",
+                name: "field",
+                value: value,
+            });
+
+            this.#addDialogToDOM(input);
 
             const content = input.querySelector<HTMLElement>(".cm-content");
             content?.focus();
-
-            const { center } = this.globalBounds;
-            const bounds = input.getBoundingClientRect();
-            const viewBounds = this.blueprint.getBoundClientRect();
-            const position: Point = {
-                x: center.x - bounds.width / 2,
-                y: center.y - bounds.height / 2,
-            };
-
-            if (position.y + bounds.height > viewBounds.bottom) {
-                position.y = viewBounds.bottom - bounds.height;
-            }
-
-            if (position.y < viewBounds.top) {
-                position.y = viewBounds.top;
-            }
-
-            if (position.x + bounds.width > viewBounds.right) {
-                position.x = viewBounds.right - bounds.width;
-            }
-
-            if (position.x < viewBounds.left) {
-                position.x = viewBounds.left;
-            }
-
-            assignStyle(input, {
-                left: `${position.x}px`,
-                top: `${position.y}px`,
-            });
 
             const onBlur = () => {
                 // we wait one frame so the code-mirror #onBlur can happen before
@@ -410,6 +424,39 @@ class EntryField extends PIXI.Graphics {
                     input.remove();
                 }
             });
+        });
+    }
+
+    #addDialogToDOM(input: HTMLElement) {
+        document.body.appendChild(input);
+
+        const { center } = this.globalBounds;
+        const bounds = input.getBoundingClientRect();
+        const viewBounds = this.blueprint.getBoundClientRect();
+        const position: Point = {
+            x: center.x - bounds.width / 2,
+            y: center.y - bounds.height / 2,
+        };
+
+        if (position.y + bounds.height > viewBounds.bottom) {
+            position.y = viewBounds.bottom - bounds.height;
+        }
+
+        if (position.y < viewBounds.top) {
+            position.y = viewBounds.top;
+        }
+
+        if (position.x + bounds.width > viewBounds.right) {
+            position.x = viewBounds.right - bounds.width;
+        }
+
+        if (position.x < viewBounds.left) {
+            position.x = viewBounds.left;
+        }
+
+        assignStyle(input, {
+            left: `${position.x}px`,
+            top: `${position.y}px`,
         });
     }
 

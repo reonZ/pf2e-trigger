@@ -1,19 +1,46 @@
-input.trigger-input {
-    position: absolute;
-    z-index: 2147483647;
-    border-color: "transparent";
-    color: white;
-    border-radius: 0;
-}
+body {
+    > .trigger-input {
+        z-index: 9998;
+        position: absolute;
+    }
 
-code-mirror.trigger-input {
-    position: absolute;
+    > input.trigger-input {
+        border-color: "transparent";
+        color: white;
+        border-radius: 0;
+    }
 
-    position: absolute;
-    z-index: 2147483647;
-    width: 380px;
-    height: 320px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 20px black;
+    > code-mirror.trigger-input,
+    prose-mirror.trigger-input {
+        width: 380px;
+        box-shadow: 0 0 20px black;
+    }
+
+    > code-mirror.trigger-input {
+        height: 320px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    > prose-mirror.trigger-input {
+        gap: 0;
+        outline: 2px solid var(--color-cool-3);
+        border-radius: 4px;
+
+        .editor-menu {
+            border-radius: 0;
+            padding: 0.1em 0 0;
+            justify-content: end;
+            padding-right: 0.1em;
+        }
+
+        .editor-container {
+            background: var(--menu-background);
+            border-top: 1px solid var(--color-cool-3);
+
+            .editor-content {
+                padding-inline: 0.5rem;
+            }
+        }
+    }
 }
