@@ -152,9 +152,15 @@ class TriggerNode<
                 };
             }
         } else if (R.isNonNullish(input.value)) {
-            this.#get[key] = () => input.value;
+            this.#get[key] = () => {
+                return this.isValidEntryValue(schemaInput, input.value)
+                    ? input.value
+                    : this.getDefaultValue(schemaInput);
+            };
         } else {
-            this.#get[key] = () => this.getDefaultValue(schemaInput);
+            this.#get[key] = () => {
+                return this.getDefaultValue(schemaInput);
+            };
         }
 
         return this.#get[key]();
@@ -231,41 +237,54 @@ class TriggerNode<
 
         // number
         if (type === "dc") {
-            return R.isNumber(value) ? ({ value, scope: "check" } satisfies TriggerDcEntry) : value;
+            value = R.isNumber(value)
+                ? ({ value, scope: "check" } satisfies TriggerDcEntry)
+                : value;
         }
-
         // uuid
-        if (type === "item") {
-            return R.isString(value) && isUuidOf(value, "Item") ? getItemFromUuid(value) : value;
+        else if (type === "item") {
+            value = R.isString(value) && isUuidOf(value, "Item") ? getItemFromUuid(value) : value;
         }
-
         // select, text
-        if (type === "list") {
-            return R.isArray(value) ? value : [value];
+        else if (type === "list") {
+            value = R.isArray(value) ? value : [value];
         }
-
         // dc
-        if (type === "number") {
-            return isDcEntry(value) ? value.value : value;
+        else if (type === "number") {
+            value = isDcEntry(value) ? value.value : value;
         }
-
         // text
-        if (type === "select") {
+        else if (type === "select") {
             const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
-            return options.includes(value) ? value : options[0] ?? "";
+            value = options.includes(value) ? value : options[0] ?? "";
         }
-
         // list, select
-        if (type === "text") {
-            return R.isArray(value) ? value[0] ?? "" : value;
+        else if (type === "text") {
+            value = R.isArray(value) ? value[0] ?? "" : value;
         }
-
         // item
-        if (type === "uuid") {
-            return value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
+        else if (type === "uuid") {
+            value = value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
         }
 
-        return value;
+        return this.isValidEntryValue(schemaInput, value)
+            ? value
+            : this.getDefaultValue(schemaInput);
+    }
+
+    isValidEntryValue(schemaInput: SchemaInputAdjacent, value: unknown): boolean {
+        const type = schemaInput.type;
+
+        if (type === "select") {
+            const options = (schemaInput.field?.options ?? []).map((option) => option.value);
+            return R.isString(value) && options.includes(value);
+        }
+
+        if (type === "uuid") {
+            return R.isString(value);
+        }
+
+        return this.isValidCustomEntry(type, value);
     }
 
     isValidCustomEntry(type: NodeEntryType, value: unknown): boolean {

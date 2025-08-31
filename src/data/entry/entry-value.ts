@@ -18,7 +18,7 @@ class NodeEntryValueField<
             return value;
         }
 
-        if (R.isString(value)) {
+        if (R.isString(value) && !R.isEmpty(value)) {
             const numbered = Number(value);
             return isNaN(numbered) ? value : numbered;
         }
