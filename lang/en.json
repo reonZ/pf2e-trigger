@@ -338,14 +338,6 @@
                 "roll-damage": {
                     "label": "Roll Damage"
                 },
-                "roll-save": {
-                    "label": "Roll Save",
-                    "entry": {
-                        "basic": "Is Basic?",
-                        "private": "Blind Roll?",
-                        "save": "Save"
-                    }
-                },
                 "roll-damage-save": {
                     "label": "Roll Damage With Save",
                     "entry": {
@@ -353,6 +345,17 @@
                     },
                     "group": {
                         "damage": "Damage",
+                        "save": "Save"
+                    }
+                },
+                "roll-flat": {
+                    "label": "Roll Flat Check"
+                },
+                "roll-save": {
+                    "label": "Roll Save",
+                    "entry": {
+                        "basic": "Is Basic?",
+                        "private": "Blind Roll?",
                         "save": "Save"
                     }
                 },

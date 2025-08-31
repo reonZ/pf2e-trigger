@@ -23,6 +23,7 @@ import { SceneTokensTriggerNode } from "./scene-tokens";
 import { UseMacroTriggerNode } from "./use-macro";
 import { AddNumberTriggerNode } from "./add-number";
 import { SubtractNumberTriggerNode } from "./subtract-number";
+import { RollFlatTriggerNode } from "./roll-flat";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -43,6 +44,7 @@ export const action = {
     "remove-temporary": RemoveTemporaryTriggerNode,
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-save": RollDamageSaveTriggerNode,
+    "roll-flat": RollFlatTriggerNode,
     "roll-save": RollSaveTriggerNode,
     "scene-tokens": SceneTokensTriggerNode,
     "subtract-number": SubtractNumberTriggerNode,

@@ -1,14 +1,5 @@
 import { NodeRawSchema, schemaConditionEntries } from "schema";
 
-const rollDamage = {
-    icon: "\uf6cf",
-    inputs: [
-        { key: "formula", type: "text" },
-        { key: "roll", type: "roll" },
-        { key: "target", type: "target" },
-    ],
-} as const satisfies ActionRawSchema;
-
 const rollSave = {
     icon: "\uf6cf",
     inputs: [
@@ -30,6 +21,30 @@ const rollSave = {
         },
     ],
     outputs: [{ key: "result", type: "number" }],
+} as const satisfies ActionRawSchema;
+
+const rollFlat = {
+    icon: "\uf6cf",
+    inputs: [
+        {
+            key: "dc",
+            type: "number",
+            field: {
+                default: 15,
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "result", type: "number" }],
+} as const satisfies ActionRawSchema;
+
+const rollDamage = {
+    icon: "\uf71c",
+    inputs: [
+        { key: "formula", type: "text" },
+        { key: "roll", type: "roll" },
+        { key: "target", type: "target" },
+    ],
 } as const satisfies ActionRawSchema;
 
 const rollDamageSave = {
@@ -271,6 +286,7 @@ export const action = {
     "remove-temporary": removeTemporary,
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,
+    "roll-flat": rollFlat,
     "roll-save": rollSave,
     "scene-tokens": sceneTokens,
     "subtract-number": arithmeticAction("\uf068"),
