@@ -229,6 +229,7 @@
       "false": "Faux",
       "formula": "formule",
       "identifier": "Identifiant",
+      "image": "image/chemin.webp",
       "in": "Dans",
       "input": "Entrée",
       "label": "Étiquette",
@@ -273,10 +274,7 @@
           "label": "Ajouter des nombres"
         },
         "add-temporary": {
-          "label": "Ajouter un effet déclencheur",
-          "entry": {
-            "image": "image/chemin.webp"
-          }
+          "label": "Ajouter un effet déclencheur"
         },
         "break-process": {
           "label": "Rompre le processus"

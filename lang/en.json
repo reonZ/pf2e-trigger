@@ -230,6 +230,7 @@
             "false": "False",
             "formula": "formula",
             "identifier": "Identifier",
+            "image": "image/path.webp",
             "in": "In",
             "input": "Input",
             "label": "Label",
@@ -274,10 +275,7 @@
                     "label": "Add Numbers"
                 },
                 "add-temporary": {
-                    "label": "Add Trigger Effect",
-                    "entry": {
-                        "image": "image/path.webp"
-                    }
+                    "label": "Add Trigger Effect"
                 },
                 "break-process": {
                     "label": "Break Process"
