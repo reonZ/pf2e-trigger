@@ -10,15 +10,15 @@ class AddPersistentTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-p
             return this.send("out");
         }
 
-        const effect = createCustomPersistentDamage({
+        const source = createCustomPersistentDamage({
             ...(await this.get("effect")),
             dc: await this.get("dc"),
             die: (await this.get("die")) || "1d6",
             type: (await this.get("type")) as DamageType,
         });
 
-        if (effect) {
-            await actor.createEmbeddedDocuments("Item", [effect]);
+        if (source) {
+            await actor.createEmbeddedDocuments("Item", [source]);
         }
 
         return this.send("out");

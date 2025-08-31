@@ -10,14 +10,14 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
             return this.send("out");
         }
 
-        const effect = createCustomCondition({
+        const source = createCustomCondition({
             ...(await this.get("effect")),
             slug: (await this.get("condition")) as ConditionSlug,
             counter: await this.get("counter"),
         });
 
-        if (effect) {
-            await actor.createEmbeddedDocuments("Item", [effect]);
+        if (source) {
+            await actor.createEmbeddedDocuments("Item", [source]);
         }
 
         return this.send("out");
