@@ -1,3 +1,25 @@
+# 2.3.0
+
+-   bump the system version minimum compatibility to `7.4.3`
+-   strongly improve value type enforcement of triggers
+-   add new `Concatenate Texts` action node:
+    -   the separator field accept "space" characters as opposed to regular text fields
+-   add new `Create Chat Message` action node
+    -   the module has a new text input type for it
+-   add new `Join List` action node:
+    -   works like the `Concatenate Texts` node but for list entries
+-   add new `Roll Flat Check` action node
+-   `Add Condition`:
+    -   now stacks with existing non-locked conditions if any exist and not providing any `Effect Data` that would require the creation of an `Effect + Condition` combo instead of always creating a new condition
+-   `Add Persistent Damage`:
+    -   fix not being able to add a regular persistent damage (one not part of an effect+condition combo)
+-   `Effect Data`:
+    -   fix placeholder localization of the "image" field
+-   `List Contains Entry`:
+    -   fix placeholder localization of the "entry" field
+-   `Roll Damage`:
+    -   fix node icon using the same as check rolls
+
 # 2.2.2
 
 -   fix not using fallback to test if a localization key exist, preventing some localization for languages without a localization file (again)
@@ -73,7 +95,7 @@
 -   add `Roll Damage With Save` toolbelt action node
     -   rolls a damage while adding the necessary data to have an inline save added to it
     -   useful if you don't want to roll the save and damage in succession and instead use the toolbelt target-helper workflow
-    -   this requires the latest `PF2e Toobelt` version to work flawlessly
+    -   this requires the latest `PF2e Toolbelt` version to work flawlessly
 -   `Damage Taken` & `Damage Dealt`:
     -   are no longer restricted to trigger when the target actually receive damage
     -   add a new `No Damage?` variable that indicate when damage has been completely negated
@@ -118,7 +140,7 @@
     -   `target`: the path can lead to an actor OR a token/token document that has a valid actor
 -   add connection to the `Adjustment` input of the `Difficulty Class (Target)`
 -   add new `Current Turn?` option to `Aura Entered` & `Aura Left` event nodes
-    -   the option is enabled by default so nothing has to be changed to keep the previous behaviour
+    -   the option is enabled by default so nothing has to be changed to keep the previous behavior
     -   disabling it will stop enforcing the "it must be the target's turn to be triggered", allowing more versatility
     -   the events still require the target to be in combat
 -   add `Damage Taken` & `Damage Dealt` event nodes
@@ -259,7 +281,7 @@
 -   add `Has Trigger Effect` condition node
     -   this is the node you would use to predicate upon the trigger effect from inside trigger itself
 -   remove `Item Convertor` from the list of nodes
--   remove `dying`, `persistent-damage` & `unconcious` from the `Add Condition` action node options
+-   remove `dying`, `persistent-damage` & `unconscious` from the `Add Condition` action node options
 -   nodes can now have labels between connections
 -   add scrolling to select menus
 -   custom nodes inputs will now contain a field instead of being a pure connection
