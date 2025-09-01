@@ -334,6 +334,9 @@
                 "give-item": {
                     "label": "Give Physical Item"
                 },
+                "join-list": {
+                    "label": "Join List"
+                },
                 "reduce-condition": {
                     "label": "Reduce Condition",
                     "entry": {

@@ -16,6 +16,7 @@ import { EffectDurationTriggerNode } from "./effect-duration";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetCombatantTriggerNode } from "./get-combatant";
 import { GiveItemTriggerNode } from "./give-item";
+import { JoinListTriggerNode } from "./join-list";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
@@ -43,6 +44,7 @@ export const action = {
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,
     "give-item": GiveItemTriggerNode,
+    "join-list": JoinListTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,

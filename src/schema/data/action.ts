@@ -275,6 +275,22 @@ const concatTexts = {
     outputs: [{ key: "result", type: "text" }],
 } as const satisfies ActionRawSchema;
 
+const joinList = {
+    icon: "\uf5ff",
+    inputs: [
+        { key: "list", type: "list" },
+        {
+            key: "separator",
+            type: "text",
+            field: {
+                default: ",",
+                trim: false,
+            },
+        },
+    ],
+    outputs: [{ key: "result", type: "text" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -314,6 +330,7 @@ export const action = {
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,
     "give-item": giveItem,
+    "join-list": joinList,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
     "remove-temporary": removeTemporary,
