@@ -258,6 +258,23 @@ const distanceBetween = {
     outputs: [{ key: "distance", type: "number" }],
 } as const satisfies ActionRawSchema;
 
+const concatTexts = {
+    icon: "\uf894",
+    inputs: [
+        { key: "a", type: "text" },
+        { key: "b", type: "text" },
+        {
+            key: "separator",
+            type: "text",
+            field: {
+                default: "",
+                trim: false,
+            },
+        },
+    ],
+    outputs: [{ key: "result", type: "text" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -287,6 +304,7 @@ export const action = {
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
     "break-process": breakProcess,
+    "concat-texts": concatTexts,
     "console-log": consoleLog,
     "create-item": createItem,
     "create-message": createMessage,

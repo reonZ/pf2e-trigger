@@ -6,6 +6,7 @@ import { AddNumberTriggerNode } from "./add-number";
 import { AddPersistentTriggerNode } from "./add-persistent";
 import { AddTemporaryTriggerNode } from "./add-temporary";
 import { BreakProcessTriggerNode } from "./break-process";
+import { ConcatTextsTriggerNode } from "./concat-texts";
 import { ConsoleLogTriggerNode } from "./console-log";
 import { CreateItemTriggerNode } from "./create-item";
 import { CreateMessageTriggerNode } from "./create-message";
@@ -32,6 +33,7 @@ export const action = {
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "break-process": BreakProcessTriggerNode,
+    "concat-texts": ConcatTextsTriggerNode,
     "console-log": ConsoleLogTriggerNode,
     "create-item": CreateItemTriggerNode,
     "create-message": CreateMessageTriggerNode,

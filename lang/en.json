@@ -240,6 +240,7 @@
             "out": "Out",
             "outcome": "Outcome",
             "result": "Result",
+            "separator": "Separator",
             "targets": "Targets",
             "this": "Trigger Target",
             "trigger": "Trigger ID",
@@ -279,6 +280,9 @@
                 },
                 "break-process": {
                     "label": "Break Process"
+                },
+                "concat-texts": {
+                    "label": "Concatenate Texts"
                 },
                 "console-log": {
                     "label": "Console Log"
