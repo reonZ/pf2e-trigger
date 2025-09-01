@@ -383,7 +383,10 @@
                 "title": "Conditions",
                 "subtitle": "Condition",
                 "contains-entry": {
-                    "label": "List Contains Entry"
+                    "label": "List Contains Entry",
+                    "entry": {
+                        "entry": "Entry"
+                    }
                 },
                 "has-condition": {
                     "label": "Has Condition"
