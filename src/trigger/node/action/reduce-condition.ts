@@ -13,26 +13,24 @@ class ReduceConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "red
         const slug = (await this.get("condition")) as ConditionSlug;
         const value = await this.get("counter");
         const min = await this.get("min");
-        const conditions = actor.conditions.bySlug(slug).filter((condition) => !condition.isLocked);
-
         const toDelete: string[] = [];
-        const toUpdate: { id: string; value: number }[] = [];
 
+        const conditions = actor.itemTypes.condition.filter(
+            (condition) => condition.slug === slug && !condition.isLocked
+        );
+
+        // we decrease all the non-locked condition up to min value or delete the ones reaching 0
         for (const condition of conditions) {
-            const current = condition?.system.value.value;
+            const current = condition.system.value.value;
             if (!R.isNumber(current) || current <= min) continue;
 
             const newValue = Math.max(current - value, min);
 
             if (newValue > 0) {
-                toUpdate.push({ id: condition.id, value: newValue });
+                await game.pf2e.ConditionManager.updateConditionValue(condition.id, actor, value);
             } else {
                 toDelete.push(condition.id);
             }
-        }
-
-        for (const { id, value } of toUpdate) {
-            await game.pf2e.ConditionManager.updateConditionValue(id, actor, value);
         }
 
         if (toDelete.length) {
