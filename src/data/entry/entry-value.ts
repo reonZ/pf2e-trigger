@@ -18,9 +18,18 @@ class NodeEntryValueField<
             return value;
         }
 
-        if (R.isString(value) && !R.isEmpty(value)) {
+        if (R.isString(value) && !R.isEmpty(value.trim())) {
             const numbered = Number(value);
             return isNaN(numbered) ? value : numbered;
+        }
+
+        if (R.isString(value)) {
+            if (R.isEmpty(value.trim())) {
+                return value;
+            } else {
+                const numbered = Number(value);
+                return isNaN(numbered) ? value : numbered;
+            }
         }
 
         return undefined;
