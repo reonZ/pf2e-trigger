@@ -153,9 +153,7 @@ class TriggerNode<
             }
         } else if (R.isNonNullish(input.value)) {
             this.#get[key] = () => {
-                return this.isValidEntryValue(schemaInput, input.value)
-                    ? input.value
-                    : this.getDefaultValue(schemaInput);
+                return this.finalizeValue(schemaInput, input.value);
             };
         } else {
             this.#get[key] = () => {
@@ -267,9 +265,19 @@ class TriggerNode<
             value = value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
         }
 
-        return this.isValidEntryValue(schemaInput, value)
-            ? value
-            : this.getDefaultValue(schemaInput);
+        return this.finalizeValue(schemaInput, value);
+    }
+
+    finalizeValue(schemaInput: SchemaInputAdjacent, value: unknown): unknown {
+        if (!this.isValidEntryValue(schemaInput, value)) {
+            return this.getDefaultValue(schemaInput);
+        }
+
+        if (R.isString(value) && "field" in schemaInput && schemaInput.field?.trim !== false) {
+            return (value as string).trim();
+        }
+
+        return value;
     }
 
     isValidEntryValue(schemaInput: SchemaInputAdjacent, value: unknown): boolean {

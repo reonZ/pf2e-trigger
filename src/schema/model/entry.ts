@@ -152,9 +152,14 @@ class NodeInputField<
                             }
                         ),
                         options: new NodeInputOptionsField(),
+                        trim: new fields.BooleanField({
+                            required: false,
+                            nullable: false,
+                            initial: undefined,
+                        }),
                         type: new fields.StringField({
                             required: false,
-                            nullable: true,
+                            nullable: false,
                             choices: NODE_INPUT_TEXT_TYPES,
                             initial: undefined,
                         }),
@@ -316,7 +321,8 @@ type NodeInputFieldSchema = {
         true
     >;
     options: NodeInputOptionsField;
-    type: fields.StringField<NodeInputFieldType, NodeInputFieldType, false, true, true>;
+    trim: fields.BooleanField<boolean, boolean, false, false>;
+    type: fields.StringField<NodeInputFieldType, NodeInputFieldType, false, false, true>;
     document: fields.StringField<"Item" | "Macro", "Item" | "Macro", false, false, false>;
 };
 
@@ -327,6 +333,7 @@ type NodeInputSource = BaseNodeSchemaEntry & {
         step?: number;
         default?: string | number | boolean;
         options?: string | (SelectOption | string)[];
+        trim?: boolean;
         type?: NodeInputFieldType;
         document?: "Item" | "Macro";
     };

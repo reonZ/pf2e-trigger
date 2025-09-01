@@ -213,11 +213,15 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         }
 
         if (type === "text") {
-            return R.isString(value) ? value : defaultValue ?? "";
+            if (!R.isString(value)) {
+                return defaultValue ?? "";
+            }
+
+            return schema.field?.trim !== false ? value.trim() : value;
         }
 
         if (type === "uuid") {
-            return isUuidEntry(value) ? value : "";
+            return isUuidEntry(value) ? value.trim() : "";
         }
 
         return value ?? defaultValue;

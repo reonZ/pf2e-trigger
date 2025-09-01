@@ -138,8 +138,8 @@ class EntryField extends PIXI.Graphics {
     }
 
     get content(): string {
-        const value = String(this.value).trim();
         const schema = this.schema;
+        const value = String(this.value);
 
         if (entrySchemaIsOfType(schema, "text") && schema.field?.type === "code") {
             return value.replace(/\s{1}|\\n/g, "");
