@@ -1,3 +1,12 @@
+# 2.3.1
+
+-   bump the foundry minimum compatibility version to `13.348`
+-   `Create Chat Message`:
+    -   no longer fallback to the `Trigger Target` for the message `Speaker`
+-   fix breaking issue with custom entries containing a `.` character in their key
+    -   the `Extract Data` and `Branch Out Text` splitter nodes were impacted
+    -   if you used any of those four nodes, check your triggers and think of deleting/remaking those nodes
+
 # 2.3.0
 
 -   bump the system version minimum compatibility to `7.4.3`
