@@ -239,6 +239,7 @@
       "out": "Sortie",
       "outcome": "Résultat",
       "result": "Résultat",
+      "separator": "Séparateur",
       "targets": "Cibles",
       "this": "Déclencheur cible",
       "trigger": "ID du déclencheur",
@@ -279,6 +280,9 @@
         "break-process": {
           "label": "Rompre le processus"
         },
+        "concat-texts": {
+          "label": "Concaténer des textes"
+        },
         "console-log": {
           "label": "Journal de la console"
         },
@@ -286,6 +290,13 @@
           "label": "Créer un objet",
           "entry": {
             "duplicate": "Dupliquer ?"
+          }
+        },
+        "create-message": {
+          "label": "Créer un message de conversation",
+          "entry": {
+            "message": "Message",
+            "target": "Orateur"
           }
         },
         "delete-item": {
@@ -322,6 +333,9 @@
         "give-item": {
           "label": "Donner un objet physique"
         },
+        "join-list": {
+          "label": "Joindre la liste"
+        },
         "reduce-condition": {
           "label": "Réduire l'état",
           "entry": {
@@ -337,14 +351,6 @@
         "roll-damage": {
           "label": "Lancer les dégâts"
         },
-        "roll-save": {
-          "label": "Lancer le jet de sauvegarde",
-          "entry": {
-            "basic": "Est-t-il basique ?",
-            "private": "Jet secret ?",
-            "save": "Jet de sauvegarde"
-          }
-        },
         "roll-damage-save": {
           "label": "Lancer les dégâts avec un jet de sauvegarde",
           "entry": {
@@ -352,6 +358,17 @@
           },
           "group": {
             "damage": "Dégâts",
+            "save": "Jet de sauvegarde"
+          }
+        },
+        "roll-flat": {
+          "label": "Lancer un test nu"
+        },
+        "roll-save": {
+          "label": "Lancer le jet de sauvegarde",
+          "entry": {
+            "basic": "Est-t-il basique ?",
+            "private": "Jet secret ?",
             "save": "Jet de sauvegarde"
           }
         },
@@ -372,7 +389,10 @@
         "title": "États",
         "subtitle": "État",
         "contains-entry": {
-          "label": "La liste contient une entrée"
+          "label": "La liste contient une entrée",
+          "entry": {
+            "entry": "Entrée"
+          }
         },
         "has-condition": {
           "label": "A un état"
