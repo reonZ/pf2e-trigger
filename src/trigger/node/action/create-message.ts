@@ -3,7 +3,7 @@ import { TriggerNode } from "trigger";
 
 class CreateMessageTriggerNode extends TriggerNode<NodeSchemaOf<"action", "create-message">> {
     async execute(): Promise<boolean> {
-        const target = await this.getTarget("target");
+        const target = await this.get("target");
         const content = await this.get("message");
         const ChatMessage = getDocumentClass("ChatMessage");
 
