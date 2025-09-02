@@ -364,10 +364,15 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             },
         });
 
+        if (this.isSutriggerEvent) {
+            // we re-initialize the trigger to update the variables
+            this.parent.reset();
+        }
+
         if (this.isSutriggerEvent || this.isSubtriggerOutput) {
             const oppositeCategory = category === "inputs" ? "outputs" : "inputs";
 
-            // we go overe all the subtrigger-node out there
+            // we go over all the subtrigger-node out there
             for (const trigger of this.triggers ?? []) {
                 if (trigger.isSubtrigger) continue;
 
