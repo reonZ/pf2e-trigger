@@ -1,3 +1,7 @@
+# 2.3.2
+
+-   fix `Delete Entry` of a sub-trigger event not removing the variable from the `Trigger Variables` list
+
 # 2.3.1
 
 -   bump the foundry minimum compatibility version to `13.348`
