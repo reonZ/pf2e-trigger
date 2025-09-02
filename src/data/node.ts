@@ -299,7 +299,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         group?: string;
         key?: string;
     }) {
-        key = key?.trim() || foundry.utils.randomID();
+        key = key?.trim().replace(/\./g, "|") || foundry.utils.randomID();
 
         const entries = (this._source.custom?.[category]?.slice() ?? []) as NodeSchemaEntry[];
         const entry: NodeSchemaEntry = {
