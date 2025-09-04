@@ -167,7 +167,7 @@ class TriggerNode<
     getDefaultValue(schemaInput: SchemaInputAdjacent): any {
         const field = schemaInput.field;
 
-        if (field && "default" in field) {
+        if (field && "default" in field && R.isNonNullish(field.default)) {
             return field.default;
         }
 
