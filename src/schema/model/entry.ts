@@ -129,7 +129,6 @@ class NodeInputField<
                         step: new fields.NumberField({
                             required: false,
                             nullable: false,
-                            step: 1,
                         }),
                         default: new DataUnionField(
                             [

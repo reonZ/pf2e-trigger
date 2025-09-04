@@ -106,7 +106,7 @@
             "title": "Import Triggers",
             "import": {
                 "title": "Import Selected",
-                "error": "An error occured while importing triggers data"
+                "error": "An error occurred while importing triggers data"
             },
             "cancel": {
                 "title": "Cancel Imports"
@@ -234,6 +234,7 @@
             "in": "In",
             "input": "Input",
             "label": "Label",
+            "max": "Maximum",
             "min": "Minimum",
             "none": "No Match",
             "options": "Roll Options",
@@ -337,6 +338,9 @@
                 },
                 "join-list": {
                     "label": "Join List"
+                },
+                "random-number": {
+                    "label": "Generate Random Number"
                 },
                 "reduce-condition": {
                     "label": "Reduce Condition",

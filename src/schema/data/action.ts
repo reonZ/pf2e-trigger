@@ -1,5 +1,22 @@
 import { NodeRawSchema, schemaConditionEntries } from "schema";
 
+const randomNumber = {
+    icon: "\ue3dd",
+    inputs: [
+        {
+            key: "min",
+            type: "number",
+            field: { step: 1 },
+        },
+        {
+            key: "max",
+            type: "number",
+            field: { default: 10, step: 1 },
+        },
+    ],
+    outputs: [{ key: "result", type: "number" }],
+} as const satisfies ActionRawSchema;
+
 const rollSave = {
     icon: "\uf6cf",
     inputs: [
@@ -331,6 +348,7 @@ export const action = {
     "get-combatant": getCombatant,
     "give-item": giveItem,
     "join-list": joinList,
+    "random-number": randomNumber,
     "reduce-condition": reduceCondition,
     "remove-item": removeItem,
     "remove-temporary": removeTemporary,
