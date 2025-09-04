@@ -1,3 +1,13 @@
+# 2.4.0
+
+-   adjust `Branch Out` splitter nodes name
+-   add new `Branch Out (Number)` splitter node:
+    -   add custom bridge values to branch out whenever they match the input
+-   add new `Has Immunity` condition node
+-   add new `Random Number` action node
+-   always sort select options by alphabetical order
+-   fix issue when the module needs to return a default value and instead returns `undefined`
+
 # 2.3.2
 
 -   fix `Delete Entry` of a sub-trigger event not removing the variable from the `Trigger Variables` list
