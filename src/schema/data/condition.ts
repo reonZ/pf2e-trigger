@@ -87,6 +87,21 @@ const hasCondition = {
     ],
 } as const satisfies ConditionSchema;
 
+const hasImmunity = {
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "target", type: "target" },
+        {
+            key: "type",
+            label: "PF2E.Actor.IWREditor.Type",
+            type: "select",
+            field: {
+                options: "CONFIG.Pf2eTrigger.immunityTypes",
+            },
+        },
+    ],
+} as const satisfies ConditionSchema;
+
 const hasTemporary = {
     outs: schemaBooleanOuts(),
     inputs: [
@@ -130,6 +145,7 @@ type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
 export const condition = {
     "contains-entry": containsEntry,
     "has-condition": hasCondition,
+    "has-immunity": hasImmunity,
     "has-item": hasItem,
     "has-option": hasOptions,
     "has-temporary": hasTemporary,

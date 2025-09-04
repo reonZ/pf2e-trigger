@@ -403,6 +403,9 @@
                 "has-condition": {
                     "label": "Has Condition"
                 },
+                "has-immunity": {
+                    "label": "Has Immunity"
+                },
                 "has-item": {
                     "label": "Has Item"
                 },

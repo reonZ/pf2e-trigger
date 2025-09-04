@@ -20,6 +20,7 @@ Hooks.once("init", () => {
     // @ts-expect-error
     CONFIG.Pf2eTrigger = {
         addConditionTypes: R.omit(CONFIG.PF2E.conditionTypes, ["persistent-damage"]),
+        immunityTypes: R.omit(CONFIG.PF2E.immunityTypes, ["custom"]),
         reduceConditionTypes: R.pipe(
             R.entries(CONFIG.PF2E.conditionTypes),
             R.filter(([key]) => {

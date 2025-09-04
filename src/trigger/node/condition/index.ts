@@ -1,19 +1,21 @@
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
-import { HasItemTriggerNode } from "./has-item";
-import { InsideAuraTriggerNode } from "./inside-aura";
-import { HasOptionTriggerNode } from "./has-option";
-import { IsCombatantTriggerNode } from "./is-combatant";
-import { InCombatTriggerNode } from "./in-combat";
 import { ContainsEntryTriggerNode } from "./contains-entry";
-import { MatchPredicateTriggerNode } from "./match-predicate";
 import { HasConditionTriggerNode } from "./has-condition";
+import { HasImmunityTriggerNode } from "./has-immunity";
+import { HasItemTriggerNode } from "./has-item";
+import { HasOptionTriggerNode } from "./has-option";
 import { HasTemporaryTriggerNode } from "./has-temporary";
+import { InCombatTriggerNode } from "./in-combat";
 import { InRangeTriggerNode } from "./in-range";
+import { InsideAuraTriggerNode } from "./inside-aura";
+import { IsCombatantTriggerNode } from "./is-combatant";
+import { MatchPredicateTriggerNode } from "./match-predicate";
 
 export const condition = {
     "contains-entry": ContainsEntryTriggerNode,
     "has-condition": HasConditionTriggerNode,
+    "has-immunity": HasImmunityTriggerNode,
     "has-item": HasItemTriggerNode,
     "has-option": HasOptionTriggerNode,
     "has-temporary": HasTemporaryTriggerNode,
