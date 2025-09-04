@@ -19,6 +19,8 @@ import {
 } from "schema";
 import fields = foundry.data.fields;
 
+const CUSTOM_KEY_TYPES = ["number", "text"] as const;
+
 class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSchema> {
     static defineSchema(): NodeSchemaModelSchema {
         return {
@@ -68,6 +70,13 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                                 required: false,
                                 nullable: false,
                                 initial: false,
+                            }),
+                            type: new fields.StringField({
+                                required: false,
+                                nullable: false,
+                                blank: false,
+                                choices: CUSTOM_KEY_TYPES,
+                                initial: "text",
                             }),
                         },
                         {
@@ -193,9 +202,12 @@ type NodeSchemaCustomSchema = {
     key: SchemaField<NodeSchemaCustomKeySchema, false>;
 };
 
+type CustomKeyType = (typeof CUSTOM_KEY_TYPES)[number];
+
 type NodeSchemaCustomKeySchema = {
     name: fields.StringField<string, string, true>;
     required: fields.BooleanField<boolean, boolean, false>;
+    type: fields.StringField<CustomKeyType, CustomKeyType, false, false, true>;
 };
 
 type NodeSchemaCustom = NodeSchemaCustomInput | NodeSchemaCustomOutput | NodeSchemaCustomOut;
@@ -207,6 +219,7 @@ type BaseNodeSchemaCustom<T extends NodeCustomEntryCategory> = {
     key?: {
         name: string;
         required?: boolean;
+        type?: CustomKeyType;
     };
 };
 

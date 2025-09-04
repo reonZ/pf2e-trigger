@@ -234,6 +234,7 @@
       "input": "Entrée",
       "label": "Étiquette",
       "min": "Minimum",
+      "none": "Aucune correspondance",
       "options": "Options de lancer",
       "origin": "Origine",
       "out": "Sortie",
@@ -534,10 +535,7 @@
           "label": "Branch Out Degré de succès"
         },
         "text-splitter": {
-          "label": "Branch Out Texte",
-          "entry": {
-            "none": "Aucune correspondance"
-          }
+          "label": "Branch Out Texte"
         }
       },
       "subtrigger": {

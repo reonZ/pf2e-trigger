@@ -235,6 +235,7 @@
             "input": "Input",
             "label": "Label",
             "min": "Minimum",
+            "none": "No Match",
             "options": "Roll Options",
             "origin": "Origin",
             "out": "Out",
@@ -523,22 +524,22 @@
                     "label": "Extract Data (Actor)"
                 },
                 "boolean-splitter": {
-                    "label": "Branch Out Boolean"
+                    "label": "Branch Out (Boolean)"
                 },
                 "item-splitter": {
                     "label": "Extract Data (Item)"
+                },
+                "number-splitter": {
+                    "label": "Branch Out (Number)"
                 },
                 "object-splitter": {
                     "label": "Extract Data (Object)"
                 },
                 "success-splitter": {
-                    "label": "Branch Out Degree of Success"
+                    "label": "Branch Out (Degree of Success)"
                 },
                 "text-splitter": {
-                    "label": "Branch Out Text",
-                    "entry": {
-                        "none": "No Match"
-                    }
+                    "label": "Branch Out (Text)"
                 }
             },
             "subtrigger": {

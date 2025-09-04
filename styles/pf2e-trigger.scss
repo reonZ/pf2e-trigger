@@ -7,6 +7,15 @@
     .window-content {
         .form-group {
             white-space: nowrap;
+
+            .form-fields:has(input[type="number"]) {
+                flex: 0;
+
+                input {
+                    width: 10ch;
+                    text-align: end;
+                }
+            }
         }
     }
 }

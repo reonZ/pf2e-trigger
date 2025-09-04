@@ -8,11 +8,13 @@ import {
 } from "./document";
 import { SuccessSplitterTriggerNode } from "./success";
 import { TextSplitterTriggerNode } from "./text";
+import { NumberSplitterTriggerNode } from "./number";
 
 export const splitter = {
     "actor-splitter": ActorSplitterTriggerNode,
     "boolean-splitter": BooleanSplitterTriggerNode,
     "item-splitter": ItemSplitterTriggerNode,
+    "number-splitter": NumberSplitterTriggerNode,
     "object-splitter": ObjectSplitterTriggerNode,
     "success-splitter": SuccessSplitterTriggerNode,
     "text-splitter": TextSplitterTriggerNode,

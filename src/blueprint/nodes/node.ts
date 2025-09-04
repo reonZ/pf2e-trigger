@@ -758,14 +758,16 @@ class BlueprintNode extends PIXI.Container {
         if (!category || !custom) return;
 
         const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
-        const content: CreateFormGroupParams[] = [
-            {
+        const content: CreateFormGroupParams[] = [];
+
+        if (custom.key?.type !== "number") {
+            content.push({
                 type: "text",
                 inputConfig: {
                     name: "label",
                 },
-            },
-        ];
+            });
+        }
 
         if (custom.types.length) {
             content.push({
@@ -780,7 +782,7 @@ class BlueprintNode extends PIXI.Container {
 
         if (customKey) {
             content.unshift({
-                type: "text",
+                type: custom.key.type,
                 inputConfig: {
                     name: "key",
                 },
@@ -790,16 +792,18 @@ class BlueprintNode extends PIXI.Container {
             });
         }
 
-        const result = await waitDialog<{ label: string; type: NodeCustomEntryType; key?: string }>(
-            {
-                content,
-                i18n: "create-entry",
-                skipAnimate: true,
-                data: {
-                    label: group ? this.getGroupLabel(group) : localize(category, "singular"),
-                },
-            }
-        );
+        const result = await waitDialog<{
+            label?: string;
+            type: NodeCustomEntryType;
+            key?: string | number;
+        }>({
+            content,
+            i18n: "create-entry",
+            skipAnimate: true,
+            data: {
+                label: group ? this.getGroupLabel(group) : localize(category, "singular"),
+            },
+        });
 
         if (!result) return;
 
@@ -808,7 +812,14 @@ class BlueprintNode extends PIXI.Container {
             return;
         }
 
-        this.data.addCustomEntry({ ...result, category, group });
+        this.data.addCustomEntry({
+            category,
+            group,
+            key: R.isNumber(result.key) ? String(result.key) : result.key,
+            label: R.isNumber(result.key) ? String(result.key) : result.label,
+            type: result.type,
+        });
+
         this.blueprint.refresh();
     }
 
