@@ -297,7 +297,7 @@ class EntryField extends PIXI.Graphics {
             const result = await BlueprintMenu.wait<{ value: string }>({
                 blueprint: this.blueprint,
                 target: this,
-                groups: [{ title: "", entries }],
+                groups: [{ title: "", entries: R.sortBy(entries, R.prop("label")) }],
                 classes: ["input-select"],
             });
 
