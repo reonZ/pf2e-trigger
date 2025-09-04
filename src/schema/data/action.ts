@@ -148,7 +148,7 @@ const addCondition = {
 const reduceCondition = {
     icon: "\ue54d",
     inputs: [
-        ...schemaConditionEntries("add"),
+        ...schemaConditionEntries("reduce"),
         {
             key: "min",
             type: "number",

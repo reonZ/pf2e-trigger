@@ -7,7 +7,7 @@ import { prepareTriggers } from "trigger";
 MODULE.register("pf2e-trigger");
 // MODULE.enableDebugMode();
 
-Hooks.once("init", () => {
+Hooks.once("setup", () => {
     // @ts-expect-error
     CONFIG.Trigger = {
         documentClass: TriggerData,
