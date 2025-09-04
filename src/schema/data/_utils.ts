@@ -18,7 +18,6 @@ function schemaConditionEntries(type: "add" | "reduce") {
         {
             key: "counter",
             type: "number",
-            label: "PF2E.Item.Effect.Badge.Type.counter",
             field: {
                 default: 1,
                 min: 1,

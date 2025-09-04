@@ -266,7 +266,10 @@
                 "title": "Actions",
                 "subtitle": "Action",
                 "add-condition": {
-                    "label": "Add Condition"
+                    "label": "Add Condition",
+                    "entry": {
+                        "counter": "Counter"
+                    }
                 },
                 "add-persistent": {
                     "label": "Add Persistent Damage",

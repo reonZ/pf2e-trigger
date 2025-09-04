@@ -11,7 +11,7 @@ class ReduceConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "red
         }
 
         const slug = (await this.get("condition")) as ConditionSlug;
-        const value = await this.get("counter");
+        const counter = await this.get("counter");
         const min = await this.get("min");
         const toDelete: string[] = [];
 
@@ -24,9 +24,9 @@ class ReduceConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "red
             const current = condition.system.value.value;
             if (!R.isNumber(current) || current <= min) continue;
 
-            const newValue = Math.max(current - value, min);
+            const value = Math.max(current - counter, min);
 
-            if (newValue > 0) {
+            if (value > 0) {
                 await game.pf2e.ConditionManager.updateConditionValue(condition.id, actor, value);
             } else {
                 toDelete.push(condition.id);
