@@ -161,6 +161,20 @@ const reduceCondition = {
     ],
 } as const satisfies ActionRawSchema;
 
+const removeCondition = {
+    icon: "\ue54d",
+    inputs: [
+        {
+            key: "condition",
+            type: "select",
+            field: {
+                options: "CONFIG.Pf2eTrigger.addConditionTypes",
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 const addTemporary = {
     icon: { unicode: "\uf017", fontWeight: "900" },
     inputs: [
@@ -350,6 +364,7 @@ export const action = {
     "join-list": joinList,
     "random-number": randomNumber,
     "reduce-condition": reduceCondition,
+    "remove-condition": removeCondition,
     "remove-item": removeItem,
     "remove-temporary": removeTemporary,
     "roll-damage-save": rollDamageSave,

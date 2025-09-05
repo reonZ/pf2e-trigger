@@ -351,6 +351,9 @@
                         "counter": "Value"
                     }
                 },
+                "remove-condition": {
+                    "label": "Remove Condition"
+                },
                 "remove-item": {
                     "label": "Remove Item"
                 },

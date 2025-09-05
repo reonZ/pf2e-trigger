@@ -19,6 +19,7 @@ import { GiveItemTriggerNode } from "./give-item";
 import { JoinListTriggerNode } from "./join-list";
 import { RandomNumberTriggerNode } from "./random-number";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
+import { RemoveConditionTriggerNode } from "./remove-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
@@ -48,6 +49,7 @@ export const action = {
     "join-list": JoinListTriggerNode,
     "random-number": RandomNumberTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
+    "remove-condition": RemoveConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
     "roll-damage": RollDamageTriggerNode,
