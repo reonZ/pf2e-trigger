@@ -16,6 +16,7 @@ export const value = {
     "duration-simple": DurationSimpleTriggerNode,
     "duration-unit": DurationUnitTriggerNode,
     "effect-data": EffectDataTriggerNode,
+    "enriched-text": InputValueTriggerNode,
     "item-source": ItemSourceTriggerNode,
     "number-value": InputValueTriggerNode,
     "success-value": SuccessValueTriggerNode,

@@ -393,6 +393,13 @@
                 "subtract-number": {
                     "label": "Subtract Numbers"
                 },
+                "surround-text": {
+                    "label": "Surround Text",
+                    "entry": {
+                        "prefix": "Prefix",
+                        "suffix": "Suffix"
+                    }
+                },
                 "use-macro": {
                     "label": "Run Macro"
                 }
@@ -586,6 +593,9 @@
                 },
                 "effect-data": {
                     "label": "Effect Data"
+                },
+                "enriched-text": {
+                    "label": "Enriched Text Entry"
                 },
                 "item-source": {
                     "label": "Item Source"
