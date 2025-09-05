@@ -45,16 +45,6 @@ const hasOptions = {
     ],
 } as const satisfies ConditionSchema;
 
-const inCombat = {
-    outs: schemaBooleanOuts(),
-    inputs: [{ key: "target", type: "target" }],
-} as const satisfies ConditionSchema;
-
-const isCombatant = {
-    outs: schemaBooleanOuts(),
-    inputs: [{ key: "target", type: "target" }],
-} as const satisfies ConditionSchema;
-
 const containsEntry = {
     outs: schemaBooleanOuts(),
     inputs: [
@@ -136,6 +126,13 @@ const inRange = {
     ],
 } as const satisfies ConditionSchema;
 
+function targetBoolean() {
+    return {
+        outs: schemaBooleanOuts(),
+        inputs: [{ key: "target", type: "target" }],
+    } as const satisfies ConditionSchema;
+}
+
 //
 
 type ConditionSchema = Omit<NodeRawSchema, "icon" | "outs"> & {
@@ -149,9 +146,10 @@ export const condition = {
     "has-item": hasItem,
     "has-option": hasOptions,
     "has-temporary": hasTemporary,
-    "in-combat": inCombat,
+    "in-combat": targetBoolean(),
     "in-range": inRange,
     "inside-aura": insideAura,
-    "is-combatant": isCombatant,
+    "is-combatant": targetBoolean(),
+    "is-dead": targetBoolean(),
     "match-predicate": matchPredicate,
 };

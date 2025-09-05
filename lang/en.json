@@ -447,6 +447,9 @@
                 "is-combatant": {
                     "label": "Is Current Combatant"
                 },
+                "is-dead": {
+                    "label": "Is Dead"
+                },
                 "match-predicate": {
                     "label": "List Matches Predicate"
                 }

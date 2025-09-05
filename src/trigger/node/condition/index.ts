@@ -10,6 +10,7 @@ import { InCombatTriggerNode } from "./in-combat";
 import { InRangeTriggerNode } from "./in-range";
 import { InsideAuraTriggerNode } from "./inside-aura";
 import { IsCombatantTriggerNode } from "./is-combatant";
+import { IsDeadTriggerNode } from "./is-dead";
 import { MatchPredicateTriggerNode } from "./match-predicate";
 
 export const condition = {
@@ -23,5 +24,6 @@ export const condition = {
     "in-range": InRangeTriggerNode,
     "inside-aura": InsideAuraTriggerNode,
     "is-combatant": IsCombatantTriggerNode,
+    "is-dead": IsDeadTriggerNode,
     "match-predicate": MatchPredicateTriggerNode,
 } as Record<NodeKeys<"condition">, typeof TriggerNode>;
