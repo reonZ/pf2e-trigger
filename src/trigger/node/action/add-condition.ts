@@ -4,11 +4,11 @@ import {
     createConditionSource,
     createCustomCondition,
     EffectSource,
-    isEffectlessCondition,
     R,
 } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
+import { isEffectlessCondition } from ".";
 
 class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-condition">> {
     async execute(): Promise<boolean> {

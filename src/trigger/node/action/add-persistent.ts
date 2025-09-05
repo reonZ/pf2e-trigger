@@ -1,6 +1,11 @@
-import { createCustomPersistentDamage, DamageType } from "module-helpers";
+import {
+    createCustomPersistentDamage,
+    createPersistentDamageSource,
+    DamageType,
+} from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
+import { isEffectlessCondition } from ".";
 
 class AddPersistentTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-persistent">> {
     async execute(): Promise<boolean> {
@@ -10,12 +15,14 @@ class AddPersistentTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-p
             return this.send("out");
         }
 
-        const source = createCustomPersistentDamage({
-            ...(await this.get("effect")),
-            dc: await this.get("dc"),
-            die: (await this.get("die")) || "1d6",
-            type: (await this.get("type")) as DamageType,
-        });
+        const dc = await this.get("dc");
+        const die = (await this.get("die")) || "1d6";
+        const effect = await this.get("effect");
+        const type = (await this.get("type")) as DamageType;
+
+        const source = isEffectlessCondition(effect)
+            ? createPersistentDamageSource(die, type, dc)
+            : createCustomPersistentDamage({ ...effect, dc, die, type });
 
         if (source) {
             await actor.createEmbeddedDocuments("Item", [source]);
