@@ -597,9 +597,6 @@
                 "effect-data": {
                     "label": "Effect Data"
                 },
-                "enriched-text": {
-                    "label": "Enriched Text Entry"
-                },
                 "item-source": {
                     "label": "Item Source"
                 },

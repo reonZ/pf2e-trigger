@@ -1,6 +1,5 @@
 import { NodeRawSchema } from "schema/schema";
 import { schemaUnidentifiedEntry } from "./_utils";
-import { NodeEntryType } from "data";
 
 const itemSource = {
     inputs: [{ key: "uuid", type: "uuid", field: { document: "Item" } }],
@@ -148,30 +147,23 @@ const effectData = {
     image: "image",
 } as const satisfies NodeRawSchema;
 
-const enrichedText = {
+const textValue = {
     inputs: [
         {
             key: "input",
             type: "text",
-            field: { type: "description" },
+            field: {
+                type: "description",
+            },
         },
     ],
     outputs: [{ key: "value", type: "text" }],
 } as const satisfies NodeRawSchema;
 
-function createInputValue<T extends InputEntryType>(type: T): InputValueSchema<T> {
-    return {
-        inputs: [{ key: "input", type }],
-        outputs: [{ key: "value", type }],
-    };
-}
-
-type InputEntryType = "number" | "boolean" | "text";
-
-type InputValueSchema<T extends NodeEntryType> = {
-    inputs: [{ key: "input"; type: T }];
-    outputs: [{ key: "value"; type: T }];
-};
+const numberValue = {
+    inputs: [{ key: "input", type: "number" }],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies NodeRawSchema;
 
 export const value = {
     "dc-target": dcTarget,
@@ -179,10 +171,9 @@ export const value = {
     "duration-simple": simpleDuration,
     "duration-unit": unitDuration,
     "effect-data": effectData,
-    "enriched-text": enrichedText,
     "item-source": itemSource,
-    "number-value": createInputValue("number"),
+    "number-value": numberValue,
     "roll-data": rollData,
     "success-value": successValue,
-    "text-value": createInputValue("text"),
+    "text-value": textValue,
 };
