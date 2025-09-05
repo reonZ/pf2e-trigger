@@ -1,3 +1,9 @@
+# 2.5.1
+
+-   the `duration` and `effect` input connections no longer return a default value when not connected to any node
+    -   if you happen to have used any of them in a `Run Macro` node, you need to make the appropriate adjustments
+-   the conditions created by the `Add Condition` and `Add Persistent Damage` nodes will now always be locked behind an effect if an `Effect Data` node is connected to it, even if the fields in the node are not filled
+
 # 2.5.0
 
 -   add new `Remove Condition` action node
