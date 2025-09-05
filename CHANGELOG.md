@@ -1,3 +1,11 @@
+# 2.5.0
+
+-   add new `Remove Condition` action node
+-   `Reduce Condition`:
+    -   change the `counter` label to `value` instead
+    -   fix the node setting the value instead of reducing it
+    -   fix the node not filtering out conditions that don't have a badge value
+
 # 2.4.0
 
 -   adjust `Branch Out` splitter nodes name
