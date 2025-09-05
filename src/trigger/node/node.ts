@@ -181,23 +181,6 @@ class TriggerNode<
             return { value: 0, scope: "check" } satisfies TriggerDcEntry;
         }
 
-        if (type === "duration") {
-            return { expiry: null, unit: "unlimited", value: -1 } satisfies TriggerDurationEntry;
-        }
-
-        if (type === "effect") {
-            return {
-                name: "",
-                unidentified: false,
-                img: "" as ImageFilePath,
-                duration: {
-                    expiry: null,
-                    unit: "unlimited",
-                    value: -1,
-                },
-            } satisfies TriggerEffectEntry;
-        }
-
         if (type === "list") {
             return [];
         }

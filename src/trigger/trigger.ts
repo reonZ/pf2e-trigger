@@ -105,9 +105,9 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     : T extends "list"
     ? string[]
     : T extends "duration"
-    ? TriggerDurationEntry
+    ? TriggerDurationEntry | undefined
     : T extends "effect"
-    ? TriggerEffectEntry
+    ? TriggerEffectEntry | undefined
     : T extends "object"
     ? Record<string, any>
     : unknown;
@@ -130,7 +130,7 @@ type TriggerDurationEntry = DurationData & {
 type TriggerEffectEntry = {
     unidentified: boolean;
     name: string;
-    duration: TriggerDurationEntry;
+    duration?: TriggerDurationEntry;
     img: ImageFilePath;
 };
 

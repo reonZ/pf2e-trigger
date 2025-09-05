@@ -14,8 +14,8 @@ class AddTemporaryTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-te
         const { identifier, slug } = await getTemporaryIdentifier(this);
         const effect = createCustomEffect({
             ...data,
-            img: data.img || imagePath("clockwork", "svg"),
-            name: data.name || `${this.trigger.label} (${identifier})`,
+            img: data?.img || imagePath("clockwork", "svg"),
+            name: data?.name || `${this.trigger.label} (${identifier})`,
             slug,
         });
 

@@ -1,4 +1,4 @@
-import { CustomEffectDuration, getExtraRollOptions, RollDamageOptions } from "module-helpers";
+import { getExtraRollOptions, RollDamageOptions } from "module-helpers";
 import { NodeSchemaInput } from "schema";
 import { TriggerNode, TriggerRollEntry } from "trigger";
 
@@ -36,16 +36,6 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
     };
 }
 
-function isEffectlessCondition({
-    duration,
-    unidentified,
-}: {
-    duration?: CustomEffectDuration;
-    unidentified?: boolean;
-}) {
-    return (duration?.unit ?? "unlimited") === "unlimited" && !unidentified && !duration?.origin;
-}
-
 type NodeDamageData = {
     formula: string;
     roll: TriggerRollEntry;
@@ -67,4 +57,4 @@ type TemporaryDataNode = TriggerNode<{
     inputs: Array<{ key: "identifier"; type: "text" } | NodeSchemaInput>;
 }>;
 
-export { getRollDamageData, getTemporaryIdentifier, isEffectlessCondition };
+export { getRollDamageData, getTemporaryIdentifier };

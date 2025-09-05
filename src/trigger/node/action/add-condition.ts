@@ -8,7 +8,6 @@ import {
 } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
-import { isEffectlessCondition } from ".";
 
 class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-condition">> {
     async execute(): Promise<boolean> {
@@ -22,6 +21,8 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
         const effect = await this.get("effect");
         const slug = (await this.get("condition")) as ConditionSlug;
 
+        console.log(effect);
+
         const createConditionFromSource = async (
             source: Maybe<PreCreate<EffectSource | ConditionSource>>
         ): Promise<boolean> => {
@@ -33,7 +34,7 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
         };
 
         // we are an effect+condition combo
-        if (!isEffectlessCondition(effect)) {
+        if (effect) {
             const source = createCustomCondition({ ...effect, slug, counter });
             return createConditionFromSource(source);
         }
