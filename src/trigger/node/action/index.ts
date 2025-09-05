@@ -28,6 +28,7 @@ import { RollFlatTriggerNode } from "./roll-flat";
 import { RollSaveTriggerNode } from "./roll-save";
 import { SceneTokensTriggerNode } from "./scene-tokens";
 import { SubtractNumberTriggerNode } from "./subtract-number";
+import { SurroundTextTriggerNode } from "./surround-text";
 import { UseMacroTriggerNode } from "./use-macro";
 
 export const action = {
@@ -57,6 +58,7 @@ export const action = {
     "roll-flat": RollFlatTriggerNode,
     "roll-save": RollSaveTriggerNode,
     "scene-tokens": SceneTokensTriggerNode,
+    "surround-text": SurroundTextTriggerNode,
     "subtract-number": SubtractNumberTriggerNode,
     "use-macro": UseMacroTriggerNode,
 } as Record<NodeKeys<"action">, typeof TriggerNode>;

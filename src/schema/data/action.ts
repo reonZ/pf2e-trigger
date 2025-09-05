@@ -306,6 +306,30 @@ const concatTexts = {
     outputs: [{ key: "result", type: "text" }],
 } as const satisfies ActionRawSchema;
 
+const surroundText = {
+    icon: "\uf035",
+    inputs: [
+        { key: "input", type: "text" },
+        {
+            key: "prefix",
+            type: "text",
+            field: {
+                default: "",
+                trim: false,
+            },
+        },
+        {
+            key: "suffix",
+            type: "text",
+            field: {
+                default: "",
+                trim: false,
+            },
+        },
+    ],
+    outputs: [{ key: "result", type: "text" }],
+} as const satisfies ActionRawSchema;
+
 const joinList = {
     icon: "\uf5ff",
     inputs: [
@@ -373,5 +397,6 @@ export const action = {
     "roll-save": rollSave,
     "scene-tokens": sceneTokens,
     "subtract-number": arithmeticAction("\uf068"),
+    "surround-text": surroundText,
     "use-macro": useMacro,
 };
