@@ -1,0 +1,310 @@
+{
+  "triggers": [
+    {
+      "name": "Thermal Nimbus (Enter)",
+      "nodes": [
+        {
+          "key": "aura-enter",
+          "type": "event",
+          "_id": "MYl5vx9s4RQD5KcB",
+          "position": {
+            "x": 350,
+            "y": 200
+          },
+          "inputs": {
+            "slug": {
+              "value": "kinetic-aura",
+              "ids": []
+            }
+          },
+          "outputs": {
+            "source": {
+              "ids": [
+                "bhTGA2xOtGUCsaDk.inputs.S14ZN7dZZpglM5o5"
+              ]
+            },
+            "out": {
+              "ids": [
+                "bhTGA2xOtGUCsaDk.inputs.in"
+              ]
+            }
+          }
+        },
+        {
+          "type": "subtrigger",
+          "key": "subtrigger-node",
+          "target": "Hg5xG15LWgeoE3Yq",
+          "_id": "bhTGA2xOtGUCsaDk",
+          "position": {
+            "x": 650.5,
+            "y": 199.75
+          },
+          "inputs": {
+            "S14ZN7dZZpglM5o5": {
+              "ids": [
+                "MYl5vx9s4RQD5KcB.outputs.source"
+              ]
+            },
+            "in": {
+              "ids": [
+                "MYl5vx9s4RQD5KcB.outputs.out"
+              ]
+            }
+          }
+        }
+      ],
+      "enabled": true,
+      "_id": "lMwVPXH0ufLJ4pjD"
+    },
+    {
+      "name": "Thermal Nimbus (Turn)",
+      "nodes": [
+        {
+          "key": "turn-start",
+          "type": "event",
+          "_id": "TXBP3ICYsdZ36tSY",
+          "position": {
+            "x": 350,
+            "y": 200
+          },
+          "outputs": {
+            "out": {
+              "ids": [
+                "E6iYi80PGFp5xINN.inputs.in"
+              ]
+            }
+          }
+        },
+        {
+          "type": "condition",
+          "key": "inside-aura",
+          "_id": "E6iYi80PGFp5xINN",
+          "position": {
+            "x": 581,
+            "y": 199.76999999999998
+          },
+          "inputs": {
+            "in": {
+              "ids": [
+                "TXBP3ICYsdZ36tSY.outputs.out"
+              ]
+            },
+            "slug": {
+              "value": "kinetic-aura",
+              "ids": []
+            }
+          },
+          "outputs": {
+            "source": {
+              "ids": [
+                "tprUGSgyQVY1v0y7.inputs.S14ZN7dZZpglM5o5"
+              ]
+            },
+            "true": {
+              "ids": [
+                "tprUGSgyQVY1v0y7.inputs.in"
+              ]
+            }
+          }
+        },
+        {
+          "type": "subtrigger",
+          "key": "subtrigger-node",
+          "target": "Hg5xG15LWgeoE3Yq",
+          "_id": "tprUGSgyQVY1v0y7",
+          "position": {
+            "x": 898.5,
+            "y": 199.75
+          },
+          "inputs": {
+            "S14ZN7dZZpglM5o5": {
+              "ids": [
+                "E6iYi80PGFp5xINN.outputs.source"
+              ]
+            },
+            "in": {
+              "ids": [
+                "E6iYi80PGFp5xINN.outputs.true"
+              ]
+            }
+          }
+        }
+      ],
+      "enabled": true,
+      "_id": "ZSyw7IogcyOSsVWo"
+    },
+    {
+      "name": "Thermal Nimbus (Damage)",
+      "nodes": [
+        {
+          "key": "subtrigger-input",
+          "type": "subtrigger",
+          "_id": "SP4p2DX09we9ZWU7",
+          "position": {
+            "x": 350,
+            "y": 200
+          },
+          "outputs": {
+            "S14ZN7dZZpglM5o5": {
+              "ids": [
+                "6aIXg60J7mPbKoCI.inputs.target",
+                "hlN31MpUXjrdLVn2.inputs.origin"
+              ]
+            },
+            "out": {
+              "ids": [
+                "6aIXg60J7mPbKoCI.inputs.in"
+              ]
+            }
+          },
+          "custom": {
+            "outputs": [
+              {
+                "key": "S14ZN7dZZpglM5o5",
+                "type": "target",
+                "label": "Aura Source",
+                "group": "",
+                "custom": true
+              }
+            ],
+            "outs": [],
+            "inputs": []
+          }
+        },
+        {
+          "key": "subtrigger-output",
+          "type": "subtrigger",
+          "position": {
+            "x": 1150,
+            "y": 200
+          },
+          "_id": "Nr3cimufNvMAXzo4",
+          "inputs": {
+            "in": {
+              "ids": [
+                "OmogG6TXHol5R5US.outputs.out"
+              ]
+            }
+          }
+        },
+        {
+          "type": "condition",
+          "key": "has-option",
+          "_id": "6aIXg60J7mPbKoCI",
+          "position": {
+            "x": 590.5,
+            "y": 199.75
+          },
+          "inputs": {
+            "target": {
+              "ids": [
+                "SP4p2DX09we9ZWU7.outputs.S14ZN7dZZpglM5o5"
+              ]
+            },
+            "in": {
+              "ids": [
+                "SP4p2DX09we9ZWU7.outputs.out"
+              ]
+            },
+            "option": {
+              "value": "self:effect:thermal-nimbus",
+              "ids": []
+            }
+          },
+          "outputs": {
+            "true": {
+              "ids": [
+                "OmogG6TXHol5R5US.inputs.in"
+              ]
+            }
+          }
+        },
+        {
+          "type": "action",
+          "key": "roll-damage",
+          "_id": "OmogG6TXHol5R5US",
+          "position": {
+            "x": 885,
+            "y": 199.75
+          },
+          "inputs": {
+            "in": {
+              "ids": [
+                "6aIXg60J7mPbKoCI.outputs.true"
+              ]
+            },
+            "formula": {
+              "value": "(floor(@actor.level/2))[@actor.flags.pf2e.kineticist.thermalNimbus]",
+              "ids": []
+            },
+            "roll": {
+              "ids": [
+                "hlN31MpUXjrdLVn2.outputs.roll"
+              ]
+            }
+          },
+          "outputs": {
+            "out": {
+              "ids": [
+                "Nr3cimufNvMAXzo4.inputs.in"
+              ]
+            }
+          }
+        },
+        {
+          "type": "value",
+          "key": "roll-data",
+          "_id": "hlN31MpUXjrdLVn2",
+          "position": {
+            "x": 593.5,
+            "y": 343.25
+          },
+          "inputs": {
+            "origin": {
+              "ids": [
+                "SP4p2DX09we9ZWU7.outputs.S14ZN7dZZpglM5o5"
+              ]
+            },
+            "item": {
+              "ids": [
+                "yomhbWWHyVwOm9Ew.outputs.item"
+              ]
+            }
+          },
+          "outputs": {
+            "roll": {
+              "ids": [
+                "OmogG6TXHol5R5US.inputs.roll"
+              ]
+            }
+          }
+        },
+        {
+          "type": "value",
+          "key": "item-source",
+          "_id": "yomhbWWHyVwOm9Ew",
+          "position": {
+            "x": 361.5,
+            "y": 397.25
+          },
+          "inputs": {
+            "uuid": {
+              "value": "Compendium.pf2e.feats-srd.Item.XJCsa3UbQtsKcqve",
+              "ids": []
+            }
+          },
+          "outputs": {
+            "item": {
+              "ids": [
+                "hlN31MpUXjrdLVn2.inputs.item"
+              ]
+            }
+          }
+        }
+      ],
+      "_id": "Hg5xG15LWgeoE3Yq",
+      "enabled": true
+    }
+  ],
+  "items": []
+}
