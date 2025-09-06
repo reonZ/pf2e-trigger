@@ -8,7 +8,7 @@ class AttackTriggerNode extends TriggerNode<
 > {
     async execute(): Promise<boolean> {
         for (const option of ATTACK_OPTIONS) {
-            this.setVariable(option, this.getOption(option));
+            this.setVariable(option, this.getOption(option) ?? undefined);
         }
 
         return this.send("out");

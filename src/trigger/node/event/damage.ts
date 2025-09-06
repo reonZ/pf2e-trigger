@@ -8,7 +8,7 @@ class DamageTriggerNode extends TriggerNode<
 > {
     async execute(): Promise<boolean> {
         for (const option of DAMAGE_OPTIONS) {
-            this.setVariable(option, this.getOption(option));
+            this.setVariable(option, this.getOption(option) ?? undefined);
         }
 
         return this.send("out");

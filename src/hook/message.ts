@@ -1,15 +1,21 @@
 import { TriggerHook } from "hook";
 import {
+    ActorPF2e,
+    ChatContextFlag,
     ChatMessagePF2e,
     CheckContextChatFlag,
     createHook,
     degreeOfSuccessNumber,
     isValidTargetDocuments,
+    ItemOriginFlag,
     ItemPF2e,
     R,
     tupleHasValue,
     ZeroToThree,
 } from "module-helpers";
+
+const ATTACK_OPTIONS = ["action", "item", "options", "other", "outcome"] as const;
+const DAMAGE_OPTIONS = ["heal", "item", "negated", "options", "other"] as const;
 
 class MessageHook extends TriggerHook {
     #createMessageHook = createHook("createChatMessage", this.#onCreateMessage.bind(this));
@@ -30,14 +36,16 @@ class MessageHook extends TriggerHook {
         if (!game.user.isActiveGM) return;
 
         const { appliedDamage, origin, context } = message.flags.pf2e;
-        if (!context || !origin?.actor || !tupleHasValue(this.events, context.type)) return;
+        if (!context || !tupleHasValue(this.events, context.type)) return;
 
-        const item = await fromUuid<ItemPF2e>(origin.uuid);
-        if (!(item instanceof Item)) return;
+        const originActor = await getOriginActor(origin, context);
+        if (!originActor) return;
+
+        const item = await getOriginItem(originActor, origin, context);
 
         if (context.type === "damage-taken") {
             const target = { actor: message.actor, token: message.token };
-            const source = { actor: await fromUuid(origin.actor) };
+            const source = { actor: originActor };
             if (!isValidTargetDocuments(target) || !isValidTargetDocuments(source)) return;
 
             this.executeTriggers<DamageTriggerOptions>(
@@ -79,12 +87,51 @@ class MessageHook extends TriggerHook {
     }
 }
 
-const ATTACK_OPTIONS = ["action", "item", "options", "other", "outcome"] as const;
-const DAMAGE_OPTIONS = ["heal", "item", "negated", "options", "other"] as const;
+function getRollOptionValue(context: ChatContextFlag, prefix: string): string | undefined {
+    return context.options?.find((option) => option.startsWith(prefix))?.slice(prefix.length);
+}
+
+const ITEM_ID_PREFIX = "item:id:";
+async function getOriginItem(
+    actor: ActorPF2e,
+    origin: Maybe<ItemOriginFlag>,
+    context: ChatContextFlag
+): Promise<ItemPF2e | null> {
+    if (origin?.uuid) {
+        return fromUuid<ItemPF2e>(origin.uuid);
+    }
+
+    const itemId = getRollOptionValue(context, ITEM_ID_PREFIX);
+    if (!itemId) return null;
+
+    return actor.system.actions?.find((action) => action.item.id === itemId)?.item ?? null;
+}
+
+const SIGNATURE_PREFIX = "origin:signature:";
+const _cachedActors: Record<string, ActorPF2e | null> = {};
+async function getOriginActor(
+    origin: Maybe<ItemOriginFlag>,
+    context: ChatContextFlag
+): Promise<ActorPF2e | null> {
+    if (origin?.actor) {
+        return fromUuid<ActorPF2e>(origin.actor);
+    }
+
+    const signature = getRollOptionValue(context, SIGNATURE_PREFIX);
+    if (!signature) return null;
+
+    const cached = _cachedActors[signature];
+    if (cached !== undefined) {
+        return cached;
+    }
+
+    const actor = game.actors.find((actor) => actor.signature === signature);
+    return (_cachedActors[signature] = actor ?? null);
+}
 
 type AttackTriggerOptions = {
     action: string;
-    item: ItemPF2e;
+    item?: ItemPF2e | null;
     options: string[];
     other: TargetDocuments;
     outcome: ZeroToThree;
@@ -92,7 +139,7 @@ type AttackTriggerOptions = {
 
 type DamageTriggerOptions = {
     heal: boolean;
-    item: ItemPF2e;
+    item?: ItemPF2e | null;
     negated: boolean;
     options: string[];
     other: TargetDocuments;
