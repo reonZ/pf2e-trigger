@@ -233,6 +233,7 @@
       "in": "Dans",
       "input": "Entrée",
       "label": "Étiquette",
+      "max": "Maximum",
       "min": "Minimum",
       "none": "Aucune correspondance",
       "options": "Options de lancer",
@@ -264,7 +265,10 @@
         "title": "Actions",
         "subtitle": "Action",
         "add-condition": {
-          "label": "Ajouter un état"
+          "label": "Ajouter un état",
+          "entry": {
+            "counter": "Contrer"
+          }
         },
         "add-persistent": {
           "label": "Ajouter des dégâts persistants",
@@ -337,11 +341,17 @@
         "join-list": {
           "label": "Joindre la liste"
         },
+        "random-number": {
+          "label": "Générer un nombre aléatoire"
+        },
         "reduce-condition": {
           "label": "Réduire l'état",
           "entry": {
             "counter": "Valeur"
           }
+        },
+        "remove-condition": {
+          "label": "Supprimer un état"
         },
         "remove-item": {
           "label": "Supprimer l'objet"
@@ -382,6 +392,13 @@
         "subtract-number": {
           "label": "Soustraire des nombres"
         },
+        "surround-text": {
+          "label": "Texte environnant",
+          "entry": {
+            "prefix": "Préfixe",
+            "suffix": "Suffixe"
+          }
+        },
         "use-macro": {
           "label": "Exécuter une macro"
         }
@@ -397,6 +414,9 @@
         },
         "has-condition": {
           "label": "A un état"
+        },
+        "has-immunity": {
+          "label": "Possède une immunité"
         },
         "has-item": {
           "label": "Possède un objet"
@@ -425,6 +445,9 @@
         },
         "is-combatant": {
           "label": "Est le combattant actuel"
+        },
+        "is-dead": {
+          "label": "est Mort"
         },
         "match-predicate": {
           "label": "Liste correspond aux prédicats"
@@ -527,6 +550,9 @@
         },
         "item-splitter": {
           "label": "Extraction des données (objet)"
+        },
+        "number-splitter": {
+          "label": "Branch Out (Nombre)"
         },
         "object-splitter": {
           "label": "Extraire des données (objet)"
