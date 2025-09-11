@@ -10,7 +10,6 @@ class AuraTriggerNode extends TriggerNode<NodeSchemaOf<"event", "aura-enter">, A
 
         if (
             !aura ||
-            !actor.inCombat ||
             aura.origin.actor.uuid === actor.uuid ||
             aura.data.slug !== (await this.get("slug")) ||
             ((await this.get("turn")) && !isCurrentCombatant(actor)) ||

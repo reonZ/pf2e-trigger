@@ -16,6 +16,7 @@ import {
     createToggleableWrapper,
     disableHooksAndWrappers,
     executeWhenReady,
+    isInCombat,
     ScenePF2e,
     TokenAura,
     TokenDocumentPF2e,
@@ -112,7 +113,7 @@ class AuraHook extends TriggerHook {
                 if (!token) {
                     removeAuraFromMemory(actor, aura.data, aura.origin);
 
-                    if (this.isValidActor(actor) && actor.inCombat) {
+                    if (this.isValidActor(actor) && isInCombat(actor)) {
                         const target = { actor, token: actorTokens.at(0) };
                         this.executeTriggers<AuraTriggerOptions>(
                             { this: target, aura },
@@ -154,7 +155,7 @@ class AuraHook extends TriggerHook {
 
                 setAuraInMemory(actor, auraData, source);
 
-                if (!already && this.isValidActor(actor) && actor.inCombat) {
+                if (!already && this.isValidActor(actor) && isInCombat(actor)) {
                     const target = { actor, token };
                     this.executeTriggers<AuraTriggerOptions>(
                         {
