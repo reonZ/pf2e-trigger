@@ -450,6 +450,12 @@
                 "is-dead": {
                     "label": "Is Dead"
                 },
+                "is-master": {
+                    "label": "Is Master Of",
+                    "entry": {
+                        "master": "Master"
+                    }
+                },
                 "match-predicate": {
                     "label": "List Matches Predicate"
                 }

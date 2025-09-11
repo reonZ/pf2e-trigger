@@ -126,6 +126,14 @@ const inRange = {
     ],
 } as const satisfies ConditionSchema;
 
+const isMaster = {
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "master", type: "target" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ConditionSchema;
+
 function targetBoolean() {
     return {
         outs: schemaBooleanOuts(),
@@ -149,6 +157,7 @@ export const condition = {
     "in-combat": targetBoolean(),
     "in-range": inRange,
     "inside-aura": insideAura,
+    "is-master": isMaster,
     "is-combatant": targetBoolean(),
     "is-dead": targetBoolean(),
     "match-predicate": matchPredicate,
