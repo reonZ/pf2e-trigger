@@ -30,6 +30,7 @@ import { SceneTokensTriggerNode } from "./scene-tokens";
 import { SubtractNumberTriggerNode } from "./subtract-number";
 import { SurroundTextTriggerNode } from "./surround-text";
 import { UseMacroTriggerNode } from "./use-macro";
+import { GetMasterTriggerNode } from "./get-master";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -46,6 +47,7 @@ export const action = {
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-combatant": GetCombatantTriggerNode,
+    "get-master": GetMasterTriggerNode,
     "give-item": GiveItemTriggerNode,
     "join-list": JoinListTriggerNode,
     "random-number": RandomNumberTriggerNode,

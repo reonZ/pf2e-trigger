@@ -234,6 +234,7 @@
             "in": "In",
             "input": "Input",
             "label": "Label",
+            "master": "Master",
             "max": "Maximum",
             "min": "Minimum",
             "none": "No Match",
@@ -335,6 +336,9 @@
                     "entry": {
                         "combatant": "Combatant"
                     }
+                },
+                "get-master": {
+                    "label": "Get Master Of"
                 },
                 "give-item": {
                     "label": "Give Physical Item"
@@ -451,10 +455,7 @@
                     "label": "Is Dead"
                 },
                 "is-master": {
-                    "label": "Is Master Of",
-                    "entry": {
-                        "master": "Master"
-                    }
+                    "label": "Is Master Of"
                 },
                 "match-predicate": {
                     "label": "List Matches Predicate"

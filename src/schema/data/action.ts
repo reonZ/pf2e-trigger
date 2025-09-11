@@ -254,6 +254,12 @@ const getCombatant = {
     outputs: [{ key: "combatant", type: "target" }],
 } as const satisfies ActionRawSchema;
 
+const getMaster = {
+    icon: "\uf501",
+    inputs: [{ key: "target", type: "target" }],
+    outputs: [{ key: "master", type: "target" }],
+} as const satisfies ActionRawSchema;
+
 const effectDuration = {
     icon: "\ue29e",
     inputs: [
@@ -384,6 +390,7 @@ export const action = {
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-combatant": getCombatant,
+    "get-master": getMaster,
     "give-item": giveItem,
     "join-list": joinList,
     "random-number": randomNumber,
