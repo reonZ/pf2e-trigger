@@ -1,3 +1,10 @@
+# 2.7.0
+
+-   this release requires you to update the `PF2e Toolbelt` module to version `3.13.1` if you use it
+-   the `Aura Entered`, `Aura Left`, `Is In Combat` and `Is Current Combatant` nodes will now make use of their master for familiar and actors bound via the `PF2e Toolbelt` `Shared Data` tool to make the different tests
+-   add new `Get Master Of` action node
+-   add new `Is Master Of` condition node
+
 # 2.6.0
 
 -   add a workaround for damage applied messages missing the needed data for the module to work properly
@@ -5,7 +12,7 @@
     -   this was affecting the `Attack Rolled` and `Damage Taken` events which would never be triggered by unarmed attacks
 -   add new `Is Dead` condition node
 -   add new `Surround Text` action node:
-    -   surround and existing text entry with a `prefix` and a `suffix`
+    -   surround an existing text entry with a `prefix` and a `suffix`
 -   `Text Entry`:
     -   the input now uses the prose mirror editor
 
