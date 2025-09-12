@@ -233,6 +233,7 @@
       "in": "Dans",
       "input": "Entrée",
       "label": "Étiquette",
+      "master": "Maître",
       "max": "Maximum",
       "min": "Minimum",
       "none": "Aucune correspondance",
@@ -334,6 +335,9 @@
           "entry": {
             "combatant": "Combattant"
           }
+        },
+        "get-master": {
+          "label": "Obtient le maître de"
         },
         "give-item": {
           "label": "Donner un objet physique"
@@ -448,6 +452,9 @@
         },
         "is-dead": {
           "label": "est Mort"
+        },
+        "is-master": {
+          "label": "Est maître de"
         },
         "match-predicate": {
           "label": "Liste correspond aux prédicats"
