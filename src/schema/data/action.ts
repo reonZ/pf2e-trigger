@@ -239,6 +239,14 @@ const removeItem = {
     document: "uuid",
 } as const satisfies ActionRawSchema;
 
+const removeItemWithSlug = {
+    icon: "\uf1f8",
+    inputs: [
+        { key: "slug", type: "text" },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 const getChoiceset = {
     icon: "\uf03a",
     inputs: [
@@ -391,6 +399,7 @@ export const action = {
     "reduce-condition": reduceCondition,
     "remove-condition": removeCondition,
     "remove-item": removeItem,
+    "remove-item-slug": removeItemWithSlug,
     "remove-temporary": removeTemporary,
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,

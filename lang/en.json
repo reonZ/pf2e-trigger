@@ -356,6 +356,9 @@
                 "remove-item": {
                     "label": "Remove Item"
                 },
+                "remove-item-slug": {
+                    "label": "Remove Item with Slug"
+                },
                 "remove-temporary": {
                     "label": "Remove Trigger Effect"
                 },

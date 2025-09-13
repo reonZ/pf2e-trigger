@@ -21,6 +21,7 @@ import { RandomNumberTriggerNode } from "./random-number";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
 import { RemoveConditionTriggerNode } from "./remove-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
+import { RemoveItemWithSlugTriggerNode } from "./remove-item-slug";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
@@ -52,6 +53,7 @@ export const action = {
     "reduce-condition": ReduceConditionTriggerNode,
     "remove-condition": RemoveConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
+    "remove-item-slug": RemoveItemWithSlugTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-save": RollDamageSaveTriggerNode,
