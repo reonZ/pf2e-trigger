@@ -244,6 +244,7 @@
             "outcome": "Outcome",
             "result": "Result",
             "separator": "Separator",
+            "slug": "item-slug",
             "targets": "Targets",
             "this": "Trigger Target",
             "trigger": "Trigger ID",
@@ -419,6 +420,9 @@
                 },
                 "has-item": {
                     "label": "Has Item"
+                },
+                "has-item-slug": {
+                    "label": "Has Item with Slug"
                 },
                 "has-option": {
                     "label": "Has RollOption",

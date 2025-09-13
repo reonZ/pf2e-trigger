@@ -37,6 +37,15 @@ const hasItem = {
     document: "uuid",
 } as const satisfies ConditionSchema;
 
+const hasItemWithSlug = {
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "target", type: "target" },
+        { key: "slug", type: "text" },
+    ],
+    outputs: [{ key: "item", type: "item" }],
+} as const satisfies ConditionSchema;
+
 const hasOptions = {
     outs: schemaBooleanOuts(),
     inputs: [
@@ -152,6 +161,7 @@ export const condition = {
     "has-condition": hasCondition,
     "has-immunity": hasImmunity,
     "has-item": hasItem,
+    "has-item-slug": hasItemWithSlug,
     "has-option": hasOptions,
     "has-temporary": hasTemporary,
     "in-combat": targetBoolean(),
