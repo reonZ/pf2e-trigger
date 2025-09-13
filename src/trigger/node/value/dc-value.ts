@@ -44,10 +44,15 @@ class DcValueTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-value">> 
             },
         });
 
+        const label = item
+            ? game.i18n.format("PF2E.InlineCheck.DCWithName", { name: item.name })
+            : undefined;
+
         return {
-            target: origin,
-            statistic: statistic.dc,
+            label,
             scope: "check",
+            statistic: statistic.dc,
+            target: origin,
             value: statistic.dc.value,
         };
     }

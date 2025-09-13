@@ -35,11 +35,11 @@ class DcTargetTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-target">
             game.i18n.format("PF2E.InlineCheck.DCWithName", { name: defenseStat.label });
 
         return {
-            target: origin,
-            statistic: defenseStat.dc,
-            scope: "check",
-            value: defenseStat.dc.value,
             label,
+            scope: "check",
+            statistic: defenseStat.dc,
+            target: origin,
+            value: defenseStat.dc.value,
         };
     }
 }

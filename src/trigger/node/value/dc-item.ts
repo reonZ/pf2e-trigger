@@ -4,13 +4,14 @@ import { TriggerDcEntry, TriggerNode } from "trigger";
 class DcItemTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-item">> {
     async query(): Promise<TriggerDcEntry> {
         const target = await this.get("origin");
-        const description = (await this.get("item"))?.description;
+        const item = await this.get("item");
 
-        if (!description) {
+        if (!item) {
             return { scope: "check", target, value: 0 };
         }
 
         const nb = await this.get("nb");
+        const description = item.description;
         const regex = /@Check\[(?=.*\b(will|reflex|fortitude)\b).*?(dc:(?<dc>\d+)).*?\]/gm;
 
         let count = 0;
@@ -30,7 +31,12 @@ class DcItemTriggerNode extends TriggerNode<NodeSchemaOf<"value", "dc-item">> {
             }
         }
 
-        return { scope: "check", target, value };
+        return {
+            label: game.i18n.format("PF2E.InlineCheck.DCWithName", { name: item.name }),
+            scope: "check",
+            target,
+            value,
+        };
     }
 }
 
