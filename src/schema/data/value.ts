@@ -148,6 +148,11 @@ const effectData = {
 } as const satisfies NodeRawSchema;
 
 const textValue = {
+    inputs: [{ key: "input", type: "text" }],
+    outputs: [{ key: "value", type: "text" }],
+} as const satisfies NodeRawSchema;
+
+const enrichedText = {
     inputs: [
         {
             key: "input",
@@ -176,6 +181,7 @@ export const value = {
     "duration-simple": simpleDuration,
     "duration-unit": unitDuration,
     "effect-data": effectData,
+    "enriched-text": enrichedText,
     "item-source": itemSource,
     "number-value": numberValue,
     "roll-data": rollData,

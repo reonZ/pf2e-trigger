@@ -604,6 +604,9 @@
                 "effect-data": {
                     "label": "Effect Data"
                 },
+                "enriched-text": {
+                    "label": "Enriched Text"
+                },
                 "item-source": {
                     "label": "Item Source"
                 },
