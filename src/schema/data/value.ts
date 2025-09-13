@@ -165,7 +165,12 @@ const numberValue = {
     outputs: [{ key: "value", type: "number" }],
 } as const satisfies NodeRawSchema;
 
+const currentCombatant = {
+    outputs: [{ key: "combatant", type: "target" }],
+} as const satisfies NodeRawSchema;
+
 export const value = {
+    "current-combatant": currentCombatant,
     "dc-target": dcTarget,
     "dc-value": dcValue,
     "duration-simple": simpleDuration,

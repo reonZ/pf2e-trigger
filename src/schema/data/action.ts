@@ -249,11 +249,6 @@ const getChoiceset = {
     outputs: [{ key: "selection", type: "text" }],
 } as const satisfies ActionRawSchema;
 
-const getCombatant = {
-    icon: "\ue2bf",
-    outputs: [{ key: "combatant", type: "target" }],
-} as const satisfies ActionRawSchema;
-
 const getMaster = {
     icon: "\uf501",
     inputs: [{ key: "target", type: "target" }],
@@ -389,7 +384,6 @@ export const action = {
     "distance-between": distanceBetween,
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
-    "get-combatant": getCombatant,
     "get-master": getMaster,
     "give-item": giveItem,
     "join-list": joinList,

@@ -5,13 +5,13 @@ import { TriggerNode } from "trigger";
 class ItemSourceTriggerNode extends TriggerNode<NodeSchemaOf<"value", "item-source">> {
     #cached: Maybe<ItemPF2e>;
 
-    async query(): Promise<Maybe<ItemPF2e>> {
-        if (this.#cached !== undefined) {
-            return this.#cached;
+    async query(): Promise<ItemPF2e | undefined> {
+        if (this.#cached === undefined) {
+            const uuid = await this.get("uuid");
+            this.#cached = await getItemFromUuid(uuid);
         }
 
-        const uuid = await this.get("uuid");
-        return (this.#cached = await getItemFromUuid(uuid));
+        return this.#cached ?? undefined;
     }
 }
 

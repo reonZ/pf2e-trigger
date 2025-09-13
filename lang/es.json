@@ -316,12 +316,6 @@
             "selection": "Selección"
           }
         },
-        "get-combatant": {
-          "label": "Obtener combatiente actual",
-          "entry": {
-            "combatant": "Combatiente"
-          }
-        },
         "give-item": {
           "label": "Dar artículo físico"
         },
@@ -533,6 +527,11 @@
       "value": {
         "title": "Valores",
         "subtitle": "valor",
+        "current-combatant": {
+          "entry": {
+            "combatant": "Combatiente"
+          }
+        },
         "dc-target": {
           "label": "Clase de dificultad (en contra)",
           "entry": {

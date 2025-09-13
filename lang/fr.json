@@ -330,12 +330,6 @@
             "selection": "Sélection"
           }
         },
-        "get-combatant": {
-          "label": "Obtenir le combattant actuel",
-          "entry": {
-            "combatant": "Combattant"
-          }
-        },
         "get-master": {
           "label": "Obtient le maître de"
         },
@@ -584,6 +578,11 @@
       "value": {
         "title": "Valeurs",
         "subtitle": "valeur",
+        "current-combatant": {
+          "entry": {
+            "combatant": "Combattant"
+          }
+        },
         "dc-target": {
           "label": "Degré de difficulté (Contre)",
           "entry": {
