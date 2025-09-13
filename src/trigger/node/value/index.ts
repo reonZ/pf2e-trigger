@@ -1,6 +1,7 @@
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
 import { CurrentCombatantTriggerNode } from "./current-combatant";
+import { DcItemTriggerNode } from "./dc-item";
 import { DcTargetTriggerNode } from "./dc-target";
 import { DcValueTriggerNode } from "./dc-value";
 import { DurationSimpleTriggerNode } from "./duration-simple";
@@ -13,6 +14,7 @@ import { SuccessValueTriggerNode } from "./success";
 
 export const value = {
     "current-combatant": CurrentCombatantTriggerNode,
+    "dc-item": DcItemTriggerNode,
     "dc-target": DcTargetTriggerNode,
     "dc-value": DcValueTriggerNode,
     "duration-simple": DurationSimpleTriggerNode,

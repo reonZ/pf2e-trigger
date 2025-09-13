@@ -585,6 +585,12 @@
                         "combatant": "Combatant"
                     }
                 },
+                "dc-item": {
+                    "label": "Difficulty Class (Item Description)",
+                    "entry": {
+                        "nb": "@Check #"
+                    }
+                },
                 "dc-target": {
                     "label": "Difficulty Class (Against)",
                     "entry": {

@@ -34,6 +34,22 @@ const dcValue = {
     outputs: [{ key: "dc", type: "dc" }],
 } as const satisfies ValuenRawSchema;
 
+const dcItem = {
+    inputs: [
+        { key: "origin", type: "target" },
+        { key: "item", type: "item" },
+        {
+            key: "nb",
+            type: "number",
+            field: {
+                default: 1,
+                min: 1,
+            },
+        },
+    ],
+    outputs: [{ key: "dc", type: "dc" }],
+} as const satisfies ValuenRawSchema;
+
 const rollData = {
     inputs: [
         { key: "origin", type: "target" },
@@ -180,6 +196,7 @@ type ValuenRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
 
 export const value = {
     "current-combatant": currentCombatant,
+    "dc-item": dcItem,
     "dc-target": dcTarget,
     "dc-value": dcValue,
     "duration-simple": simpleDuration,
