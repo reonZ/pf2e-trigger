@@ -1,11 +1,25 @@
-#
+# 2.8.0
 
--   the following nodes now use an item slug field instead of a source uuid to find the item, be sure to check your triggers and make the appropriate changes
-    -   `Has Item with Slug`
-    -   `Remove Item with Slug`
--   rename `Has Item` to `Has Item with Slug`
--   rename `Remove Item` to `Remove Item with Slug`
-    -   it now removes all instances of the item from the actor instead of the first one found
+-   add spanish localization (thanks to [HonzoNebro](https://github.com/HonzoNebro))
+-   replace the `Get Current Combatant` action node with a new `Current Combatant` value node
+    -   you gonna have to check your triggers and make the appropriate changes if you were using that node
+-   `Difficulty Class (Value)`:
+    -   now adds the item name to the DC label when one is provided
+-   `Get Distance Between`:
+    -   now tries to find an active token on the scene if none is associated with the connected target
+-   `Remove Item`:
+    -   now removes all instances of the item from the actor instead of the first one found
+-   `Text Entry`:
+    -   revert using the prose mirror editor as it made it impossible to enter a simple string
+-   add new `Difficulty Class (Item Description)` value node
+    -   this node extract a DC value from an item description
+    -   the `@Check #` number fields indicates which valid save inline link should be used if more than one exist
+        -   a valid link is a save inline that has a DC value
+-   add new `Enriched Text` value node:
+    -   this make use of the prose mirror editor
+-   add new `Has Item with Slug` condition node
+-   add new `Remove Item with Slug` action node
+-   fix `value` node variables always returning the default value
 
 # 2.7.0
 
