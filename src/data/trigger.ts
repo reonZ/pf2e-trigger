@@ -10,7 +10,7 @@ import {
     WorldTriggers,
 } from "data";
 import { IdField, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
-import { isEvent, isVariable, NodeEventKey } from "schema";
+import { isEvent, isVariable, NODE_KEYS, NodeEventKey } from "schema";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
 
@@ -125,6 +125,8 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         options?: DataModelConstructionOptions<ModuleDocument> | undefined
     ): this["_source"] {
         const source = super._initializeSource(data, options);
+        // we preemptively remove the non-existing nodes
+        source.nodes = source.nodes.filter((node) => NODE_KEYS.includes(node.key));
 
         if (!R.isArray(source.nodes) || !source.nodes.some(isEvent)) {
             const node = new TriggerNodeData({ type: "event", key: "test-event" });
