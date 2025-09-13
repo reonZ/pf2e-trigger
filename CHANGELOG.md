@@ -1,3 +1,12 @@
+#
+
+-   the following nodes now use an item slug field instead of a source uuid to find the item, be sure to check your triggers and make the appropriate changes
+    -   `Has Item with Slug`
+    -   `Remove Item with Slug`
+-   rename `Has Item` to `Has Item with Slug`
+-   rename `Remove Item` to `Remove Item with Slug`
+    -   it now removes all instances of the item from the actor instead of the first one found
+
 # 2.7.0
 
 -   this release requires you to update the `PF2e Toolbelt` module to version `3.13.1` if you use it

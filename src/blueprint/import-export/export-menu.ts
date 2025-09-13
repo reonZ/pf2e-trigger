@@ -1,6 +1,7 @@
 import { TriggerData } from "data";
 import {
     ApplicationConfiguration,
+    getItemFromUuid,
     getItemSourceId,
     htmlClosest,
     info,
@@ -125,11 +126,8 @@ class TriggersExportMenu extends ImportExportMenu {
         const items = (
             await Promise.all(
                 this.resources.item.map(async (resource) => {
-                    const item = resource.selected
-                        ? await fromUuid<ItemPF2e>(resource.id)
-                        : undefined;
-
-                    if (!(item instanceof Item)) return;
+                    const item = resource.selected ? await getItemFromUuid(resource.id) : undefined;
+                    if (!item) return;
 
                     const source = item.toCompendium();
 
