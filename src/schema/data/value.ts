@@ -1,11 +1,11 @@
-import { NodeRawSchema } from "schema/schema";
+import { NodeRawSchema, NodeSchemaOutput } from "schema/schema";
 import { schemaUnidentifiedEntry } from "./_utils";
 
 const itemSource = {
     inputs: [{ key: "uuid", type: "uuid", field: { document: "Item" } }],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const dcTarget = {
     inputs: [
@@ -23,7 +23,7 @@ const dcTarget = {
         },
     ],
     outputs: [{ key: "dc", type: "dc" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const dcValue = {
     inputs: [
@@ -32,7 +32,7 @@ const dcValue = {
         { key: "value", type: "number" },
     ],
     outputs: [{ key: "dc", type: "dc" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const rollData = {
     inputs: [
@@ -42,7 +42,7 @@ const rollData = {
         { key: "traits", type: "text" },
     ],
     outputs: [{ key: "roll", type: "roll" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const successValue = {
     inputs: [
@@ -73,7 +73,7 @@ const successValue = {
         },
     ],
     outputs: [{ key: "value", type: "number" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const simpleDuration = {
     inputs: [
@@ -89,7 +89,7 @@ const simpleDuration = {
         },
     ],
     outputs: [{ key: "duration", type: "duration" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const unitDuration = {
     inputs: [
@@ -134,7 +134,7 @@ const unitDuration = {
         },
     ],
     outputs: [{ key: "duration", type: "duration" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const effectData = {
     inputs: [
@@ -145,12 +145,12 @@ const effectData = {
     ],
     outputs: [{ key: "effect", type: "effect" }],
     image: "image",
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const textValue = {
     inputs: [{ key: "input", type: "text" }],
     outputs: [{ key: "value", type: "text" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const enrichedText = {
     inputs: [
@@ -163,16 +163,20 @@ const enrichedText = {
         },
     ],
     outputs: [{ key: "value", type: "text" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const numberValue = {
     inputs: [{ key: "input", type: "number" }],
     outputs: [{ key: "value", type: "number" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
 
 const currentCombatant = {
     outputs: [{ key: "combatant", type: "target" }],
-} as const satisfies NodeRawSchema;
+} as const satisfies ValuenRawSchema;
+
+type ValuenRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
+    outputs: [NodeSchemaOutput];
+};
 
 export const value = {
     "current-combatant": currentCombatant,
