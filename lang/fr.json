@@ -243,6 +243,7 @@
       "outcome": "Résultat",
       "result": "Résultat",
       "separator": "Séparateur",
+      "slug": "item-slug",
       "targets": "Cibles",
       "this": "Déclencheur cible",
       "trigger": "ID du déclencheur",
@@ -354,6 +355,9 @@
         "remove-item": {
           "label": "Supprimer l'objet"
         },
+        "remove-item-slug": {
+          "label": "Supprimer l'objet avec Slug"
+        },
         "remove-temporary": {
           "label": "Supprimer l'effet déclencheur"
         },
@@ -418,6 +422,9 @@
         },
         "has-item": {
           "label": "Possède un objet"
+        },
+        "has-item-slug": {
+          "label": "Possède un objet avec slug"
         },
         "has-option": {
           "label": "A une option de lancer",
@@ -579,8 +586,15 @@
         "title": "Valeurs",
         "subtitle": "valeur",
         "current-combatant": {
+          "label": "Combattant actuel",
           "entry": {
             "combatant": "Combattant"
+          }
+        },
+        "dc-item": {
+          "label": "Degré de difficulté (description de l'objet)",
+          "entry": {
+            "nb": "@Check #"
           }
         },
         "dc-target": {
@@ -601,6 +615,9 @@
         },
         "effect-data": {
           "label": "Donnée de l'effet"
+        },
+        "enriched-text": {
+          "label": "Texte enrichi"
         },
         "item-source": {
           "label": "Source de l'objet"
