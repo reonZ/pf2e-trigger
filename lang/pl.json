@@ -1,0 +1,652 @@
+{
+  "TYPES": {
+    "RegionBehavior": {
+      "pf2e-trigger": {
+        "trigger": "PF2e Trigger"
+      }
+    }
+  },
+  "pf2e-trigger": {
+    "region": {
+      "id": "ID Wyzwalacza"
+    },
+    "settings": {
+      "menus": {
+        "triggers-menu": {
+          "name": "Menu wyzwalaczy",
+          "hint": "Zarejestruj własne wyzwalacze w module.",
+          "label": "Rejestracja"
+        }
+      }
+    },
+    "outs": {
+      "singular": "Wyjście",
+      "plural": "Wyjścia"
+    },
+    "inputs": {
+      "singular": "Wejście",
+      "plural": "Wejścia"
+    },
+    "outputs": {
+      "singular": "Wyjście",
+      "plural": "Wyjścia"
+    },
+    "blueprint-menu": {
+      "sidebar": {
+        "title": "Menu wyzwalaczy",
+        "close": "Zamknij okno",
+        "import": "Importuj",
+        "export": "Eksportuj",
+        "trigger": {
+          "add": "Utwórz wyzwalacz",
+          "copied": "ID wyzwalacza <strong>{id}</strong> zostało skopiowane do schowka.",
+          "copy": "Skopiuj ID wyzwalacza",
+          "delete": "Usuń wyzwalacz",
+          "title": "Wyzwalacze"
+        },
+        "subtrigger": {
+          "add": "Utwórz podwyzwalacz",
+          "copy": "Skopiuj ID podwyzwalacza",
+          "delete": "Usuń podwyzwalacz",
+          "title": "Podwyzwalacze"
+        },
+        "variable": {
+          "add": "Utwórz zmienną",
+          "delete": "Usuń zmienną",
+          "global": "Ten [{type}] jest globalny dla wyzwalacza",
+          "linked": "Ten [{type}] jest powiązany z wyjściem",
+          "locked": "Nie można usunąć tej zmiennej",
+          "title": "Zmienne wyzwalające"
+        }
+      },
+      "controls": {
+        "save": "Zapisz wyzwalacze",
+        "reset": "Zresetuj wyzwalacze",
+        "collapse": "Zwiń okno"
+      },
+      "collapsed": {
+        "expand": "Rozwiń okno wyzwalaczy"
+      }
+    },
+    "import-export-menu": {
+      "toggle": "Przełącz wszystkie",
+      "trigger": {
+        "title": "Wyzwalacze"
+      },
+      "subtrigger": {
+        "title": "Podwyzwalacze"
+      },
+      "item": {
+        "title": "Pozycje",
+        "add": "Dodaj pozycję do eksportu",
+        "delete": "Usuń pozycję"
+      }
+    },
+    "export-menu": {
+      "title": "Eksportuj wyzwalacze",
+      "cancel": {
+        "label": "Anuluj eksporty"
+      },
+      "copy": {
+        "label": "Kopiuj do schowka",
+        "confirm": "Wyzwalacze zostały skopiowane do schowka."
+      },
+      "export": {
+        "label": "Eksportuj do pliku"
+      },
+      "add-item": {
+        "title": "Ręczne dodawanie pozycji do eksportu",
+        "yes": "Dodaj pozycję",
+        "uuid": {
+          "label": "Identyfikator UUID pozycji"
+        }
+      }
+    },
+    "import-menu": {
+      "title": "Importuj wyzwalacze",
+      "import": {
+        "title": "Importuj wybrane",
+        "error": "Wystąpił błąd podczas importowania danych wyzwalaczy"
+      },
+      "cancel": {
+        "title": "Anuluj importy"
+      },
+      "code": {
+        "title": "Wklej JSON",
+        "yes": "Parsowanie JSON"
+      },
+      "file": {
+        "title": "Załaduj plik",
+        "yes": "Parsowanie pliku"
+      }
+    },
+    "close-window": {
+      "title": "Zamknij menu wyzwalaczy",
+      "content": "Czy chcesz zapisać swoje wyzwalacze przed zamknięciem?",
+      "yes": "Zapisz i zamknij",
+      "no": "Zamknij bez zapisywania"
+    },
+    "save-triggers": {
+      "title": "Zapisz wyzwalacze",
+      "content": "Czy na pewno chcesz zapisać swoje wyzwalacze?"
+    },
+    "reset-triggers": {
+      "title": "Zresetuj wyzwalacze",
+      "content": "Czy na pewno chcesz zresetować wyzwalacze do ostatniego zapisanego stanu?"
+    },
+    "create-trigger": {
+      "title": "Utwórz wyzwalacz",
+      "yes": "Utwórz",
+      "name": {
+        "label": "Nazwa wyzwalacza"
+      },
+      "event": {
+        "label": "Typ zdarzenia"
+      }
+    },
+    "delete-trigger": {
+      "title": "Usuń wyzwalacz ({id})",
+      "content": "Czy na pewno chcesz usunąć wyzwalacz <strong>{label}</strong>?"
+    },
+    "edit-trigger": {
+      "title": "Edytuj wyzwalacz ({id})",
+      "yes": "Edytuj"
+    },
+    "delete-node": {
+      "title": "Usuń węzeł ({id})",
+      "content": "Czy na pewno chcesz usunąć ten węzeł?"
+    },
+    "create-subtrigger": {
+      "title": "Utwórz podwyzwalacz",
+      "yes": "Utwórz"
+    },
+    "create-variable": {
+      "title": "Utwórz zmienną",
+      "yes": "Utwórz",
+      "label": {
+        "label": "Etykieta zmiennej"
+      },
+      "type": {
+        "label": "Typ zmiennej"
+      }
+    },
+    "delete-variable": {
+      "title": "Usuń zmienną",
+      "content": "Czy na pewno chcesz usunąć zmienną <strong>{label}</strong>?"
+    },
+    "edit-variable": {
+      "title": "Edytuj zmienną",
+      "yes": "Edytuj"
+    },
+    "create-entry": {
+      "title": "Utwórz wpis {label}",
+      "yes": "Utwórz",
+      "required": "Pole <strong>{name}</strong> jest wymagane.",
+      "label": {
+        "label": "Etykieta wpisu"
+      },
+      "type": {
+        "label": "Typ wpisu"
+      },
+      "path": {
+        "label": "Ścieżka wpisu"
+      },
+      "value": {
+        "label": "Wartość"
+      }
+    },
+    "delete-entry": {
+      "content": "Czy na pewno chcesz usunąć wpis <strong>{name}</strong>?",
+      "title": "Usuń wpis {label}"
+    },
+    "context": {
+      "create-entry": "Utwórz wpis {label}",
+      "create-variable": "Utwórz zmienną",
+      "delete-entry": "Usuń wpis",
+      "delete-node": "Usuń węzeł",
+      "delete-variable": "Usuń zmienną",
+      "disconnect": "Odłącz wpis",
+      "duplicate-node": "Duplikuj węzeł",
+      "edit-variable": "Edytuj zmienną"
+    },
+    "entry": {
+      "boolean": "Boolean",
+      "dc": "ST",
+      "duration": "Czas trwania",
+      "effect": "Efekt",
+      "item": "Pozycja",
+      "list": "Lista",
+      "number": "Liczba",
+      "object": "Obiekt",
+      "roll": "Rzut",
+      "select": "Wybierz",
+      "target": "Cel",
+      "text": "Tekst",
+      "uuid": "UUID źródła",
+      "a": "A",
+      "b": "B",
+      "distance": "Odległość (stopy)",
+      "false": "Fałsz",
+      "formula": "formuła",
+      "identifier": "Identyfikator",
+      "image": "obraz/ścieżka.webp",
+      "in": "Wejście",
+      "input": "Wejście",
+      "label": "Etykieta",
+      "master": "Mistrz",
+      "max": "Maksimum",
+      "min": "Minimum",
+      "none": "Brak dopasowania",
+      "options": "Opcje rzutu",
+      "origin": "Oryginalny",
+      "out": "Wyjście",
+      "outcome": "Wynik",
+      "result": "Wynik",
+      "separator": "Separator",
+      "slug": "slug-elementu",
+      "targets": "Cele",
+      "this": "Cel wyzwalacza",
+      "trigger": "ID Wyzwalacza",
+      "true": "Prawda",
+      "type": "Typ",
+      "unit": "Jednostka",
+      "value": "Wartość",
+      "quantity": "Ilość"
+    },
+    "document": {
+      "broken": "Uszkodzony link",
+      "wrong": "To pole nie akceptuje tego typu dokumentów."
+    },
+    "select-option": {
+      "all": "Wszyscy",
+      "allies": "Sojusznicy",
+      "enemies": "Wrogowie"
+    },
+    "node": {
+      "action": {
+        "title": "Akcje",
+        "subtitle": "Akcja",
+        "add-condition": {
+          "label": "Dodaj Stan",
+          "entry": {
+            "counter": "Licznik"
+          }
+        },
+        "add-persistent": {
+          "label": "Dodaj Trwałe Obrażenia",
+          "entry": {
+            "die": "1k6"
+          }
+        },
+        "add-number": {
+          "label": "Dodaj liczby"
+        },
+        "add-temporary": {
+          "label": "Dodaj efekt wyzwalający"
+        },
+        "break-process": {
+          "label": "Przerwij proces"
+        },
+        "concat-texts": {
+          "label": "Łączenie tekstów"
+        },
+        "console-log": {
+          "label": "Dziennik konsoli"
+        },
+        "create-item": {
+          "label": "Utwórz pozycję",
+          "entry": {
+            "duplicate": "Zduplikować?"
+          }
+        },
+        "create-message": {
+          "label": "Utwórz wiadomość czatu",
+          "entry": {
+            "message": "Wiadomość",
+            "target": "Mówca"
+          }
+        },
+        "delete-item": {
+          "label": "Usuń pozycję"
+        },
+        "distance-between": {
+          "label": "Oblicz odległość między",
+          "entry": {
+            "a": "Cel A",
+            "b": "Cel B"
+          }
+        },
+        "effect-duration": {
+          "label": "Aktualizuj czas trwania efektu",
+          "entry": {
+            "effect": "Efekt",
+            "removed": "Usunięto"
+          }
+        },
+        "get-choiceset": {
+          "label": "Pobierz zestaw opcji wyboru elementu",
+          "entry": {
+            "flag": "flaga",
+            "option": "opcja rzutu",
+            "selection": "Wybór"
+          }
+        },
+        "get-master": {
+          "label": "Pobierz Mistrza"
+        },
+        "give-item": {
+          "label": "Przyznaj przedmiot fizyczny"
+        },
+        "join-list": {
+          "label": "Dołącz do listy"
+        },
+        "random-number": {
+          "label": "Generuj liczbę losową"
+        },
+        "reduce-condition": {
+          "label": "Zmniejsz stan",
+          "entry": {
+            "counter": "Wartość"
+          }
+        },
+        "remove-condition": {
+          "label": "Usuń stan"
+        },
+        "remove-item": {
+          "label": "Usuń przedmiot"
+        },
+        "remove-item-slug": {
+          "label": "Usuń przedmiot z tagiem"
+        },
+        "remove-temporary": {
+          "label": "Usuń efekt wyzwalający"
+        },
+        "roll-damage": {
+          "label": "Rzut na obrażenia"
+        },
+        "roll-damage-save": {
+          "label": "Rzut na obrażenia z rzutem obronnym",
+          "entry": {
+            "private": "Prywatny rzut?"
+          },
+          "group": {
+            "damage": "Obrażenia",
+            "save": "Zapisz"
+          }
+        },
+        "roll-flat": {
+          "label": "Rzut na Płaski Test"
+        },
+        "roll-save": {
+          "label": "Rzut obronny\n",
+          "entry": {
+            "basic": "Czy jest podstawowy?",
+            "private": "Ślepy rzut?",
+            "save": "Zapisz"
+          }
+        },
+        "scene-tokens": {
+          "label": "Tokeny sceny",
+          "entry": {
+            "other": "Cel sceny"
+          }
+        },
+        "subtract-number": {
+          "label": "Odejmij liczby"
+        },
+        "surround-text": {
+          "label": "Tekst otaczający",
+          "entry": {
+            "prefix": "Prefiks",
+            "suffix": "Sufiks"
+          }
+        },
+        "use-macro": {
+          "label": "Uruchom makro"
+        }
+      },
+      "condition": {
+        "title": "Stany",
+        "subtitle": "Stan",
+        "contains-entry": {
+          "label": "Lista zawiera wpis",
+          "entry": {
+            "entry": "Wpis"
+          }
+        },
+        "has-condition": {
+          "label": "Ma stan"
+        },
+        "has-immunity": {
+          "label": "Ma niewrażliwość"
+        },
+        "has-item": {
+          "label": "Ma przedmiot"
+        },
+        "has-item-slug": {
+          "label": "Ma przedmiot z tagiem"
+        },
+        "has-option": {
+          "label": "ma opcję rzutu",
+          "entry": {
+            "options": "rzut:opcja"
+          }
+        },
+        "has-temporary": {
+          "label": "Ma efekt wyzwalający"
+        },
+        "in-combat": {
+          "label": "Jest w walce"
+        },
+        "in-range": {
+          "label": "Jest w zasięgu"
+        },
+        "inside-aura": {
+          "label": "Jest wewnątrz aury",
+          "entry": {
+            "source": "Źródło aury",
+            "slug": "slug-aury"
+          }
+        },
+        "is-combatant": {
+          "label": "Jest bieżącym uczestnikiem walki"
+        },
+        "is-dead": {
+          "label": "Jest martwy"
+        },
+        "is-master": {
+          "label": "Jest mistrzem"
+        },
+        "match-predicate": {
+          "label": "Lista dopasowań predykatu"
+        }
+      },
+      "event": {
+        "title": "Zdarzenia",
+        "subtitle": "Zdarzenie",
+        "attack-roll": {
+          "label": "Wykonano rzut ataku",
+          "entry": {
+            "action": "Tag akcji",
+            "other": "Cel ataku",
+            "item": "Przedmiot ataku"
+          }
+        },
+        "aura-enter": {
+          "label": "Wejście w aurę",
+          "entry": {
+            "turn": "Bieżąca tura?"
+          }
+        },
+        "aura-leave": {
+          "label": "Wyjście z aury"
+        },
+        "damage-taken": {
+          "label": "Otrzymano obrażenia",
+          "entry": {
+            "other": "Źródło obrażeń",
+            "item": "Przedmiot obrażeń",
+            "heal": "Czy leczenie",
+            "negated": "Brak obrażeń?"
+          }
+        },
+        "execute-event": {
+          "label": "Wykonaj zdarzenie",
+          "subtitle": "game.trigger.execute()"
+        },
+        "region-event": {
+          "label": "Region sceny",
+          "entry": {
+            "event": "Zdarzenie"
+          }
+        },
+        "test-event": {
+          "label": "Zdarzenie testowe",
+          "subtitle": "game.trigger.test()",
+          "warning": "Aby uruchomić wyzwalacze <strong>Zdarzenia testowego</strong>, należy wybrać jeden token."
+        },
+        "token-create": {
+          "label": "Utworzono token"
+        },
+        "token-delete": {
+          "label": "Usunięto token"
+        },
+        "token-moved": {
+          "label": "Przesunięto token",
+          "entry": {
+            "data": "Dane ruchu"
+          }
+        },
+        "turn-end": {
+          "label": "Koniec tury"
+        },
+        "turn-start": {
+          "label": "Rozpoczęcie tury"
+        }
+      },
+      "logic": {
+        "title": "Logika",
+        "eq-actor": {
+          "label": "Równe (aktor)"
+        },
+        "eq-number": {
+          "label": "Równe (liczba)"
+        },
+        "eq-text": {
+          "label": "Równe (tekst)"
+        },
+        "gt-number": {
+          "label": "Większe niż"
+        },
+        "gte-number": {
+          "label": "Większe lub równe"
+        },
+        "lt-number": {
+          "label": "Mniejsze niż"
+        },
+        "lte-number": {
+          "label": "Mniejsze lub równe"
+        }
+      },
+      "splitter": {
+        "title": "Rozdzielacze",
+        "actor-splitter": {
+          "label": "Wyodrębnij dane (aktor)"
+        },
+        "boolean-splitter": {
+          "label": "Rozgałęzienie (wartość logiczna)"
+        },
+        "item-splitter": {
+          "label": "Wyodrębnij dane (pozycja)"
+        },
+        "number-splitter": {
+          "label": "Rozgałęzienie (liczba)"
+        },
+        "object-splitter": {
+          "label": "Wyodrębnij dane (obiekt)"
+        },
+        "success-splitter": {
+          "label": "Rozgałęzienie (stopień sukcesu)"
+        },
+        "text-splitter": {
+          "label": "Rozgałęzienie (tekst)"
+        }
+      },
+      "subtrigger": {
+        "title": "Podwyzwalacze",
+        "subtitle": "Podwyzwalacz",
+        "subtrigger-input": {
+          "label": "Wejście"
+        },
+        "subtrigger-output": {
+          "label": "Wyjście"
+        }
+      },
+      "value": {
+        "title": "Wartości",
+        "subtitle": "wartość",
+        "current-combatant": {
+          "label": "Bieżący uczestnik walki",
+          "entry": {
+            "combatant": "Uczestnik walki"
+          }
+        },
+        "dc-item": {
+          "label": "Klasa trudności (opis przedmiotu)",
+          "entry": {
+            "nb": "@Check #"
+          }
+        },
+        "dc-target": {
+          "label": "Klasa trudności (przeciwko)",
+          "entry": {
+            "against": "przeciwko",
+            "adjustment": "Dostosowanie"
+          }
+        },
+        "dc-value": {
+          "label": "Klasa trudności (wartość)"
+        },
+        "duration-simple": {
+          "label": "Czas trwania efektu"
+        },
+        "duration-unit": {
+          "label": "Czas trwania efektu (jednostka)"
+        },
+        "effect-data": {
+          "label": "Dane efektu"
+        },
+        "enriched-text": {
+          "label": "Wzbogacony tekst"
+        },
+        "item-source": {
+          "label": "Źródło pozycji"
+        },
+        "number-value": {
+          "label": "Liczba wpisów"
+        },
+        "roll-data": {
+          "label": "Dane rzutu",
+          "entry": {
+            "options": "dodatkowe, opcje",
+            "traits": "dodatkowe, cechy"
+          }
+        },
+        "success-value": {
+          "label": "Stopień sukcesu"
+        },
+        "text-value": {
+          "label": "Wprowadzanie tekstu"
+        }
+      },
+      "variable": {
+        "title": "Zmienne",
+        "getter": "Getter",
+        "setter": "Setter",
+        "variable-setter": {
+          "label": "Ustaw zmienną"
+        }
+      }
+    }
+  }
+}
