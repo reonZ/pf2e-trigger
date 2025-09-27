@@ -3,7 +3,6 @@ import {
     ActorPF2e,
     ChatContextFlag,
     ChatMessagePF2e,
-    CheckContextChatFlag,
     createHook,
     degreeOfSuccessNumber,
     isValidTargetDocuments,
@@ -74,7 +73,7 @@ class MessageHook extends TriggerHook {
 
             this.executeTriggers<AttackTriggerOptions>(
                 {
-                    action: (context as CheckContextChatFlag & { action: string }).action ?? "",
+                    action: (context as { action?: string }).action ?? "",
                     item,
                     options: context?.options ?? [],
                     other: target,

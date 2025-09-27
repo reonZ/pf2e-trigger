@@ -181,7 +181,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             this.#draw();
         }
 
-        MODULE.debug(this.trigger);
+        MODULE.debug("Set Trigger\n", this.trigger);
 
         this.parent?.refresh();
         this.resetPosition();
