@@ -1,3 +1,7 @@
+# 2.9.1
+
+-   fix `network` nodes timeout being way too short
+
 # 2.9.0
 
 -   add `number -> text` auto converter
