@@ -33,7 +33,7 @@ const OUTPUT_COMPATIBLES: PartialRecord<NodeEntryType, NodeEntryType[]> = {
     dc: ["number"],
     item: ["uuid"],
     list: ["text"],
-    number: ["dc"],
+    number: ["dc", "text"],
     select: ["text", "list"],
     text: ["select", "list"],
     uuid: ["item"],

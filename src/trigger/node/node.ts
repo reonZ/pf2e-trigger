@@ -239,9 +239,9 @@ class TriggerNode<
             const options = (schemaInput.field?.options ?? []).map(({ value }) => value);
             value = options.includes(value) ? value : options[0] ?? "";
         }
-        // list, select
+        // list, select, number
         else if (type === "text") {
-            value = R.isArray(value) ? value[0] ?? "" : value;
+            value = R.isArray(value) ? value[0] ?? "" : R.isNumber(value) ? String(value) : value;
         }
         // item
         else if (type === "uuid") {
