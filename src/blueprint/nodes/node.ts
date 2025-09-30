@@ -626,39 +626,39 @@ class BlueprintNode extends PIXI.Container {
         });
     }
 
-    #drawHelper(): PIXI.Graphics | undefined {
-        const helperIcon: IconObject | undefined = this.isCustom
-            ? { unicode: "\uf013", fontWeight: "900" }
-            : this.isLoop
-            ? { unicode: "\uf363", fontWeight: "900" }
-            : undefined;
+    #drawSpecials(): PIXI.Graphics[] {
+        const icons: IconObject[] = [
+            this.isCustom ? { unicode: "\uf013", fontWeight: "900" } : undefined,
+            this.isLoop ? { unicode: "\uf363", fontWeight: "900" } : undefined,
+        ].filter((x): x is IconObject => R.isTruthy(x));
 
-        if (!helperIcon) return;
+        return icons.map((helperIcon): PIXI.Graphics => {
+            const icon = this.fontAwesomeIcon(helperIcon, this.fontSize * 0.86);
 
-        const icon = this.fontAwesomeIcon(helperIcon, this.fontSize * 0.86);
-        icon.x = (icon.width / 2) * -1;
-        icon.y = (icon.height / 2) * -1;
+            const helper = new PIXI.Graphics();
+            const color = this.headerColor;
+            const x = icon.width / 2;
+            const y = icon.height / 2;
+            const radius = icon.width * 0.8;
 
-        const helper = new PIXI.Graphics();
-        const color = this.headerColor;
-        const radius = icon.width * 0.8;
-        const mask = drawCircleMask(0, 0, radius);
+            helper.beginFill(color, this.opacity);
+            helper.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });
+            helper.drawCircle(x, y, radius);
+            helper.endFill();
 
-        helper.beginFill(color, this.opacity);
-        helper.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });
-        helper.drawCircle(0, 0, radius);
-        helper.endFill();
+            const mask = drawCircleMask(x, y, radius);
 
-        helper.mask = mask;
-        helper.addChild(icon, mask);
+            helper.mask = mask;
+            helper.addChild(icon, mask);
 
-        return helper;
+            return helper;
+        });
     }
 
     #draw() {
         const header = this.#drawHeader();
         const body = this.#drawBody();
-        const helper = this.#drawHelper();
+        const specials = this.#drawSpecials();
         const outerPadding = this.outerPadding;
 
         const minClamp = header ? 180 : 100;
@@ -701,11 +701,17 @@ class BlueprintNode extends PIXI.Container {
 
         this.addChild(background);
 
-        if (helper) {
-            helper.x = totalWidth + helper.width * -0.2;
-            helper.y = helper.height * 0.15;
+        if (specials.length) {
+            const helpers = new HorizontalLayoutGraphics();
 
-            this.addChild(helper);
+            for (const special of specials) {
+                helpers.addChild(special);
+            }
+
+            helpers.x = totalWidth - helpers.width + specials[0].width * 0.4;
+            helpers.y = helpers.height * -0.15;
+
+            this.addChild(helpers);
         }
     }
 
