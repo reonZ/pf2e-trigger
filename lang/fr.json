@@ -246,6 +246,7 @@
       "slug": "item-slug",
       "targets": "Cibles",
       "this": "Déclencheur cible",
+      "title": "Titre",
       "trigger": "ID du déclencheur",
       "true": "Vrai",
       "type": "Type",
@@ -283,6 +284,14 @@
         },
         "add-temporary": {
           "label": "Ajouter un effet déclencheur"
+        },
+        "await-confirm": {
+          "label": "Attendre la confirmation",
+          "entry": {
+            "false": "Annulé",
+            "prompt": "Invite",
+            "true": "Confirmé"
+          }
         },
         "break-process": {
           "label": "Rompre le processus"
