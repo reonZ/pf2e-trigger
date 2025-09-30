@@ -1,3 +1,11 @@
+# 2.9.0
+
+-   add `number -> text` auto converter
+-   add a new special `network` type of nodes which will hold the trigger until a user is processing the request (or the end of a 30 seconds timeout period)
+-   add new `Await Confirm` network action node
+    -   a confirm dialog will be sent to the "primary" user owner of the `target` (first player owner or GM as fallback)
+    -   a timeout will completely halt the trigger process
+
 # 2.8.0
 
 -   add spanish localization (thanks to [HonzoNebro](https://github.com/HonzoNebro))
