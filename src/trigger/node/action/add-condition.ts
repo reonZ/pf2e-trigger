@@ -21,8 +21,6 @@ class AddConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-co
         const effect = await this.get("effect");
         const slug = (await this.get("condition")) as ConditionSlug;
 
-        console.log(effect);
-
         const createConditionFromSource = async (
             source: Maybe<PreCreate<EffectSource | ConditionSource>>
         ): Promise<boolean> => {
