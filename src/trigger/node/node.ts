@@ -34,7 +34,7 @@ import {
     TriggerValue,
 } from "trigger";
 
-const USER_QUERY_TIMEOUT = 3000;
+const USER_QUERY_TIMEOUT = 30000;
 
 class TriggerNode<
     TSchema extends NodeRawSchema = NodeRawSchema,
