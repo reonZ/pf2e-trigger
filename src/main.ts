@@ -2,7 +2,7 @@ import { BlueprintApplication } from "blueprint";
 import { TriggerData, TriggerNodeData, WorldTriggers } from "data";
 import { PF2eTriggerBehaviorType } from "hook";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
-import { prepareTriggers } from "trigger";
+import { confirmPrompt, prepareTriggers, UserQueryPromptData } from "trigger";
 
 MODULE.register("pf2e-trigger");
 // MODULE.enableDebugMode();
@@ -29,6 +29,14 @@ Hooks.once("setup", () => {
             }),
             R.mapToObj(([key, value]) => [key, value])
         ),
+    };
+
+    CONFIG.queries[MODULE.path("user-query")] = async function (data: UserQueries) {
+        switch (data.action) {
+            case "await-prompt": {
+                return confirmPrompt(data);
+            }
+        }
     };
 
     CONFIG.RegionBehavior.dataModels[MODULE.path("trigger")] = PF2eTriggerBehaviorType;
@@ -58,3 +66,5 @@ MODULE.apiExpose({
         new BlueprintApplication().render(true);
     },
 });
+
+type UserQueries = UserQueryPromptData;

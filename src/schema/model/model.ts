@@ -92,6 +92,11 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                     initial: () => [],
                 }
             ),
+            await: new fields.BooleanField({
+                required: false,
+                nullable: false,
+                initial: false,
+            }),
             loop: new fields.BooleanField({
                 required: false,
                 nullable: false,
@@ -187,19 +192,20 @@ interface NodeSchemaModel
         ModelPropsFromSchema<NodeSchemaModelSchema> {}
 
 type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
-    icon: NodeSchemaIconField;
-    module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
+    await: fields.BooleanField<boolean, boolean, false>;
     custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
-    loop: fields.BooleanField<boolean, boolean, false>;
     document: fields.StringField<string, string, false, false, false>;
+    icon: NodeSchemaIconField;
     image: fields.StringField<string, string, false, false, false>;
+    loop: fields.BooleanField<boolean, boolean, false>;
+    module: fields.StringField<NodeSchemaModuleId, NodeSchemaModuleId, false, false, false>;
 };
 
 type NodeSchemaCustomSchema = {
     category: fields.StringField<NodeCustomEntryCategory, NodeCustomEntryCategory, true>;
     group: fields.StringField<string, string, false>;
-    types: ArrayField<fields.StringField<NodeCustomEntryType, NodeCustomEntryType, true>, false>;
     key: SchemaField<NodeSchemaCustomKeySchema, false>;
+    types: ArrayField<fields.StringField<NodeCustomEntryType, NodeCustomEntryType, true>, false>;
 };
 
 type CustomKeyType = (typeof CUSTOM_KEY_TYPES)[number];
@@ -215,12 +221,12 @@ type NodeSchemaCustom = NodeSchemaCustomInput | NodeSchemaCustomOutput | NodeSch
 type BaseNodeSchemaCustom<T extends NodeCustomEntryCategory> = {
     category: T;
     group?: string;
-    types?: NodeCustomEntryType[];
     key?: {
         name: string;
         required?: boolean;
         type?: CustomKeyType;
     };
+    types?: NodeCustomEntryType[];
 };
 
 type NodeSchemaCustomInput = BaseNodeSchemaCustom<"inputs">;

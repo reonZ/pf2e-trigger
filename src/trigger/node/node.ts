@@ -15,6 +15,7 @@ import {
     ItemPF2e,
     MODULE,
     R,
+    UserPF2e,
 } from "module-helpers";
 import {
     NodeFieldSchema,
@@ -32,6 +33,8 @@ import {
     TriggerRollEntry,
     TriggerValue,
 } from "trigger";
+
+const USER_QUERY_TIMEOUT = 3000;
 
 class TriggerNode<
     TSchema extends NodeRawSchema = NodeRawSchema,
@@ -351,6 +354,18 @@ class TriggerNode<
         }
     }
 
+    async userQuery<T>(user: UserPF2e, data: object): Promise<T | null> {
+        try {
+            const result = await user.query(MODULE.path("user-query"), data, {
+                timeout: USER_QUERY_TIMEOUT,
+            });
+
+            return (result as T) ?? null;
+        } catch {
+            return null;
+        }
+    }
+
     #getFirstNodeFromEntries(
         entries: NodeDataEntry
     ): { entryId: NodeEntryId; node: TriggerNode } | undefined {
@@ -436,4 +451,4 @@ type ExtractOutKey<S extends NodeRawSchema> = S extends {
         : K
     : "out";
 
-export { isUuidEntry, TriggerNode };
+export { isUuidEntry, TriggerNode, USER_QUERY_TIMEOUT };

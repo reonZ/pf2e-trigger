@@ -247,6 +247,7 @@
             "slug": "item-slug",
             "targets": "Targets",
             "this": "Trigger Target",
+            "title": "Title",
             "trigger": "Trigger ID",
             "true": "True",
             "type": "Type",
@@ -284,6 +285,14 @@
                 },
                 "add-temporary": {
                     "label": "Add Trigger Effect"
+                },
+                "await-confirm": {
+                    "label": "Await Confirmation",
+                    "entry": {
+                        "false": "Canceled",
+                        "prompt": "Prompt",
+                        "true": "Confirmed"
+                    }
                 },
                 "break-process": {
                     "label": "Break Process"

@@ -1,4 +1,4 @@
-import { NodeRawSchema, schemaConditionEntries } from "schema";
+import { NodeRawSchema, schemaBooleanOuts, schemaConditionEntries } from "schema";
 
 const randomNumber = {
     icon: "\ue3dd",
@@ -355,6 +355,21 @@ const joinList = {
     outputs: [{ key: "result", type: "text" }],
 } as const satisfies ActionRawSchema;
 
+const awaitConfirm = {
+    await: true,
+    icon: { unicode: "\uf4a2", fontWeight: "900" },
+    outs: schemaBooleanOuts(),
+    inputs: [
+        { key: "title", type: "text" },
+        {
+            key: "prompt",
+            type: "text",
+            field: { type: "description" },
+        },
+        { key: "target", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -383,6 +398,7 @@ export const action = {
     "add-number": arithmeticAction("\ue59e"),
     "add-persistent": addPersistent,
     "add-temporary": addTemporary,
+    "await-confirm": awaitConfirm,
     "break-process": breakProcess,
     "concat-texts": concatTexts,
     "console-log": consoleLog,

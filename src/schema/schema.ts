@@ -129,15 +129,16 @@ type NonEventKey = Exclude<NodeKey, NodeEventKey>;
 type NodeKeys<T extends NodeType> = keyof (typeof SCHEMAS)[T];
 
 type NodeRawSchema = {
-    icon?: string | IconObject;
-    module?: NodeSchemaModuleId;
-    loop?: boolean;
-    document?: string;
-    image?: string;
+    await?: boolean;
     custom?: ReadonlyArray<NodeSchemaCustom>;
-    outs?: ReadonlyArray<NodeSchemaRawBridge>;
+    document?: string;
+    icon?: string | IconObject;
+    image?: string;
     inputs?: ReadonlyArray<NodeSchemaInput>;
+    loop?: boolean;
+    module?: NodeSchemaModuleId;
     outputs?: ReadonlyArray<NodeSchemaOutput>;
+    outs?: ReadonlyArray<NodeSchemaRawBridge>;
 };
 
 type NodeRawSchemaEntry<T extends NodeEntryType> = BaseNodeSchemaEntry<T>;

@@ -223,6 +223,10 @@ class BlueprintNode extends PIXI.Container {
         );
     }
 
+    get isAwait(): boolean {
+        return !!this.schema.await;
+    }
+
     get isCustom(): boolean {
         return !!this.schema.custom?.length;
     }
@@ -627,19 +631,20 @@ class BlueprintNode extends PIXI.Container {
     }
 
     #drawSpecials(): PIXI.Graphics[] {
-        const icons: IconObject[] = [
-            this.isCustom ? { unicode: "\uf013", fontWeight: "900" } : undefined,
-            this.isLoop ? { unicode: "\uf363", fontWeight: "900" } : undefined,
-        ].filter((x): x is IconObject => R.isTruthy(x));
+        const icons: (IconObject & { fontSize: number })[] = [
+            this.isAwait ? { unicode: "\uf1eb", fontWeight: "900", fontSize: 0.74 } : undefined,
+            this.isCustom ? { unicode: "\uf013", fontWeight: "900", fontSize: 0.86 } : undefined,
+            this.isLoop ? { unicode: "\uf363", fontWeight: "900", fontSize: 0.86 } : undefined,
+        ].filter((x): x is IconObject & { fontSize: number } => R.isTruthy(x));
 
         return icons.map((helperIcon): PIXI.Graphics => {
-            const icon = this.fontAwesomeIcon(helperIcon, this.fontSize * 0.86);
+            const icon = this.fontAwesomeIcon(helperIcon, this.fontSize * helperIcon.fontSize);
 
             const helper = new PIXI.Graphics();
             const color = this.headerColor;
-            const x = icon.width / 2;
-            const y = icon.height / 2;
-            const radius = icon.width * 0.8;
+            const x = 13 / 2;
+            const y = 14 / 2;
+            const radius = 13 * 0.8;
 
             helper.beginFill(color, this.opacity);
             helper.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });

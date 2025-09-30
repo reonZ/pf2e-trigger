@@ -1,10 +1,13 @@
 export * from "./_utils";
+export * from "./await-confirm";
+
 import { NodeKeys } from "schema";
 import { TriggerNode } from "trigger";
 import { AddConditionTriggerNode } from "./add-condition";
 import { AddNumberTriggerNode } from "./add-number";
 import { AddPersistentTriggerNode } from "./add-persistent";
 import { AddTemporaryTriggerNode } from "./add-temporary";
+import { AwaitConfirmTriggerNode } from "./await-confirm";
 import { BreakProcessTriggerNode } from "./break-process";
 import { ConcatTextsTriggerNode } from "./concat-texts";
 import { ConsoleLogTriggerNode } from "./console-log";
@@ -37,6 +40,7 @@ export const action = {
     "add-number": AddNumberTriggerNode,
     "add-persistent": AddPersistentTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
+    "await-confirm": AwaitConfirmTriggerNode,
     "break-process": BreakProcessTriggerNode,
     "concat-texts": ConcatTextsTriggerNode,
     "console-log": ConsoleLogTriggerNode,
