@@ -246,6 +246,7 @@
       "slug": "slug-elementu",
       "targets": "Cele",
       "this": "Cel wyzwalacza",
+      "title": "Tytuł",
       "trigger": "ID Wyzwalacza",
       "true": "Prawda",
       "type": "Typ",
@@ -283,6 +284,14 @@
         },
         "add-temporary": {
           "label": "Dodaj efekt wyzwalający"
+        },
+        "await-confirm": {
+          "label": "Oczekiwanie na potwierdzenie",
+          "entry": {
+            "false": "Anulowano",
+            "prompt": "Monit",
+            "true": "Potwierdzono"
+          }
         },
         "break-process": {
           "label": "Przerwij proces"
