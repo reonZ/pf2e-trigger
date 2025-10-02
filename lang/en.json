@@ -344,6 +344,13 @@
                 "get-master": {
                     "label": "Get Master Of"
                 },
+                "get-percent": {
+                    "label": "Get Percentage",
+                    "entry": {
+                        "a": "Numerator",
+                        "b": "Denominator"
+                    }
+                },
                 "give-item": {
                     "label": "Give Physical Item"
                 },

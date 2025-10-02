@@ -34,6 +34,7 @@ import { SceneTokensTriggerNode } from "./scene-tokens";
 import { SubtractNumberTriggerNode } from "./subtract-number";
 import { SurroundTextTriggerNode } from "./surround-text";
 import { UseMacroTriggerNode } from "./use-macro";
+import { GetPercentTriggerNode } from "./get-percent";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -51,6 +52,7 @@ export const action = {
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-master": GetMasterTriggerNode,
+    "get-percent": GetPercentTriggerNode,
     "give-item": GiveItemTriggerNode,
     "join-list": JoinListTriggerNode,
     "random-number": RandomNumberTriggerNode,

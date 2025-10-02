@@ -409,6 +409,7 @@ export const action = {
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,
+    "get-percent": arithmeticAction("\ue41c"),
     "give-item": giveItem,
     "join-list": joinList,
     "random-number": randomNumber,
