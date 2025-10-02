@@ -12,6 +12,7 @@ import {
     htmlQuery,
     info,
     localize,
+    MODULE,
     R,
     templateLocalize,
     TemplateLocalize,
@@ -89,6 +90,11 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     _onFirstRender(context: object, options: BlueprintMenuRenderOptions) {
         this.bringToFront();
+
+        if (MODULE.isDebug) {
+            this.element.classList.add("debug");
+        }
+
         // we wait one frame before initializing the canvas
         requestAnimationFrame(() => {
             this.blueprint.initialize(this);
