@@ -343,6 +343,13 @@
         "get-master": {
           "label": "Pobierz Mistrza"
         },
+        "get-percent": {
+          "label": "Pobierz procent",
+          "entry": {
+            "a": "Licznik",
+            "b": "Mianownik"
+          }
+        },
         "give-item": {
           "label": "Przyznaj przedmiot fizyczny"
         },
