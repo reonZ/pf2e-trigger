@@ -1,3 +1,7 @@
+# 2.10.0
+
+-   add new `Get Percentage` action node
+
 # 2.9.1
 
 -   fix `network` nodes timeout being way too short
