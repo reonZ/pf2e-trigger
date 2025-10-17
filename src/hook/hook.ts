@@ -1,5 +1,13 @@
 import { TriggerData } from "data";
-import { ActorPF2e, createHook, MODULE, PersistentHook, R, userIsGM } from "module-helpers";
+import {
+    ActorPF2e,
+    createHook,
+    HookOptions,
+    MODULE,
+    PersistentHook,
+    R,
+    userIsGM,
+} from "module-helpers";
 import { NodeEventKey, NodeKey, NonEventKey } from "schema";
 import { Trigger, TriggerPreOptions } from "trigger";
 
@@ -101,9 +109,10 @@ abstract class TriggerHook {
 
     createEventHook(
         event: string,
-        listener: (...args: any[]) => any
+        listener: (...args: any[]) => any,
+        options: HookOptions = {}
     ): PersistentEventHook<this["events"][number]> {
-        const hook = createHook(event, listener);
+        const hook = createHook(event, listener, options);
         const self = this;
 
         type TriggerHookEvent = this["events"][number];
