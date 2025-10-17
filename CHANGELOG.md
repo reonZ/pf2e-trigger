@@ -1,3 +1,9 @@
+# 2.10.1
+
+-   `Has Condition`:
+    -   fix localization of the `counter` output
+-   fix console error when a combatant is deleted or an encounter is ended while any `Turn Started` or `Turn Ended` trigger event exist
+
 # 2.10.0
 
 -   add new `Get Percentage` action node
