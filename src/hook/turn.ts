@@ -19,19 +19,26 @@ class TurnHook extends TriggerHook {
         this.#turnEndHook.disable();
     }
 
-    #onTurnStart(combatant: CombatantPF2e) {
-        const actor = combatant.actor;
+    #getTargetDocument(combatant?: CombatantPF2e): TargetDocuments | undefined {
+        if (!combatant) return;
 
-        if (this.isValidEvent(actor)) {
-            this.executeTriggers({ this: { actor, token: combatant.token } }, "turn-start");
+        const actor = combatant.actor;
+        return this.isValidEvent(actor) ? { actor, token: combatant.token } : undefined;
+    }
+
+    #onTurnStart(combatant?: CombatantPF2e) {
+        const target = this.#getTargetDocument(combatant);
+
+        if (target) {
+            this.executeTriggers({ this: target }, "turn-start");
         }
     }
 
-    #onTurnEnd(combatant: CombatantPF2e) {
-        const actor = combatant.actor;
+    #onTurnEnd(combatant?: CombatantPF2e) {
+        const target = this.#getTargetDocument(combatant);
 
-        if (this.isValidEvent(actor)) {
-            this.executeTriggers({ this: { actor, token: combatant.token } }, "turn-end");
+        if (target) {
+            this.executeTriggers({ this: target }, "turn-end");
         }
     }
 }
