@@ -225,6 +225,7 @@
       "uuid": "IDUU source",
       "a": "A",
       "b": "B",
+      "counter": "Contrer",
       "distance": "Distance (pieds)",
       "false": "Faux",
       "formula": "formule",
@@ -268,10 +269,7 @@
         "title": "Actions",
         "subtitle": "Action",
         "add-condition": {
-          "label": "Ajouter un état",
-          "entry": {
-            "counter": "Contrer"
-          }
+          "label": "Ajouter un état"
         },
         "add-persistent": {
           "label": "Ajouter des dégâts persistants",

@@ -226,6 +226,7 @@
 
             "a": "A",
             "b": "B",
+            "counter": "Counter",
             "distance": "Distance (ft.)",
             "false": "False",
             "formula": "formula",
@@ -269,10 +270,7 @@
                 "title": "Actions",
                 "subtitle": "Action",
                 "add-condition": {
-                    "label": "Add Condition",
-                    "entry": {
-                        "counter": "Counter"
-                    }
+                    "label": "Add Condition"
                 },
                 "add-persistent": {
                     "label": "Add Persistent Damage",

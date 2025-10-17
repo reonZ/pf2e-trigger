@@ -225,6 +225,7 @@
       "uuid": "UUID źródła",
       "a": "A",
       "b": "B",
+      "counter": "Licznik",
       "distance": "Odległość (stopy)",
       "false": "Fałsz",
       "formula": "formuła",
@@ -268,10 +269,7 @@
         "title": "Akcje",
         "subtitle": "Akcja",
         "add-condition": {
-          "label": "Dodaj Stan",
-          "entry": {
-            "counter": "Licznik"
-          }
+          "label": "Dodaj Stan"
         },
         "add-persistent": {
           "label": "Dodaj Trwałe Obrażenia",
