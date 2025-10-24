@@ -341,6 +341,13 @@
         "get-master": {
           "label": "Obtient le maître de"
         },
+        "get-percent": {
+          "label": "Obtenir le pourcentage",
+          "entry": {
+            "a": "Numérateur",
+            "b": "Dénominateur"
+          }
+        },
         "give-item": {
           "label": "Donner un objet physique"
         },
