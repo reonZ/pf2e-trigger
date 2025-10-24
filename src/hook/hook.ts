@@ -3,6 +3,7 @@ import {
     ActorPF2e,
     createHook,
     HookOptions,
+    MapOfArrays,
     MODULE,
     PersistentHook,
     R,
@@ -13,7 +14,7 @@ import { Trigger, TriggerPreOptions } from "trigger";
 
 abstract class TriggerHook {
     #triggers = new Map<string, TriggerData>();
-    #events: PartialRecord<NodeEventKey, TriggerData[]> = {};
+    #events = new MapOfArrays<TriggerData>();
 
     abstract get events(): NodeEventKey[];
     abstract activate(): void;
@@ -28,7 +29,7 @@ abstract class TriggerHook {
 
     initialize(triggers: TriggerData[], subtriggers: TriggerData[]) {
         this.#triggers.clear();
-        this.#events = {};
+        this.#events.clear();
 
         const isGM = userIsGM();
         const nodeKeys: NodeKey[] = this.nodes;
@@ -41,7 +42,7 @@ abstract class TriggerHook {
 
             if (eventKeys.includes(eventKey)) {
                 this.#triggers.set(trigger.id, trigger);
-                (this.#events[eventKey] ??= []).push(trigger);
+                this.#events.add(eventKey, trigger);
 
                 active = true;
                 continue trigger;
@@ -91,7 +92,7 @@ abstract class TriggerHook {
         options: TriggerPreOptions<TOptions>,
         event?: this["events"][number]
     ) {
-        const triggers = event ? this.#events[event] : this.#triggers.values();
+        const triggers = event ? this.#events.get(event) : this.#triggers.values();
 
         for (const data of triggers ?? []) {
             const trigger = new Trigger(data, options);
@@ -128,7 +129,6 @@ abstract class TriggerHook {
                 hook.disable();
             },
             toggle(...args: (TriggerHookEvent | boolean)[]) {
-                const activeEvents = R.keys(self.#events);
                 const [booleans, events] = R.partition(args, R.isBoolean) as [
                     boolean[],
                     TriggerHookEvent[]
@@ -136,7 +136,7 @@ abstract class TriggerHook {
 
                 hook.toggle(
                     booleans.every(R.isTruthy) &&
-                        (!events.length || events.some((event) => activeEvents.includes(event)))
+                        (!events.length || events.some((event) => self.#events.has(event)))
                 );
             },
         };
