@@ -1,7 +1,7 @@
 import { TriggerData } from "data";
 import {
     ActorPF2e,
-    createHook,
+    createToggleableHook,
     HookOptions,
     MapOfArrays,
     MODULE,
@@ -113,7 +113,7 @@ abstract class TriggerHook {
         listener: (...args: any[]) => any,
         options: HookOptions = {}
     ): PersistentEventHook<this["events"][number]> {
-        const hook = createHook(event, listener, options);
+        const hook = createToggleableHook(event, listener, options);
         const self = this;
 
         type TriggerHookEvent = this["events"][number];

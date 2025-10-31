@@ -3,7 +3,7 @@ import {
     ActorPF2e,
     ChatContextFlag,
     ChatMessagePF2e,
-    createHook,
+    createToggleableHook,
     degreeOfSuccessNumber,
     isValidTargetDocuments,
     ItemOriginFlag,
@@ -17,7 +17,10 @@ const ATTACK_OPTIONS = ["action", "item", "options", "other", "outcome"] as cons
 const DAMAGE_OPTIONS = ["heal", "item", "negated", "options", "other"] as const;
 
 class MessageHook extends TriggerHook {
-    #createMessageHook = createHook("createChatMessage", this.#onCreateMessage.bind(this));
+    #createMessageHook = createToggleableHook(
+        "createChatMessage",
+        this.#onCreateMessage.bind(this)
+    );
 
     get events(): ["attack-roll", "damage-taken"] {
         return ["attack-roll", "damage-taken"];
