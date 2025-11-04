@@ -28,6 +28,7 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
         roll,
         damageOptions: {
             item: roll.item,
+            notes: roll.notes,
             origin: roll.origin,
             target,
             skipDialog: true,

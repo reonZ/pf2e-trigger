@@ -16,6 +16,7 @@ class RollSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll-save"
         const dc = await this.get("dc");
         const isBasic = await this.get("basic");
         const isPrivate = await this.get("private");
+
         const rolled = await statistic.roll({
             dc,
             origin: dc.target?.actor,
@@ -23,6 +24,7 @@ class RollSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll-save"
             extraRollOptions: getExtraRollOptions(roll, isBasic),
             rollMode: isPrivate ? "blindroll" : "publicroll",
             skipDialog: true,
+            extraRollNotes: roll.notes,
         });
 
         this.setVariable("result", rolled?.degreeOfSuccess ?? 0);

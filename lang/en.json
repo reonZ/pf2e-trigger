@@ -665,6 +665,7 @@
                 "roll-data": {
                     "label": "Roll Data",
                     "entry": {
+                        "note": "Extra Note",
                         "options": "extra, options",
                         "traits": "extra, traits"
                     }

@@ -1,6 +1,14 @@
 import { NodeEntryId, NodeEntryType, nodeIdFromEntry, TriggerData, WorldTriggers } from "data";
 import { prepareHooks } from "hook";
-import { ActorPF2e, CheckDC, DurationData, getSetting, ItemPF2e, R } from "module-helpers";
+import {
+    ActorPF2e,
+    CheckDC,
+    DurationData,
+    getSetting,
+    ItemPF2e,
+    R,
+    RollNoteSource,
+} from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
 
 let SUBTRIGGERS: Record<string, TriggerData> = {};
@@ -115,6 +123,7 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
 type TriggerRollEntry = {
     origin?: TargetDocuments;
     item?: ItemPF2e<ActorPF2e>;
+    notes: RollNoteSource[];
     options: string[];
     traits: string[];
 };

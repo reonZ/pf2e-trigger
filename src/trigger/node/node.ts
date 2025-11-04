@@ -197,7 +197,7 @@ class TriggerNode<
         }
 
         if (type === "roll") {
-            return { options: [], traits: [] } satisfies TriggerRollEntry;
+            return { notes: [], options: [], traits: [] } satisfies TriggerRollEntry;
         }
 
         if (type === "select") {
