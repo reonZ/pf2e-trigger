@@ -1,3 +1,36 @@
+# 2.11.0
+
+-   add new `Number Between` logic node:
+    -   checks if the provided value is `greater-than or equal` and `lower-than` bounds
+    -   a `lower-than` of `-1` means no max limit
+    -   the node doesn't force either bounds to be in their logical "position", which means that having the `lower-than` entry (other than `-1`) lower than the `greater-than or equal` entry will always return `false`
+-   add new `Get Resource` action node:
+    -   retrieve a resource from the target and returns its `label`, current `value` and `max` value
+    -   if no resource is found, the returned numbers will be `-1`
+-   add new `Increase Resource`:
+-   add new `Reduce Resource`:
+    -   will attempt to modify the value of a resource on the actor and return its new value
+    -   if no resource is found on the actor, the returned value will be `-1`
+-   add new `Get RollOption Value (Actor)`:
+-   add new `Get RollOption Value (List)`:
+    -   you provide a roll option base (i.e. `roll:option`) and the nodes will look for a version of it that ends with a number (i.e. `roll:option:3`) and return the number
+    -   returns `-1` if the roll option wasn't found or if it isn't a valued one
+-   add new `Resolve Formula` custom action node:
+    -   the node allow you to resolve a mathematical formula while providing customizable variables
+    -   you can input `target`, `item` and `number` variables to the node
+    -   a `target` input will be converted into an `Actor`
+    -   the generated label for the input will reflect the exact syntax to use inside the formula
+        -   it will remove any spaces
+        -   it will prefix the variable with a `@`
+    -   the resolution of the formula works exactly as the one from the system's damage formula (e.g. you can make use of `floor`, etc.)
+-   `Has RollOption`:
+    -   fix localization of the `option` input
+-   `Roll Data`:
+    -   add `Extra Note` input
+        -   the input content will be stripped of all its line breaks and paragraphs to look like a regular system `note`
+        -   the note can resolve both `@actor` and `@item` using the provided `Origin` and `Item` inputs
+        -   while normally damage message cards don't display notes, the module will still add it when linked to a `Roll Damage` node
+
 # 2.10.1
 
 -   `Has Condition`:
