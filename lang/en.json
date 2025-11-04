@@ -225,6 +225,7 @@
             "uuid": "Source UUID",
 
             "a": "A",
+            "amount": "Amount",
             "b": "B",
             "counter": "Counter",
             "distance": "Distance (ft.)",

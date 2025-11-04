@@ -13,9 +13,9 @@ class AddResourceTriggerNode extends TriggerNode<NodeSchemaOf<"action", "add-res
             return this.send("out");
         }
 
-        const value = Math.abs(await this.get("value"));
+        const amount = Math.abs(await this.get("amount"));
         const max = await this.get("max");
-        const newValue = Math.min(resource.value + value, max < 0 ? resource.max : max);
+        const newValue = Math.min(resource.value + amount, max < 0 ? resource.max : max);
 
         await (actor as CreaturePF2e).updateResource(slug, newValue);
 

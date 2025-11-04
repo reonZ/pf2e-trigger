@@ -13,9 +13,9 @@ class ReduceResourceTriggerNode extends TriggerNode<NodeSchemaOf<"action", "redu
             return this.send("out");
         }
 
-        const value = Math.abs(await this.get("value"));
+        const amount = Math.abs(await this.get("amount"));
         const min = Math.abs(await this.get("min"));
-        const newValue = Math.max(resource.value - value, Math.max(min, 0));
+        const newValue = Math.max(resource.value - amount, Math.max(min, 0));
 
         await (actor as CreaturePF2e).updateResource(slug, newValue);
 

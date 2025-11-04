@@ -406,7 +406,7 @@ const addResource = {
     inputs: [
         { key: "slug", type: "text", label: "action.get-resource" },
         {
-            key: "value",
+            key: "amount",
             type: "number",
             field: {
                 min: 1,
@@ -433,7 +433,7 @@ const reduceResource = {
     inputs: [
         { key: "slug", type: "text", label: "action.get-resource" },
         {
-            key: "value",
+            key: "amount",
             type: "number",
             field: {
                 min: 1,
