@@ -404,7 +404,7 @@ const getResource = {
 const addResource = {
     icon: "\uf240",
     inputs: [
-        { key: "slug", type: "text" },
+        { key: "slug", type: "text", label: "action.get-resource" },
         {
             key: "value",
             type: "number",
@@ -431,7 +431,7 @@ const addResource = {
 const reduceResource = {
     icon: "\ue0b1",
     inputs: [
-        { key: "slug", type: "text" },
+        { key: "slug", type: "text", label: "action.get-resource" },
         {
             key: "value",
             type: "number",

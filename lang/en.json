@@ -362,7 +362,10 @@
                     }
                 },
                 "get-resource": {
-                    "label": "Get Resource"
+                    "label": "Get Resource",
+                    "entry": {
+                        "slug": "resource-slug"
+                    }
                 },
                 "give-item": {
                     "label": "Give Physical Item"
