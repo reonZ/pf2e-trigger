@@ -370,6 +370,24 @@ const awaitConfirm = {
     ],
 } as const satisfies ActionRawSchema;
 
+const getOptionValueActor = {
+    icon: "\uf0cb",
+    inputs: [
+        { key: "option", type: "text" },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies ActionRawSchema;
+
+const getOptionValueList = {
+    icon: "\uf0cb",
+    inputs: [
+        { key: "option", type: "text" },
+        { key: "list", type: "list" },
+    ],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -409,6 +427,8 @@ export const action = {
     "effect-duration": effectDuration,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,
+    "get-option-value-actor": getOptionValueActor,
+    "get-option-value-list": getOptionValueList,
     "get-percent": arithmeticAction("\ue41c"),
     "give-item": giveItem,
     "join-list": joinList,

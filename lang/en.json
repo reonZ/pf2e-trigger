@@ -345,6 +345,12 @@
                 "get-master": {
                     "label": "Get Master Of"
                 },
+                "get-option-value-actor": {
+                    "label": "Get RollOption Value (Actor)"
+                },
+                "get-option-value-list": {
+                    "label": "Get RollOption Value (List)"
+                },
                 "get-percent": {
                     "label": "Get Percentage",
                     "entry": {

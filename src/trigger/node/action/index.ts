@@ -18,6 +18,9 @@ import { DistanceBetweenTriggerNode } from "./distance-between";
 import { EffectDurationTriggerNode } from "./effect-duration";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetMasterTriggerNode } from "./get-master";
+import { GetOptionValueActorTriggerNode } from "./get-option-value-actor";
+import { GetOptionValueListTriggerNode } from "./get-option-value-list";
+import { GetPercentTriggerNode } from "./get-percent";
 import { GiveItemTriggerNode } from "./give-item";
 import { JoinListTriggerNode } from "./join-list";
 import { RandomNumberTriggerNode } from "./random-number";
@@ -34,7 +37,6 @@ import { SceneTokensTriggerNode } from "./scene-tokens";
 import { SubtractNumberTriggerNode } from "./subtract-number";
 import { SurroundTextTriggerNode } from "./surround-text";
 import { UseMacroTriggerNode } from "./use-macro";
-import { GetPercentTriggerNode } from "./get-percent";
 
 export const action = {
     "add-condition": AddConditionTriggerNode,
@@ -52,6 +54,8 @@ export const action = {
     "effect-duration": EffectDurationTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-master": GetMasterTriggerNode,
+    "get-option-value-actor": GetOptionValueActorTriggerNode,
+    "get-option-value-list": GetOptionValueListTriggerNode,
     "get-percent": GetPercentTriggerNode,
     "give-item": GiveItemTriggerNode,
     "join-list": JoinListTriggerNode,
