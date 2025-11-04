@@ -2,6 +2,7 @@ import { NonBridgeEntryType } from "data";
 import { SchemaBooleanOuts, schemaBooleanOuts, IconObject, NodeRawSchema } from "schema";
 
 const numberBetween = {
+    icon: "\ue664",
     inputs: [
         { key: "value", type: "number" },
         {
