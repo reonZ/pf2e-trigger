@@ -193,6 +193,9 @@
       },
       "value": {
         "label": "Valeur"
+      },
+      "variable": {
+        "label": "Variable"
       }
     },
     "delete-entry": {
@@ -224,16 +227,19 @@
       "text": "Texte",
       "uuid": "IDUU source",
       "a": "A",
+      "amount": "Montant",
       "b": "B",
       "counter": "Contrer",
       "distance": "Distance (pieds)",
       "false": "Faux",
       "formula": "formule",
+      "gte": "≥",
       "identifier": "Identifiant",
       "image": "image/chemin.webp",
       "in": "Dans",
       "input": "Entrée",
       "label": "Étiquette",
+      "lt": "<",
       "master": "Maître",
       "max": "Maximum",
       "min": "Minimum",
@@ -280,6 +286,9 @@
         },
         "add-number": {
           "label": "Ajouter des nombres"
+        },
+        "add-resource": {
+          "label": "Augmenter la ressource"
         },
         "add-temporary": {
           "label": "Ajouter un effet déclencheur"
@@ -342,11 +351,23 @@
         "get-master": {
           "label": "Obtient le maître de"
         },
+        "get-option-value-actor": {
+          "label": "Obtenir la valeur RollOption (acteur)"
+        },
+        "get-option-value-list": {
+          "label": "Obtenir la valeur RollOption (liste)"
+        },
         "get-percent": {
           "label": "Obtenir le pourcentage",
           "entry": {
             "a": "Numérateur",
             "b": "Dénominateur"
+          }
+        },
+        "get-resource": {
+          "label": "Obtenir une ressource",
+          "entry": {
+            "slug": "slug de la ressource"
           }
         },
         "give-item": {
@@ -364,6 +385,9 @@
             "counter": "Valeur"
           }
         },
+        "reduce-resource": {
+          "label": "Réduire la ressource"
+        },
         "remove-condition": {
           "label": "Supprimer un état"
         },
@@ -371,10 +395,16 @@
           "label": "Supprimer l'objet"
         },
         "remove-item-slug": {
-          "label": "Supprimer l'objet avec Slug"
+          "label": "Supprimer l'élément avec le slug"
         },
         "remove-temporary": {
           "label": "Supprimer l'effet déclencheur"
+        },
+        "replace-x": {
+          "label": "Remplacez @x dans la formule"
+        },
+        "resolve-formula": {
+          "label": "Résolution de la formule"
         },
         "roll-damage": {
           "label": "Lancer les dégâts"
@@ -439,7 +469,7 @@
           "label": "Possède un objet"
         },
         "has-item-slug": {
-          "label": "Possède un objet avec slug"
+          "label": "Contient un élément avec le slug"
         },
         "has-option": {
           "label": "A une option de lancer"
@@ -558,6 +588,9 @@
         },
         "lte-number": {
           "label": "Inférieur ou égal à"
+        },
+        "number-between": {
+          "label": "Nombre entre"
         }
       },
       "splitter": {
@@ -640,6 +673,7 @@
         "roll-data": {
           "label": "Donnée du lancer",
           "entry": {
+            "note": "Note supplémentaire",
             "options": "extra, options",
             "traits": "extra, traits"
           }
