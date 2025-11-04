@@ -388,6 +388,73 @@ const getOptionValueList = {
     outputs: [{ key: "value", type: "number" }],
 } as const satisfies ActionRawSchema;
 
+const getResource = {
+    icon: "\uf242",
+    inputs: [
+        { key: "slug", type: "text" },
+        { key: "target", type: "target" },
+    ],
+    outputs: [
+        { key: "label", type: "text" },
+        { key: "value", type: "number" },
+        { key: "max", type: "number" },
+    ],
+} as const satisfies ActionRawSchema;
+
+const addResource = {
+    icon: "\uf240",
+    inputs: [
+        { key: "slug", type: "text" },
+        {
+            key: "value",
+            type: "number",
+            field: {
+                min: 1,
+                default: 1,
+                step: 1,
+            },
+        },
+        {
+            key: "max",
+            type: "number",
+            field: {
+                min: -1,
+                default: -1,
+                step: 1,
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies ActionRawSchema;
+
+const reduceResource = {
+    icon: "\ue0b1",
+    inputs: [
+        { key: "slug", type: "text" },
+        {
+            key: "value",
+            type: "number",
+            field: {
+                min: 1,
+                default: 1,
+                step: 1,
+            },
+        },
+        {
+            key: "min",
+            type: "number",
+            field: {
+                min: 0,
+                default: 0,
+                step: 1,
+            },
+        },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "value", type: "number" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -415,6 +482,7 @@ export const action = {
     "add-condition": addCondition,
     "add-number": arithmeticAction("\ue59e"),
     "add-persistent": addPersistent,
+    "add-resource": addResource,
     "add-temporary": addTemporary,
     "await-confirm": awaitConfirm,
     "break-process": breakProcess,
@@ -430,10 +498,12 @@ export const action = {
     "get-option-value-actor": getOptionValueActor,
     "get-option-value-list": getOptionValueList,
     "get-percent": arithmeticAction("\ue41c"),
+    "get-resource": getResource,
     "give-item": giveItem,
     "join-list": joinList,
     "random-number": randomNumber,
     "reduce-condition": reduceCondition,
+    "reduce-resource": reduceResource,
     "remove-condition": removeCondition,
     "remove-item": removeItem,
     "remove-item-slug": removeItemWithSlug,

@@ -11,8 +11,8 @@ class ReduceConditionTriggerNode extends TriggerNode<NodeSchemaOf<"action", "red
         }
 
         const slug = (await this.get("condition")) as ConditionSlug;
-        const counter = await this.get("counter");
-        const min = await this.get("min");
+        const counter = Math.abs(await this.get("counter"));
+        const min = Math.abs(await this.get("min"));
         const toDelete: string[] = [];
 
         const conditions = actor.itemTypes.condition.filter(

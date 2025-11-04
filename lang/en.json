@@ -284,6 +284,9 @@
                 "add-number": {
                     "label": "Add Numbers"
                 },
+                "add-resource": {
+                    "label": "Increase Resource"
+                },
                 "add-temporary": {
                     "label": "Add Trigger Effect"
                 },
@@ -358,6 +361,9 @@
                         "b": "Denominator"
                     }
                 },
+                "get-resource": {
+                    "label": "Get Resource"
+                },
                 "give-item": {
                     "label": "Give Physical Item"
                 },
@@ -372,6 +378,9 @@
                     "entry": {
                         "counter": "Value"
                     }
+                },
+                "reduce-resource": {
+                    "label": "Reduce Resource"
                 },
                 "remove-condition": {
                     "label": "Remove Condition"

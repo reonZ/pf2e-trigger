@@ -6,6 +6,7 @@ import { TriggerNode } from "trigger";
 import { AddConditionTriggerNode } from "./add-condition";
 import { AddNumberTriggerNode } from "./add-number";
 import { AddPersistentTriggerNode } from "./add-persistent";
+import { AddResourceTriggerNode } from "./add-resource";
 import { AddTemporaryTriggerNode } from "./add-temporary";
 import { AwaitConfirmTriggerNode } from "./await-confirm";
 import { BreakProcessTriggerNode } from "./break-process";
@@ -21,10 +22,12 @@ import { GetMasterTriggerNode } from "./get-master";
 import { GetOptionValueActorTriggerNode } from "./get-option-value-actor";
 import { GetOptionValueListTriggerNode } from "./get-option-value-list";
 import { GetPercentTriggerNode } from "./get-percent";
+import { GetResourceTriggerNode } from "./get-resource";
 import { GiveItemTriggerNode } from "./give-item";
 import { JoinListTriggerNode } from "./join-list";
 import { RandomNumberTriggerNode } from "./random-number";
 import { ReduceConditionTriggerNode } from "./reduce-condition";
+import { ReduceResourceTriggerNode } from "./reduce-resource";
 import { RemoveConditionTriggerNode } from "./remove-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveItemWithSlugTriggerNode } from "./remove-item-slug";
@@ -42,6 +45,7 @@ export const action = {
     "add-condition": AddConditionTriggerNode,
     "add-number": AddNumberTriggerNode,
     "add-persistent": AddPersistentTriggerNode,
+    "add-resource": AddResourceTriggerNode,
     "add-temporary": AddTemporaryTriggerNode,
     "await-confirm": AwaitConfirmTriggerNode,
     "break-process": BreakProcessTriggerNode,
@@ -57,10 +61,12 @@ export const action = {
     "get-option-value-actor": GetOptionValueActorTriggerNode,
     "get-option-value-list": GetOptionValueListTriggerNode,
     "get-percent": GetPercentTriggerNode,
+    "get-resource": GetResourceTriggerNode,
     "give-item": GiveItemTriggerNode,
     "join-list": JoinListTriggerNode,
     "random-number": RandomNumberTriggerNode,
     "reduce-condition": ReduceConditionTriggerNode,
+    "reduce-resource": ReduceResourceTriggerNode,
     "remove-condition": RemoveConditionTriggerNode,
     "remove-item": RemoveItemTriggerNode,
     "remove-item-slug": RemoveItemWithSlugTriggerNode,
