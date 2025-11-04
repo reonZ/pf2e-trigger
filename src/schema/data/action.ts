@@ -468,6 +468,15 @@ const resolveFormula = {
     outputs: [{ key: "result", type: "number" }],
 } as const satisfies ActionRawSchema;
 
+const replaceX = {
+    icon: "\uf661",
+    inputs: [
+        { key: "formula", type: "text" },
+        { key: "x", type: "number", label: "@x" },
+    ],
+    outputs: [{ key: "result", type: "text" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -521,6 +530,7 @@ export const action = {
     "remove-item": removeItem,
     "remove-item-slug": removeItemWithSlug,
     "remove-temporary": removeTemporary,
+    "replace-x": replaceX,
     "resolve-formula": resolveFormula,
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,

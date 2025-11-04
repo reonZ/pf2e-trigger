@@ -396,10 +396,13 @@
                     "label": "Remove Item"
                 },
                 "remove-item-slug": {
-                    "label": "Remove Item with Slug"
+                    "label": "Remove Item With Slug"
                 },
                 "remove-temporary": {
                     "label": "Remove Trigger Effect"
+                },
+                "replace-x": {
+                    "label": "Replace @x In Formula"
                 },
                 "resolve-formula": {
                     "label": "Resolve Formula"
@@ -467,7 +470,7 @@
                     "label": "Has Item"
                 },
                 "has-item-slug": {
-                    "label": "Has Item with Slug"
+                    "label": "Has Item With Slug"
                 },
                 "has-option": {
                     "label": "Has RollOption"

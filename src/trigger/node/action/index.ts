@@ -32,6 +32,7 @@ import { RemoveConditionTriggerNode } from "./remove-condition";
 import { RemoveItemTriggerNode } from "./remove-item";
 import { RemoveItemWithSlugTriggerNode } from "./remove-item-slug";
 import { RemoveTemporaryTriggerNode } from "./remove-temporary";
+import { ReplaceXTriggerNode } from "./replace-x";
 import { ResolveFormulaTriggerNode } from "./resolve-formula";
 import { RollDamageTriggerNode } from "./roll-damage";
 import { RollDamageSaveTriggerNode } from "./roll-damage-save";
@@ -72,6 +73,7 @@ export const action = {
     "remove-item": RemoveItemTriggerNode,
     "remove-item-slug": RemoveItemWithSlugTriggerNode,
     "remove-temporary": RemoveTemporaryTriggerNode,
+    "replace-x": ReplaceXTriggerNode,
     "resolve-formula": ResolveFormulaTriggerNode,
     "roll-damage": RollDamageTriggerNode,
     "roll-damage-save": RollDamageSaveTriggerNode,
