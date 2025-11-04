@@ -1,3 +1,8 @@
+# 2.12.0
+
+-   add new `Replace @x In Formula` action node:
+    -   returns the resolve `@x` variable in the provided formula
+
 # 2.11.0
 
 -   add new `Number Between` logic node:
