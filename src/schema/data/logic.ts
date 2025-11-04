@@ -1,5 +1,30 @@
 import { NonBridgeEntryType } from "data";
-import { SchemaBooleanOuts, schemaBooleanOuts, IconObject } from "schema";
+import { SchemaBooleanOuts, schemaBooleanOuts, IconObject, NodeRawSchema } from "schema";
+
+const numberBetween = {
+    inputs: [
+        { key: "value", type: "number" },
+        {
+            key: "gte",
+            type: "number",
+            field: {
+                min: 0,
+                step: 1,
+                default: 0,
+            },
+        },
+        {
+            key: "lt",
+            type: "number",
+            field: {
+                min: -1,
+                step: 1,
+                default: -1,
+            },
+        },
+    ],
+    outs: schemaBooleanOuts(),
+} as const satisfies NodeRawSchema;
 
 function createLogicSchema<T extends NonBridgeEntryType>(
     type: T,
@@ -38,4 +63,5 @@ export const logic = {
     "gte-number": createNumberSchema("\uf532"),
     "lt-number": createNumberSchema("\x3c"),
     "lte-number": createNumberSchema("\uf537"),
+    "number-between": numberBetween,
 };

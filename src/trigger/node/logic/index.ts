@@ -8,6 +8,7 @@ import {
     LteNumberTriggerNode,
     LtNumberTriggerNode,
 } from "./number";
+import { NumberBetweenTriggerNode } from "./number-between";
 import { EqTextTriggerNode } from "./text";
 
 export const logic = {
@@ -18,4 +19,5 @@ export const logic = {
     "gte-number": GteNumberTriggerNode,
     "lt-number": LtNumberTriggerNode,
     "lte-number": LteNumberTriggerNode,
+    "number-between": NumberBetweenTriggerNode,
 } as Record<NodeKeys<"logic">, typeof TriggerNode>;

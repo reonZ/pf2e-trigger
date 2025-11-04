@@ -230,11 +230,13 @@
             "distance": "Distance (ft.)",
             "false": "False",
             "formula": "formula",
+            "gte": "≥",
             "identifier": "Identifier",
             "image": "image/path.webp",
             "in": "In",
             "input": "Input",
             "label": "Label",
+            "lt": "<",
             "master": "Master",
             "max": "Maximum",
             "min": "Minimum",
@@ -561,6 +563,9 @@
                 },
                 "lte-number": {
                     "label": "Less Than or Equal"
+                },
+                "number-between": {
+                    "label": "Number Between"
                 }
             },
             "splitter": {
