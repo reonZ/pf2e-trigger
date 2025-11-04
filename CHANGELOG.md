@@ -18,7 +18,7 @@
 -   add new `Resolve Formula` custom action node:
     -   the node allow you to resolve a mathematical formula while providing customizable variables
     -   you can input `target`, `item` and `number` variables to the node
-    -   a `target` input will be converted into an `Actor`
+        -   a `target` input will be converted into an `Actor`
     -   the generated label for the input will reflect the exact syntax to use inside the formula
         -   it will remove any spaces
         -   it will prefix the variable with a `@`
