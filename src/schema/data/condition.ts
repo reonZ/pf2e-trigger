@@ -46,7 +46,7 @@ const hasItemWithSlug = {
     outputs: [{ key: "item", type: "item" }],
 } as const satisfies ConditionSchema;
 
-const hasOptions = {
+const hasOption = {
     outs: schemaBooleanOuts(),
     inputs: [
         { key: "target", type: "target" },
@@ -162,7 +162,7 @@ export const condition = {
     "has-immunity": hasImmunity,
     "has-item": hasItem,
     "has-item-slug": hasItemWithSlug,
-    "has-option": hasOptions,
+    "has-option": hasOption,
     "has-temporary": hasTemporary,
     "in-combat": targetBoolean(),
     "in-range": inRange,

@@ -238,6 +238,7 @@
       "max": "Maksimum",
       "min": "Minimum",
       "none": "Brak dopasowania",
+      "option": "rzut:opcja",
       "options": "Opcje rzutu",
       "origin": "Oryginalny",
       "out": "Wyjście",
@@ -441,10 +442,7 @@
           "label": "Ma przedmiot z tagiem"
         },
         "has-option": {
-          "label": "ma opcję rzutu",
-          "entry": {
-            "options": "rzut:opcja"
-          }
+          "label": "ma opcję rzutu"
         },
         "has-temporary": {
           "label": "Ma efekt wyzwalający"

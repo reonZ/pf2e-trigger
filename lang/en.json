@@ -241,6 +241,7 @@
             "max": "Maximum",
             "min": "Minimum",
             "none": "No Match",
+            "option": "roll:option",
             "options": "Roll Options",
             "origin": "Origin",
             "out": "Out",
@@ -444,10 +445,7 @@
                     "label": "Has Item with Slug"
                 },
                 "has-option": {
-                    "label": "Has RollOption",
-                    "entry": {
-                        "options": "roll:option"
-                    }
+                    "label": "Has RollOption"
                 },
                 "has-temporary": {
                     "label": "Has Trigger Effect"

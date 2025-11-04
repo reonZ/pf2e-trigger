@@ -234,6 +234,7 @@
       "label": "Etiqueta",
       "min": "Mínimo",
       "none": "No hay coincidencia",
+      "option": "roll:option",
       "options": "Opciones de tirar dados",
       "origin": "Origen",
       "out": "Afuera",
@@ -378,10 +379,7 @@
           "label": "Tiene artículo"
         },
         "has-option": {
-          "label": "Tiene RollOption",
-          "entry": {
-            "options": "roll:option"
-          }
+          "label": "Tiene RollOption"
         },
         "has-temporary": {
           "label": "Tiene efecto desencadenante"

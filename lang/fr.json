@@ -238,6 +238,7 @@
       "max": "Maximum",
       "min": "Minimum",
       "none": "Aucune correspondance",
+      "option": "roll:option",
       "options": "Options de lancer",
       "origin": "Origine",
       "out": "Sortie",
@@ -441,10 +442,7 @@
           "label": "Possède un objet avec slug"
         },
         "has-option": {
-          "label": "A une option de lancer",
-          "entry": {
-            "options": "roll:option"
-          }
+          "label": "A une option de lancer"
         },
         "has-temporary": {
           "label": "A un effet déclencheur"
