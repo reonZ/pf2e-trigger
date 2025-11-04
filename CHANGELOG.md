@@ -1,7 +1,7 @@
 # 2.12.0
 
 -   add new `Replace @x In Formula` action node:
-    -   returns formula with the `@x` variable resolved
+    -   returns the provided formula with the `@x` variable resolved
 
 # 2.11.0
 
