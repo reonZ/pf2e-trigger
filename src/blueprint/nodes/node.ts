@@ -770,8 +770,9 @@ class BlueprintNode extends PIXI.Container {
 
         const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
         const content: CreateFormGroupParams[] = [];
+        const noLabel = custom.key?.label === false;
 
-        if (custom.key?.type !== "number") {
+        if (!noLabel) {
             content.push({
                 type: "text",
                 inputConfig: {
@@ -809,6 +810,7 @@ class BlueprintNode extends PIXI.Container {
             key?: string | number;
         }>({
             content,
+            disabled: true,
             i18n: "create-entry",
             skipAnimate: true,
             data: {
@@ -818,17 +820,24 @@ class BlueprintNode extends PIXI.Container {
 
         if (!result) return;
 
-        if (custom.key?.required && !result.key) {
+        const { key, label, type } = result;
+
+        if (custom.key?.required && !key) {
             warning("create-entry.required", { name: customKey });
             return;
         }
 
+        const isNumber = R.isNumber(key);
+        const prefixIt = (value: string = "") => {
+            return custom.key?.prefix ? `${custom.key?.prefix}${value.replace(/\s/gm, "")}` : value;
+        };
+
         this.data.addCustomEntry({
             category,
             group,
-            key: R.isNumber(result.key) ? String(result.key) : result.key,
-            label: R.isNumber(result.key) ? String(result.key) : result.label,
-            type: result.type,
+            key: isNumber ? String(key) : key,
+            label: noLabel ? (isNumber ? String(key) : prefixIt(key)) : prefixIt(label),
+            type,
         });
 
         this.blueprint.refresh();

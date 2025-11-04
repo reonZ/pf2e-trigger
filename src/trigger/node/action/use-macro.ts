@@ -14,9 +14,7 @@ class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro"
         this.get("uuid");
 
         const target = this.target;
-        const values = await Promise.all(
-            this.customInputs.map(async (input) => this.get(input.key as never))
-        );
+        const values = await this.getCustomInputs(true);
 
         const returnedValues = await macro.execute({
             actor: target.actor,

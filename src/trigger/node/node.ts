@@ -106,6 +106,17 @@ class TriggerNode<
         return this.#getFirstNodeFromEntries(this.#data.outputs[output])?.node.execute() ?? true;
     }
 
+    getCustomInputs<T>(values: true): Promise<T[]>;
+    getCustomInputs<T>(values?: false): Promise<[string, T, string][]>;
+    getCustomInputs(values?: boolean) {
+        return Promise.all(
+            this.customInputs.map(async ({ key, label }) => {
+                const value = await this.get(key as any);
+                return values ? value : [key, value, label];
+            })
+        );
+    }
+
     getOption<K extends keyof TOptions & string>(key: K): TOptions[K] {
         return this.trigger.getOption(key);
     }

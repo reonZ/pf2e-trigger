@@ -455,6 +455,19 @@ const reduceResource = {
     outputs: [{ key: "value", type: "number" }],
 } as const satisfies ActionRawSchema;
 
+const resolveFormula = {
+    custom: [
+        {
+            category: "inputs",
+            key: { label: false, name: "variable", prefix: "@", required: true },
+            types: ["number", "item", "target"],
+        },
+    ],
+    icon: "\uf661",
+    inputs: [{ key: "formula", type: "text" }],
+    outputs: [{ key: "result", type: "number" }],
+} as const satisfies ActionRawSchema;
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -508,6 +521,7 @@ export const action = {
     "remove-item": removeItem,
     "remove-item-slug": removeItemWithSlug,
     "remove-temporary": removeTemporary,
+    "resolve-formula": resolveFormula,
     "roll-damage-save": rollDamageSave,
     "roll-damage": rollDamage,
     "roll-flat": rollFlat,

@@ -5,11 +5,7 @@ import { TriggerNode } from "trigger";
 class ConsoleLogTriggerNode extends TriggerNode<NodeSchemaOf<"action", "console-log">> {
     async execute(): Promise<boolean> {
         const target = this.target;
-        const entries = await Promise.all(
-            this.customInputs.map(
-                async (input) => [input.label ?? input.key, await this.get(input.key)] as const
-            )
-        );
+        const entries = await this.getCustomInputs();
 
         MODULE.group(this.trigger.label);
         MODULE.log(`${localize("entry.this")}:`, target);

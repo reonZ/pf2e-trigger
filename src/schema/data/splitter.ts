@@ -55,7 +55,7 @@ const number = {
     custom: [
         {
             category: "outs",
-            key: { name: "value", required: true, type: "number" },
+            key: { label: false, name: "value", required: true, type: "number" },
         },
     ],
 } as const satisfies NodeRawSchema;

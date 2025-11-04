@@ -193,6 +193,9 @@
             },
             "value": {
                 "label": "Value"
+            },
+            "variable": {
+                "label": "Variable"
             }
         },
         "delete-entry": {
@@ -397,6 +400,9 @@
                 },
                 "remove-temporary": {
                     "label": "Remove Trigger Effect"
+                },
+                "resolve-formula": {
+                    "label": "Resolve Formula"
                 },
                 "roll-damage": {
                     "label": "Roll Damage"

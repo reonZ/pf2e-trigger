@@ -6,12 +6,9 @@ class SubtriggerOutputTriggerNode extends TriggerNode<
     SubtriggerOutputOptions
 > {
     async execute(): Promise<boolean> {
-        const outputs = await Promise.all(
-            this.customInputs.map(async ({ key }) => [key, await this.get(key)])
-        );
+        const outputs = await this.getCustomInputs<string>();
 
         this.setOption("outputs", outputs);
-
         return this.send("out");
     }
 }

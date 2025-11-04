@@ -61,10 +61,22 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                     ),
                     key: new fields.SchemaField(
                         {
+                            label: new fields.BooleanField({
+                                required: false,
+                                nullable: false,
+                                initial: true,
+                            }),
                             name: new fields.StringField({
                                 required: true,
                                 nullable: false,
                                 blank: false,
+                            }),
+                            prefix: new fields.StringField({
+                                required: false,
+                                nullable: false,
+                                blank: false,
+                                trim: false,
+                                initial: undefined,
                             }),
                             required: new fields.BooleanField({
                                 required: false,
@@ -211,7 +223,9 @@ type NodeSchemaCustomSchema = {
 type CustomKeyType = (typeof CUSTOM_KEY_TYPES)[number];
 
 type NodeSchemaCustomKeySchema = {
+    label: fields.BooleanField<boolean, boolean, false, false, true>;
     name: fields.StringField<string, string, true>;
+    prefix: fields.StringField<string, string, false, false, false>;
     required: fields.BooleanField<boolean, boolean, false>;
     type: fields.StringField<CustomKeyType, CustomKeyType, false, false, true>;
 };
@@ -222,7 +236,9 @@ type BaseNodeSchemaCustom<T extends NodeCustomEntryCategory> = {
     category: T;
     group?: string;
     key?: {
+        label?: boolean;
         name: string;
+        prefix?: string;
         required?: boolean;
         type?: CustomKeyType;
     };
