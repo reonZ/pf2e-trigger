@@ -193,6 +193,9 @@
       },
       "value": {
         "label": "Wartość"
+      },
+      "variable": {
+        "label": "Zmienna\n"
       }
     },
     "delete-entry": {
@@ -224,16 +227,19 @@
       "text": "Tekst",
       "uuid": "UUID źródła",
       "a": "A",
+      "amount": "Ilość",
       "b": "B",
       "counter": "Licznik",
       "distance": "Odległość (stopy)",
       "false": "Fałsz",
       "formula": "formuła",
+      "gte": "≥",
       "identifier": "Identyfikator",
       "image": "obraz/ścieżka.webp",
       "in": "Wejście",
       "input": "Wejście",
       "label": "Etykieta",
+      "lt": "<",
       "master": "Mistrz",
       "max": "Maksimum",
       "min": "Minimum",
@@ -280,6 +286,9 @@
         },
         "add-number": {
           "label": "Dodaj liczby"
+        },
+        "add-resource": {
+          "label": "Zwiększenie zasobów"
         },
         "add-temporary": {
           "label": "Dodaj efekt wyzwalający"
@@ -342,11 +351,23 @@
         "get-master": {
           "label": "Pobierz Mistrza"
         },
+        "get-option-value-actor": {
+          "label": "Pobierz wartość RollOption (aktor)"
+        },
+        "get-option-value-list": {
+          "label": "Pobierz wartość RollOption (lista)"
+        },
         "get-percent": {
           "label": "Pobierz procent",
           "entry": {
             "a": "Licznik",
             "b": "Mianownik"
+          }
+        },
+        "get-resource": {
+          "label": "Pobierz zasoby",
+          "entry": {
+            "slug": "slug-zasobów\n"
           }
         },
         "give-item": {
@@ -364,6 +385,9 @@
             "counter": "Wartość"
           }
         },
+        "reduce-resource": {
+          "label": "Zmniejszenie zasobów"
+        },
         "remove-condition": {
           "label": "Usuń stan"
         },
@@ -371,10 +395,16 @@
           "label": "Usuń przedmiot"
         },
         "remove-item-slug": {
-          "label": "Usuń przedmiot z tagiem"
+          "label": "Usuń przedmiot ze slugiem"
         },
         "remove-temporary": {
           "label": "Usuń efekt wyzwalający"
+        },
+        "replace-x": {
+          "label": "Zastąp @x w formule"
+        },
+        "resolve-formula": {
+          "label": "Rozwiązanie formuły"
         },
         "roll-damage": {
           "label": "Rzut na obrażenia"
@@ -439,7 +469,7 @@
           "label": "Ma przedmiot"
         },
         "has-item-slug": {
-          "label": "Ma przedmiot z tagiem"
+          "label": "Ma przedmiot ze slugiem"
         },
         "has-option": {
           "label": "ma opcję rzutu"
@@ -558,6 +588,9 @@
         },
         "lte-number": {
           "label": "Mniejsze lub równe"
+        },
+        "number-between": {
+          "label": "Liczba pomiędzy"
         }
       },
       "splitter": {
@@ -640,6 +673,7 @@
         "roll-data": {
           "label": "Dane rzutu",
           "entry": {
+            "note": "Dodatkowa uwaga",
             "options": "dodatkowe, opcje",
             "traits": "dodatkowe, cechy"
           }
