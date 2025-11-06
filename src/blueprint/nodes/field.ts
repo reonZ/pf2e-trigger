@@ -40,11 +40,13 @@ class EntryField extends PIXI.Graphics {
 
         this.addChild(...children.filter(R.isTruthy));
 
-        this.eventMode = "static";
-        this.hitArea = new PIXI.Rectangle(0, 0, this.width, this.height);
+        if (this.node.canBeInteractedWith) {
+            this.eventMode = "static";
+            this.hitArea = new PIXI.Rectangle(0, 0, this.width, this.height);
 
-        this.on("pointerdown", (event) => event.stopPropagation());
-        this.on("pointerup", this.#onPointerUp.bind(this));
+            this.on("pointerdown", (event) => event.stopPropagation());
+            this.on("pointerup", this.#onPointerUp.bind(this));
+        }
     }
 
     static isFieldEntry<T extends BlueprintEntry>(entry: T): boolean {
@@ -264,7 +266,7 @@ class EntryField extends PIXI.Graphics {
         overlay.endFill();
 
         overlay.alpha = Number(connected);
-        overlay.eventMode = connected ? "static" : "none";
+        overlay.eventMode = connected && this.node.canBeInteractedWith ? "static" : "none";
 
         return overlay;
     }

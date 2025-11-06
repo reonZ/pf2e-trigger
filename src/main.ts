@@ -1,13 +1,18 @@
 import { BlueprintApplication } from "blueprint";
-import { TriggerData, TriggerNodeData, WorldTriggers } from "data";
+import { TriggerData, TriggerNodeData, TriggersContext } from "data";
 import { PF2eTriggerBehaviorType } from "hook";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
-import { confirmPrompt, prepareTriggers, UserQueryPromptData } from "trigger";
+import {
+    confirmPrompt,
+    prepareModuleTriggers,
+    prepareTriggers,
+    UserQueryPromptData,
+} from "trigger";
 
 MODULE.register("pf2e-trigger");
 // MODULE.enableDebugMode();
 
-Hooks.once("setup", () => {
+Hooks.once("setup", async () => {
     // @ts-expect-error
     CONFIG.Trigger = {
         documentClass: TriggerData,
@@ -44,8 +49,8 @@ Hooks.once("setup", () => {
 
     // we register after CONFIG is set because foundry creates an instance right away
     registerSetting("world-triggers", {
-        type: WorldTriggers,
-        default: new WorldTriggers(),
+        type: TriggersContext,
+        default: new TriggersContext(),
         scope: "world",
         config: false,
         onChange: () => {
@@ -58,6 +63,7 @@ Hooks.once("setup", () => {
         restricted: true,
     });
 
+    await prepareModuleTriggers();
     prepareTriggers();
 });
 

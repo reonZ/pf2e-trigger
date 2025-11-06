@@ -296,9 +296,11 @@ class BlueprintEntry extends HorizontalLayoutGraphics {
         const connector = new PIXI.Graphics();
         const color = this.connectorColor;
 
-        connector.eventMode = "static";
-        connector.hitArea = new PIXI.Rectangle(0, 0, 12, 12);
-        connector.on("pointerdown", this.#onConnectorPointerDown, this);
+        if (this.node.canBeInteractedWith) {
+            connector.eventMode = "static";
+            connector.hitArea = new PIXI.Rectangle(0, 0, 12, 12);
+            connector.on("pointerdown", this.#onConnectorPointerDown, this);
+        }
 
         if (this.connected) {
             connector.beginFill(color);

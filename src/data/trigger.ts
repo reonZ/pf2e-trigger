@@ -7,7 +7,7 @@ import {
     NonBridgeEntryType,
     TriggerNodeData,
     TriggerNodeDataSource,
-    WorldTriggers,
+    TriggersContext,
 } from "data";
 import { IdField, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
 import { isEvent, isVariable, NODE_KEYS, NodeEventKey } from "schema";
@@ -25,16 +25,18 @@ const triggerDataMetadata = (): Partial<abstract.DocumentClassMetadata> => ({
 });
 
 const triggerDataSchema = (): TriggerDataSchema => ({
-    _id: new IdField(),
+    _id: new IdField({
+        required: true,
+    }),
     name: new fields.StringField({
         required: false,
         nullable: false,
         initial: "",
     }),
-    enabled: new fields.BooleanField({
+    module: new fields.StringField({
         required: false,
         nullable: false,
-        initial: true,
+        initial: undefined,
     }),
     nodes: new fields.EmbeddedCollectionField(TriggerNodeData),
     variables: new fields.TypedObjectField(
@@ -95,6 +97,10 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
     get triggers(): abstract.EmbeddedCollection<TriggerData> | undefined {
         return this.parent?.triggers;
+    }
+
+    get moduleTitle(): string {
+        return (this.module && game.modules.get(this.module)?.title) || "";
     }
 
     getNode(id: NodeEntryId): TriggerNodeData | undefined {
@@ -181,7 +187,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 }
 
 interface TriggerData {
-    parent: WorldTriggers;
+    parent: TriggersContext;
 
     createEmbeddedDocuments(
         embeddedName: "Node",
@@ -191,9 +197,9 @@ interface TriggerData {
 }
 
 type TriggerDataSchema = {
-    _id: IdField;
+    _id: IdField<true>;
     name: fields.StringField<string, string, false, false, true>;
-    enabled: fields.BooleanField<boolean, boolean, false, false, true>;
+    module: fields.StringField<string, string, false, false, false>;
     nodes: fields.EmbeddedCollectionField<TriggerNodeData>;
     variables: fields.TypedObjectField<
         fields.SchemaField<TriggerVariableSchema>,

@@ -1,11 +1,11 @@
 import { createEntryId, TriggerData } from "data";
 import { R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { getSubtrigger, Trigger, TriggerNode, TriggerPreOptions } from "trigger";
+import { Trigger, TriggerNode, TriggerPreOptions } from "trigger";
 
 class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "subtrigger-node">> {
     get subtrigger(): TriggerData | undefined {
-        return getSubtrigger(this.nodeTarget);
+        return this.triggers?.model?.subtriggers.get(this.nodeTarget);
     }
 
     async execute(): Promise<boolean> {

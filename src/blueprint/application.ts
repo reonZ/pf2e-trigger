@@ -113,6 +113,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
             case "title": {
                 return {
+                    locked: this.blueprint.isTriggerLocked,
                     title: this.trigger?.label ?? "",
                 } satisfies BlueprintMenuParts["title"];
             }
@@ -153,10 +154,15 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     async #prepareSidebarContext(): Promise<BlueprintMenuParts["sidebar"]> {
         const trigger = this.trigger;
-        const [subtriggers, triggers] = R.partition(
-            this.blueprint.triggers.contents,
-            (t) => t.isSubtrigger
+        const [subtriggers, triggers] = R.pipe(
+            [this.blueprint.triggers.contents, ...this.blueprint.modulesTriggers],
+            R.flat(),
+            R.partition((trigger) => trigger.isSubtrigger)
         );
+
+        const moduleLocked = this.blueprint.isTriggerLocked
+            ? localize("blueprint-menu.sidebar.locked.variable")
+            : null;
 
         const variables = R.pipe(
             trigger?.variables ?? {},
@@ -174,6 +180,10 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         return {
             i18n: templateLocalize("blueprint-menu.sidebar"),
+            isEnabled: (trigger: TriggerData) => {
+                return this.blueprint.isEnabled(trigger);
+            },
+            moduleLocked,
             selected: trigger?.id,
             showSidebar: this.#showSidebar,
             subtriggers,
@@ -190,8 +200,12 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         type VariableAction = "remove-variable";
         type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeaderAction;
 
-        const getEntryId = (el: HTMLElement) => {
+        const getEntryId = (el: HTMLElement): string => {
             return htmlClosest(el, "[data-id]")?.dataset.id ?? "";
+        };
+
+        const getEntryDataset = (el: HTMLElement): { id?: string; module?: string } => {
+            return htmlClosest(el, "[data-id]")?.dataset as { id?: string; module?: string };
         };
 
         addListenerAll(html, ".trigger[data-id] .name", "contextmenu", (el) => {
@@ -204,13 +218,11 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             ".trigger[data-id] [name='enabled']",
             "change",
             (el: HTMLInputElement) => {
-                const triggerId = getEntryId(el);
-                const trigger = this.blueprint.getTrigger(triggerId);
+                const entry = getEntryDataset(el);
+                const trigger = this.blueprint.getTrigger(entry);
+                if (!trigger) return;
 
-                if (trigger) {
-                    trigger.update({ enabled: el.checked });
-                    this.refresh();
-                }
+                this.blueprint.updateEnabled(trigger, el.checked);
             }
         );
 
@@ -242,7 +254,8 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             } else if (action === "delete-trigger") {
                 this.#deleteTrigger(triggerId);
             } else if (action === "select-trigger") {
-                this.blueprint.setTrigger(triggerId);
+                const entry = getEntryDataset(el);
+                this.blueprint.setTrigger(entry);
             }
         });
 
@@ -332,7 +345,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     async #deleteTrigger(id: string) {
-        const trigger = this.blueprint.getTrigger(id);
+        const trigger = this.blueprint.getTrigger({ id });
         if (!trigger) return;
 
         const result = await confirmDialog("delete-trigger", {
@@ -346,7 +359,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     async #editTrigger(id: string) {
-        const trigger = this.blueprint.getTrigger(id);
+        const trigger = this.blueprint.getTrigger({ id });
         if (!trigger) return;
 
         const result = await waitDialog<{ name: string }>({
@@ -421,6 +434,8 @@ type BlueprintMenuRenderOptions = Omit<HandlebarsRenderOptions, "parts"> & {
 type BlueprintMenuParts = {
     sidebar: {
         i18n: TemplateLocalize;
+        isEnabled: (trigger: TriggerData) => boolean;
+        moduleLocked: string | null;
         selected: Maybe<string>;
         showSidebar: boolean;
         subtriggers: TriggerData[];
@@ -428,6 +443,7 @@ type BlueprintMenuParts = {
         variables: BlueprintVariable[];
     };
     title: {
+        locked: boolean;
         title: string;
     };
     windowControls: {

@@ -1,4 +1,11 @@
-import { NodeEntryId, NodeEntryType, nodeIdFromEntry, TriggerData, WorldTriggers } from "data";
+import {
+    NodeEntryId,
+    NodeEntryType,
+    nodeIdFromEntry,
+    TriggerData,
+    TriggerDataSource,
+    TriggersContext,
+} from "data";
 import { prepareHooks } from "hook";
 import {
     ActorPF2e,
@@ -11,7 +18,7 @@ import {
 } from "module-helpers";
 import { createTriggerNode, TriggerNode } from "trigger";
 
-let SUBTRIGGERS: Record<string, TriggerData> = {};
+let MODULES_CONTEXTS: TriggersContext[] = [];
 
 class Trigger {
     #data: TriggerData;
@@ -39,6 +46,10 @@ class Trigger {
 
     get target(): TargetDocuments {
         return this.#options.this;
+    }
+
+    get module(): string | undefined {
+        return this.#data.module;
     }
 
     getVariable(entryId: NodeEntryId): TriggerValue | undefined {
@@ -73,20 +84,70 @@ class Trigger {
     }
 }
 
-function prepareTriggers() {
-    const [subtriggers, triggers] = R.pipe(
-        getSetting<WorldTriggers>("world-triggers").triggers.contents,
-        R.filter((trigger) => trigger.enabled),
-        R.partition((trigger) => trigger.isSubtrigger)
+async function prepareModuleTriggers() {
+    const modulesDataPromises = game.modules.map(async (module) => {
+        if (!module.active) return;
+
+        const key = module.id;
+        const filePath = module.flags?.[key]?.["triggers"];
+        if (!R.isString(filePath)) return;
+
+        try {
+            const path = filePath.startsWith("/") ? filePath.slice(1) : filePath;
+            const response = await fetch(`modules/${key}/${path}`);
+            const json = await response.json();
+
+            return R.isArray(json.triggers)
+                ? ([key, json.triggers as TriggerDataSource[]] as const)
+                : undefined;
+        } catch {}
+    });
+
+    MODULES_CONTEXTS = R.pipe(
+        await Promise.all(modulesDataPromises),
+        R.filter(R.isTruthy),
+        R.map(([key, sources]) => {
+            const triggers = R.pipe(
+                sources,
+                R.map((data) => {
+                    if (!R.isPlainObject(data)) return;
+
+                    try {
+                        const trigger = new TriggerData(data);
+                        if (trigger.invalid) return;
+
+                        // we add the module id and keep the original ids to allow switching enabled
+                        return trigger.clone({ module: key }, { keepId: true });
+                    } catch {}
+                }),
+                R.filter(R.isTruthy)
+            );
+
+            return new TriggersContext({
+                module: key,
+                triggers: triggers.map((x) => x.toObject()),
+            });
+        }),
+        R.filter(R.isTruthy)
     );
-
-    SUBTRIGGERS = R.mapToObj(subtriggers, (trigger) => [trigger.id, trigger]);
-
-    prepareHooks(triggers, subtriggers);
 }
 
-function getSubtrigger(id: string): TriggerData | undefined {
-    return SUBTRIGGERS[id];
+function prepareTriggers() {
+    const worldContext = getSetting<TriggersContext>("world-triggers");
+    const triggers = R.pipe(
+        [
+            getSetting<TriggersContext>("world-triggers").triggers.contents,
+            ...MODULES_CONTEXTS.flatMap((context) => context.triggers.contents),
+        ],
+        R.flat(),
+        R.filter((trigger) => worldContext.isEnabled(trigger))
+    );
+
+    prepareHooks(triggers);
+}
+
+function getModulesContexts(): TriggersContext[] {
+    return MODULES_CONTEXTS;
 }
 
 type TriggerPreOptions<TOptions extends Record<string, any> = Record<string, any>> = TOptions & {
@@ -143,7 +204,7 @@ type TriggerEffectEntry = {
     img: ImageFilePath;
 };
 
-export { getSubtrigger, prepareTriggers, Trigger };
+export { getModulesContexts, prepareModuleTriggers, prepareTriggers, Trigger };
 export type {
     TriggerDcEntry,
     TriggerDurationEntry,

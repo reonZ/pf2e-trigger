@@ -84,12 +84,18 @@ class BlueprintNode extends PIXI.Container {
 
         this.#draw();
 
-        this.eventMode = "static";
-        this.on("pointerdown", this.#onPointerDown, this);
+        if (this.canBeInteractedWith) {
+            this.eventMode = "static";
+            this.on("pointerdown", this.#onPointerDown, this);
+        }
     }
 
     get data(): TriggerNodeData {
         return this.#data;
+    }
+
+    get canBeInteractedWith(): boolean {
+        return !this.data.parent.module;
     }
 
     get schema(): NodeSchemaModel {
@@ -168,17 +174,24 @@ class BlueprintNode extends PIXI.Container {
         return { x: 10, y: 4 };
     }
 
+    get triggerModule(): string | undefined {
+        return this.data.parent.module;
+    }
+
     get temporaryLabel(): string | undefined {
-        return this.isTemporary
-            ? this.blueprint.getTrigger(this.data.inputs.trigger?.value as string)?.label
-            : undefined;
+        if (!this.isTemporary) return;
+
+        const id = this.data.inputs.trigger?.value as string;
+        const module = this.triggerModule;
+
+        return this.blueprint.getTrigger({ id, module })?.label;
     }
 
     get targetLabel(): string | undefined {
         return this.isVariable
             ? this.trigger?.getVariable(this.data.target as NodeEntryId)?.label
             : this.isSubtriggerNode
-            ? this.blueprint.triggers.get(this.data.target as string)?.label
+            ? this.blueprint.getTrigger({ id: this.data.target, module: this.triggerModule })?.label
             : undefined;
     }
 

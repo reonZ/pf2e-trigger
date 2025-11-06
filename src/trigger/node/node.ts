@@ -5,6 +5,7 @@ import {
     NodeEntryId,
     NodeEntryType,
     NodeType,
+    TriggerData,
     TriggerNodeData,
 } from "data";
 import {
@@ -63,6 +64,10 @@ class TriggerNode<
 
     get trigger(): Trigger {
         return this.#trigger;
+    }
+
+    get triggers(): foundry.abstract.EmbeddedCollection<TriggerData> | undefined {
+        return this.#data.triggers;
     }
 
     get target(): TargetDocuments {

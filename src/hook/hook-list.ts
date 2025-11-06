@@ -21,10 +21,10 @@ const HOOKS: TriggerHook[] = [
     new TurnHook(),
 ];
 
-function prepareHooks(triggers: TriggerData[], subtriggers: TriggerData[]) {
+function prepareHooks(triggers: TriggerData[]) {
     MODULE.group("Prepare Hooks");
     for (const hook of HOOKS) {
-        hook.initialize(triggers, subtriggers);
+        hook.initialize(triggers);
     }
     MODULE.groupEnd();
     MODULE.debug(HOOKS);

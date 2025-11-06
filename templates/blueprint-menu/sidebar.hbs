@@ -29,10 +29,12 @@
         <div class="header">
             <div class="title">{{@root.i18n 'variable.title'}}</div>
             <div class="controls right">
+                {{#unless @root.moduleLocked}}
                 <a data-action="create-variable" {{{@root.i18n.tooltip 'variable.add' }}} {{disabled
                     (not selected)}}>
                     <i class="fa-solid fa-plus"></i>
                 </a>
+                {{/unless}}
             </div>
         </div>
         <div class="scroll">
@@ -53,7 +55,11 @@
                         {{variable.label}}
                     </div>
                     <div class="controls">
-                        {{#if variable.locked}}
+                        {{#if @root.moduleLocked}}
+                        <span data-tooltip="{{@root.moduleLocked}}">
+                            <i class="fa-solid fa-plug-circle-xmark"></i>
+                        </span>
+                        {{else if variable.locked}}
                         <span {{{@root.i18n.tooltip 'variable.locked' }}}>
                             <i class="fa-solid fa-lock"></i>
                         </span>
@@ -93,20 +99,27 @@
 
 
 {{#*inline "trigger"}}
-<li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}" data-id="{{trigger.id}}">
+<li class="trigger{{#if (eq trigger.id @root.selected)}} active{{/if}}" {{#if
+    trigger.module}}data-module="{{trigger.module}}" {{/if}} data-id="{{trigger.id}}">
     {{#if (eq type 'trigger')}}
-    <input class="enabled" type="checkbox" name="enabled" {{checked trigger.enabled}}>
+    <input class="enabled" type="checkbox" name="enabled" {{checked (@root.isEnabled trigger)}}>
     {{/if}}
     <div class="name" data-action="select-trigger">
         {{trigger.label}}
     </div>
     <div class="controls">
+        {{#if trigger.module}}
+        <span {{{@root.i18n.tooltip 'locked.trigger' module=trigger.moduleTitle}}}>
+            <i class="fa-solid fa-plug-circle-xmark"></i>
+        </span>
+        {{else}}
         <a data-action="copy-id" {{{@root.i18n.tooltip type 'copy' }}}>
             <i class="fa-solid fa-copy"></i>
         </a>
         <a data-action="delete-trigger" {{{@root.i18n.tooltip type 'delete' }}}>
             <i class="fa-solid fa-trash"></i>
         </a>
+        {{/if}}
     </div>
 </li>
 {{/inline}}

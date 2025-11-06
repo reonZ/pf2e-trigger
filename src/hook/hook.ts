@@ -27,7 +27,7 @@ abstract class TriggerHook {
     activateAll() {}
     disableAll() {}
 
-    initialize(triggers: TriggerData[], subtriggers: TriggerData[]) {
+    initialize(triggers: TriggerData[]) {
         this.#triggers.clear();
         this.#events.clear();
 
@@ -40,7 +40,7 @@ abstract class TriggerHook {
         trigger: for (const trigger of triggers) {
             const eventKey = trigger.event.key;
 
-            if (eventKeys.includes(eventKey)) {
+            if (!trigger.isSubtrigger && eventKeys.includes(eventKey)) {
                 this.#triggers.set(trigger.id, trigger);
                 this.#events.add(eventKey, trigger);
 
@@ -53,17 +53,6 @@ abstract class TriggerHook {
                     if (nodeKeys.includes(node.key)) {
                         active = true;
                         continue trigger;
-                    }
-                }
-            }
-        }
-
-        if (!active && nodeKeys.length) {
-            subtrigger: for (const trigger of subtriggers) {
-                for (const node of trigger.nodes) {
-                    if (nodeKeys.includes(node.key)) {
-                        active = true;
-                        continue subtrigger;
                     }
                 }
             }

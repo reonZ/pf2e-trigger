@@ -37,6 +37,10 @@
                 "close": "Close Window",
                 "import": "Import",
                 "export": "Export",
+                "locked": {
+                    "trigger": "Originate from the module: {module}",
+                    "variable": "Module triggers are locked"
+                },
                 "trigger": {
                     "add": "Create Trigger",
                     "copied": "The Trigger ID <strong>{id}</strong> has been copied to the clipboard.",
@@ -66,6 +70,9 @@
             },
             "collapsed": {
                 "expand": "Expand Triggers Window"
+            },
+            "title": {
+                "locked": "locked"
             }
         },
         "import-export-menu": {

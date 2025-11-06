@@ -1,1 +1,6 @@
-<div class="trigger-title">{{title}}</div>
+<div class="trigger-title">
+    {{#if locked}}
+    <i class="fa-solid fa-plug-circle-xmark"></i>
+    {{/if}}
+    {{title}}
+</div>

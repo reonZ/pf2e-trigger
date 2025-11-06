@@ -19,7 +19,7 @@ import {
     TriggerDataSource,
     TriggerDataVariable,
     TriggerNodeDataSource,
-    WorldTriggers,
+    TriggersContext,
 } from "data";
 import {
     confirmDialog,
@@ -43,17 +43,19 @@ import {
     NodeEventKey,
     NodeKey,
 } from "schema";
+import { getModulesContexts } from "trigger";
 
 class Blueprint extends PIXI.Application<HTMLCanvasElement> {
-    #initialized = false;
-    #parent: BlueprintApplication | undefined;
-    #trigger: string | null = null;
-    #worldTriggers: WorldTriggers;
-    #hitArea = new PIXI.Rectangle();
-    #gridLayer: BlueprintGridLayer;
     #connectionsLayer: BlueprintConnectionsLayer;
-    #nodesLayer: BlueprintNodesLayer;
     #drag: { origin: Point; dragging?: boolean } | null = null;
+    #gridLayer: BlueprintGridLayer;
+    #hitArea = new PIXI.Rectangle();
+    #initialized = false;
+    #modulesContexts: Record<string, TriggersContext>;
+    #nodesLayer: BlueprintNodesLayer;
+    #parent: BlueprintApplication | undefined;
+    #trigger: { id: string; module: string | null } | null = null;
+    #worldContext: TriggersContext;
 
     constructor() {
         super({
@@ -63,7 +65,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             resolution: window.devicePixelRatio,
         });
 
-        this.#worldTriggers = this.#getWorldTriggers();
+        this.#worldContext = this.#getWorldTriggers();
+        this.#modulesContexts = R.mapToObj(
+            getModulesContexts(),
+            (context) => [context.module!, context] as const
+        );
 
         this.stage.addChild(
             (this.#gridLayer = new BlueprintGridLayer()),
@@ -92,7 +98,20 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     get triggers(): foundry.abstract.EmbeddedCollection<TriggerData> {
-        return this.#worldTriggers.triggers;
+        return this.#worldContext.triggers;
+    }
+
+    get isTriggerLocked(): boolean {
+        return !!this.trigger?.module;
+    }
+
+    get modulesTriggers(): TriggerData[] {
+        return R.pipe(
+            this.#modulesContexts,
+            R.values(),
+            R.map((context) => context.triggers.contents),
+            R.flat()
+        );
     }
 
     get nodesLayer(): BlueprintNodesLayer {
@@ -125,6 +144,20 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.#clear();
         this.#draw();
         this.parent?.refresh();
+    }
+
+    isEnabled(trigger: TriggerData): boolean {
+        return this.#worldContext.isEnabled(trigger);
+    }
+
+    updateEnabled(trigger: TriggerData, enabled: boolean) {
+        if (trigger.module) {
+            const path = `enabled.${trigger.module}.${enabled ? "" : "-="}${trigger.id}`;
+            this.#worldContext.updateSource({ [path]: enabled ? true : null });
+        } else {
+            const path = `disabled.${enabled ? "-=" : ""}${trigger.id}`;
+            this.#worldContext.updateSource({ [path]: enabled ? null : true });
+        }
     }
 
     resizeAll() {
@@ -161,23 +194,28 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     saveTriggers() {
-        setSetting("world-triggers", this.#worldTriggers);
+        setSetting("world-triggers", this.#worldContext);
     }
 
     resetTriggers() {
         this.setTrigger(null);
-        this.#worldTriggers = this.#getWorldTriggers();
+        this.#worldContext = this.#getWorldTriggers();
         this.refresh();
     }
 
-    getTrigger(id: Maybe<string>): TriggerData | undefined {
-        return id ? this.triggers.get(id) : undefined;
+    getTrigger(entry: { id?: string; module?: string | null } | null): TriggerData | undefined {
+        const { id, module } = entry ?? {};
+        if (!id) return undefined;
+
+        return module ? this.#modulesContexts[module]?.triggers.get(id) : this.triggers.get(id);
     }
 
-    setTrigger(id: Maybe<string>) {
-        if (this.#trigger !== id) {
+    setTrigger(entry: { id?: string; module?: string | null } | null) {
+        const { id, module } = entry ?? {};
+
+        if (this.#trigger?.module != module || this.#trigger?.id != id) {
             this.#clear();
-            this.#trigger = id ?? null;
+            this.#trigger = id ? { id, module: module ?? null } : null;
             this.#draw();
         }
 
@@ -188,7 +226,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
     }
 
     addTriggers(sources: TriggerDataSource[]) {
-        this.#worldTriggers.createEmbeddedDocuments("Trigger", sources, {
+        this.#worldContext.createEmbeddedDocuments("Trigger", sources, {
             keepId: true,
             keepEmbeddedIds: true,
         });
@@ -214,20 +252,20 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
                 });
             }
 
-            const [trigger] = await this.#worldTriggers.createEmbeddedDocuments("Trigger", [
+            const [trigger] = await this.#worldContext.createEmbeddedDocuments("Trigger", [
                 { name, nodes },
             ]);
 
-            this.setTrigger(trigger.id);
+            this.setTrigger(trigger);
         } catch (error) {
             MODULE.error("An error occured while creating a new trigger.", error);
         }
     }
 
     async deleteTrigger(id: string) {
-        const [deleted] = await this.#worldTriggers.deleteEmbeddedDocuments("Trigger", [id]);
+        const [deleted] = await this.#worldContext.deleteEmbeddedDocuments("Trigger", [id]);
 
-        if (this.#trigger === id) {
+        if (this.#trigger?.id === id) {
             this.setTrigger(null);
         } else if (deleted.isSubtrigger) {
             this.refresh();
@@ -392,8 +430,8 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         );
     }
 
-    #getWorldTriggers(): WorldTriggers {
-        return getSetting<WorldTriggers>("world-triggers").clone();
+    #getWorldTriggers(): TriggersContext {
+        return getSetting<TriggersContext>("world-triggers").clone();
     }
 
     #getFilterGroups(entry?: BlueprintEntry): BlueprintMenuGroup[] {
@@ -589,7 +627,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.stage.off("pointerupoutside", this.#onPointerUp, this);
         this.stage.off("pointermove", this.#onDragMove, this);
 
-        if (!wasDragging && this.trigger) {
+        if (!wasDragging && this.trigger && !this.isTriggerLocked) {
             this.#onContextMenu(event.global);
         }
     }
