@@ -147,7 +147,7 @@ class TriggersExportMenu extends ImportExportMenu {
 
     async #exportToFile() {
         const data = await this.#getExportData();
-        const stringified = JSON.stringify(data, null, 2);
+        const stringified = JSON.stringify(data);
         const filename = `${MODULE.id}-${Date.now()}`;
 
         foundry.utils.saveDataToFile(stringified, "text/json", `${filename}.json`);
