@@ -1,3 +1,24 @@
+# 2.13.0
+
+-   added support for module triggers registration:
+    -   to register module triggers, you need to provide a json file relative path in your `module.json` manifest
+        ```json
+        "flags": {
+            "<module-id>": {
+                "triggers": "relative/path/to/triggers.json"
+            }
+        },
+        ```
+    -   the json file must be an export from the module
+    -   only `triggers` and `subtriggers` will be used from it, so there is no point in selecting `items` when exporting
+        -   items should be in your module compendiums
+    -   each module has its own isolated triggers context, there is no relation possible between them or with your world triggers
+    -   because of the need to handle triggers that aren't saved in settings, the data for `enabled` had to be extracted from the triggers themselves
+        -   all your world triggers will revert to `enabled` because of that
+        -   all module triggers will be `disabled` by default
+        -   all imported triggers will be `enabled` by default
+-   no longer format/indent exported files
+
 # 2.12.0
 
 -   add new `Replace @x In Formula` action node:
