@@ -87,6 +87,10 @@ class TriggersExportMenu extends ImportExportMenu {
         return true;
     }
 
+    get canKeepIds(): boolean {
+        return false;
+    }
+
     _getButtons(): { action: string; label: string }[] {
         return ["copy", "export", "cancel"].map((action) => ({
             action,

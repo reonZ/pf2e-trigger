@@ -38,6 +38,10 @@ class TriggersImportMenu extends ImportExportMenu {
         return false;
     }
 
+    get canKeepIds(): boolean {
+        return true;
+    }
+
     _getButtons(): { action: string; label: string }[] {
         return ["import", "code", "file", "cancel"].map((action) => ({
             action,
@@ -95,6 +99,8 @@ class TriggersImportMenu extends ImportExportMenu {
     }
 
     #generateData(raw: unknown): ImportedData | undefined {
+        const keepIds = this.isKeepingIDs;
+
         try {
             const data = (R.isString(raw) ? JSON.parse(raw) : undefined) as Maybe<ImportExportData>;
 
@@ -154,6 +160,10 @@ class TriggersImportMenu extends ImportExportMenu {
                         }
                     }
 
+                    if (keepIds) {
+                        return trigger;
+                    }
+
                     // we cache subtriggers old id while generating a new one to convert them on trigger nodes
                     if (trigger.isSubtrigger) {
                         const newId = foundry.utils.randomID();
@@ -174,15 +184,17 @@ class TriggersImportMenu extends ImportExportMenu {
                 R.partition((trigger) => trigger.isSubtrigger)
             );
 
-            for (const trigger of triggers) {
-                for (const node of trigger.nodes) {
-                    if (!node.isSubtriggerNode) continue;
+            if (!keepIds) {
+                for (const trigger of triggers) {
+                    for (const node of trigger.nodes) {
+                        if (!node.isSubtriggerNode) continue;
 
-                    const replaceId = subtriggerIds[node.target as string];
-                    if (!replaceId) continue;
+                        const replaceId = subtriggerIds[node.target as string];
+                        if (!replaceId) continue;
 
-                    // we replace the target id with the newly generated one from subtriggers packed with this import
-                    node.update({ target: replaceId });
+                        // we replace the target id with the newly generated one from subtriggers packed with this import
+                        node.update({ target: replaceId });
+                    }
                 }
             }
 

@@ -79,6 +79,10 @@
             }
         },
         "import-export-menu": {
+            "keep": {
+                "label": "Keep IDs",
+                "hint": "This must be checked before clicking on the <strong>{code}</strong> or <strong>{file}</strong> buttons."
+            },
             "toggle": "Toggle All",
             "trigger": {
                 "title": "Triggers"

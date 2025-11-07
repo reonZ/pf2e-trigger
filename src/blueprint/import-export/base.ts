@@ -12,6 +12,7 @@ import {
 } from "module-helpers";
 
 abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
+    #keepIds: boolean = false;
     #resources: ImportExportResources = {
         trigger: new Collection(),
         subtrigger: new Collection(),
@@ -28,11 +29,16 @@ abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
     };
 
     abstract get canAddItem(): boolean;
+    abstract get canKeepIds(): boolean;
 
     abstract _getButtons(): { action: string; label: string }[];
 
     get resources(): ImportExportResources {
         return this.#resources;
+    }
+
+    get isKeepingIDs(): boolean {
+        return !!htmlQuery<HTMLInputElement>(this.element, `[name="keepids"]`)?.checked;
     }
 
     createResource({
@@ -61,9 +67,16 @@ abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
         return {
             buttons: this._getButtons(),
             canAddItem: this.canAddItem,
+            canKeepIds: this.canKeepIds,
+            keepIds: this.#keepIds,
             resources: this.#resources,
             i18n: "import-export-menu",
         };
+    }
+
+    async _preRender(context: object, options: ApplicationRenderOptions): Promise<void> {
+        this.#keepIds = this.isKeepingIDs;
+        super._preRender(context, options);
     }
 
     async _renderHTML(
@@ -119,6 +132,8 @@ abstract class ImportExportMenu extends foundry.applications.api.ApplicationV2 {
 
 type ImportExportContext = RenderTemplateData & {
     canAddItem: boolean;
+    canKeepIds: boolean;
+    keepIds: boolean;
     buttons: { action: string; label: string }[];
     resources: ImportExportResources;
 };

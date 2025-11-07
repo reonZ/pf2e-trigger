@@ -7,6 +7,16 @@
 <div class="items" data-type="item">
     {{> 'column' type='item'}}
 </div>
+{{#if canKeepIds}}
+<div class="keep-ids">
+    <label>
+        <input type="checkbox" name="keepids" {{checked keepIds}}>{{@root.i18n 'keep.label'}}:
+    </label>
+    <span class="hint">
+        {{{@root.i18n 'keep.hint' code=buttons.1.label file=buttons.2.label}}}
+    </span>
+</div>
+{{/if}}
 <div class="buttons" style="--nb-buttons: {{buttons.length}};">
     {{#each buttons as |button|}}
     <button type="button" data-action="{{button.action}}">
