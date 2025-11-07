@@ -1,15 +1,14 @@
 .sidebar {
     --background-accent: #0000003b;
-    --sidebar-width: 300px;
     --indicator-width: 18px;
     --active-color: #086c819c;
-    --inner-width: calc(var(--sidebar-width) - var(--indicator-width));
+    --inner-width: calc(var(--trigger-sidebar-width) - var(--indicator-width));
 
     position: absolute;
     top: -1px;
     bottom: -1px;
     left: 0;
-    width: var(--sidebar-width);
+    width: var(--trigger-sidebar-width);
     border-radius: 0 5px 5px 0;
     border: 1px solid var(--color-border-dark-1);
     background: url(/ui/denim075.png) repeat;
@@ -100,6 +99,19 @@
                     align-items: center;
                     justify-content: center;
                     gap: 0.6em;
+
+                    [data-action="lock-description"] {
+                        display: none;
+                    }
+                }
+
+                &.show-description,
+                &.description-locked {
+                    .controls {
+                        [data-action="lock-description"] {
+                            display: block;
+                        }
+                    }
                 }
 
                 &.trigger {
@@ -127,6 +139,11 @@
                             color: var(--entry-color);
                         }
                     }
+                }
+
+                [data-trigger-description] {
+                    display: none;
+                    user-select: text;
                 }
             }
 

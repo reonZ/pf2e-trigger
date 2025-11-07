@@ -141,15 +141,13 @@
       "title": "Réinitialiser les déclencheurs",
       "content": "Êtes-vous sûr de vouloir réinitialiser vos déclencheurs à leur dernier état enregistré ?"
     },
+    "create-edit-menu": {
+      "event": "Type d'événement",
+      "name": "Nom du déclencheur"
+    },
     "create-trigger": {
       "title": "Créer un déclencheur",
-      "yes": "Créer",
-      "name": {
-        "label": "Nom du déclencheur"
-      },
-      "event": {
-        "label": "Type d'événement"
-      }
+      "yes": "Créer"
     },
     "delete-trigger": {
       "title": "Effacer le déclencheur ({id})",

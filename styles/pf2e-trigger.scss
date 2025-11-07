@@ -18,4 +18,18 @@
             }
         }
     }
+
+    &.pf2e-trigger-create-edit-menu {
+        prose-mirror {
+            min-height: 380px;
+
+            .editor-container {
+                box-shadow: inset 0 0 0px 1px var(--color-border);
+
+                .editor-content {
+                    padding: 0.2rem 0.5rem;
+                }
+            }
+        }
+    }
 }

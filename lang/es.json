@@ -134,15 +134,13 @@
       "title": "Restablecer disparadores",
       "content": "¿Estás seguro de que deseas restablecer tus disparadores a su último estado guardado?"
     },
+    "create-edit-menu": {
+      "event": "Tipo de evento",
+      "name": "Nombre del disparador"
+    },
     "create-trigger": {
       "title": "Crear disparador",
-      "yes": "Crear",
-      "name": {
-        "label": "Nombre del disparador"
-      },
-      "event": {
-        "label": "Tipo de evento"
-      }
+      "yes": "Crear"
     },
     "delete-trigger": {
       "title": "Eliminar disparador ({id})",

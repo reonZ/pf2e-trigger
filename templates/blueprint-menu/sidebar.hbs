@@ -108,13 +108,16 @@
         {{trigger.label}}
     </div>
     <div class="controls">
+        <a data-action="lock-description" {{{@root.i18n.tooltip 'description' }}}>
+            <i class="fa-solid fa-signature-lock"></i>
+        </a>
         {{#if trigger.module}}
         <span {{{@root.i18n.tooltip 'locked.trigger' module=trigger.moduleTitle}}}>
             <i class="fa-solid fa-plug-circle-xmark"></i>
         </span>
         {{else}}
         <a data-action="copy-id" {{{@root.i18n.tooltip type 'copy' }}}>
-            <i class="fa-solid fa-copy"></i>
+            <i class="fa-solid fa-clipboard"></i>
         </a>
         <a data-action="delete-trigger" {{{@root.i18n.tooltip type 'delete' }}}>
             <i class="fa-solid fa-trash"></i>

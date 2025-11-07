@@ -1,0 +1,19 @@
+<div class="form-group">
+    <label>{{@root.i18n 'name'}}</label>
+    <div class="form-fields">
+        <input type="text" name="name" value="{{name}}" placeholder="{{placeholder}}">
+    </div>
+</div>
+{{#if events.length}}
+<div class="form-group">
+    <label>{{@root.i18n 'event'}}</label>
+    <div class="form-fields">
+        <select name="event">
+            {{selectOptions events sort=true}}
+        </select>
+    </div>
+</div>
+{{/if}}
+<prose-mirror name="description" value="{{description}}">
+    {{{enrichedDescription}}}
+</prose-mirror>

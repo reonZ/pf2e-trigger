@@ -134,15 +134,13 @@
       "title": "Zresetuj wyzwalacze",
       "content": "Czy na pewno chcesz zresetować wyzwalacze do ostatniego zapisanego stanu?"
     },
+    "create-edit-menu": {
+      "event": "Typ zdarzenia",
+      "name": "Nazwa wyzwalacza"
+    },
     "create-trigger": {
       "title": "Utwórz wyzwalacz",
-      "yes": "Utwórz",
-      "name": {
-        "label": "Nazwa wyzwalacza"
-      },
-      "event": {
-        "label": "Typ zdarzenia"
-      }
+      "yes": "Utwórz"
     },
     "delete-trigger": {
       "title": "Usuń wyzwalacz ({id})",

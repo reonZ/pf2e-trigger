@@ -5,15 +5,20 @@ import {
     addListenerAll,
     ApplicationClosingOptions,
     ApplicationConfiguration,
+    arrayToSelectOptions,
     confirmDialog,
+    createHTMLElement,
+    enrichHTML,
     HandlebarsRenderOptions,
     HandlebarsTemplatePart,
     htmlClosest,
     htmlQuery,
+    I18n,
     info,
     localize,
     MODULE,
     R,
+    render,
     templateLocalize,
     TemplateLocalize,
     waitDialog,
@@ -194,7 +199,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     #attachSidebarListeners(html: HTMLElement) {
         type TriggerHeaderAction = "close-window" | "create-trigger" | "export" | "import";
-        type TriggerAction = "select-trigger" | "delete-trigger" | "copy-id";
+        type TriggerAction = "select-trigger" | "delete-trigger" | "copy-id" | "lock-description";
         type SubtriggerHeaderAction = "create-subtrigger";
         type VariableHeaderAction = "create-variable";
         type VariableAction = "remove-variable";
@@ -206,6 +211,15 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         const getEntryDataset = (el: HTMLElement): { id?: string; module?: string } => {
             return htmlClosest(el, "[data-id]")?.dataset as { id?: string; module?: string };
+        };
+
+        const getTriggerDescriptionPanel = (): HTMLElement | null => {
+            return htmlQuery(this.element, ":scope > [data-trigger-description]");
+        };
+
+        const getdescriptionKey = (el: HTMLElement): string => {
+            const { id, module } = el.dataset;
+            return module ? `${module}:${id}` : id ?? "";
         };
 
         addListenerAll(html, ".trigger[data-id] .name", "contextmenu", (el) => {
@@ -225,6 +239,54 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                 this.blueprint.updateEnabled(trigger, el.checked);
             }
         );
+
+        addListenerAll(html, ".trigger[data-id]", "pointerenter", async (el) => {
+            if (getTriggerDescriptionPanel()) return;
+
+            let descriptionElement = htmlQuery(el, "[data-trigger-description]");
+
+            if (!descriptionElement) {
+                const entry = getEntryDataset(el);
+                const trigger = this.blueprint.getTrigger(entry);
+                if (!trigger) return;
+
+                descriptionElement = createHTMLElement("div", {
+                    content: await enrichHTML(trigger.description),
+                    dataset: { triggerDescription: getdescriptionKey(el) },
+                });
+
+                el.appendChild(descriptionElement);
+            }
+
+            if (!descriptionElement) return;
+
+            if (descriptionElement.childNodes.length) {
+                el.classList.add("show-description");
+            }
+
+            const cloneElement = descriptionElement.cloneNode(true);
+            this.element.appendChild(cloneElement);
+        });
+
+        addListenerAll(html, ".trigger[data-id]", "pointerleave", (el) => {
+            const key = getdescriptionKey(el);
+            const panel = getTriggerDescriptionPanel();
+            if (panel && panel.dataset.triggerDescription !== key) return;
+
+            const selector = el.classList.contains("description-locked")
+                ? `:not([data-trigger-description^="${key}"])`
+                : "";
+
+            const elements = this.element.querySelectorAll<HTMLElement>(
+                `:scope > [data-trigger-description]${selector}`
+            );
+
+            el.classList.remove("show-description");
+
+            for (const el of elements) {
+                el.remove();
+            }
+        });
 
         addListenerAll(html, ".header [data-action]", (el) => {
             const action = el.dataset.action as HeaderAction;
@@ -253,6 +315,8 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                 info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
             } else if (action === "delete-trigger") {
                 this.#deleteTrigger(triggerId);
+            } else if (action === "lock-description") {
+                htmlClosest(el, "[data-id]")?.classList.toggle("description-locked");
             } else if (action === "select-trigger") {
                 const entry = getEntryDataset(el);
                 this.blueprint.setTrigger(entry);
@@ -300,47 +364,73 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         });
     }
 
-    async #createSubtrigger() {
-        const result = await waitDialog<{ name: string }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: { name: "name" },
-                    groupConfig: { i18n: "create-trigger" },
-                },
-            ],
-            i18n: "create-subtrigger",
+    async #createCreateEditMenu({
+        noEvents,
+        trigger,
+    }: { noEvents?: boolean; trigger?: TriggerData } = {}): Promise<
+        { description: string; name: string; event: NodeEventKey } | false | null
+    > {
+        const localizationKey = `${trigger ? "edit" : "create"}-trigger`;
+        const events = noEvents
+            ? undefined
+            : arrayToSelectOptions(
+                  EVENT_KEYS,
+                  I18n.from({ prefix: "node.event", suffix: "label" })
+              );
+
+        return waitDialog<{ description: string; name: string; event: NodeEventKey }>({
+            classes: ["pf2e-trigger-create-edit-menu"],
+            content: await render("create-edit-menu", {
+                description: trigger?.description ?? "",
+                enrichedDescription: trigger ? await enrichHTML(trigger.description) : "",
+                events,
+                name: trigger?.name ?? "",
+                placeholder: trigger?.label ?? "",
+            }),
+            i18n: localizationKey,
             skipAnimate: true,
+            minWidth: "700px",
+            title: localize(localizationKey, "title", trigger ?? {}),
         });
+    }
+
+    async #createSubtrigger() {
+        const result = await this.#createCreateEditMenu({ noEvents: true });
 
         if (result) {
-            this.blueprint.createTrigger({ name: result.name, event: "subtrigger-input" });
+            this.blueprint.createTrigger({
+                description: result.description,
+                name: result.name,
+                event: "subtrigger-input",
+            });
         }
     }
 
     async #createTrigger() {
-        const result = await waitDialog<{ name: string; event: NodeEventKey }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: { name: "name", required: true },
-                },
-                {
-                    type: "select",
-                    inputConfig: {
-                        name: "event",
-                        options: EVENT_KEYS,
-                        i18n: { prefix: "node.event", suffix: "label" },
-                        sort: true,
-                    },
-                },
-            ],
-            i18n: "create-trigger",
-            skipAnimate: true,
-        });
+        const result = await this.#createCreateEditMenu();
 
         if (result) {
             this.blueprint.createTrigger(result);
+        }
+    }
+
+    async #editTrigger(id: string) {
+        const trigger = this.blueprint.getTrigger({ id });
+        if (!trigger) return;
+
+        const result = await this.#createCreateEditMenu({ noEvents: true, trigger });
+        if (!result) return;
+
+        const { description, name } = result;
+
+        if (description !== trigger.description || name !== trigger.name) {
+            trigger.update({ description, name });
+
+            if (trigger.isSubtrigger) {
+                this.blueprint.refresh();
+            } else {
+                this.refresh();
+            }
         }
     }
 
@@ -355,40 +445,6 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
         if (result) {
             this.blueprint.deleteTrigger(id);
-        }
-    }
-
-    async #editTrigger(id: string) {
-        const trigger = this.blueprint.getTrigger({ id });
-        if (!trigger) return;
-
-        const result = await waitDialog<{ name: string }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: {
-                        name: "name",
-                        value: trigger.name,
-                        placeholder: trigger.label,
-                    },
-                    groupConfig: {
-                        i18n: "create-trigger",
-                    },
-                },
-            ],
-            i18n: "edit-trigger",
-            skipAnimate: true,
-            data: trigger,
-        });
-
-        if (result && result.name !== trigger.name) {
-            trigger.update({ name: result.name });
-
-            if (trigger.isSubtrigger) {
-                this.blueprint.refresh();
-            } else {
-                this.refresh();
-            }
         }
     }
 

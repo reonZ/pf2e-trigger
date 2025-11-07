@@ -1,6 +1,2 @@
-<div class="trigger-title">
-    {{#if locked}}
-    <i class="fa-solid fa-plug-circle-xmark"></i>
-    {{/if}}
-    {{title}}
-</div>
+{{!-- we keep this on a single line for the :empty --}}
+<div class="trigger-title">{{#if locked}}<i class="fa-solid fa-plug-circle-xmark"></i>{{/if}}{{title}}</div>

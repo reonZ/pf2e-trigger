@@ -234,7 +234,15 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.parent?.refresh();
     }
 
-    async createTrigger({ event, name }: { event: NodeEventKey; name: string }) {
+    async createTrigger({
+        description,
+        event,
+        name,
+    }: {
+        event: NodeEventKey;
+        name: string;
+        description: string;
+    }) {
         try {
             const isSubtrigger = event === "subtrigger-input";
             const nodes: TriggerNodeDataSource[] = [
@@ -253,7 +261,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             }
 
             const [trigger] = await this.#worldContext.createEmbeddedDocuments("Trigger", [
-                { name, nodes },
+                { description, name, nodes },
             ]);
 
             this.setTrigger(trigger);

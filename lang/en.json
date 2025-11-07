@@ -37,12 +37,14 @@
                 "close": "Close Window",
                 "import": "Import",
                 "export": "Export",
+                "description": "Toggle Lock Description",
                 "locked": {
                     "trigger": "Originate from the module: {module}",
                     "variable": "Module triggers are locked"
                 },
                 "trigger": {
                     "add": "Create Trigger",
+                    "clone": "Clone Trigger",
                     "copied": "The Trigger ID <strong>{id}</strong> has been copied to the clipboard.",
                     "copy": "Copy Trigger ID",
                     "delete": "Delete Trigger",
@@ -50,6 +52,7 @@
                 },
                 "subtrigger": {
                     "add": "Create Sub-Trigger",
+                    "clone": "Clone Sub-Trigger",
                     "copy": "Copy Sub-Trigger ID",
                     "delete": "Delete Sub-Trigger",
                     "title": "Sub-Triggers"
@@ -141,15 +144,13 @@
             "title": "Reset Triggers",
             "content": "Are you sure you want to reset your triggers to their last saved state?"
         },
+        "create-edit-menu": {
+            "event": "Event Type",
+            "name": "Trigger Name"
+        },
         "create-trigger": {
             "title": "Create Trigger",
-            "yes": "Create",
-            "name": {
-                "label": "Trigger Name"
-            },
-            "event": {
-                "label": "Event Type"
-            }
+            "yes": "Create"
         },
         "delete-trigger": {
             "title": "Delete Trigger ({id})",
