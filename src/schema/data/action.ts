@@ -477,6 +477,16 @@ const replaceX = {
     outputs: [{ key: "result", type: "text" }],
 } as const satisfies ActionRawSchema;
 
+const sendToChat = {
+    icon: "\uf4a8",
+    inputs: [
+        { key: "item", type: "item" },
+        { key: "targeting", type: "target" },
+    ],
+} as const satisfies ActionRawSchema;
+
+//
+
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -537,6 +547,7 @@ export const action = {
     "roll-flat": rollFlat,
     "roll-save": rollSave,
     "scene-tokens": sceneTokens,
+    "send-to-chat": sendToChat,
     "subtract-number": arithmeticAction("\uf068"),
     "surround-text": surroundText,
     "use-macro": useMacro,

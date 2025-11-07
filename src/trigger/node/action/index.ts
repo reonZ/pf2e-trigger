@@ -39,6 +39,7 @@ import { RollDamageSaveTriggerNode } from "./roll-damage-save";
 import { RollFlatTriggerNode } from "./roll-flat";
 import { RollSaveTriggerNode } from "./roll-save";
 import { SceneTokensTriggerNode } from "./scene-tokens";
+import { SendToChatTriggerNode } from "./send-to-chat";
 import { SubtractNumberTriggerNode } from "./subtract-number";
 import { SurroundTextTriggerNode } from "./surround-text";
 import { UseMacroTriggerNode } from "./use-macro";
@@ -80,6 +81,7 @@ export const action = {
     "roll-flat": RollFlatTriggerNode,
     "roll-save": RollSaveTriggerNode,
     "scene-tokens": SceneTokensTriggerNode,
+    "send-to-chat": SendToChatTriggerNode,
     "surround-text": SurroundTextTriggerNode,
     "subtract-number": SubtractNumberTriggerNode,
     "use-macro": UseMacroTriggerNode,

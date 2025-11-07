@@ -446,6 +446,12 @@
                         "other": "Scene Target"
                     }
                 },
+                "send-to-chat": {
+                    "label": "Send Item To Chat",
+                    "entry": {
+                        "targeting": "With Target?"
+                    }
+                },
                 "subtract-number": {
                     "label": "Subtract Numbers"
                 },
