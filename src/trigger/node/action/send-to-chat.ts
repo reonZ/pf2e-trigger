@@ -6,7 +6,7 @@ class SendToChatTriggerNode extends TriggerNode<NodeSchemaOf<"action", "send-to-
     async execute(): Promise<boolean> {
         const item = await this.get("item");
 
-        if (!item) {
+        if (!item?.parent) {
             return this.send("out");
         }
 
