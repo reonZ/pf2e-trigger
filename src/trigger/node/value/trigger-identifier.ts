@@ -9,7 +9,7 @@ class TriggerIdentifierTriggerNode extends TriggerNode<
         return R.pipe(
             [
                 await this.get("key"), //
-                (await this.getTargetActor("target"))?.uuid,
+                (await this.get("target"))?.actor.uuid,
             ],
             R.filter(R.isTruthy),
             R.join("-")

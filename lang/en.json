@@ -705,7 +705,8 @@
                 "trigger-identifier": {
                     "label": "Trigger Effect Identifier",
                     "entry": {
-                        "key": "Unique Key"
+                        "key": "Unique Key",
+                        "target": "Actor"
                     }
                 }
             },
