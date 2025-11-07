@@ -5,7 +5,7 @@ const itemSource = {
     inputs: [{ key: "uuid", type: "uuid", field: { document: "Item" } }],
     outputs: [{ key: "item", type: "item" }],
     document: "uuid",
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const dcTarget = {
     inputs: [
@@ -23,7 +23,7 @@ const dcTarget = {
         },
     ],
     outputs: [{ key: "dc", type: "dc" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const dcValue = {
     inputs: [
@@ -32,7 +32,7 @@ const dcValue = {
         { key: "value", type: "number" },
     ],
     outputs: [{ key: "dc", type: "dc" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const dcItem = {
     inputs: [
@@ -48,7 +48,7 @@ const dcItem = {
         },
     ],
     outputs: [{ key: "dc", type: "dc" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const rollData = {
     inputs: [
@@ -65,7 +65,7 @@ const rollData = {
         },
     ],
     outputs: [{ key: "roll", type: "roll" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const successValue = {
     inputs: [
@@ -96,7 +96,7 @@ const successValue = {
         },
     ],
     outputs: [{ key: "value", type: "number" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const simpleDuration = {
     inputs: [
@@ -112,7 +112,7 @@ const simpleDuration = {
         },
     ],
     outputs: [{ key: "duration", type: "duration" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const unitDuration = {
     inputs: [
@@ -157,7 +157,7 @@ const unitDuration = {
         },
     ],
     outputs: [{ key: "duration", type: "duration" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const effectData = {
     inputs: [
@@ -168,12 +168,12 @@ const effectData = {
     ],
     outputs: [{ key: "effect", type: "effect" }],
     image: "image",
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const textValue = {
     inputs: [{ key: "input", type: "text" }],
     outputs: [{ key: "value", type: "text" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const enrichedText = {
     inputs: [
@@ -186,18 +186,26 @@ const enrichedText = {
         },
     ],
     outputs: [{ key: "value", type: "text" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const numberValue = {
     inputs: [{ key: "input", type: "number" }],
     outputs: [{ key: "value", type: "number" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
 const currentCombatant = {
     outputs: [{ key: "combatant", type: "target" }],
-} as const satisfies ValuenRawSchema;
+} as const satisfies ValueRawSchema;
 
-type ValuenRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
+const triggerIdentifier = {
+    inputs: [
+        { key: "key", type: "text" },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "identifier", type: "text" }],
+} as const satisfies ValueRawSchema;
+
+type ValueRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
     outputs: [NodeSchemaOutput];
 };
 
@@ -215,4 +223,5 @@ export const value = {
     "roll-data": rollData,
     "success-value": successValue,
     "text-value": textValue,
+    "trigger-identifier": triggerIdentifier,
 };

@@ -11,6 +11,7 @@ import { InputValueTriggerNode } from "./input";
 import { ItemSourceTriggerNode } from "./item-source";
 import { RollDataTriggerNode } from "./roll-data";
 import { SuccessValueTriggerNode } from "./success";
+import { TriggerIdentifierTriggerNode } from "./trigger-identifier";
 
 export const value = {
     "current-combatant": CurrentCombatantTriggerNode,
@@ -23,7 +24,8 @@ export const value = {
     "enriched-text": InputValueTriggerNode,
     "item-source": ItemSourceTriggerNode,
     "number-value": InputValueTriggerNode,
+    "roll-data": RollDataTriggerNode,
     "success-value": SuccessValueTriggerNode,
     "text-value": InputValueTriggerNode,
-    "roll-data": RollDataTriggerNode,
+    "trigger-identifier": TriggerIdentifierTriggerNode,
 } as Record<NodeKeys<"value">, typeof TriggerNode>;

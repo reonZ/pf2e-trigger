@@ -691,6 +691,12 @@
                 },
                 "text-value": {
                     "label": "Text Entry"
+                },
+                "trigger-identifier": {
+                    "label": "Trigger Effect Identifier",
+                    "entry": {
+                        "key": "Unique Key"
+                    }
                 }
             },
             "variable": {
