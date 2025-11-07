@@ -256,9 +256,11 @@
       "origin": "Origine",
       "out": "Sortie",
       "outcome": "Résultat",
+      "prefix": "Préfixe",          
       "result": "Résultat",
       "separator": "Séparateur",
       "slug": "item-slug",
+      "suffix": "Suffixe",
       "targets": "Cibles",
       "this": "Déclencheur cible",
       "title": "Titre",
@@ -447,11 +449,7 @@
           "label": "Soustraire des nombres"
         },
         "surround-text": {
-          "label": "Texte environnant",
-          "entry": {
-            "prefix": "Préfixe",
-            "suffix": "Suffixe"
-          }
+          "label": "Texte environnant"
         },
         "use-macro": {
           "label": "Exécuter une macro"

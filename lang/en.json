@@ -257,9 +257,11 @@
             "origin": "Origin",
             "out": "Out",
             "outcome": "Outcome",
+            "prefix": "Prefix",
             "result": "Result",
             "separator": "Separator",
             "slug": "item-slug",
+            "suffix": "Suffix",
             "targets": "Targets",
             "this": "Trigger Target",
             "title": "Title",
@@ -448,11 +450,7 @@
                     "label": "Subtract Numbers"
                 },
                 "surround-text": {
-                    "label": "Surround Text",
-                    "entry": {
-                        "prefix": "Prefix",
-                        "suffix": "Suffix"
-                    }
+                    "label": "Surround Text"
                 },
                 "use-macro": {
                     "label": "Run Macro"
@@ -674,6 +672,12 @@
                 },
                 "item-source": {
                     "label": "Item Source"
+                },
+                "named-label-actor": {
+                    "label": "Named Label (Actor)"
+                },
+                "named-label-item": {
+                    "label": "Named Label (Item)"
                 },
                 "number-value": {
                     "label": "Number Entry"

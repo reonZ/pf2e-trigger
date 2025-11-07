@@ -9,6 +9,8 @@ import { DurationUnitTriggerNode } from "./duration-unit";
 import { EffectDataTriggerNode } from "./effect-data";
 import { InputValueTriggerNode } from "./input";
 import { ItemSourceTriggerNode } from "./item-source";
+import { NamedLabelActorTriggerNode } from "./named-label-actor";
+import { NamedLabelItemTriggerNode } from "./named-label-item";
 import { RollDataTriggerNode } from "./roll-data";
 import { SuccessValueTriggerNode } from "./success";
 import { TriggerIdentifierTriggerNode } from "./trigger-identifier";
@@ -23,6 +25,8 @@ export const value = {
     "effect-data": EffectDataTriggerNode,
     "enriched-text": InputValueTriggerNode,
     "item-source": ItemSourceTriggerNode,
+    "named-label-actor": NamedLabelActorTriggerNode,
+    "named-label-item": NamedLabelItemTriggerNode,
     "number-value": InputValueTriggerNode,
     "roll-data": RollDataTriggerNode,
     "success-value": SuccessValueTriggerNode,

@@ -205,6 +205,22 @@ const triggerIdentifier = {
     outputs: [{ key: "identifier", type: "text" }],
 } as const satisfies ValueRawSchema;
 
+const namedLabelActor = {
+    inputs: [
+        { key: "prefix", type: "text" },
+        { key: "target", type: "target" },
+    ],
+    outputs: [{ key: "label", type: "text" }],
+} as const satisfies ValueRawSchema;
+
+const namedLabelItem = {
+    inputs: [
+        { key: "prefix", type: "text" },
+        { key: "item", type: "item" },
+    ],
+    outputs: [{ key: "label", type: "text" }],
+} as const satisfies ValueRawSchema;
+
 type ValueRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
     outputs: [NodeSchemaOutput];
 };
@@ -219,6 +235,8 @@ export const value = {
     "effect-data": effectData,
     "enriched-text": enrichedText,
     "item-source": itemSource,
+    "named-label-actor": namedLabelActor,
+    "named-label-item": namedLabelItem,
     "number-value": numberValue,
     "roll-data": rollData,
     "success-value": successValue,

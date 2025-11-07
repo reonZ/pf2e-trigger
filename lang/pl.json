@@ -249,9 +249,11 @@
       "origin": "Oryginalny",
       "out": "Wyjście",
       "outcome": "Wynik",
+      "prefix": "Prefiks",
       "result": "Wynik",
       "separator": "Separator",
       "slug": "slug-elementu",
+      "suffix": "Sufiks",
       "targets": "Cele",
       "this": "Cel wyzwalacza",
       "title": "Tytuł",
@@ -440,11 +442,7 @@
           "label": "Odejmij liczby"
         },
         "surround-text": {
-          "label": "Tekst otaczający",
-          "entry": {
-            "prefix": "Prefiks",
-            "suffix": "Sufiks"
-          }
+          "label": "Tekst otaczający"
         },
         "use-macro": {
           "label": "Uruchom makro"
