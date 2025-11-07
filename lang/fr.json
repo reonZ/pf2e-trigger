@@ -37,6 +37,10 @@
         "close": "Fermer la fenêtre",
         "import": "Importer",
         "export": "Exporter",
+        "locked": {
+          "trigger": "Origine du module : {module}",
+          "variable": "Les déclencheurs du module sont verrouillés."
+        },
         "trigger": {
           "add": "Créer un déclencheur",
           "copied": "L'ID du déclencheur <strong>{id}</strong> a été copié dans le presse-papier.",
@@ -66,6 +70,9 @@
       },
       "collapsed": {
         "expand": "Développer la fenêtre des déclencheurs"
+      },
+      "title": {
+        "locked": "verrouillé"
       }
     },
     "import-export-menu": {
