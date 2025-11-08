@@ -95,7 +95,7 @@
                     justify-content: center;
                     gap: 0.6em;
 
-                    [data-action="lock-description"] {
+                    > a {
                         display: none;
                     }
                 }
@@ -103,7 +103,7 @@
                 &.show-description,
                 &.description-locked {
                     .controls {
-                        [data-action="lock-description"] {
+                        > a {
                             display: block;
                         }
                     }
@@ -121,6 +121,12 @@
 
                 &:hover {
                     background: #ffffff0d;
+
+                    .controls {
+                        a:not([data-action="lock-description"]) {
+                            display: block;
+                        }
+                    }
                 }
 
                 &.active {
