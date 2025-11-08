@@ -240,7 +240,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         try {
             const name = game.i18n.format("DOCUMENT.CopyOf", { name: trigger.name });
-            const source = trigger.clone({ "-=module": null, name }).toObject();
+            const source = trigger.clone({ "-=folder": null, "-=module": null, name }).toObject();
             const [clone] = await this.#worldContext.createEmbeddedDocuments("Trigger", [source]);
 
             this.setTrigger(clone);
@@ -249,15 +249,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         }
     }
 
-    async createTrigger({
-        description,
-        event,
-        name,
-    }: {
-        event: NodeEventKey;
-        name: string;
-        description: string;
-    }) {
+    async createTrigger({ description, event, folder, name }: CreateTriggerOptions) {
         try {
             const isSubtrigger = event === "subtrigger-input";
             const nodes: TriggerNodeDataSource[] = [
@@ -276,7 +268,7 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
             }
 
             const [trigger] = await this.#worldContext.createEmbeddedDocuments("Trigger", [
-                { description, name, nodes },
+                { description, folder, name, nodes },
             ]);
 
             this.setTrigger(trigger);
@@ -697,6 +689,10 @@ type BlueprintFilterData = {
     subtrigger?: {
         target: string;
     };
+};
+
+type CreateTriggerOptions = Pick<TriggerDataSource, "description" | "folder" | "name"> & {
+    event: NodeEventKey;
 };
 
 export { Blueprint };

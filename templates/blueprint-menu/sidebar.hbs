@@ -20,26 +20,29 @@
             </div>
         </div>
         <div class="scroll scroll-triggers">
+            {{#each triggers as |group|}}
+            {{#if group.folder}}
+            {{> 'header' folder=group.folder type='trigger'}}
+            {{/if}}
             <ul class="triggers">
-                {{#each triggers as |trigger|}}
+                {{#each group.entries as |trigger|}}
                 {{> 'trigger' type='trigger' trigger=trigger}}
                 {{/each}}
             </ul>
+            {{/each}}
         </div>
-        <div class="header">
-            <div class="title">{{@root.i18n 'subtrigger.title'}}</div>
-            <div class="controls right">
-                <a data-action="create-subtrigger" {{{@root.i18n.tooltip 'subtrigger.add' }}}>
-                    <i class="fa-solid fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{> 'header' title=(@root.i18n 'subtrigger.title') type='subtrigger'}}
         <div class="scroll scroll-subtriggers">
+            {{#each subtriggers as |group|}}
+            {{#if group.folder}}
+            {{> 'header' folder=group.folder type='subtrigger'}}
+            {{/if}}
             <ul class="triggers sub">
-                {{#each subtriggers as |trigger|}}
+                {{#each group.entries as |trigger|}}
                 {{> 'trigger' type='subtrigger' trigger=trigger}}
                 {{/each}}
             </ul>
+            {{/each}}
         </div>
         <div class="header">
             <div class="title">{{@root.i18n 'variable.title'}}</div>
@@ -96,6 +99,24 @@
         </i>
     </div>
 </div>
+
+
+{{#* inline 'header'}}
+<div class="header{{#if folder}} folder{{/if}}">
+    {{#if folder}}
+    <div class="controls left">
+        <i class="fa-solid fa-folder-open fa-fw"></i>
+    </div>
+    {{/if}}
+    <div class="title">{{ifThen folder folder title}}</div>
+    <div class="controls right">
+        <a data-action="create-{{type}}" {{#if folder}} data-folder="{{folder}}" {{/if}}
+            {{{@root.i18n.tooltip type 'add' }}}>
+            <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+</div>
+{{/inline}}
 
 
 {{#*inline "trigger"}}

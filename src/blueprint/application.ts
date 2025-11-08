@@ -1,5 +1,5 @@
 import { Blueprint, getConnectorColor, TriggersExportMenu, TriggersImportMenu } from "blueprint";
-import { NodeEntryId, TriggerData, TriggerDataVariable } from "data";
+import { NodeEntryId, TriggerData, TriggerDataSource, TriggerDataVariable } from "data";
 import {
     addListener,
     addListenerAll,
@@ -162,7 +162,25 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const [subtriggers, triggers] = R.pipe(
             [this.blueprint.triggers.contents, ...this.blueprint.modulesTriggers],
             R.flat(),
-            R.partition((trigger) => trigger.isSubtrigger)
+            R.partition((trigger) => trigger.isSubtrigger),
+            R.map((triggers): BlueprintMenuTriggersGroup[] => {
+                const groups = R.pipe(
+                    triggers,
+                    R.groupBy(R.prop("folder")),
+                    R.entries(),
+                    R.sortBy(([folder]) => folder),
+                    R.map(([folder, entries]): BlueprintMenuTriggersGroup => {
+                        return { folder, entries };
+                    })
+                );
+
+                // we move the folderless group at the end
+                if (groups.length > 1 && groups[0].folder === "") {
+                    groups.push(groups.shift()!);
+                }
+
+                return groups;
+            })
         );
 
         const moduleLocked = this.blueprint.isTriggerLocked
@@ -283,15 +301,19 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             }
         });
 
-        addListenerAll(html, ".header [data-action]", (el) => {
+        addListenerAll(html, ".header [data-action]", async (el) => {
             const action = el.dataset.action as HeaderAction;
 
             if (action === "close-window") {
                 this.#closeAndSave();
             } else if (action === "create-subtrigger") {
-                this.#createSubtrigger();
+                this.#createSubtrigger(el.dataset.folder);
             } else if (action === "create-trigger") {
-                this.#createTrigger();
+                const result = await this.#createCreateEditMenu({ folder: el.dataset.folder });
+
+                if (result) {
+                    this.blueprint.createTrigger(result);
+                }
             } else if (action === "create-variable") {
                 this.blueprint.createVariable();
             } else if (action === "export") {
@@ -373,10 +395,11 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     async #createCreateEditMenu({
+        folder,
         noEvents,
         trigger,
-    }: { noEvents?: boolean; trigger?: TriggerData } = {}): Promise<
-        { description: string; name: string; event: NodeEventKey } | false | null
+    }: { folder?: string; noEvents?: boolean; trigger?: TriggerData } = {}): Promise<
+        CreateEditMenuResult | false | null
     > {
         const localizationKey = `${trigger ? "edit" : "create"}-trigger`;
         const events = noEvents
@@ -386,12 +409,13 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                   I18n.from({ prefix: "node.event", suffix: "label" })
               );
 
-        return waitDialog<{ description: string; name: string; event: NodeEventKey }>({
+        return waitDialog<CreateEditMenuResult>({
             classes: ["pf2e-trigger-create-edit-menu"],
             content: await render("create-edit-menu", {
                 description: trigger?.description ?? "",
                 enrichedDescription: trigger ? await enrichHTML(trigger.description) : "",
                 events,
+                folder: trigger?.folder ?? folder ?? "",
                 name: trigger?.name ?? "",
                 placeholder: trigger?.label ?? "",
             }),
@@ -402,23 +426,16 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         });
     }
 
-    async #createSubtrigger() {
-        const result = await this.#createCreateEditMenu({ noEvents: true });
+    async #createSubtrigger(folder: string | undefined) {
+        const result = await this.#createCreateEditMenu({ folder, noEvents: true });
 
         if (result) {
             this.blueprint.createTrigger({
                 description: result.description,
-                name: result.name,
                 event: "subtrigger-input",
+                folder: result.folder,
+                name: result.name,
             });
-        }
-    }
-
-    async #createTrigger() {
-        const result = await this.#createCreateEditMenu();
-
-        if (result) {
-            this.blueprint.createTrigger(result);
         }
     }
 
@@ -429,16 +446,14 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const result = await this.#createCreateEditMenu({ noEvents: true, trigger });
         if (!result) return;
 
-        const { description, name } = result;
+        const { description, folder, name } = result;
 
-        if (description !== trigger.description || name !== trigger.name) {
-            trigger.update({ description, name });
+        trigger.update({ description, folder, name });
 
-            if (trigger.isSubtrigger) {
-                this.blueprint.refresh();
-            } else {
-                this.refresh();
-            }
+        if (trigger.isSubtrigger) {
+            this.blueprint.refresh();
+        } else {
+            this.refresh();
         }
     }
 
@@ -512,6 +527,15 @@ type BlueprintMenuRenderOptions = Omit<HandlebarsRenderOptions, "parts"> & {
     parts?: BlueprintMenuPart[];
 };
 
+type CreateEditMenuResult = Pick<TriggerDataSource, "description" | "folder" | "name"> & {
+    event: NodeEventKey;
+};
+
+type BlueprintMenuTriggersGroup = {
+    folder: string;
+    entries: TriggerData[];
+};
+
 type BlueprintMenuParts = {
     sidebar: {
         i18n: TemplateLocalize;
@@ -519,8 +543,8 @@ type BlueprintMenuParts = {
         moduleLocked: string | null;
         selected: Maybe<string>;
         showSidebar: boolean;
-        subtriggers: TriggerData[];
-        triggers: TriggerData[];
+        subtriggers: BlueprintMenuTriggersGroup[];
+        triggers: BlueprintMenuTriggersGroup[];
         variables: BlueprintVariable[];
     };
     title: {

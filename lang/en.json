@@ -150,6 +150,7 @@
         },
         "create-edit-menu": {
             "event": "Event Type",
+            "folder": "Folder",
             "name": "Trigger Name"
         },
         "create-trigger": {

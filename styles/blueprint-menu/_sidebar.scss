@@ -1,5 +1,6 @@
 .sidebar {
     --background-accent: #0000003b;
+    --background-alternate: #353535ab;
     --indicator-width: 18px;
     --active-color: #086c819c;
     --inner-width: calc(var(--trigger-sidebar-width) - var(--indicator-width));
@@ -30,7 +31,7 @@
             font-size: 1.2em;
             background: var(--background-accent);
             position: relative;
-            padding-block: 0.5em;
+            padding-block: 0.5rem;
 
             .title {
                 text-align: center;
@@ -59,6 +60,34 @@
                     color: var(--color-disabled);
                 }
             }
+
+            &.folder {
+                background: var(--background-alternate);
+                font-size: 1.1em;
+                padding-block: 0.4rem;
+
+                + ul {
+                    --spacer-width: 6px;
+
+                    margin-left: var(--spacer-width);
+
+                    li {
+                        position: relative;
+
+                        &::before {
+                            position: absolute;
+                            content: "";
+                            inset: 0 100% 0 auto;
+                            background: var(--background-alternate);
+                            width: var(--spacer-width);
+                        }
+
+                        &:last-child::before {
+                            border-bottom-right-radius: 50%;
+                        }
+                    }
+                }
+            }
         }
 
         .scroll {
@@ -85,7 +114,7 @@
                     flex: 1;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    padding-block: 0.6em;
+                    padding-block: 0.5rem;
                     padding-inline: 0.2em 1em;
                 }
 
@@ -120,7 +149,7 @@
                 }
 
                 &:hover {
-                    background: #ffffff0d;
+                    background: #5be5ed12;
 
                     .controls {
                         a:not([data-action="lock-description"]) {

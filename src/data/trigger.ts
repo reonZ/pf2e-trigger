@@ -33,6 +33,11 @@ const triggerDataSchema = (): TriggerDataSchema => ({
         nullable: false,
         initial: "",
     }),
+    folder: new fields.StringField({
+        required: false,
+        nullable: false,
+        initial: "",
+    }),
     name: new fields.StringField({
         required: false,
         nullable: false,
@@ -204,6 +209,7 @@ interface TriggerData {
 type TriggerDataSchema = {
     _id: IdField<true>;
     description: fields.StringField;
+    folder: fields.StringField;
     name: fields.StringField<string, string, false, false, true>;
     module: fields.StringField<string, string, false, false, false>;
     nodes: fields.EmbeddedCollectionField<TriggerNodeData>;
