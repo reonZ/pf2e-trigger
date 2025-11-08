@@ -485,6 +485,26 @@ const sendToChat = {
     ],
 } as const satisfies ActionRawSchema;
 
+const extractFormula = {
+    icon: "\uf661",
+    inputs: [
+        { key: "item", type: "item" },
+        {
+            key: "nb",
+            type: "number",
+            field: {
+                default: 1,
+                min: 1,
+            },
+        },
+    ],
+    outputs: [
+        { key: "formula", type: "text" },
+        { key: "options", type: "text" },
+        { key: "traits", type: "text" },
+    ],
+} as const satisfies ActionRawSchema;
+
 //
 
 function arithmeticAction(unicode: string, fontWeight: TextStyleFontWeight = "400") {
@@ -525,6 +545,7 @@ export const action = {
     "delete-item": deleteItem,
     "distance-between": distanceBetween,
     "effect-duration": effectDuration,
+    "extract-formula": extractFormula,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,
     "get-option-value-actor": getOptionValueActor,

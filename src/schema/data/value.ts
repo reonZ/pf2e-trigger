@@ -221,6 +221,8 @@ const namedLabelItem = {
     outputs: [{ key: "label", type: "text" }],
 } as const satisfies ValueRawSchema;
 
+//
+
 type ValueRawSchema = Pick<NodeRawSchema, "inputs" | "image" | "document"> & {
     outputs: [NodeSchemaOutput];
 };

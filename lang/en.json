@@ -355,6 +355,14 @@
                         "removed": "Removed"
                     }
                 },
+                "extract-formula": {
+                    "label": "Extract Formula From Item",
+                    "entry": {
+                        "nb": "@Damage #",
+                        "options": "options",
+                        "traits": "traits"
+                    }
+                },
                 "get-choiceset": {
                     "label": "Retrieve Item ChoiceSet",
                     "entry": {
@@ -654,7 +662,7 @@
                     }
                 },
                 "dc-item": {
-                    "label": "Difficulty Class (Item Description)",
+                    "label": "Difficulty Class (Item)",
                     "entry": {
                         "nb": "@Check #"
                     }
