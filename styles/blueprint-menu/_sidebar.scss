@@ -23,8 +23,8 @@
         flex: 1;
         padding-bottom: 0.5em;
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: auto 6fr auto 2fr auto 1fr;
 
         .header {
             font-size: 1.2em;
@@ -63,11 +63,6 @@
 
         .scroll {
             overflow: auto;
-            flex: 1;
-
-            &.scroll-triggers {
-                flex-basis: 30%;
-            }
         }
 
         ul {

@@ -172,6 +172,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const variables = R.pipe(
             trigger?.variables ?? {},
             R.entries(),
+            R.filter(([_, variable]) => !variable.locked),
             R.map(([id, variable]): BlueprintVariable => {
                 return {
                     ...variable,

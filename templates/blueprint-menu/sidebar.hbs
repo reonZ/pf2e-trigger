@@ -27,6 +27,21 @@
             </ul>
         </div>
         <div class="header">
+            <div class="title">{{@root.i18n 'subtrigger.title'}}</div>
+            <div class="controls right">
+                <a data-action="create-subtrigger" {{{@root.i18n.tooltip 'subtrigger.add' }}}>
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+            </div>
+        </div>
+        <div class="scroll scroll-subtriggers">
+            <ul class="triggers sub">
+                {{#each subtriggers as |trigger|}}
+                {{> 'trigger' type='subtrigger' trigger=trigger}}
+                {{/each}}
+            </ul>
+        </div>
+        <div class="header">
             <div class="title">{{@root.i18n 'variable.title'}}</div>
             <div class="controls right">
                 {{#unless @root.moduleLocked}}
@@ -71,21 +86,6 @@
                         {{/if}}
                     </div>
                 </li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class="header">
-            <div class="title">{{@root.i18n 'subtrigger.title'}}</div>
-            <div class="controls right">
-                <a data-action="create-subtrigger" {{{@root.i18n.tooltip 'subtrigger.add' }}}>
-                    <i class="fa-solid fa-plus"></i>
-                </a>
-            </div>
-        </div>
-        <div class="scroll scroll-subtriggers">
-            <ul class="triggers sub">
-                {{#each subtriggers as |trigger|}}
-                {{> 'trigger' type='subtrigger' trigger=trigger}}
                 {{/each}}
             </ul>
         </div>
