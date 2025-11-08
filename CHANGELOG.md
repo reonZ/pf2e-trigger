@@ -1,3 +1,37 @@
+# 2.14.0
+
+-   rearrange the blueprint menu sidebar:
+    -   no longer display locked variables in `Variables` section
+    -   give more space for the `Triggers` section
+    -   now only display controls when hovering over the trigger row
+-   add `Description` property to triggers:
+    -   the description field can be found in the popup window when creating/editing a trigger
+    -   trigger description is shown when hovering over a trigger row in the left sidebar
+    -   you can lock the trigger description panel to be able to interact with it if needed (i.e. click on links)
+-   add `Folder` property to triggers:
+    -   folders do not physically exist, all triggers with the exact folder match will simply be grouped together
+    -   the folder field can be found in the popup window when creating/editing a trigger
+-   add `Duplicate Trigger` functionality:
+    -   it will duplicate the trigger completely, pointing to the same sub-triggers
+    -   it will change its `id` as well as strip its module and folder association
+-   add `Extract Formula From Item` action node:
+    -   it looks through the item's description and retrieve the `#`nth instance of `@Damage` found
+    -   it splits the found instance of `@Damage` in three outputs: `formula`, `options` and `traits`
+-   add a `Keep IDs` flag when importing trigger
+    -   this is primarily for module triggers devs as they want to keep the trigger ids the same when importing from their own export file, otherwise, the next export will have all triggers disabled for the module users
+-   add new `Named Label (Actor)` value node:
+-   add new `Named Label (Item)` value node:
+    -   it will extract the name of the provided actor/item and add it after the prefix between parenthesis:
+        -   label: `Prefix (ActorOrItemName)`
+-   add new `Send Item To Chat` action node:
+    -   the `With Target?` input will add the target to the message for `PF2e Toolbelt` shenanigans
+    -   only embedded items can be sent to chat, world/compendium items cannot
+-   add new `Trigger Effect Identifier` value node:
+    -   it helps you generate an unique trigger effect identifier based on an actor
+    -   this prevents the need to use a series of `Extract Data (Actor)` + `Concatenate Texts` as it directly uses the actor's uuid for you
+-   `Console Log`:
+    -   fix node logging inputs key instead of their label
+
 # 2.13.0
 
 -   added support for module triggers registration:
