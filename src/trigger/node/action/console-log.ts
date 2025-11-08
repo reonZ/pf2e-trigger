@@ -10,7 +10,7 @@ class ConsoleLogTriggerNode extends TriggerNode<NodeSchemaOf<"action", "console-
         MODULE.group(this.trigger.label);
         MODULE.log(`${localize("entry.this")}:`, target);
 
-        for (const [label, value] of entries) {
+        for (const [_, value, label] of entries) {
             MODULE.log(`${label}:`, value);
         }
 
