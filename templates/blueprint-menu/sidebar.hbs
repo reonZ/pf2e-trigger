@@ -111,6 +111,9 @@
         <a data-action="lock-description" {{{@root.i18n.tooltip 'description' }}}>
             <i class="fa-solid fa-signature-lock"></i>
         </a>
+        <a data-action="clone-trigger" {{{@root.i18n.tooltip type 'clone' }}}>
+            <i class="fa-solid fa-copy"></i>
+        </a>
         {{#if trigger.module}}
         <span {{{@root.i18n.tooltip 'locked.trigger' module=trigger.moduleTitle}}}>
             <i class="fa-solid fa-plug-circle-xmark"></i>

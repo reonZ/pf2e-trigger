@@ -234,6 +234,21 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         this.parent?.refresh();
     }
 
+    async cloneTrigger(entry: { id: string; module?: string }) {
+        const trigger = this.getTrigger(entry);
+        if (!trigger) return;
+
+        try {
+            const name = game.i18n.format("DOCUMENT.CopyOf", { name: trigger.name });
+            const source = trigger.clone({ "-=module": null, name }).toObject();
+            const [clone] = await this.#worldContext.createEmbeddedDocuments("Trigger", [source]);
+
+            this.setTrigger(clone);
+        } catch (error) {
+            MODULE.error(`An error occured while duplicating the trigger: ${trigger.id}`, error);
+        }
+    }
+
     async createTrigger({
         description,
         event,

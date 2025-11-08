@@ -44,7 +44,7 @@
                 },
                 "trigger": {
                     "add": "Create Trigger",
-                    "clone": "Clone Trigger",
+                    "clone": "Duplicate Trigger",
                     "copied": "The Trigger ID <strong>{id}</strong> has been copied to the clipboard.",
                     "copy": "Copy Trigger ID",
                     "delete": "Delete Trigger",

@@ -199,19 +199,13 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     #attachSidebarListeners(html: HTMLElement) {
-        type TriggerHeaderAction = "close-window" | "create-trigger" | "export" | "import";
-        type TriggerAction = "select-trigger" | "delete-trigger" | "copy-id" | "lock-description";
-        type SubtriggerHeaderAction = "create-subtrigger";
-        type VariableHeaderAction = "create-variable";
-        type VariableAction = "remove-variable";
-        type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeaderAction;
-
         const getEntryId = (el: HTMLElement): string => {
             return htmlClosest(el, "[data-id]")?.dataset.id ?? "";
         };
 
-        const getEntryDataset = (el: HTMLElement): { id?: string; module?: string } => {
-            return htmlClosest(el, "[data-id]")?.dataset as { id?: string; module?: string };
+        const getEntryDataset = (el: HTMLElement): { id: string; module?: string } | null => {
+            const { id, module } = htmlClosest(el, "[data-id]")?.dataset ?? {};
+            return id ? { id, module } : null;
         };
 
         const getTriggerDescriptionPanel = (): HTMLElement | null => {
@@ -311,16 +305,29 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
             const triggerId = getEntryId(el);
             const action = el.dataset.action as TriggerAction;
 
-            if (action === "copy-id") {
-                game.clipboard.copyPlainText(triggerId);
-                info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
-            } else if (action === "delete-trigger") {
-                this.#deleteTrigger(triggerId);
-            } else if (action === "lock-description") {
-                htmlClosest(el, "[data-id]")?.classList.toggle("description-locked");
-            } else if (action === "select-trigger") {
-                const entry = getEntryDataset(el);
-                this.blueprint.setTrigger(entry);
+            switch (action) {
+                case "clone-trigger": {
+                    const entry = getEntryDataset(el);
+                    return entry && this.blueprint.cloneTrigger(entry);
+                }
+
+                case "copy-id": {
+                    game.clipboard.copyPlainText(triggerId);
+                    return info("blueprint-menu.sidebar.trigger.copied", { id: triggerId });
+                }
+
+                case "delete-trigger": {
+                    return this.#deleteTrigger(triggerId);
+                }
+
+                case "lock-description": {
+                    return htmlClosest(el, "[data-id]")?.classList.toggle("description-locked");
+                }
+
+                case "select-trigger": {
+                    const entry = getEntryDataset(el);
+                    return entry && this.blueprint.setTrigger(entry);
+                }
             }
         });
 
@@ -483,6 +490,23 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         }
     }
 }
+
+type TriggerHeaderAction = "close-window" | "create-trigger" | "export" | "import";
+
+type TriggerAction =
+    | "clone-trigger"
+    | "copy-id"
+    | "delete-trigger"
+    | "lock-description"
+    | "select-trigger";
+
+type SubtriggerHeaderAction = "create-subtrigger";
+
+type VariableHeaderAction = "create-variable";
+
+type VariableAction = "remove-variable";
+
+type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeaderAction;
 
 type BlueprintMenuRenderOptions = Omit<HandlebarsRenderOptions, "parts"> & {
     parts?: BlueprintMenuPart[];
