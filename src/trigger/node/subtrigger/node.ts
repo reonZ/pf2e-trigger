@@ -2,6 +2,7 @@ import { createEntryId, TriggerData } from "data";
 import { R } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { Trigger, TriggerNode, TriggerPreOptions } from "trigger";
+import { SubtriggerOutputOptions } from "./output";
 
 class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "subtrigger-node">> {
     get subtrigger(): TriggerData | undefined {
@@ -32,6 +33,10 @@ class SubtriggerNodeTriggerNode extends TriggerNode<NodeSchemaOf<"subtrigger", "
         const trigger = new Trigger(subtrigger, options);
         await trigger.execute();
 
+        if (!options.proceed) {
+            return true;
+        }
+
         if (options.outputs) {
             for (const [key, value] of options.outputs) {
                 this.setVariable(key, value);
@@ -46,8 +51,6 @@ interface SubtriggerNodeTriggerNode {
     get nodeTarget(): string;
 }
 
-type SubtriggerOptions = TriggerPreOptions & {
-    outputs?: [string, never][];
-};
+type SubtriggerOptions = TriggerPreOptions & Partial<SubtriggerOutputOptions>;
 
 export { SubtriggerNodeTriggerNode };

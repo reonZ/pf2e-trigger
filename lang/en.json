@@ -649,6 +649,11 @@
                 "subtrigger-input": {
                     "label": "Input"
                 },
+                "subtrigger-node": {
+                    "entry": {
+                        "out": "Proceed"
+                    }
+                },
                 "subtrigger-output": {
                     "label": "Output"
                 }
