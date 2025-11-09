@@ -37,8 +37,14 @@
         "close": "Zamknij okno",
         "import": "Importuj",
         "export": "Eksportuj",
+        "description": "Opis przełącznika blokady",
+        "locked": {
+          "trigger": "Pochodzi z modułu: {module}",
+          "variable": "Wyzwalacze modułów są zablokowane"
+        },
         "trigger": {
           "add": "Utwórz wyzwalacz",
+          "clone": "Duplikuj wyzwalacz",
           "copied": "ID wyzwalacza <strong>{id}</strong> zostało skopiowane do schowka.",
           "copy": "Skopiuj ID wyzwalacza",
           "delete": "Usuń wyzwalacz",
@@ -46,6 +52,7 @@
         },
         "subtrigger": {
           "add": "Utwórz podwyzwalacz",
+          "clone": "Klonowanie podwyzwalacza",
           "copy": "Skopiuj ID podwyzwalacza",
           "delete": "Usuń podwyzwalacz",
           "title": "Podwyzwalacze"
@@ -66,9 +73,16 @@
       },
       "collapsed": {
         "expand": "Rozwiń okno wyzwalaczy"
+      },
+      "title": {
+        "locked": "zablokowany"
       }
     },
     "import-export-menu": {
+      "keep": {
+        "label": "Zachowaj ID",
+        "hint": "Należy to sprawdzić przed kliknięciem przycisków <strong>{code}</strong> lub <strong>{file}</strong>."
+      },
       "toggle": "Przełącz wszystkie",
       "trigger": {
         "title": "Wyzwalacze"
@@ -136,6 +150,7 @@
     },
     "create-edit-menu": {
       "event": "Typ zdarzenia",
+      "folder": "Folder",
       "name": "Nazwa wyzwalacza"
     },
     "create-trigger": {
@@ -340,6 +355,14 @@
             "removed": "Usunięto"
           }
         },
+        "extract-formula": {
+          "label": "Wyodrębnij formułę z elementu",
+          "entry": {
+            "nb": "@Obrażenia #",
+            "options": "opcje",
+            "traits": "cechy"
+          }
+        },
         "get-choiceset": {
           "label": "Pobierz zestaw opcji wyboru elementu",
           "entry": {
@@ -434,6 +457,12 @@
           "label": "Tokeny sceny",
           "entry": {
             "other": "Cel sceny"
+          }
+        },
+        "send-to-chat": {
+          "label": "Wyślij przedmiot na czat",
+          "entry": {
+            "targeting": "Z celem?"
           }
         },
         "subtract-number": {
@@ -663,6 +692,12 @@
         "item-source": {
           "label": "Źródło pozycji"
         },
+        "named-label-actor": {
+          "label": "Nazwa etykiety (aktor)"
+        },
+        "named-label-item": {
+          "label": "Nazwa etykiety (przedmiot)\n"
+        },
         "number-value": {
           "label": "Liczba wpisów"
         },
@@ -679,6 +714,13 @@
         },
         "text-value": {
           "label": "Wprowadzanie tekstu"
+        },
+        "trigger-identifier": {
+          "label": "Identyfikator efektu wyzwalającego",
+          "entry": {
+            "key": "Unikalny klucz",
+            "target": "Aktor"
+          }
         }
       },
       "variable": {
