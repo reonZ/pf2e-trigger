@@ -132,6 +132,7 @@ type NodeRawSchema = {
     await?: boolean;
     custom?: ReadonlyArray<NodeSchemaCustom>;
     document?: string;
+    halt?: boolean;
     icon?: string | IconObject;
     image?: string;
     inputs?: ReadonlyArray<NodeSchemaInput>;

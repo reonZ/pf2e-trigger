@@ -109,6 +109,11 @@ class NodeSchemaModel extends foundry.abstract.DataModel<null, NodeSchemaModelSc
                 nullable: false,
                 initial: false,
             }),
+            halt: new fields.BooleanField({
+                required: false,
+                nullable: false,
+                initial: false,
+            }),
             loop: new fields.BooleanField({
                 required: false,
                 nullable: false,
@@ -207,6 +212,7 @@ type NodeSchemaModelSchema = NodeSchemaEntriesSchema & {
     await: fields.BooleanField<boolean, boolean, false>;
     custom: ArrayField<SchemaField<NodeSchemaCustomSchema>>;
     document: fields.StringField<string, string, false, false, false>;
+    halt: fields.BooleanField<boolean, boolean, false>;
     icon: NodeSchemaIconField;
     image: fields.StringField<string, string, false, false, false>;
     loop: fields.BooleanField<boolean, boolean, false>;

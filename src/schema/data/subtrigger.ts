@@ -13,6 +13,7 @@ const output = {
 
 const node = {
     icon: "\uf1e6",
+    halt: true,
 } as const satisfies NodeRawSchema;
 
 export const subtrigger = {
