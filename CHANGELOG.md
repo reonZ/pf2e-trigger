@@ -1,3 +1,11 @@
+# 2.15.0
+
+-   this is a system `7.7.0` release
+-   some internal changes to match the latest system update
+-   `Sub-Trigger (Node)`:
+    -   no longer chain to the next node if the `Sub-Trigger (Output)` is not reached inside a sub-trigger
+    -   renamed the `Out` bridge into `Proceed` to make it distinct from regular nodes which always chain out
+
 # 2.14.0
 
 -   rearrange the blueprint menu sidebar:
