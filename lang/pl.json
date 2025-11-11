@@ -648,6 +648,11 @@
         "subtrigger-input": {
           "label": "Wejście"
         },
+        "subtrigger-node": {
+          "entry": {
+            "out": "Kontynuuj"
+          }
+        },
         "subtrigger-output": {
           "label": "Wyjście"
         }
