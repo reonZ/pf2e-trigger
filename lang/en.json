@@ -549,6 +549,9 @@
                 "aura-leave": {
                     "label": "Aura Left"
                 },
+                "combatant-create": {
+                    "label": "Combatant Joined"
+                },
                 "damage-taken": {
                     "label": "Damage Taken",
                     "entry": {

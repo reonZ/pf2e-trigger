@@ -15,6 +15,7 @@ import { CombatantHook } from ".";
 
 const HOOKS: TriggerHook[] = [
     new AuraHook(),
+    new CombatantHook("createCombatant", "combatant-create", "CombatantCreate"),
     new ExecuteHook(),
     new MessageHook(),
     REGION_HOOK,

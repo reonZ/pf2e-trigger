@@ -46,6 +46,8 @@ const tokenMoved = {
     ],
 } as const satisfies EventNodeSchema;
 
+//
+
 function createAuraSchema(unicode: string, fontWeight: TextStyleFontWeight = "400") {
     return {
         icon: { unicode, fontWeight },
@@ -90,6 +92,8 @@ function createEventSchema(unicode: string, fontWeight: TextStyleFontWeight = "4
     } as const satisfies EventNodeSchema;
 }
 
+//
+
 type EventNodeSchema = Omit<WithRequired<NodeRawSchema, "icon">, "outputs"> & {
     outputs: ReadonlyArray<{ key: "this"; type: "target" } | NodeSchemaOutput>;
 };
@@ -98,6 +102,7 @@ export const event = {
     "attack-roll": attackRoll,
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
+    "combatant-create": createEventSchema("\uf71d"),
     "damage-taken": damageTaken,
     "execute-event": executeEvent,
     "region-event": regionEvent,
