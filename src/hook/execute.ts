@@ -22,7 +22,7 @@ class ExecuteHook extends TriggerHook {
                 ? actorOrTarget
                 : undefined;
 
-        if (!this.isValidEvent(target?.actor)) return;
+        if (!this.isValidEventActor(target?.actor)) return;
 
         this.executeTriggers({ this: target, values });
     }

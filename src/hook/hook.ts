@@ -59,13 +59,13 @@ abstract class TriggerHook {
         }
 
         if (active) {
-            MODULE.debug(this.constructor.name, "active");
+            MODULE.debug(this.constructor.name, "-> ENABLED\n", this);
             if (isGM) {
                 this.activate();
             }
             this.activateAll();
         } else {
-            MODULE.debug(this.constructor.name, "disabled");
+            MODULE.debug(this.constructor.name, "-> DISABLED\n", this);
             if (isGM) {
                 this.disable();
             }
@@ -93,7 +93,7 @@ abstract class TriggerHook {
         return !!actor && !actor.pack;
     }
 
-    isValidEvent(actor: Maybe<ActorPF2e>): actor is ActorPF2e {
+    isValidEventActor(actor: Maybe<ActorPF2e>): actor is ActorPF2e {
         return this.isValidActor(actor) && game.user.isActiveGM;
     }
 

@@ -5,9 +5,12 @@ import {
     MessageHook,
     REGION_HOOK,
     TestHook,
-    TokenHook,
+    TokenCreateHook,
+    TokenDeleteHook,
+    TokenMoveHook,
     TriggerHook,
-    TurnHook,
+    TurnEndHook,
+    TurnStartHook,
 } from "hook";
 import { MODULE } from "module-helpers";
 
@@ -17,8 +20,11 @@ const HOOKS: TriggerHook[] = [
     new MessageHook(),
     REGION_HOOK,
     new TestHook(),
-    new TokenHook(),
-    new TurnHook(),
+    new TokenCreateHook(),
+    new TokenDeleteHook(),
+    new TokenMoveHook(),
+    new TurnEndHook(),
+    new TurnStartHook(),
 ];
 
 function prepareHooks(triggers: TriggerData[]) {
@@ -27,7 +33,6 @@ function prepareHooks(triggers: TriggerData[]) {
         hook.initialize(triggers);
     }
     MODULE.groupEnd();
-    MODULE.debug(HOOKS);
 }
 
 export { prepareHooks };
