@@ -652,7 +652,7 @@ class BlueprintNode extends PIXI.Container {
             [
                 [this.isAwait, "\uf1eb", 0.74],
                 [this.isCustom, "\uf013", 0.86],
-                [this.isHalt, "\uf127", 0.74],
+                [this.isHalt, "\uf636", 0.76],
                 [this.isLoop, "\uf363", 0.86],
             ] as const,
             R.filter(([condition]) => condition),
@@ -662,11 +662,17 @@ class BlueprintNode extends PIXI.Container {
                     this.fontSize * fontSize
                 );
 
+                const width = 13;
+                const height = 14;
+
+                icon.x = (width - icon.width) / 2;
+                icon.y = (height - icon.height) / 2;
+
                 const helper = new PIXI.Graphics();
                 const color = this.headerColor;
-                const x = 13 / 2;
-                const y = 14 / 2;
-                const radius = 13 * 0.8;
+                const x = width / 2;
+                const y = height / 2;
+                const radius = width * 0.8;
 
                 helper.beginFill(color, this.opacity);
                 helper.lineStyle({ color: 0x0, width: 2, alpha: 0.8 });
