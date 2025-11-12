@@ -548,6 +548,12 @@
         "aura-leave": {
           "label": "Wyjście z aury"
         },
+        "combatant-create": {
+          "label": "Dołączył uczestnik walki"
+        },
+        "combatant-delete": {
+          "label": "Uczestnik walki wyszedł"
+        },
         "damage-taken": {
           "label": "Otrzymano obrażenia",
           "entry": {
