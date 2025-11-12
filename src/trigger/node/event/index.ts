@@ -13,6 +13,7 @@ export const event = {
     "aura-enter": AuraTriggerNode,
     "aura-leave": AuraTriggerNode,
     "combatant-create": EventTriggerNode,
+    "combatant-delete": EventTriggerNode,
     "damage-taken": DamageTriggerNode,
     "execute-event": ExecuteTriggerNode,
     "region-event": RegionTriggerNode,

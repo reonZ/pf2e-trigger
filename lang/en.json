@@ -552,6 +552,9 @@
                 "combatant-create": {
                     "label": "Combatant Joined"
                 },
+                "combatant-delete": {
+                    "label": "Combatant Left"
+                },
                 "damage-taken": {
                     "label": "Damage Taken",
                     "entry": {

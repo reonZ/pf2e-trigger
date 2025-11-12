@@ -103,6 +103,7 @@ export const event = {
     "aura-enter": createAuraSchema("\uf192", "900"),
     "aura-leave": createAuraSchema("\uf192"),
     "combatant-create": createEventSchema("\uf71d"),
+    "combatant-delete": createEventSchema("\ue433"),
     "damage-taken": damageTaken,
     "execute-event": executeEvent,
     "region-event": regionEvent,
