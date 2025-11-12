@@ -2,7 +2,7 @@ import { TriggerHook } from "hook";
 import { R, warning } from "module-helpers";
 
 class TestHook extends TriggerHook {
-    get events(): ["test-event"] {
+    get eventKeys(): ["test-event"] {
         return ["test-event"];
     }
 

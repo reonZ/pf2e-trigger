@@ -22,7 +22,7 @@ class MessageHook extends TriggerHook {
         this.#onCreateMessage.bind(this)
     );
 
-    get events(): ["attack-roll", "damage-taken"] {
+    get eventKeys(): ["attack-roll", "damage-taken"] {
         return ["attack-roll", "damage-taken"];
     }
 
@@ -38,7 +38,7 @@ class MessageHook extends TriggerHook {
         if (!game.user.isActiveGM) return;
 
         const { appliedDamage, origin, context } = message.flags.pf2e;
-        if (!context || !tupleHasValue(this.events, context.type)) return;
+        if (!context || !tupleHasValue(this.eventKeys, context.type)) return;
 
         const originActor = await getOriginActor(origin, context);
         if (!originActor) return;

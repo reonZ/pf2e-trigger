@@ -45,7 +45,7 @@ class AuraHook extends TriggerHook {
         ),
     ];
 
-    get events(): ["aura-enter", "aura-leave"] {
+    get eventKeys(): ["aura-enter", "aura-leave"] {
         return ["aura-enter", "aura-leave"];
     }
 

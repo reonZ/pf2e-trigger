@@ -4,7 +4,7 @@ import { TokenDocumentPF2e } from "module-helpers";
 class TokenCreateHook extends TriggerHook {
     #createTokenHook = this.createEventHook("createToken", this.#onCreateToken.bind(this));
 
-    get events(): ["token-create"] {
+    get eventKeys(): ["token-create"] {
         return ["token-create"];
     }
 

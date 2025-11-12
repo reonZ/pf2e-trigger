@@ -9,10 +9,9 @@ import {
     TokenDeleteHook,
     TokenMoveHook,
     TriggerHook,
-    TurnEndHook,
-    TurnStartHook,
 } from "hook";
 import { MODULE } from "module-helpers";
+import { CombatantHook } from ".";
 
 const HOOKS: TriggerHook[] = [
     new AuraHook(),
@@ -23,8 +22,8 @@ const HOOKS: TriggerHook[] = [
     new TokenCreateHook(),
     new TokenDeleteHook(),
     new TokenMoveHook(),
-    new TurnEndHook(),
-    new TurnStartHook(),
+    new CombatantHook("pf2e.endTurn", "turn-end", "TurnEnd"),
+    new CombatantHook("pf2e.startTurn", "turn-start", "TurnStart"),
 ];
 
 function prepareHooks(triggers: TriggerData[]) {

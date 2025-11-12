@@ -1,7 +1,7 @@
 import { TriggerHook } from "hook";
 
 class RegionHook extends TriggerHook {
-    get events(): ["region-event"] {
+    get eventKeys(): ["region-event"] {
         return ["region-event"];
     }
 

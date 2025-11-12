@@ -2,7 +2,7 @@ import { TriggerHook } from "hook";
 import { ActorPF2e, isValidTargetDocuments } from "module-helpers";
 
 class ExecuteHook extends TriggerHook {
-    get events(): ["execute-event"] {
+    get eventKeys(): ["execute-event"] {
         return ["execute-event"];
     }
 

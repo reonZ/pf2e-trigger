@@ -16,12 +16,16 @@ abstract class TriggerHook {
     #triggers = new Map<string, TriggerData>();
     #events = new MapOfArrays<TriggerData>();
 
-    abstract get events(): NodeEventKey[];
+    abstract get eventKeys(): NodeEventKey[];
     abstract activate(): void;
     abstract disable(): void;
 
     get nodes(): NonEventKey[] {
         return [];
+    }
+
+    get constructorName(): string {
+        return this.constructor.name;
     }
 
     activateAll() {}
@@ -33,7 +37,7 @@ abstract class TriggerHook {
 
         const isGM = userIsGM();
         const nodeKeys: NodeKey[] = this.nodes;
-        const eventKeys = this.events;
+        const eventKeys = this.eventKeys;
 
         let active = false;
 
@@ -59,13 +63,13 @@ abstract class TriggerHook {
         }
 
         if (active) {
-            MODULE.debug(this.constructor.name, "-> ENABLED\n", this);
+            MODULE.debug(this.constructorName, "-> ENABLED", this);
             if (isGM) {
                 this.activate();
             }
             this.activateAll();
         } else {
-            MODULE.debug(this.constructor.name, "-> DISABLED\n", this);
+            MODULE.debug(this.constructorName, "-> DISABLED", this);
             if (isGM) {
                 this.disable();
             }
@@ -79,7 +83,7 @@ abstract class TriggerHook {
 
     async executeTriggers<TOptions extends Record<string, any> | never = never>(
         options: TriggerPreOptions<TOptions>,
-        event?: this["events"][number]
+        event?: this["eventKeys"][number]
     ) {
         const triggers = event ? this.#events.get(event) : this.#triggers.values();
 
@@ -101,11 +105,11 @@ abstract class TriggerHook {
         event: string,
         listener: (...args: any[]) => any,
         options: HookOptions = {}
-    ): PersistentEventHook<this["events"][number]> {
+    ): PersistentEventHook<this["eventKeys"][number]> {
         const hook = createToggleableHook(event, listener, options);
         const self = this;
 
-        type TriggerHookEvent = this["events"][number];
+        type TriggerHookEvent = this["eventKeys"][number];
 
         return {
             get enabled(): boolean {
@@ -137,3 +141,4 @@ type PersistentEventHook<TEvents extends NodeEventKey> = Omit<PersistentHook, "t
 };
 
 export { TriggerHook };
+export type { PersistentEventHook };

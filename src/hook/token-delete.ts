@@ -4,7 +4,7 @@ import { TokenDocumentPF2e } from "module-helpers";
 class TokenDeleteHook extends TriggerHook {
     #deleteTokenHook = this.createEventHook("deleteToken", this.#onDeleteToken.bind(this));
 
-    get events(): ["token-delete"] {
+    get eventKeys(): ["token-delete"] {
         return ["token-delete"];
     }
 

@@ -4,7 +4,7 @@ import { TokenDocumentPF2e } from "module-helpers";
 class TokenMoveHook extends TriggerHook {
     #moveTokenHook = this.createEventHook("moveToken", this.#onMoveToken.bind(this));
 
-    get events(): ["token-moved"] {
+    get eventKeys(): ["token-moved"] {
         return ["token-moved"];
     }
 
