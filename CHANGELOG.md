@@ -1,3 +1,10 @@
+# 2.16.0
+
+-   add new `Combatant Joined` event node:
+-   add new `Combatant Left` event node:
+    -   they trigger whenever a combatant joins or leaves an encounter
+-   change the icon for `halt` nodes (those that can have their process halted)
+
 # 2.15.0
 
 -   this is a system `7.7.0` release
