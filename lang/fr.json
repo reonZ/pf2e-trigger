@@ -43,6 +43,7 @@
         },
         "trigger": {
           "add": "Créer un déclencheur",
+          "clone": "Dupliquer le déclencheur",
           "copied": "L'ID du déclencheur <strong>{id}</strong> a été copié dans le presse-papier.",
           "copy": "Copier l'ID du déclencheur",
           "delete": "Effacer le déclencheur",
@@ -50,6 +51,7 @@
         },
         "subtrigger": {
           "add": "Créer un sous déclencheur",
+          "clone": "Cloner le sous-déclencheur",
           "copy": "Copier l'ID du sous déclencheur",
           "delete": "Effacer le sous déclencheur",
           "title": "Sous déclencheurs"
@@ -76,6 +78,10 @@
       }
     },
     "import-export-menu": {
+      "keep": {
+        "label": "Conserver les ID",
+        "hint": "Il faut le vérifier avant de cliquer sur les boutons <strong>{code}</strong> ou <strong>{file}</strong>."
+      },
       "toggle": "Activer/Désactiver tout",
       "trigger": {
         "title": "Déclencheurs"
@@ -143,6 +149,7 @@
     },
     "create-edit-menu": {
       "event": "Type d'événement",
+      "folder": "Dossier",
       "name": "Nom du déclencheur"
     },
     "create-trigger": {
@@ -254,7 +261,7 @@
       "origin": "Origine",
       "out": "Sortie",
       "outcome": "Résultat",
-      "prefix": "Préfixe",          
+      "prefix": "Préfixe",
       "result": "Résultat",
       "separator": "Séparateur",
       "slug": "item-slug",
@@ -345,6 +352,14 @@
           "entry": {
             "effect": "Effet",
             "removed": "Supprimé"
+          }
+        },
+        "extract-formula": {
+          "label": "Extraire la formule de l'objet",
+          "entry": {
+            "nb": "@Damage #",
+            "options": "options",
+            "traits": "traits"
           }
         },
         "get-choiceset": {
@@ -443,6 +458,12 @@
             "other": "Cible de la scène"
           }
         },
+        "send-to-chat": {
+          "label": "Envoyer l'objet dans la conversation",
+          "entry": {
+            "targeting": "Avec la cible ?"
+          }
+        },
         "subtract-number": {
           "label": "Soustraire des nombres"
         },
@@ -525,6 +546,12 @@
         },
         "aura-leave": {
           "label": "Quitte l'aura"
+        },
+        "combatant-create": {
+          "label": "Combattant a rejoint"
+        },
+        "combatant-delete": {
+          "label": "Combattant a quitté"
         },
         "damage-taken": {
           "label": "Dégâts subis",
@@ -626,6 +653,11 @@
         "subtrigger-input": {
           "label": "Entrée"
         },
+        "subtrigger-node": {
+          "entry": {
+            "out": "Procéder"
+          }
+        },
         "subtrigger-output": {
           "label": "Sortie"
         }
@@ -670,6 +702,12 @@
         "item-source": {
           "label": "Source de l'objet"
         },
+        "named-label-actor": {
+          "label": "Étiquette nommée (acteur)"
+        },
+        "named-label-item": {
+          "label": "Étiquette nommée (objet)"
+        },
         "number-value": {
           "label": "Saisir le nombre"
         },
@@ -686,6 +724,13 @@
         },
         "text-value": {
           "label": "Entrée de texte"
+        },
+        "trigger-identifier": {
+          "label": "Identificateur de l'effet déclencheur",
+          "entry": {
+            "key": "Clé unique",
+            "target": "Acteur"
+          }
         }
       },
       "variable": {
