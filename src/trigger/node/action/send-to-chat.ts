@@ -1,4 +1,4 @@
-import { ChatMessagePF2e, getFirstActiveToken } from "module-helpers";
+import { getFirstActiveToken } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
@@ -12,14 +12,17 @@ class SendToChatTriggerNode extends TriggerNode<NodeSchemaOf<"action", "send-to-
 
         const targeting = await this.get("targeting");
         const target = targeting ? targeting.token ?? getFirstActiveToken(targeting.actor) : null;
+        const message = await item.toMessage(null, { create: !target });
 
-        if (target) {
-            Hooks.once("preCreateChatMessage", (message: ChatMessagePF2e) => {
-                message.updateSource({ "flags.pf2e-toolbelt.targetHelper.targets": [target.uuid] });
-            });
+        if (target && message) {
+            const source = message?.toObject() as ChatMessageCreateData<ChatMessage>;
+
+            foundry.utils.setProperty(source, "flags.pf2e-toolbelt.targetHelper.targets", [
+                target.uuid,
+            ]);
+
+            await getDocumentClass("ChatMessage").create(source);
         }
-
-        await item.toMessage();
 
         return this.send("out");
     }
