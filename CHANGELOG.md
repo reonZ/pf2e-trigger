@@ -1,3 +1,9 @@
+# 2.16.1
+
+-   `Send To Chat`:
+    -   fix target setting issue when the node is executed multiple times in succession
+-   fix issue with variables containing special characters in their label breaking html when creating a new getter/setter
+
 # 2.16.0
 
 -   add new `Combatant Joined` event node:
