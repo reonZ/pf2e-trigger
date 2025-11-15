@@ -1,3 +1,9 @@
+# 2.16.2
+
+-   `Triggers Menu`:
+    -   now remove description lock whenever the menu is refreshed (i.e. selecting/creating a trigger)
+    -   fix scrollable sections not retaining their scroll state on render
+
 # 2.16.1
 
 -   `Send To Chat`:
