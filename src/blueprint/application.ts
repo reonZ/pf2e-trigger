@@ -81,6 +81,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
     }
 
     refresh() {
+        htmlQuery(this.element, ":scope > [data-trigger-description]")?.remove();
         this.render({ parts: ["sidebar", "title"] });
     }
 
