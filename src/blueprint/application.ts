@@ -45,6 +45,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
 
     static PARTS: Record<BlueprintMenuPart, HandlebarsTemplatePart> = {
         sidebar: {
+            scrollable: [".scroll-triggers", ".scroll-subtriggers", ".scroll-variables"],
             template: "modules/pf2e-trigger/templates/blueprint-menu/sidebar.hbs",
         },
         title: {
