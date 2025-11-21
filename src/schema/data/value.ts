@@ -56,13 +56,7 @@ const rollData = {
         { key: "item", type: "item" },
         { key: "options", type: "text" },
         { key: "traits", type: "text" },
-        {
-            key: "note",
-            type: "text",
-            field: {
-                type: "description",
-            },
-        },
+        { key: "note", type: "text" },
     ],
     outputs: [{ key: "roll", type: "roll" }],
 } as const satisfies ValueRawSchema;

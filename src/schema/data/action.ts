@@ -101,13 +101,7 @@ const useMacro = {
 const createMessage = {
     icon: "\uf4b6",
     inputs: [
-        {
-            key: "message",
-            type: "text",
-            field: {
-                type: "description",
-            },
-        },
+        { key: "message", type: "text" },
         { key: "target", type: "target" },
     ],
 } as const satisfies ActionRawSchema;
@@ -361,11 +355,7 @@ const awaitConfirm = {
     outs: schemaBooleanOuts(),
     inputs: [
         { key: "title", type: "text" },
-        {
-            key: "prompt",
-            type: "text",
-            field: { type: "description" },
-        },
+        { key: "prompt", type: "text" },
         { key: "target", type: "target" },
     ],
 } as const satisfies ActionRawSchema;

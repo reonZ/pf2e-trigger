@@ -14,8 +14,8 @@ class AwaitConfirmTriggerNode extends TriggerNode<NodeSchemaOf<"action", "await-
 
         const data: UserQueryPromptData = {
             action: "await-prompt",
-            prompt: (await this.get("prompt")) || "???",
-            title: (await this.get("title")) || this.trigger.label,
+            prompt: (await this.getLocalizedText("prompt")) || "???",
+            title: (await this.getLocalizedText("title")) || this.trigger.label,
         };
 
         const result = await this.userQuery<boolean | null>(user, data);

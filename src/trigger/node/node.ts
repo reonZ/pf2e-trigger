@@ -147,6 +147,11 @@ class TriggerNode<
         return (await this.getTarget(key))?.actor;
     }
 
+    async getLocalizedText(key: ExtractTextKey<TSchema>): Promise<string> {
+        const value = await this.get(key as any);
+        return R.isString(value) ? game.i18n.localize(value) : "";
+    }
+
     async get<K extends ExtractInputKey<TSchema>>(key: K): Promise<ExtractInputValue<TSchema, K>> {
         if (this.#get[key]) {
             return this.#get[key]();
@@ -425,6 +430,11 @@ type SchemaInputAdjacent = {
 type ExtractTargetKey<S extends NodeRawSchema> = Extract<
     ExtractArrayUnion<S["inputs"]>,
     { type: "target" }
+>["key"];
+
+type ExtractTextKey<S extends NodeRawSchema> = Extract<
+    ExtractArrayUnion<S["inputs"]>,
+    { type: "text" }
 >["key"];
 
 type ExtractInputKey<S extends NodeRawSchema> = ExtractArrayUnion<S["inputs"]> extends {

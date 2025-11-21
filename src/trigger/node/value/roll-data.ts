@@ -4,7 +4,7 @@ import { TriggerNode, TriggerRollEntry } from "trigger";
 
 class RollDataTriggerNode extends TriggerNode<NodeSchemaOf<"value", "roll-data">> {
     async query(): Promise<TriggerRollEntry> {
-        const note = (await this.get("note"))
+        const note = (await this.getLocalizedText("note"))
             .replace(/\n/gm, "")
             .replace(/<p>/gm, "")
             .replace(/<\/p>/gm, " ")
