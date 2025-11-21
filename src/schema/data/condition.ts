@@ -70,10 +70,7 @@ const matchPredicate = {
             key: "predicate",
             type: "text",
             label: "PF2E.RuleEditor.General.Predicate",
-            field: {
-                type: "json",
-                default: "[\n  \n]",
-            },
+            field: { type: "json" },
         },
     ],
 } as const satisfies ConditionSchema;

@@ -14,7 +14,12 @@ import {
     R,
     warning,
 } from "module-helpers";
-import { BaseNodeSchemaEntry, entrySchemaIsOfType } from "schema";
+import {
+    BaseNodeSchemaEntry,
+    entrySchemaIsOfType,
+    NODE_INPUT_CODE_TYPES,
+    NodeCodeInputType,
+} from "schema";
 
 class EntryField extends PIXI.Graphics {
     #entry: BlueprintEntry;
@@ -143,8 +148,11 @@ class EntryField extends PIXI.Graphics {
         const schema = this.schema;
         const value = String(this.value);
 
-        if (entrySchemaIsOfType(schema, "text") && schema.field?.type === "json") {
-            return value.replace(/\s{1}|\\n/g, "");
+        if (
+            entrySchemaIsOfType(schema, "text") &&
+            R.isIncludedIn(schema.field?.type, NODE_INPUT_CODE_TYPES)
+        ) {
+            return value.replace(/\s{1}|\\n/g, schema.field.type === "json" ? "" : " ");
         }
 
         if (entrySchemaIsOfType(schema, "select")) {
@@ -320,8 +328,8 @@ class EntryField extends PIXI.Graphics {
         }
 
         if (entrySchemaIsOfType(schema, "text")) {
-            if (schema.field?.type === "json") {
-                return this.#createCodeDialog(current as string);
+            if (R.isIncludedIn(schema.field?.type, NODE_INPUT_CODE_TYPES)) {
+                return this.#createCodeDialog(current as string, schema.field.type);
             }
 
             if (schema.field?.type === "enriched") {
@@ -391,12 +399,12 @@ class EntryField extends PIXI.Graphics {
         });
     }
 
-    #createCodeDialog(value: string): Promise<NodeEntryValue> {
+    #createCodeDialog(value: string, type: NodeCodeInputType): Promise<NodeEntryValue> {
         return new Promise((resolve) => {
             const input = foundry.applications.elements.HTMLCodeMirrorElement.create({
                 autofocus: true,
                 classes: "trigger-input",
-                language: "json",
+                language: type,
                 name: "field",
                 value: value,
             });

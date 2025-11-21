@@ -98,6 +98,15 @@ const useMacro = {
     ],
 } as const satisfies ActionRawSchema;
 
+const executeScript = {
+    icon: "\uf121",
+    inputs: [{ type: "text", key: "code", field: { type: "javascript" } }],
+    custom: [
+        { category: "inputs" }, //
+        { category: "outputs" },
+    ],
+} as const satisfies ActionRawSchema;
+
 const createMessage = {
     icon: "\uf4b6",
     inputs: [
@@ -535,6 +544,7 @@ export const action = {
     "delete-item": deleteItem,
     "distance-between": distanceBetween,
     "effect-duration": effectDuration,
+    "execute-script": executeScript,
     "extract-formula": extractFormula,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,

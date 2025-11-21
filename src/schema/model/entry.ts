@@ -10,7 +10,8 @@ import {
 import { NodeRawSchemaEntry, SchemaEntries } from "schema";
 import fields = foundry.data.fields;
 
-const NODE_INPUT_TEXT_TYPES = ["json", "enriched"] as const;
+const NODE_INPUT_CODE_TYPES = ["javascript", "json"] as const;
+const NODE_INPUT_TEXT_TYPES = ["enriched", ...NODE_INPUT_CODE_TYPES] as const;
 
 class NodeInputOptionsField extends DataUnionField<
     fields.StringField | ArrayField<SelectArrayOption>,
@@ -240,6 +241,10 @@ class NodeInputField<
             source.field.default = source.field.options[0].value;
         }
 
+        if (source.type === "text" && source.field?.type === "json" && !source.field.default) {
+            source.field.default = "[\n  \n]";
+        }
+
         return source;
     }
 }
@@ -346,15 +351,17 @@ type SelectArrayOption = DataUnionField<
     false
 >;
 
+type NodeCodeInputType = (typeof NODE_INPUT_CODE_TYPES)[number];
 type NodeTextInputType = (typeof NODE_INPUT_TEXT_TYPES)[number];
 
 type NodeInputFieldType = NodeTextInputType;
 
-export { baseNodeSchemaEntry, entrySchemaIsOfType, NodeInputField };
+export { baseNodeSchemaEntry, entrySchemaIsOfType, NODE_INPUT_CODE_TYPES, NodeInputField };
 export type {
     BaseNodeSchemaEntry,
     NodeBridgeSchema,
     NodeBridgeSource,
+    NodeCodeInputType,
     NodeFieldSchema,
     NodeInputSchema,
     NodeInputSource,

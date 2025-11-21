@@ -11,8 +11,6 @@ class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro"
             return this.send("out");
         }
 
-        this.get("uuid");
-
         const target = this.target;
         const values = await this.getCustomInputs(true);
 

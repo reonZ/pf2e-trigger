@@ -17,6 +17,7 @@ import { CreateMessageTriggerNode } from "./create-message";
 import { DeleteItemTriggerNode } from "./delete-item";
 import { DistanceBetweenTriggerNode } from "./distance-between";
 import { EffectDurationTriggerNode } from "./effect-duration";
+import { ExecuteScriptTriggerNode } from "./execute-script";
 import { ExtractFormulaTriggerNode } from "./extract-formula";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetMasterTriggerNode } from "./get-master";
@@ -60,6 +61,7 @@ export const action = {
     "delete-item": DeleteItemTriggerNode,
     "distance-between": DistanceBetweenTriggerNode,
     "effect-duration": EffectDurationTriggerNode,
+    "execute-script": ExecuteScriptTriggerNode,
     "extract-formula": ExtractFormulaTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-master": GetMasterTriggerNode,

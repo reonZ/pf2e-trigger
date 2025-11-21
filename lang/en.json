@@ -356,6 +356,12 @@
                         "removed": "Removed"
                     }
                 },
+                "execute-script": {
+                    "label": "Execute Script",
+                    "entry": {
+                        "code": "console.log(\"code\");"
+                    }
+                },
                 "extract-formula": {
                     "label": "Extract Formula From Item",
                     "entry": {
