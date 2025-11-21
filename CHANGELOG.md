@@ -1,3 +1,12 @@
+# 2.17.0
+
+-   `Roll Data` value node:
+-   `Create Chat Message` action node:
+-   `Await Confirmation` action node:
+    -   the aforementioned nodes have had the `description` flag removed from their `text` inputs
+    -   the `text` inputs are instead going through the localization pipeline
+    -   you now need to use an `Enriched Text` value node if you want to replicate the previous behavior
+
 # 2.16.2
 
 -   `Triggers Menu`:
