@@ -1,5 +1,11 @@
-import { Blueprint, getConnectorColor, TriggersExportMenu, TriggersImportMenu } from "blueprint";
-import { NodeEntryId, TriggerData, TriggerDataSource, TriggerDataVariable } from "data";
+import {
+    Blueprint,
+    CreateTriggerOptions,
+    getConnectorColor,
+    TriggersExportMenu,
+    TriggersImportMenu,
+} from "blueprint";
+import { NodeEntryId, TriggerData, TriggerDataVariable } from "data";
 import {
     addListener,
     addListenerAll,
@@ -23,7 +29,7 @@ import {
     TemplateLocalize,
     waitDialog,
 } from "module-helpers";
-import { EVENT_KEYS, NodeEventKey } from "schema";
+import { EVENT_KEYS } from "schema";
 import apps = foundry.applications.api;
 
 class BlueprintApplication extends apps.HandlebarsApplicationMixin(
@@ -401,7 +407,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         noEvents,
         trigger,
     }: { folder?: string; noEvents?: boolean; trigger?: TriggerData } = {}): Promise<
-        CreateEditMenuResult | false | null
+        CreateTriggerOptions | false | null
     > {
         const localizationKey = `${trigger ? "edit" : "create"}-trigger`;
         const events = noEvents
@@ -411,7 +417,7 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
                   I18n.from({ prefix: "node.event", suffix: "label" })
               );
 
-        return waitDialog<CreateEditMenuResult>({
+        return waitDialog<CreateTriggerOptions>({
             classes: ["pf2e-trigger-create-edit-menu"],
             content: await render("create-edit-menu", {
                 description: trigger?.description ?? "",
@@ -527,10 +533,6 @@ type HeaderAction = TriggerHeaderAction | SubtriggerHeaderAction | VariableHeade
 
 type BlueprintMenuRenderOptions = Omit<HandlebarsRenderOptions, "parts"> & {
     parts?: BlueprintMenuPart[];
-};
-
-type CreateEditMenuResult = Pick<TriggerDataSource, "description" | "folder" | "name"> & {
-    event: NodeEventKey;
 };
 
 type BlueprintMenuTriggersGroup = {

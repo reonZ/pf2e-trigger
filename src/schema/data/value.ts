@@ -175,7 +175,7 @@ const enrichedText = {
             key: "input",
             type: "text",
             field: {
-                type: "description",
+                type: "enriched",
             },
         },
     ],

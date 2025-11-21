@@ -696,4 +696,4 @@ type CreateTriggerOptions = Pick<TriggerDataSource, "description" | "folder" | "
 };
 
 export { Blueprint };
-export type { BlueprintDropDocument };
+export type { BlueprintDropDocument, CreateTriggerOptions };

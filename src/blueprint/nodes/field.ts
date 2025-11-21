@@ -324,7 +324,7 @@ class EntryField extends PIXI.Graphics {
                 return this.#createCodeDialog(current as string);
             }
 
-            if (schema.field?.type === "description") {
+            if (schema.field?.type === "enriched") {
                 return this.#createDescriptionDialog(current as string);
             }
 
