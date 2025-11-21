@@ -10,7 +10,7 @@ import {
 import { NodeRawSchemaEntry, SchemaEntries } from "schema";
 import fields = foundry.data.fields;
 
-const NODE_INPUT_TEXT_TYPES = ["code", "description"] as const;
+const NODE_INPUT_TEXT_TYPES = ["json", "description"] as const;
 
 class NodeInputOptionsField extends DataUnionField<
     fields.StringField | ArrayField<SelectArrayOption>,

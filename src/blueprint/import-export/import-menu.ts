@@ -254,7 +254,6 @@ class TriggersImportMenu extends ImportExportMenu {
         const result = await waitDialog<{ file: File }>({
             i18n: "import-menu.file",
             content: `<input type="file" name="file" accept=".json">`,
-            focus: "code",
         });
 
         if (result && result.file) {

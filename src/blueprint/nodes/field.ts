@@ -143,7 +143,7 @@ class EntryField extends PIXI.Graphics {
         const schema = this.schema;
         const value = String(this.value);
 
-        if (entrySchemaIsOfType(schema, "text") && schema.field?.type === "code") {
+        if (entrySchemaIsOfType(schema, "text") && schema.field?.type === "json") {
             return value.replace(/\s{1}|\\n/g, "");
         }
 
@@ -320,7 +320,7 @@ class EntryField extends PIXI.Graphics {
         }
 
         if (entrySchemaIsOfType(schema, "text")) {
-            if (schema.field?.type === "code") {
+            if (schema.field?.type === "json") {
                 return this.#createCodeDialog(current as string);
             }
 
