@@ -1,3 +1,4 @@
+import { ActorPF2e, R, ScenePF2e, TokenDocumentPF2e } from "module-helpers";
 import { NodeSchemaOf } from "schema";
 import { TriggerNode } from "trigger";
 
@@ -9,18 +10,22 @@ class SceneTokensTriggerNode extends TriggerNode<NodeSchemaOf<"action", "scene-t
             return this.send("out");
         }
 
-        for (const token of scene.tokens) {
-            const actor = token.actor;
-            if (!actor || token === this.target.token) continue;
+        const targets = R.pipe(
+            scene.tokens.contents,
+            R.filter((token): token is TokenDocumentPF2e<ScenePF2e> & { actor: ActorPF2e } => {
+                return !!token.actor;
+            }),
+            R.map((token): TargetDocuments => {
+                return {
+                    actor: token.actor,
+                    token,
+                };
+            })
+        );
 
-            this.setVariable("other", { actor, token });
+        this.setVariable("multi", targets);
 
-            if (!(await this.send("out"))) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.send("out");
     }
 }
 
