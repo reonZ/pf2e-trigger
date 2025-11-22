@@ -11,6 +11,8 @@
         .triggers,
         .subtriggers,
         .items {
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
@@ -22,15 +24,24 @@
         }
 
         .triggers {
-            padding-right: 1em;
+            .title,
+            .scroll {
+                padding-right: 0.5em;
+            }
         }
 
         .subtriggers {
-            padding-inline: 1em;
+            .title,
+            .scroll {
+                padding-inline: 0.5em;
+            }
         }
 
         .items {
-            padding-left: 1em;
+            .title,
+            .scroll {
+                padding-left: 1em;
+            }
         }
 
         .title {
@@ -58,6 +69,11 @@
                 text-transform: uppercase;
                 font-size: 1.1em;
             }
+        }
+
+        .scroll {
+            flex: 1;
+            overflow: auto;
         }
 
         ul {

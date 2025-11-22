@@ -37,17 +37,19 @@
     </a>
     {{/if}}
 </div>
-<ul>
-    {{#each (lookup resources type) as |resource|}}
-    <li data-resource-id="{{resource.id}}">
-        <input type="checkbox" name="selected" {{checked resource.selected}}>
-        <span>{{resource.name}}</span>
-        {{#if resource.added}}
-        <a data-action="delete-item" {{{@root.i18n.tooltip 'item.delete' }}}>
-            <i class="fa-solid fa-trash"></i>
-        </a>
-        {{/if}}
-    </li>
-    {{/each}}
-</ul>
+<div class="scroll">
+    <ul>
+        {{#each (lookup resources type) as |resource|}}
+        <li data-resource-id="{{resource.id}}">
+            <input type="checkbox" name="selected" {{checked resource.selected}}>
+            <span>{{resource.name}}</span>
+            {{#if resource.added}}
+            <a data-action="delete-item" {{{@root.i18n.tooltip 'item.delete' }}}>
+                <i class="fa-solid fa-trash"></i>
+            </a>
+            {{/if}}
+        </li>
+        {{/each}}
+    </ul>
+</div>
 {{/inline}}
