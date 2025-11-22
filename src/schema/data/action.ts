@@ -478,9 +478,11 @@ const replaceX = {
 } as const satisfies ActionRawSchema;
 
 const sendToChat = {
-    custom: [{ category: "inputs", types: ["target"] }],
     icon: "\uf4a8",
-    inputs: [{ key: "item", type: "item" }],
+    inputs: [
+        { key: "item", type: "item" },
+        { key: "target", type: "multi" },
+    ],
 } as const satisfies ActionRawSchema;
 
 const extractFormula = {

@@ -231,7 +231,8 @@
             "duration": "Duration",
             "effect": "Effect",
             "item": "Item",
-            "list": "List",
+            "list": "Text List",
+            "multi": "Target List",
             "number": "Number",
             "object": "Object",
             "roll": "Roll",
@@ -461,15 +462,12 @@
                     }
                 },
                 "scene-tokens": {
-                    "label": "Scene Tokens",
-                    "entry": {
-                        "other": "Scene Target"
-                    }
+                    "label": "Get Scene Tokens"
                 },
                 "send-to-chat": {
                     "label": "Send Item To Chat",
                     "entry": {
-                        "targeting": "With Target?"
+                        "target": "With Targets?"
                     }
                 },
                 "subtract-number": {

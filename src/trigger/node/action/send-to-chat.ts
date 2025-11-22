@@ -9,13 +9,14 @@ class SendToChatTriggerNode extends TriggerNode<NodeSchemaOf<"action", "send-to-
             return this.send("out");
         }
 
-        const targets = await this.getCustomTargets();
+        const targets = await this.getTargetsUUIDs("target");
         const message = await item.toMessage(null, { create: !targets.length });
 
         if (targets.length && message) {
             const source = message?.toObject() as ChatMessageCreateData<ChatMessage>;
 
             foundry.utils.setProperty(source, "flags.pf2e-toolbelt.targetHelper.targets", targets);
+
             await getDocumentClass("ChatMessage").create(source);
         }
 

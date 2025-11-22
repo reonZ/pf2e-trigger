@@ -123,6 +123,16 @@ class TriggerNode<
         );
     }
 
+    async getTargetsUUIDs(
+        key: ExtractInputTypeKey<TSchema, "multi">
+    ): Promise<TokenDocumentUUID[]> {
+        return R.pipe(
+            (await this.get(key as any)) as TargetDocuments[],
+            R.map((target) => getTargetToken(target)?.uuid),
+            R.filter(R.isTruthy)
+        );
+    }
+
     async getCustomTargets(): Promise<TokenDocumentUUID[]> {
         return R.pipe(
             await this.getCustomInputs<TargetDocuments | undefined>(true),
@@ -147,16 +157,20 @@ class TriggerNode<
         this.trigger.setVariable(entryId, value);
     }
 
-    async getTarget(key: ExtractTargetKey<TSchema>): Promise<TargetDocuments | undefined> {
+    async getTarget(
+        key: ExtractInputTypeKey<TSchema, "target">
+    ): Promise<TargetDocuments | undefined> {
         const target = await this.get(key as any);
         return target === null ? undefined : (target as TargetDocuments | undefined) ?? this.target;
     }
 
-    async getTargetActor(key: ExtractTargetKey<TSchema>): Promise<ActorPF2e | undefined> {
+    async getTargetActor(
+        key: ExtractInputTypeKey<TSchema, "target">
+    ): Promise<ActorPF2e | undefined> {
         return (await this.getTarget(key))?.actor;
     }
 
-    async getLocalizedText(key: ExtractTextKey<TSchema>): Promise<string> {
+    async getLocalizedText(key: ExtractInputTypeKey<TSchema, "text">): Promise<string> {
         const value = await this.get(key as any);
         return R.isString(value) ? game.i18n.localize(value) : "";
     }
@@ -453,14 +467,9 @@ type SchemaInputAdjacent = {
 
 // input
 
-type ExtractTargetKey<S extends NodeRawSchema> = Extract<
+type ExtractInputTypeKey<S extends NodeRawSchema, T extends NodeEntryType> = Extract<
     ExtractArrayUnion<S["inputs"]>,
-    { type: "target" }
->["key"];
-
-type ExtractTextKey<S extends NodeRawSchema> = Extract<
-    ExtractArrayUnion<S["inputs"]>,
-    { type: "text" }
+    { type: T }
 >["key"];
 
 type ExtractInputKey<S extends NodeRawSchema> = ExtractArrayUnion<S["inputs"]> extends {
