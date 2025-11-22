@@ -1,10 +1,10 @@
 import { rollDamageFromFormula, SaveType } from "module-helpers";
 import { NodeSchemaOf } from "schema";
-import { getRollDamageData, TriggerNode } from "trigger";
+import { getRollDamageData, RollDamageNode, TriggerNode } from "trigger";
 
 class RollDamageSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll-damage-save">> {
     async execute(): Promise<boolean> {
-        const damageData = await getRollDamageData(this);
+        const damageData = await getRollDamageData(this as RollDamageNode);
 
         if (!damageData) {
             return this.send("out");

@@ -123,20 +123,12 @@ class TriggerNode<
         );
     }
 
-    async getTargetsUUIDs(
+    async getTargetsTokensUUIDs(
         key: ExtractInputTypeKey<TSchema, "multi">
     ): Promise<TokenDocumentUUID[]> {
         return R.pipe(
             (await this.get(key as any)) as TargetDocuments[],
             R.map((target) => getTargetToken(target)?.uuid),
-            R.filter(R.isTruthy)
-        );
-    }
-
-    async getCustomTargets(): Promise<TokenDocumentUUID[]> {
-        return R.pipe(
-            await this.getCustomInputs<TargetDocuments | undefined>(true),
-            R.map((target) => target && getTargetToken(target)?.uuid),
             R.filter(R.isTruthy)
         );
     }
@@ -158,14 +150,15 @@ class TriggerNode<
     }
 
     async getTarget(
-        key: ExtractInputTypeKey<TSchema, "target">
+        key: ExtractInputTypeKey<TSchema, "target" | "multi">
     ): Promise<TargetDocuments | undefined> {
-        const target = await this.get(key as any);
-        return target === null ? undefined : (target as TargetDocuments | undefined) ?? this.target;
+        const raw = (await this.get(key as any)) as Maybe<TargetDocuments | TargetDocuments[]>;
+        const target = R.isArray(raw) ? raw[0] : raw;
+        return target == null ? undefined : target ?? this.target;
     }
 
     async getTargetActor(
-        key: ExtractInputTypeKey<TSchema, "target">
+        key: ExtractInputTypeKey<TSchema, "target" | "multi">
     ): Promise<ActorPF2e | undefined> {
         return (await this.getTarget(key))?.actor;
     }

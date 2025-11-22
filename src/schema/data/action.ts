@@ -56,17 +56,15 @@ const rollFlat = {
 } as const satisfies ActionRawSchema;
 
 const rollDamage = {
-    custom: [{ category: "inputs", types: ["target"] }],
     icon: "\uf71c",
     inputs: [
         { key: "formula", type: "text" },
         { key: "roll", type: "roll" },
-        { key: "target", type: "target" },
+        { key: "target", type: "multi" },
     ],
 } as const satisfies ActionRawSchema;
 
 const rollDamageSave = {
-    custom: [{ category: "inputs", types: ["target"], group: "damage" }],
     icon: "\uf71c",
     inputs: [
         ...rollSave.inputs.slice(1).map((input) => {

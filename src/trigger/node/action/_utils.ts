@@ -22,7 +22,7 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
     if (!formula || !target) return;
 
     const roll = await node.get("roll");
-    const otherTargets = await node.getCustomTargets();
+    const otherTargets = await node.getTargetsTokensUUIDs("target");
 
     return {
         formula,
@@ -48,9 +48,11 @@ type NodeDamageData = {
 };
 
 type RollDamageNode = TriggerNode<{
-    inputs: Array<
-        { key: "formula"; type: "text" } | { key: "roll"; type: "roll" } | NodeSchemaInput
-    >;
+    inputs: [
+        { key: "formula"; type: "text" },
+        { key: "roll"; type: "roll" },
+        { key: "target"; type: "multi" }
+    ];
 }>;
 
 type NodeTemporaryData = {
@@ -63,3 +65,4 @@ type TemporaryDataNode = TriggerNode<{
 }>;
 
 export { getRollDamageData, getTemporaryIdentifier };
+export type { RollDamageNode };

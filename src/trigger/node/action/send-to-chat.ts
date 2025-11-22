@@ -9,7 +9,7 @@ class SendToChatTriggerNode extends TriggerNode<NodeSchemaOf<"action", "send-to-
             return this.send("out");
         }
 
-        const targets = await this.getTargetsUUIDs("target");
+        const targets = await this.getTargetsTokensUUIDs("target");
         const message = await item.toMessage(null, { create: !targets.length });
 
         if (targets.length && message) {
