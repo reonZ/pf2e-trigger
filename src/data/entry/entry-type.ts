@@ -10,6 +10,7 @@ const NODE_ENTRY_TYPES = [
     "effect",
     "item",
     "list",
+    "multi",
     "number",
     "object",
     "roll",
@@ -33,10 +34,12 @@ const OUTPUT_COMPATIBLES: PartialRecord<NodeEntryType, NodeEntryType[]> = {
     dc: ["number"],
     item: ["uuid"],
     list: ["text"],
+    multi: ["target"],
     number: ["dc", "text"],
     select: ["text", "list"],
     text: ["select", "list"],
     uuid: ["item"],
+    target: ["multi"],
 };
 
 // input -> output

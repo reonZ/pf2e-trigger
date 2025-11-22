@@ -161,6 +161,8 @@ type TriggerValue<T extends NodeEntryType = NodeEntryType> = T extends "boolean"
     ? boolean
     : T extends "number"
     ? number
+    : T extends "multi"
+    ? TargetDocuments[]
     : T extends "target"
     ? TargetDocuments | undefined
     : T extends "item"

@@ -214,7 +214,7 @@ class TriggerNode<
             return { value: 0, scope: "check" } satisfies TriggerDcEntry;
         }
 
-        if (type === "list") {
+        if (R.isIncludedIn(type, ["list", "multi"])) {
             return [];
         }
 
@@ -280,6 +280,14 @@ class TriggerNode<
         else if (type === "uuid") {
             value = value instanceof Item ? getItemSourceId(value as ItemPF2e) : value;
         }
+        // multi
+        else if (type === "target") {
+            value = R.isArray(value) ? value[0] : value;
+        }
+        // target
+        else if (type === "multi") {
+            value = R.isArray(value) ? value : [value].filter(R.isTruthy);
+        }
 
         return this.finalizeValue(schemaInput, value);
     }
@@ -336,6 +344,11 @@ class TriggerNode<
             return R.isArray(value) && value.every(R.isString);
         }
 
+        if (type === "multi") {
+            const targets = R.isArray(value) ? value : [value];
+            return targets.every((target) => this.isValidCustomTarget(target));
+        }
+
         if (type === "number") {
             return R.isNumber(value);
         }
@@ -349,11 +362,7 @@ class TriggerNode<
         }
 
         if (type === "target") {
-            return (
-                R.isPlainObject(value) &&
-                value.actor instanceof Actor &&
-                (!value.token || value.token instanceof TokenDocument)
-            );
+            return this.isValidCustomTarget(value);
         }
 
         if (type === "text") {
@@ -361,6 +370,14 @@ class TriggerNode<
         }
 
         return false;
+    }
+
+    isValidCustomTarget(value: unknown): boolean {
+        return (
+            R.isPlainObject(value) &&
+            value.actor instanceof Actor &&
+            (!value.token || value.token instanceof TokenDocument)
+        );
     }
 
     setOutputValues(values: unknown) {

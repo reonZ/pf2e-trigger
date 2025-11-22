@@ -29,6 +29,10 @@ abstract class DocumentSplitterTriggerNode<T> extends TriggerNode {
             return this.#interpretTargetValue(value);
         }
 
+        if (type === "multi") {
+            return [this.#interpretTargetValue(value)].filter(R.isTruthy);
+        }
+
         if (type === "list") {
             const list = value instanceof Set ? [...value] : R.isArray(value) ? value : [];
             return list.filter(R.isString);

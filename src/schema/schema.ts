@@ -156,6 +156,7 @@ type NodeSchemaInput =
     | NodeSchemaEffect
     | NodeSchemaItem
     | NodeSchemaList
+    | NodeSchemaMulti
     | NodeSchemaNumber
     | NodeSchemaRoll
     | NodeSchemaSelect
@@ -224,6 +225,7 @@ type NodeSchemaDuration = NodeSchemaInputEntry<"duration">;
 type NodeSchemaEffect = NodeSchemaInputEntry<"effect">;
 type NodeSchemaItem = NodeSchemaInputEntry<"item">;
 type NodeSchemaList = NodeSchemaInputEntry<"list">;
+type NodeSchemaMulti = NodeSchemaInputEntry<"multi">;
 type NodeSchemaRoll = NodeSchemaInputEntry<"roll">;
 type NodeSchemaTarget = NodeSchemaInputEntry<"target">;
 type NodeSchemaObject = NodeSchemaInputEntry<"object">;
