@@ -814,9 +814,10 @@ class BlueprintNode extends PIXI.Container {
             content.push({
                 type: "select",
                 inputConfig: {
+                    i18n: "entry",
                     name: "type",
                     options: custom.types,
-                    i18n: "entry",
+                    sort: true,
                 },
             });
         }
