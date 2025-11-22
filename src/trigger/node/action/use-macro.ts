@@ -17,6 +17,7 @@ class UseMacroTriggerNode extends TriggerNode<NodeSchemaOf<"action", "use-macro"
         const returnedValues = await macro.execute({
             actor: target.actor,
             token: target.token?.object ?? undefined,
+            inputs: values,
             values,
         });
 

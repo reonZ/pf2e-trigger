@@ -9,10 +9,11 @@ class ExecuteScriptTriggerNode extends TriggerNode<NodeSchemaOf<"action", "execu
         const values = await this.getCustomInputs(true);
 
         try {
-            const fn = new foundry.utils.AsyncFunction("actor", "token", "values", code);
+            const fn = new foundry.utils.AsyncFunction("actor", "token", "inputs", "values", code);
             const returnedValues = await fn(
                 target.actor,
                 target.token?.object ?? undefined,
+                values,
                 values
             );
 
