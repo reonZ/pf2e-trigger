@@ -331,6 +331,9 @@
                     "label": "Create Item",
                     "entry": {
                         "duplicate": "Duplicate?"
+                    },
+                    "group": {
+                        "choices": "ChoiceSet"
                     }
                 },
                 "create-message": {

@@ -116,6 +116,7 @@ const createMessage = {
 } as const satisfies ActionRawSchema;
 
 const createItem = {
+    custom: [{ category: "inputs", group: "choices", types: ["text"] }],
     icon: "\uf466",
     inputs: [
         { key: "uuid", type: "uuid", field: { document: "Item" } },
