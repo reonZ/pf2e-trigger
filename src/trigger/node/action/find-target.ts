@@ -1,9 +1,9 @@
 import { NodeSchemaOf } from "schema";
 import { filterTargets, TriggerNode } from "trigger";
 
-class FilterTargetsTriggerNode extends TriggerNode<NodeSchemaOf<"action", "filter-targets">> {
+class FindTargetTriggerNode extends TriggerNode<NodeSchemaOf<"action", "find-target">> {
     async execute(): Promise<boolean> {
-        const result = await filterTargets(this, false);
+        const result = await filterTargets(this, true);
 
         this.setVariable("result", result);
 
@@ -11,4 +11,4 @@ class FilterTargetsTriggerNode extends TriggerNode<NodeSchemaOf<"action", "filte
     }
 }
 
-export { FilterTargetsTriggerNode };
+export { FindTargetTriggerNode };

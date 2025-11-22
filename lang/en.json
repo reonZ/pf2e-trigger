@@ -380,6 +380,9 @@
                         "callback": "return true;"
                     }
                 },
+                "find-target": {
+                    "label": "Find Target"
+                },
                 "get-choiceset": {
                     "label": "Retrieve Item ChoiceSet",
                     "entry": {

@@ -41,6 +41,39 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
     };
 }
 
+async function filterTargets(
+    node: FilterTargetsNode,
+    find: true
+): Promise<TargetDocuments | undefined>;
+async function filterTargets(node: FilterTargetsNode, find: false): Promise<TargetDocuments[]>;
+async function filterTargets(node: FilterTargetsNode, find: boolean) {
+    const code = await node.get("callback");
+    const targets = await node.get("multi");
+
+    if (!targets?.length) {
+        return [];
+    }
+
+    const values = await node.getCustomInputs(true);
+
+    try {
+        const Fn = function () {}.constructor as SyncFunction;
+        const callback = new Fn("target", "inputs", "values", code);
+
+        return targets[find ? "find" : "filter"]((target) => callback(target, values, values));
+    } catch {}
+
+    return [];
+}
+
+type FilterTargetsNode = TriggerNode<{
+    inputs: [{ key: "callback"; type: "text" }, { key: "multi"; type: "multi" }];
+}>;
+
+type SyncFunction = {
+    new <T>(...args: any[]): (...args: any[]) => T;
+};
+
 type NodeDamageData = {
     formula: string;
     roll: TriggerRollEntry;
@@ -64,5 +97,5 @@ type TemporaryDataNode = TriggerNode<{
     inputs: Array<{ key: "identifier"; type: "text" } | NodeSchemaInput>;
 }>;
 
-export { getRollDamageData, getTemporaryIdentifier };
+export { filterTargets, getRollDamageData, getTemporaryIdentifier };
 export type { RollDamageNode };

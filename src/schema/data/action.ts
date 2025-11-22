@@ -302,10 +302,18 @@ const filterTargets = {
         {
             key: "callback",
             type: "text",
+            label: "action.filter-targets",
             field: { type: "javascript" },
         },
     ],
     outputs: [{ key: "result", type: "multi" }],
+} as const satisfies ActionRawSchema;
+
+const findTarget = {
+    custom: filterTargets.custom,
+    icon: "\uf0b0",
+    inputs: filterTargets.inputs,
+    outputs: [{ key: "result", type: "target" }],
 } as const satisfies ActionRawSchema;
 
 const breakProcess = {
@@ -567,6 +575,7 @@ export const action = {
     "execute-script": executeScript,
     "extract-formula": extractFormula,
     "filter-targets": filterTargets,
+    "find-target": findTarget,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,
     "get-option-value-actor": getOptionValueActor,

@@ -20,6 +20,7 @@ import { EffectDurationTriggerNode } from "./effect-duration";
 import { ExecuteScriptTriggerNode } from "./execute-script";
 import { ExtractFormulaTriggerNode } from "./extract-formula";
 import { FilterTargetsTriggerNode } from "./filter-targets";
+import { FindTargetTriggerNode } from "./find-target";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetMasterTriggerNode } from "./get-master";
 import { GetOptionValueActorTriggerNode } from "./get-option-value-actor";
@@ -65,6 +66,7 @@ export const action = {
     "execute-script": ExecuteScriptTriggerNode,
     "extract-formula": ExtractFormulaTriggerNode,
     "filter-targets": FilterTargetsTriggerNode,
+    "find-target": FindTargetTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-master": GetMasterTriggerNode,
     "get-option-value-actor": GetOptionValueActorTriggerNode,
