@@ -23,7 +23,7 @@ class SceneTokensTriggerNode extends TriggerNode<NodeSchemaOf<"action", "scene-t
             })
         );
 
-        this.setVariable("multi", targets);
+        this.setVariable("other", targets);
 
         return this.send("out");
     }

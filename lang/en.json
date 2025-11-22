@@ -462,7 +462,10 @@
                     }
                 },
                 "scene-tokens": {
-                    "label": "Get Scene Tokens"
+                    "label": "Get Scene Tokens",
+                    "entry": {
+                        "other": "Scene Targets"
+                    }
                 },
                 "send-to-chat": {
                     "label": "Send Item To Chat",

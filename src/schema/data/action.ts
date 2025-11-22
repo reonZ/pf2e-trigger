@@ -284,7 +284,7 @@ const effectDuration = {
 
 const sceneTokens = {
     icon: "\uf0c0",
-    outputs: [{ key: "multi", type: "multi" }],
+    outputs: [{ key: "other", type: "multi" }],
 } as const satisfies ActionRawSchema;
 
 const breakProcess = {
