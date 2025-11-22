@@ -14,6 +14,7 @@ import {
     getItemSourceId,
     getTargetToken,
     isUuidOf,
+    isValidTargetDocuments,
     ItemPF2e,
     MODULE,
     R,
@@ -127,7 +128,7 @@ class TriggerNode<
         key: ExtractInputTypeKey<TSchema, "multi">
     ): Promise<TokenDocumentUUID[]> {
         return R.pipe(
-            (await this.get(key as any)) as TargetDocuments[],
+            ((await this.get(key as any)) ?? []) as TargetDocuments[],
             R.map((target) => getTargetToken(target)?.uuid),
             R.filter(R.isTruthy)
         );
@@ -153,8 +154,8 @@ class TriggerNode<
         key: ExtractInputTypeKey<TSchema, "target" | "multi">
     ): Promise<TargetDocuments | undefined> {
         const raw = (await this.get(key as any)) as Maybe<TargetDocuments | TargetDocuments[]>;
-        const target = R.isArray(raw) ? raw[0] : raw;
-        return target == null ? undefined : target ?? this.target;
+        const target = R.isArray(raw) ? raw[0] ?? null : raw;
+        return target === null ? undefined : target ?? this.target;
     }
 
     async getTargetActor(
@@ -221,7 +222,7 @@ class TriggerNode<
             return { value: 0, scope: "check" } satisfies TriggerDcEntry;
         }
 
-        if (R.isIncludedIn(type, ["list", "multi"])) {
+        if (type === "list") {
             return [];
         }
 
@@ -293,7 +294,7 @@ class TriggerNode<
         }
         // target
         else if (type === "multi") {
-            value = R.isArray(value) ? value : [value].filter(R.isTruthy);
+            value = R.isArray(value) ? value : value ? [value] : undefined;
         }
 
         return this.finalizeValue(schemaInput, value);
@@ -353,7 +354,7 @@ class TriggerNode<
 
         if (type === "multi") {
             const targets = R.isArray(value) ? value : [value];
-            return targets.every((target) => this.isValidCustomTarget(target));
+            return targets.every((target) => isValidTargetDocuments(target));
         }
 
         if (type === "number") {
@@ -369,7 +370,7 @@ class TriggerNode<
         }
 
         if (type === "target") {
-            return this.isValidCustomTarget(value);
+            return isValidTargetDocuments(value);
         }
 
         if (type === "text") {
@@ -377,14 +378,6 @@ class TriggerNode<
         }
 
         return false;
-    }
-
-    isValidCustomTarget(value: unknown): boolean {
-        return (
-            R.isPlainObject(value) &&
-            value.actor instanceof Actor &&
-            (!value.token || value.token instanceof TokenDocument)
-        );
     }
 
     setOutputValues(values: unknown) {
