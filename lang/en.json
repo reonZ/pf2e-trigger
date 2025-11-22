@@ -333,7 +333,7 @@
                         "duplicate": "Duplicate?"
                     },
                     "group": {
-                        "choices": "ChoiceSet"
+                        "choices": "ChoiceSets"
                     }
                 },
                 "create-message": {
@@ -363,7 +363,7 @@
                 "execute-script": {
                     "label": "Execute Script",
                     "entry": {
-                        "code": "console.log(\"code\");"
+                        "code": "console.log(\"\");"
                     }
                 },
                 "extract-formula": {
@@ -372,6 +372,12 @@
                         "nb": "@Damage #",
                         "options": "options",
                         "traits": "traits"
+                    }
+                },
+                "filter-targets": {
+                    "label": "Filter Targets",
+                    "entry": {
+                        "callback": "return true;"
                     }
                 },
                 "get-choiceset": {
@@ -744,6 +750,9 @@
                         "target": "Actor"
                     }
                 }
+            },
+            "group": {
+                "argument": "Arguments"
             },
             "variable": {
                 "title": "Variables",

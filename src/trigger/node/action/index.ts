@@ -19,6 +19,7 @@ import { DistanceBetweenTriggerNode } from "./distance-between";
 import { EffectDurationTriggerNode } from "./effect-duration";
 import { ExecuteScriptTriggerNode } from "./execute-script";
 import { ExtractFormulaTriggerNode } from "./extract-formula";
+import { FilterTargetsTriggerNode } from "./filter-targets";
 import { GetChoicesetTriggerNode } from "./get-choiceset";
 import { GetMasterTriggerNode } from "./get-master";
 import { GetOptionValueActorTriggerNode } from "./get-option-value-actor";
@@ -63,6 +64,7 @@ export const action = {
     "effect-duration": EffectDurationTriggerNode,
     "execute-script": ExecuteScriptTriggerNode,
     "extract-formula": ExtractFormulaTriggerNode,
+    "filter-targets": FilterTargetsTriggerNode,
     "get-choiceset": GetChoicesetTriggerNode,
     "get-master": GetMasterTriggerNode,
     "get-option-value-actor": GetOptionValueActorTriggerNode,

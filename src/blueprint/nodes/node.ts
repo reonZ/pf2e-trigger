@@ -420,6 +420,7 @@ class BlueprintNode extends PIXI.Container {
     getGroupLabel(group: string) {
         return (
             localizeIfExist(this.localizePath, "group", group) ??
+            localizeIfExist("node", "group", group) ??
             localizeIfExist("node", group) ??
             game.i18n.localize(group)
         );

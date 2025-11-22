@@ -89,22 +89,28 @@ const consoleLog = {
 } as const satisfies ActionRawSchema;
 
 const useMacro = {
-    icon: "\uf121",
-    inputs: [{ type: "uuid", key: "uuid", field: { document: "Macro" } }],
-    document: "uuid",
     custom: [
-        { category: "inputs" }, //
+        { category: "inputs", group: "argument" }, //
         { category: "outputs" },
     ],
+    icon: "\uf121",
+    inputs: [
+        {
+            type: "uuid",
+            key: "uuid",
+            field: { document: "Macro" },
+        },
+    ],
+    document: "uuid",
 } as const satisfies ActionRawSchema;
 
 const executeScript = {
-    icon: "\uf121",
-    inputs: [{ type: "text", key: "code", field: { type: "javascript" } }],
     custom: [
-        { category: "inputs" }, //
+        { category: "inputs", group: "argument" }, //
         { category: "outputs" },
     ],
+    icon: "\uf121",
+    inputs: [{ type: "text", key: "code", field: { type: "javascript" } }],
 } as const satisfies ActionRawSchema;
 
 const createMessage = {
@@ -286,6 +292,20 @@ const effectDuration = {
 const sceneTokens = {
     icon: "\uf0c0",
     outputs: [{ key: "other", type: "multi" }],
+} as const satisfies ActionRawSchema;
+
+const filterTargets = {
+    custom: [{ category: "inputs", group: "argument" }],
+    icon: "\ue17e",
+    inputs: [
+        { key: "multi", type: "multi" },
+        {
+            key: "callback",
+            type: "text",
+            field: { type: "javascript" },
+        },
+    ],
+    outputs: [{ key: "result", type: "multi" }],
 } as const satisfies ActionRawSchema;
 
 const breakProcess = {
@@ -546,6 +566,7 @@ export const action = {
     "effect-duration": effectDuration,
     "execute-script": executeScript,
     "extract-formula": extractFormula,
+    "filter-targets": filterTargets,
     "get-choiceset": getChoiceset,
     "get-master": getMaster,
     "get-option-value-actor": getOptionValueActor,
