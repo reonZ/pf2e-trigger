@@ -22,17 +22,21 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
     if (!formula || !target) return;
 
     const roll = await node.get("roll");
+    const otherTargets = await node.getCustomTargets();
 
     return {
         formula,
         roll,
         damageOptions: {
+            extraRollOptions: getExtraRollOptions(roll),
             item: roll.item,
             notes: roll.notes,
             origin: roll.origin,
-            target,
             skipDialog: true,
-            extraRollOptions: getExtraRollOptions(roll),
+            target,
+            toolbelt: {
+                targets: otherTargets,
+            },
         },
     };
 }
@@ -40,7 +44,7 @@ async function getRollDamageData(node: RollDamageNode): Promise<NodeDamageData |
 type NodeDamageData = {
     formula: string;
     roll: TriggerRollEntry;
-    damageOptions: WithRequired<RollDamageOptions, "target" | "extraRollOptions">;
+    damageOptions: WithRequired<RollDamageOptions, "target" | "extraRollOptions" | "toolbelt">;
 };
 
 type RollDamageNode = TriggerNode<{

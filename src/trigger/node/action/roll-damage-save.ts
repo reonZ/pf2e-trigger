@@ -13,6 +13,7 @@ class RollDamageSaveTriggerNode extends TriggerNode<NodeSchemaOf<"action", "roll
         const { damageOptions, formula, roll } = damageData;
 
         damageOptions.toolbelt = {
+            ...damageOptions.toolbelt,
             author: damageOptions.origin?.actor.uuid,
             item: roll.item?.uuid,
             options: roll.options,

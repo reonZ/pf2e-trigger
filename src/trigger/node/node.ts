@@ -12,6 +12,7 @@ import {
     ActorPF2e,
     getItemFromUuid,
     getItemSourceId,
+    getTargetToken,
     isUuidOf,
     ItemPF2e,
     MODULE,
@@ -119,6 +120,14 @@ class TriggerNode<
                 const value = await this.get(key as any);
                 return values ? value : [key, value, label];
             })
+        );
+    }
+
+    async getCustomTargets(): Promise<TokenDocumentUUID[]> {
+        return R.pipe(
+            await this.getCustomInputs<TargetDocuments | undefined>(true),
+            R.map((target) => target && getTargetToken(target)?.uuid),
+            R.filter(R.isTruthy)
         );
     }
 
