@@ -294,6 +294,13 @@ const sceneTokens = {
     outputs: [{ key: "other", type: "multi" }],
 } as const satisfies ActionRawSchema;
 
+const loopTargets = {
+    loop: true,
+    icon: "\uf0c0",
+    inputs: [{ key: "multi", type: "multi" }],
+    outputs: [{ key: "target", type: "target" }],
+} as const satisfies ActionRawSchema;
+
 const filterTargets = {
     custom: [{ category: "inputs", group: "argument" }],
     icon: "\ue17e",
@@ -584,6 +591,7 @@ export const action = {
     "get-resource": getResource,
     "give-item": giveItem,
     "join-list": joinList,
+    "loop-targets": loopTargets,
     "random-number": randomNumber,
     "reduce-condition": reduceCondition,
     "reduce-resource": reduceResource,

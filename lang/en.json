@@ -419,6 +419,9 @@
                 "join-list": {
                     "label": "Join List"
                 },
+                "loop-targets": {
+                    "label": "Loop Over Targets"
+                },
                 "random-number": {
                     "label": "Generate Random Number"
                 },
