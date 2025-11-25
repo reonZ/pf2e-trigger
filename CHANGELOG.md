@@ -1,9 +1,34 @@
+# 2.18.0
+
+-   add new `target-list` node connection:
+    -   it represents an array of `target`
+    -   it is automatically converted both ways with the `target` connections
+        -   `target-list` -> `target` will result in picking the first entry of the list
+    -   NOTE that the default value for this connection is `undefined` and not an empty array
+-   add new `Execute Script` action node:
+    -   this works just like the `Run Macro` but the code is directly added to the trigger
+-   add new `Filter Targets`:
+-   add new `Find Target`:
+    -   provide a callback function that must return a `boolean` value indicating which `target` should be added to the returned value (the only `target` in the case of `Find Target`)
+    -   you can also provided arbitrary input arguments that will be passed to the callback the same way `Execute Script` works
+-   `Run Macro`:
+    -   add `Argument` group label to custom inputs
+    -   add `inputs` alias for `values` argument
+-   `Scene Tokens` action node:
+    -   rename to `Get Scene Tokens`
+    -   is no longer a `loop` node, it instead now returns a `target-list`
+-   `Send Item To Chat` action node:
+-   `Roll Damage` action nodes:
+    -   the aforementioned nodes have had their `target` inputs converted into `target-list`
+    -   the connections keys have been kept and with the auto-conversion being applied, there shouldn't be anything broken in your triggers
+-   fix import/export menu not allowing scrolling
+
 # 2.17.0
 
 -   `Roll Data` value node:
 -   `Create Chat Message` action node:
 -   `Await Confirmation` action node:
-    -   the aforementioned nodes have had the `description` flag removed from their `text` inputs
+    -   the aforementioned nodes have had the `enriched` flag removed from their `text` inputs
     -   the `text` inputs are instead going through the localization pipeline
     -   you now need to use an `Enriched Text` value node if you want to replicate the previous behavior
 
