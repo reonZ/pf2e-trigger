@@ -1,3 +1,8 @@
+# 2.19.0
+
+-   add new `Loop Over Targets` loop action node:
+    -   this was missing with the `Get Scene Tokens` now loosing its `loop`^flag and the new `target-list` node connection
+
 # 2.18.0
 
 -   add new `target-list` node connection:
