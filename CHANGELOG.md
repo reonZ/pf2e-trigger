@@ -1,3 +1,8 @@
+# 2.20.0
+
+-   `Execute Event` event node:
+    -   can now be used from player clients as well
+
 # 2.19.0
 
 -   add new `Loop Over Targets` loop action node:
