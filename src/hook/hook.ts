@@ -17,8 +17,6 @@ abstract class TriggerHook {
     #events = new MapOfArrays<TriggerData>();
 
     abstract get eventKeys(): NodeEventKey[];
-    abstract activate(): void;
-    abstract disable(): void;
 
     get nodes(): NonEventKey[] {
         return [];
@@ -28,7 +26,9 @@ abstract class TriggerHook {
         return this.constructor.name;
     }
 
+    activate() {}
     activateAll() {}
+    disable() {}
     disableAll() {}
 
     initialize(triggers: TriggerData[]) {

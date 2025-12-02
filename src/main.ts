@@ -1,6 +1,6 @@
 import { BlueprintApplication } from "blueprint";
 import { TriggerData, TriggerNodeData, TriggersContext } from "data";
-import { PF2eTriggerBehaviorType } from "hook";
+import { executeEvent, PF2eTriggerBehaviorType, UserQueryExecuteData } from "hook";
 import { MODULE, R, registerSetting, registerSettingMenu } from "module-helpers";
 import {
     confirmPrompt,
@@ -41,6 +41,10 @@ Hooks.once("setup", async () => {
             case "await-prompt": {
                 return confirmPrompt(data);
             }
+
+            case "execute-event": {
+                return executeEvent(data);
+            }
         }
     };
 
@@ -73,4 +77,4 @@ MODULE.apiExpose({
     },
 });
 
-type UserQueries = UserQueryPromptData;
+type UserQueries = UserQueryPromptData | UserQueryExecuteData;
