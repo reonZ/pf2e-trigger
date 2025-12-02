@@ -231,7 +231,8 @@
       "duration": "Czas trwania",
       "effect": "Efekt",
       "item": "Pozycja",
-      "list": "Lista",
+      "list": "Lista tekstów",
+      "multi": "Lista celów",
       "number": "Liczba",
       "object": "Obiekt",
       "roll": "Rzut",
@@ -329,6 +330,9 @@
           "label": "Utwórz pozycję",
           "entry": {
             "duplicate": "Zduplikować?"
+          },
+          "group": {
+            "choices": "Zestawy wyborów"
           }
         },
         "create-message": {
@@ -355,6 +359,12 @@
             "removed": "Usunięto"
           }
         },
+        "execute-script": {
+          "label": "Wykonaj skrypt",
+          "entry": {
+            "code": "console.log(\"\");"
+          }
+        },
         "extract-formula": {
           "label": "Wyodrębnij formułę z elementu",
           "entry": {
@@ -362,6 +372,15 @@
             "options": "opcje",
             "traits": "cechy"
           }
+        },
+        "filter-targets": {
+          "label": "Filtruj cele",
+          "entry": {
+            "callback": "return true;"
+          }
+        },
+        "find-target": {
+          "label": "Znajdź cel"
         },
         "get-choiceset": {
           "label": "Pobierz zestaw opcji wyboru elementu",
@@ -398,6 +417,9 @@
         },
         "join-list": {
           "label": "Dołącz do listy"
+        },
+        "loop-targets": {
+          "label": "Zapętlanie celów"
         },
         "random-number": {
           "label": "Generuj liczbę losową"
@@ -454,15 +476,15 @@
           }
         },
         "scene-tokens": {
-          "label": "Tokeny sceny",
+          "label": "Uzyskaj tokeny sceny",
           "entry": {
-            "other": "Cel sceny"
+            "other": "Cele sceny"
           }
         },
         "send-to-chat": {
           "label": "Wyślij przedmiot na czat",
           "entry": {
-            "targeting": "Z celem?"
+            "target": "Z celami?"
           }
         },
         "subtract-number": {
@@ -733,6 +755,9 @@
             "target": "Aktor"
           }
         }
+      },
+      "group": {
+        "argument": "Argumenty"
       },
       "variable": {
         "title": "Zmienne",
