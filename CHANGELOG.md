@@ -1,3 +1,8 @@
+# 2.20.2
+
+-   `Execute Event` event node:
+    -   significantly improve data conversion robustness when the trigger is executed from a player client
+
 # 2.20.1
 
 -   `Execute Event` event node:
