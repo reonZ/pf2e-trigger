@@ -1,3 +1,8 @@
+# 2.20.1
+
+-   `Execute Event` event node:
+    -   fix `text` values vanishing when received by the active GM
+
 # 2.20.0
 
 -   `Execute Event` event node:

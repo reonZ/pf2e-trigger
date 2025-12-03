@@ -17,11 +17,11 @@
         "maximum": "13"
     },
     "socket": true,
-    "version": "2.20.0",
+    "version": "2.20.1",
     "url": "https://github.com/reonZ/pf2e-trigger",
     "readme": "https://github.com/reonZ/pf2e-trigger/blob/master/README.md",
     "manifest": "https://raw.githubusercontent.com/reonZ/pf2e-trigger/master/module.json",
-    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/2.20.0/module.zip",
+    "download": "https://github.com/reonZ/pf2e-trigger/releases/download/2.20.1/module.zip",
     "changelog": "https://github.com/reonZ/pf2e-trigger/blob/master/CHANGELOG.md",
     "bugs": "https://github.com/reonZ/pf2e-trigger/issues",
     "styles": [
