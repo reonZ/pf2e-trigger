@@ -1,12 +1,13 @@
 import { TriggerHook } from "hook";
 import {
     ActorPF2e,
-    convertToCallOption,
-    convertToEmitOption,
+    convertTargetFromPacket,
+    convertToCallOptions,
+    convertToEmitOptions,
+    EmitablePacket,
     isValidTargetDocuments,
     MODULE,
     R,
-    TokenDocumentPF2e,
 } from "module-helpers";
 
 class ExecuteHook extends TriggerHook {
@@ -41,7 +42,7 @@ class ExecuteHook extends TriggerHook {
         const data: UserQueryExecuteData = {
             action: "execute-event",
             target: { actor: target.actor.uuid, token: target.token?.uuid },
-            values: values.map(convertToEmitOption),
+            values: convertToEmitOptions(values),
         };
 
         game.users.activeGM?.query(MODULE.path("user-query"), data);
@@ -49,14 +50,11 @@ class ExecuteHook extends TriggerHook {
 }
 
 async function executeEvent(data: UserQueryExecuteData) {
-    const target = {
-        actor: await fromUuid<ActorPF2e>(data.target.actor),
-        token: data.target.token ? await fromUuid<TokenDocumentPF2e>(data.target.token) : undefined,
-    };
+    const target = await convertTargetFromPacket(data.target);
 
     if (!isValidTargetDocuments(target)) return;
 
-    const values = await Promise.all(data.values.map(convertToCallOption));
+    const values = await convertToCallOptions(data.values);
 
     game.trigger?.execute(target, values);
 }
@@ -64,7 +62,7 @@ async function executeEvent(data: UserQueryExecuteData) {
 type UserQueryExecuteData = {
     action: "execute-event";
     target: { actor: ActorUUID; token?: TokenDocumentUUID };
-    values: any[];
+    values: EmitablePacket<unknown[]>;
 };
 
 export { executeEvent, ExecuteHook };
