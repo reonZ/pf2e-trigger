@@ -56,7 +56,7 @@ async function executeEvent(data: UserQueryExecuteData) {
 
     if (!isValidTargetDocuments(target)) return;
 
-    const values = data.values.map(convertToCallOption);
+    const values = await Promise.all(data.values.map(convertToCallOption));
 
     game.trigger?.execute(target, values);
 }
