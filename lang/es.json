@@ -37,8 +37,14 @@
         "close": "Cerrar ventana",
         "import": "Importar",
         "export": "Exportar",
+        "description": "Descripción del bloqueo de alternancia",
+        "locked": {
+          "trigger": "Originario del módulo: {module}",
+          "variable": "Los activadores del módulo están bloqueados"
+        },
         "trigger": {
           "add": "Crear disparador",
+          "clone": "Disparador duplicado",
           "copied": "El ID del disparador <strong>{id}</strong> se ha copiado al portapapeles.",
           "copy": "Copiar ID de disparador",
           "delete": "Eliminar disparador",
@@ -46,6 +52,7 @@
         },
         "subtrigger": {
           "add": "Crear subdisparador",
+          "clone": "Clonar subdisparador",
           "copy": "Copiar ID de subdisparador",
           "delete": "Eliminar subdisparador",
           "title": "Subdisparadores"
@@ -66,9 +73,16 @@
       },
       "collapsed": {
         "expand": "Expandir ventana de disparadores"
+      },
+      "title": {
+        "locked": "bloqueado"
       }
     },
     "import-export-menu": {
+      "keep": {
+        "label": "Conservar IDs",
+        "hint": "Esto debe comprobarse antes de hacer clic en los botones <strong>{code}</strong> o <strong>{file}<strong>."
+      },
       "toggle": "Alternar todo",
       "trigger": {
         "title": "Disparadores"
@@ -136,6 +150,7 @@
     },
     "create-edit-menu": {
       "event": "Tipo de evento",
+      "folder": "Carpeta",
       "name": "Nombre del disparador"
     },
     "create-trigger": {
@@ -191,6 +206,9 @@
       },
       "value": {
         "label": "Valor"
+      },
+      "variable": {
+        "label": "Variable"
       }
     },
     "delete-entry": {
@@ -213,7 +231,8 @@
       "duration": "Duración",
       "effect": "Efecto",
       "item": "Elemento",
-      "list": "Lista",
+      "list": "Lista de textos",
+      "multi": "Lista de objetivos",
       "number": "Número",
       "object": "Objeto",
       "roll": "Tirada",
@@ -222,14 +241,21 @@
       "text": "Texto",
       "uuid": "UUID de origen",
       "a": "A",
+      "amount": "Cantidad",
       "b": "B",
+      "counter": "Contador",
       "distance": "Distancia (ft.)",
       "false": "Falso",
       "formula": "fórmula",
+      "gte": "≥",
       "identifier": "Identificador",
+      "image": "imagen/ruta.webp",
       "in": "En",
       "input": "Entrada",
       "label": "Etiqueta",
+      "lt": "<",
+      "master": "Maestro",
+      "max": "Máximo",
       "min": "Mínimo",
       "none": "No hay coincidencia",
       "option": "roll:option",
@@ -237,9 +263,14 @@
       "origin": "Origen",
       "out": "Afuera",
       "outcome": "Resultado",
+      "prefix": "Prefijo",
       "result": "Resultado",
+      "separator": "Separador",
+      "slug": "item-slug",
+      "suffix": "Sufijo",
       "targets": "Objetivos",
       "this": "Objetivo del disparador",
+      "title": "Título",
       "trigger": "Identificación del disparador",
       "true": "Verdadero",
       "type": "Tipo",
@@ -272,14 +303,25 @@
         "add-number": {
           "label": "Agregar números"
         },
+        "add-resource": {
+          "label": "Aumentar los recursos"
+        },
         "add-temporary": {
-          "label": "Agregar efecto disparado",
+          "label": "Agregar efecto disparado"
+        },
+        "await-confirm": {
+          "label": "Esperar confirmación",
           "entry": {
-            "image": "imagen/ruta.webp"
+            "false": "Cancelado",
+            "prompt": "Petición",
+            "true": "Confirmado"
           }
         },
         "break-process": {
           "label": "Proceso de ruptura"
+        },
+        "concat-texts": {
+          "label": "Concatenar textos"
         },
         "console-log": {
           "label": "Registro de la consola"
@@ -288,6 +330,16 @@
           "label": "Crear elemento",
           "entry": {
             "duplicate": "¿Duplicado?"
+          },
+          "group": {
+            "choices": "ChoiceSets"
+          }
+        },
+        "create-message": {
+          "label": "Crear mensaje de chat",
+          "entry": {
+            "message": "Mensaje",
+            "target": "Orador"
           }
         },
         "delete-item": {
@@ -307,6 +359,29 @@
             "removed": "Eliminado"
           }
         },
+        "execute-script": {
+          "label": "Ejecutar script",
+          "entry": {
+            "code": "console.log(\"\");"
+          }
+        },
+        "extract-formula": {
+          "label": "Extraer fórmula del artículo",
+          "entry": {
+            "nb": "@Damage #",
+            "options": "opciones",
+            "traits": "rasgos"
+          }
+        },
+        "filter-targets": {
+          "label": "Filtro de objetivos",
+          "entry": {
+            "callback": "return true;"
+          }
+        },
+        "find-target": {
+          "label": "Encontrar objetivo"
+        },
         "get-choiceset": {
           "label": "Recuperar elemento de conjunto de opciones",
           "entry": {
@@ -315,8 +390,39 @@
             "selection": "Selección"
           }
         },
+        "get-master": {
+          "label": "Obtener el maestro de"
+        },
+        "get-option-value-actor": {
+          "label": "Obtener el valor RollOption (Actor)"
+        },
+        "get-option-value-list": {
+          "label": "Obtener el valor de RollOption (lista)"
+        },
+        "get-percent": {
+          "label": "Obtener porcentaje",
+          "entry": {
+            "a": "Numerador",
+            "b": "Denominador"
+          }
+        },
+        "get-resource": {
+          "label": "Obtener recurso",
+          "entry": {
+            "slug": "resource-slug"
+          }
+        },
         "give-item": {
           "label": "Dar artículo físico"
+        },
+        "join-list": {
+          "label": "Unirse a la lista"
+        },
+        "loop-targets": {
+          "label": "Bucle sobre objetivos"
+        },
+        "random-number": {
+          "label": "Generar número aleatorio"
         },
         "reduce-condition": {
           "label": "Reducir condición",
@@ -324,22 +430,29 @@
             "counter": "Valor"
           }
         },
+        "reduce-resource": {
+          "label": "Reducir recurso"
+        },
+        "remove-condition": {
+          "label": "Eliminar condición"
+        },
         "remove-item": {
           "label": "Eliminar artículo"
+        },
+        "remove-item-slug": {
+          "label": "Eliminar elemento con slug"
         },
         "remove-temporary": {
           "label": "Eliminar efecto de activación"
         },
+        "replace-x": {
+          "label": "Reemplazar @x en la fórmula"
+        },
+        "resolve-formula": {
+          "label": "Resolver fórmula"
+        },
         "roll-damage": {
           "label": "Tirada de daño"
-        },
-        "roll-save": {
-          "label": "Tirada de salvación",
-          "entry": {
-            "basic": "¿Es básico?",
-            "private": "¿Tirada ciega?",
-            "save": "Salvación"
-          }
         },
         "roll-damage-save": {
           "label": "Daño de tirada con salvación",
@@ -351,14 +464,34 @@
             "save": "Salvación"
           }
         },
-        "scene-tokens": {
-          "label": "Tokens de escena",
+        "roll-flat": {
+          "label": "Realizar prueba plana"
+        },
+        "roll-save": {
+          "label": "Tirada de salvación",
           "entry": {
-            "other": "Objetivo de la escena"
+            "basic": "¿Es básico?",
+            "private": "¿Tirada ciega?",
+            "save": "Salvación"
+          }
+        },
+        "scene-tokens": {
+          "label": "Obtener tokens de escena",
+          "entry": {
+            "other": "Objetivos de la escena"
+          }
+        },
+        "send-to-chat": {
+          "label": "Enviar elemento al chat",
+          "entry": {
+            "target": "¿Con objetivos?"
           }
         },
         "subtract-number": {
           "label": "Restar números"
+        },
+        "surround-text": {
+          "label": "Texto envolvente"
         },
         "use-macro": {
           "label": "Ejecutar macro"
@@ -368,13 +501,22 @@
         "title": "Condiciones",
         "subtitle": "Condición",
         "contains-entry": {
-          "label": "La lista contiene la entrada"
+          "label": "La lista contiene la entrada",
+          "entry": {
+            "entry": "Entrada"
+          }
         },
         "has-condition": {
           "label": "Tiene condición"
         },
+        "has-immunity": {
+          "label": "Tiene inmunidad"
+        },
         "has-item": {
           "label": "Tiene artículo"
+        },
+        "has-item-slug": {
+          "label": "Tiene un objeto con slug"
         },
         "has-option": {
           "label": "Tiene RollOption"
@@ -397,6 +539,12 @@
         },
         "is-combatant": {
           "label": "Es combatiente actual"
+        },
+        "is-dead": {
+          "label": "Está muerto"
+        },
+        "is-master": {
+          "label": "Es Maestro De"
         },
         "match-predicate": {
           "label": "La lista coincide con el predicado"
@@ -421,6 +569,12 @@
         },
         "aura-leave": {
           "label": "Aura izquierda"
+        },
+        "combatant-create": {
+          "label": "Combatiente se unió"
+        },
+        "combatant-delete": {
+          "label": "Combatiente abandonó"
         },
         "damage-taken": {
           "label": "Daños recibidos",
@@ -487,6 +641,9 @@
         },
         "lte-number": {
           "label": "Menor o igual que"
+        },
+        "number-between": {
+          "label": "Número entre"
         }
       },
       "splitter": {
@@ -499,6 +656,9 @@
         },
         "item-splitter": {
           "label": "Extraer datos (elemento)"
+        },
+        "number-splitter": {
+          "label": "Ramificar (Número)"
         },
         "object-splitter": {
           "label": "Extraer datos (Object)"
@@ -516,6 +676,11 @@
         "subtrigger-input": {
           "label": "Aporte"
         },
+        "subtrigger-node": {
+          "entry": {
+            "out": "Proceder"
+          }
+        },
         "subtrigger-output": {
           "label": "Producción"
         }
@@ -524,8 +689,15 @@
         "title": "Valores",
         "subtitle": "valor",
         "current-combatant": {
+          "label": "Combatiente actual",
           "entry": {
             "combatant": "Combatiente"
+          }
+        },
+        "dc-item": {
+          "label": "Clase de dificultad (Item)",
+          "entry": {
+            "nb": "@Check #"
           }
         },
         "dc-target": {
@@ -547,8 +719,17 @@
         "effect-data": {
           "label": "Datos de efectos"
         },
+        "enriched-text": {
+          "label": "Texto enriquecido"
+        },
         "item-source": {
           "label": "Origen del artículo"
+        },
+        "named-label-actor": {
+          "label": "Etiqueta nombrada (Actor)"
+        },
+        "named-label-item": {
+          "label": "Etiqueta con nombre (Item)"
         },
         "number-value": {
           "label": "Entrada de número"
@@ -556,6 +737,7 @@
         "roll-data": {
           "label": "Datos del rollo",
           "entry": {
+            "note": "Nota adicional",
             "options": "extra, opciones",
             "traits": "extra, rasgos"
           }
@@ -565,7 +747,17 @@
         },
         "text-value": {
           "label": "Entrada de texto"
+        },
+        "trigger-identifier": {
+          "label": "Identificador del efecto desencadenante",
+          "entry": {
+            "key": "Clave única",
+            "target": "Actor"
+          }
         }
+      },
+      "group": {
+        "argument": "Argumentos"
       },
       "variable": {
         "title": "Variables",
