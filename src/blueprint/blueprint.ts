@@ -347,27 +347,24 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
 
         const global = !entry;
         const placeholder = entry?.label ?? "";
-        const options = global ? NODE_NONBRIDGE_TYPES : [{ value: "", label: entry.type }];
+
+        const types = global
+            ? NODE_NONBRIDGE_TYPES.map((type) => {
+                  return {
+                      label: localize("entry", type),
+                      value: type,
+                  };
+              })
+            : [{ value: "", label: localize("entry", entry.type) }];
 
         const result = await waitDialog<{ label: string; type: NonBridgeEntryType }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: {
-                        name: "label",
-                        placeholder,
-                    },
-                },
-                {
-                    type: "select",
-                    inputConfig: {
-                        name: "type",
-                        options,
-                        i18n: "entry",
-                        disabled: !global,
-                    },
-                },
-            ],
+            content: "create-edit-variable",
+            data: {
+                disabled: !global,
+                placeholder,
+                types,
+                value: "",
+            },
             i18n: "create-variable",
             skipAnimate: true,
         });
@@ -403,19 +400,11 @@ class Blueprint extends PIXI.Application<HTMLCanvasElement> {
         if (!variable) return;
 
         const result = await waitDialog<{ label: string }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: {
-                        name: "label",
-                        value: variable.label,
-                        placeholder: localize("entry", variable.type),
-                    },
-                    groupConfig: {
-                        i18n: "create-variable",
-                    },
-                },
-            ],
+            content: "create-edit-variable",
+            data: {
+                placeholder: localize("entry", variable.type),
+                value: variable.label,
+            },
             i18n: "edit-variable",
             skipAnimate: true,
         });

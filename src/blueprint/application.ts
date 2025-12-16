@@ -11,7 +11,6 @@ import {
     addListenerAll,
     ApplicationClosingOptions,
     ApplicationConfiguration,
-    arrayToSelectOptions,
     confirmDialog,
     createHTMLElement,
     enrichHTML,
@@ -19,7 +18,6 @@ import {
     HandlebarsTemplatePart,
     htmlClosest,
     htmlQuery,
-    I18n,
     info,
     localize,
     MODULE,
@@ -412,10 +410,12 @@ class BlueprintApplication extends apps.HandlebarsApplicationMixin(
         const localizationKey = `${trigger ? "edit" : "create"}-trigger`;
         const events = noEvents
             ? undefined
-            : arrayToSelectOptions(
-                  EVENT_KEYS,
-                  I18n.from({ prefix: "node.event", suffix: "label" })
-              );
+            : EVENT_KEYS.map((event) => {
+                  return {
+                      label: localize("node.event", event, "label"),
+                      value: event,
+                  };
+              });
 
         return waitDialog<CreateTriggerOptions>({
             classes: ["pf2e-trigger-create-edit-menu"],

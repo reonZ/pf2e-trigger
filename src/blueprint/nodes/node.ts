@@ -21,7 +21,6 @@ import {
 import {
     addToPoint,
     confirmDialog,
-    CreateFormGroupParams,
     drawCircleMask,
     drawRectangleMask,
     isUuidOf,
@@ -798,42 +797,56 @@ class BlueprintNode extends PIXI.Container {
         );
         if (!category || !custom) return;
 
-        const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
-        const content: CreateFormGroupParams[] = [];
+        // const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
+        // const content: CreateFormGroupParams[] = [];
         const noLabel = custom.key?.label === false;
+        const entries: { label: string; input: HTMLElement }[] = [];
 
         if (!noLabel) {
-            content.push({
-                type: "text",
-                inputConfig: {
-                    name: "label",
-                },
+            entries.push({
+                input: foundry.applications.fields.createTextInput({ name: "label" }),
+                label: "label",
             });
         }
 
         if (custom.types.length) {
-            content.push({
-                type: "select",
-                inputConfig: {
-                    i18n: "entry",
+            const options = custom.types.map((type) => {
+                return {
+                    label: localize("entry", type),
+                    value: type,
+                };
+            });
+
+            entries.push({
+                input: foundry.applications.fields.createSelectInput({
+                    disabled: options.length <= 1,
                     name: "type",
-                    options: custom.types,
+                    options,
                     sort: true,
-                },
+                }),
+                label: "type",
             });
         }
 
-        if (customKey) {
-            content.unshift({
-                type: custom.key.type,
-                inputConfig: {
+        if (custom.key?.name) {
+            entries.unshift({
+                input: foundry.applications.fields["createTextInput"]({
                     name: "key",
-                },
-                groupConfig: {
-                    label: customKey,
-                },
+                }),
+                label: custom.key.name,
             });
         }
+
+        const content = R.pipe(
+            entries,
+            R.map(({ input, label }) => {
+                return foundry.applications.fields.createFormGroup({
+                    label: localize("create-entry", label, "label"),
+                    input,
+                }).outerHTML;
+            }),
+            R.join("")
+        );
 
         const result = await waitDialog<{
             label?: string;
@@ -844,9 +857,9 @@ class BlueprintNode extends PIXI.Container {
             disabled: true,
             i18n: "create-entry",
             skipAnimate: true,
-            data: {
+            title: localize("create-entry.title", {
                 label: group ? this.getGroupLabel(group) : localize(category, "singular"),
-            },
+            }),
         });
 
         if (!result) return;
@@ -854,7 +867,7 @@ class BlueprintNode extends PIXI.Container {
         const { key, label, type } = result;
 
         if (custom.key?.required && !key) {
-            warning("create-entry.required", { name: customKey });
+            warning("create-entry.required", { name: custom.key?.name });
             return;
         }
 

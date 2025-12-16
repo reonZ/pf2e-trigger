@@ -175,15 +175,15 @@ class TriggersExportMenu extends ImportExportMenu {
     }
 
     async #addItem() {
+        const content = foundry.applications.fields.createFormGroup({
+            label: localize("export-menu.add-item.uuid.label"),
+            input: foundry.applications.fields.createTextInput({
+                name: "uuid",
+            }),
+        });
+
         const result = await waitDialog<{ uuid: string }>({
-            content: [
-                {
-                    type: "text",
-                    inputConfig: {
-                        name: "uuid",
-                    },
-                },
-            ],
+            content: content.outerHTML,
             i18n: "export-menu.add-item",
         });
 

@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label>{{@root.i18n.root 'create-variable.label.label'}}</label>
+    <div class="form-fields">
+        <input type="text" name="label" value="{{value}}" placeholder="{{placeholder}}">
+    </div>
+</div>
+{{#if types}}
+<div class="form-group">
+    <label>{{@root.i18n 'type.label'}}</label>
+    <div class="form-fields">
+        <select name="type" {{disabled disabled}}>
+            {{selectOptions types sort=true}}
+        </select>
+    </div>
+</div>
+{{/if}}
