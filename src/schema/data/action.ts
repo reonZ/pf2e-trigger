@@ -1,3 +1,4 @@
+import { R } from "module-helpers";
 import { NodeRawSchema, schemaBooleanOuts, schemaConditionEntries } from "schema";
 
 const randomNumber = {
@@ -291,6 +292,9 @@ const effectDuration = {
 
 const sceneTokens = {
     icon: "\uf0c0",
+    inputs: R.map(["loot", "hazard", "party"] as const, (key) => {
+        return { key, type: "boolean", label: `TYPES.Actor.${key}` } as const;
+    }),
     outputs: [{ key: "other", type: "multi" }],
 } as const satisfies ActionRawSchema;
 

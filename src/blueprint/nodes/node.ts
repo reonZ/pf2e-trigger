@@ -797,8 +797,6 @@ class BlueprintNode extends PIXI.Container {
         );
         if (!category || !custom) return;
 
-        // const customKey = !!custom.key?.name && localize("create-entry", custom.key.name, "label");
-        // const content: CreateFormGroupParams[] = [];
         const noLabel = custom.key?.label === false;
         const entries: { label: string; input: HTMLElement }[] = [];
 
