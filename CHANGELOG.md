@@ -1,3 +1,9 @@
+# 2.21.0
+
+-   `Get Scene Tokens` action node:
+    -   add actor types boolean inputs: `Hazard`, `Loot` and `Party`
+        -   the node will exclude unchecked types from the resulting list of targets
+
 # 2.20.2
 
 -   `Execute Event` event node:
