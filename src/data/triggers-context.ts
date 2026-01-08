@@ -1,6 +1,7 @@
 import { TriggerData } from "data";
-import { KeyedRecordField, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
+import { KeyedRecordField, MODULE, ModuleDocument, R } from "module-helpers";
 import fields = foundry.data.fields;
+import { makeModuleDocument } from "helpers";
 
 const triggersContextMetada = (): Partial<foundry.abstract.DocumentClassMetadata> => ({
     name: "Triggers",
@@ -24,7 +25,7 @@ const triggersContextSchema = (): TriggersContextSchema => ({
             required: false,
             nullable: false,
             initial: {},
-        }
+        },
     ),
     module: new fields.StringField({
         required: false,
@@ -37,14 +38,12 @@ const triggersContextSchema = (): TriggersContextSchema => ({
 
 class TriggersContext extends makeModuleDocument<null, TriggersContextSchema>(
     triggersContextMetada,
-    triggersContextSchema
+    triggersContextSchema,
 ) {
     declare subtriggers: Collection<TriggerData>;
 
     isEnabled(trigger: TriggerData): boolean {
-        return trigger.module
-            ? !!this.enabled[trigger.module]?.[trigger.id]
-            : !this.disabled[trigger.id];
+        return trigger.module ? !!this.enabled[trigger.module]?.[trigger.id] : !this.disabled[trigger.id];
     }
 
     protected _initialize(options?: Record<string, unknown>): void {
@@ -54,8 +53,8 @@ class TriggersContext extends makeModuleDocument<null, TriggersContextSchema>(
             R.pipe(
                 this.triggers.contents,
                 R.filter((trigger) => trigger.isSubtrigger),
-                R.map((trigger) => [trigger.id, trigger] as const)
-            )
+                R.map((trigger) => [trigger.id, trigger] as const),
+            ),
         );
 
         // we initialize node schemas once all the triggers have been initialized and added
@@ -72,7 +71,7 @@ class TriggersContext extends makeModuleDocument<null, TriggersContextSchema>(
         collection: string,
         documents: ModuleDocument[],
         triggerIds: string[],
-        options: object
+        options: object,
     ): void {
         for (const triggerId of triggerIds) {
             for (const trigger of this.triggers) {
@@ -112,7 +111,7 @@ function keyedIdBoolean(): KeyedRecordField<
             required: false,
             nullable: false,
             initial: {},
-        }
+        },
     );
 }
 
@@ -120,7 +119,7 @@ interface TriggersContext {
     deleteEmbeddedDocuments(
         embeddedName: "Trigger",
         dataId: string[],
-        operation?: Partial<DatabaseDeleteOperation<this>>
+        operation?: Partial<DatabaseDeleteOperation<this>>,
     ): Promise<TriggerData[]>;
 }
 
@@ -132,11 +131,7 @@ type TriggersContextSchema = {
     >;
     enabled: KeyedRecordField<
         fields.StringField<string, string, true, false, false>,
-        KeyedRecordField<
-            fields.DocumentIdField<string, true, false, false>,
-            fields.BooleanField<true, true>,
-            false
-        >,
+        KeyedRecordField<fields.DocumentIdField<string, true, false, false>, fields.BooleanField<true, true>, false>,
         false
     >;
     module: fields.StringField<string, string, false, false, false>;

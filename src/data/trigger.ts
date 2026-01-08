@@ -9,10 +9,11 @@ import {
     TriggerNodeDataSource,
     TriggersContext,
 } from "data";
-import { IdField, makeModuleDocument, MODULE, ModuleDocument, R } from "module-helpers";
+import { IdField, MODULE, ModuleDocument, R } from "module-helpers";
 import { isEvent, isVariable, NODE_KEYS, NodeEventKey } from "schema";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
+import { makeModuleDocument } from "helpers";
 
 const triggerDataMetadata = (): Partial<abstract.DocumentClassMetadata> => ({
     name: "Trigger",
@@ -78,13 +79,13 @@ const triggerDataSchema = (): TriggerDataSchema => ({
         {
             required: false,
             nullable: false,
-        }
+        },
     ),
 });
 
 class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
     triggerDataMetadata,
-    triggerDataSchema
+    triggerDataSchema,
 ) {
     declare event: TriggerNodeData & { key: NodeEventKey };
 
@@ -138,7 +139,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
 
     _initializeSource(
         data: object,
-        options?: DataModelConstructionOptions<ModuleDocument> | undefined
+        options?: DataModelConstructionOptions<ModuleDocument> | undefined,
     ): this["_source"] {
         const source = super._initializeSource(data, options);
         // we preemptively remove the non-existing nodes
@@ -176,7 +177,7 @@ class TriggerData extends makeModuleDocument<ModuleDocument, TriggerDataSchema>(
         collection: string,
         nodes: TriggerNodeData[],
         nodeIds: string[],
-        options: object
+        options: object,
     ): void {
         const variables: PartialRecord<string, NodeEntryId[]> = {};
 
@@ -202,7 +203,7 @@ interface TriggerData {
     createEmbeddedDocuments(
         embeddedName: "Node",
         data: PreCreate<TriggerNodeDataSource>[],
-        operation?: Partial<DatabaseCreateOperation<TriggerData>>
+        operation?: Partial<DatabaseCreateOperation<TriggerData>>,
     ): Promise<TriggerNodeData[]>;
 }
 

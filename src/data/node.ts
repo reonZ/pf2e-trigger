@@ -15,7 +15,6 @@ import {
     DataUnionField,
     IdField,
     localizeIfExist,
-    makeModuleDocument,
     MODULE,
     ModuleDocument,
     PositionField,
@@ -46,17 +45,9 @@ import {
 import { isUuidEntry } from "trigger";
 import fields = foundry.data.fields;
 import abstract = foundry.abstract;
+import { makeModuleDocument } from "helpers";
 
-const NODE_TYPES = [
-    "event",
-    "action",
-    "condition",
-    "logic",
-    "splitter",
-    "value",
-    "variable",
-    "subtrigger",
-] as const;
+const NODE_TYPES = ["event", "action", "condition", "logic", "splitter", "value", "variable", "subtrigger"] as const;
 
 const triggerNodeDataMetadata = (): Partial<abstract.DocumentClassMetadata> => ({
     name: "Node",
@@ -96,7 +87,7 @@ const triggerNodeDataSchema = (): TriggerNodeDataSchema => ({
         {
             required: false,
             nullable: false,
-        }
+        },
     ),
     position: new PositionField(),
     inputs: new fields.TypedObjectField(new NodeEntryField("outputs"), {
@@ -113,7 +104,7 @@ const triggerNodeDataSchema = (): TriggerNodeDataSchema => ({
 
 class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeDataSchema>(
     triggerNodeDataMetadata,
-    triggerNodeDataSchema
+    triggerNodeDataSchema,
 ) {
     declare nodeSchema: NodeSchemaModel;
     declare schemaInputs: Collection<ModelPropsFromSchema<NodeInputSchema>>;
@@ -190,7 +181,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         const type = schema.type;
 
         if (type === "boolean") {
-            return R.isBoolean(value) ? value : defaultValue ?? false;
+            return R.isBoolean(value) ? value : (defaultValue ?? false);
         }
 
         if (type === "number") {
@@ -201,7 +192,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             return Math.clamp(
                 roundToStep(value, schema.field?.step ?? 1),
                 schema.field?.min ?? -Infinity,
-                schema.field?.max ?? Infinity
+                schema.field?.max ?? Infinity,
             );
         }
 
@@ -209,7 +200,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
             const options = schema.field?.options ?? [];
             return R.isString(value) && options.find((option) => option.value === value)
                 ? value
-                : defaultValue ?? options[0].value;
+                : (defaultValue ?? options[0].value);
         }
 
         if (type === "text") {
@@ -337,13 +328,10 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         }
     }
 
-    removeCustomEntry(
-        category: NodeCustomEntryCategory,
-        { type, key, group = "" }: BaseNodeSchemaEntry
-    ) {
+    removeCustomEntry(category: NodeCustomEntryCategory, { type, key, group = "" }: BaseNodeSchemaEntry) {
         const entries = this._source.custom?.[category]?.slice() ?? [];
         const removed = entries.findSplice(
-            (entry) => entry.type === type && entry.key === key && (entry.group ?? "") === group
+            (entry) => entry.type === type && entry.key === key && (entry.group ?? "") === group,
         );
 
         if (!removed) return;
@@ -398,7 +386,7 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
 
     _initializeSource(
         data: object,
-        options?: DataModelConstructionOptions<ModuleDocument> | undefined
+        options?: DataModelConstructionOptions<ModuleDocument> | undefined,
     ): this["_source"] {
         const source = super._initializeSource(data, options);
 
@@ -420,8 +408,8 @@ class TriggerNodeData extends makeModuleDocument<ModuleDocument, TriggerNodeData
         this.schemaInputs = new Collection(
             R.pipe(
                 this.nodeSchema.inputs,
-                R.map((input) => [input.key, input] as const)
-            )
+                R.map((input) => [input.key, input] as const),
+            ),
         );
     }
 
@@ -438,7 +426,7 @@ interface TriggerNodeData {
 
     update(
         data: DeepPartial<TriggerNodeDataSource>,
-        operation?: Partial<DatabaseUpdateOperation<ModuleDocument>>
+        operation?: Partial<DatabaseUpdateOperation<ModuleDocument>>,
     ): Promise<this | undefined>;
 }
 
