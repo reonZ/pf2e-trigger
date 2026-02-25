@@ -3,7 +3,7 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K6M2V13) or [Stripe](https://buy.stripe.com/cN23dy0hd0gW5nq3cc) directly
 
 > [!WARNING]
-> THIS MODULE IS NO LONGER SUPPORT AND HAS BEEN REPLACED WITH https://foundryvtt.com/packages/trigger-engine
+> THIS MODULE IS NO LONGER SUPPORTED AND HAS BEEN REPLACED WITH https://foundryvtt.com/packages/trigger-engine
 
 # CHANGELOG
 
